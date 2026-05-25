@@ -354,7 +354,7 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
                 <span class="msi xs" style="color:var(--g500)">folder</span>
                 <span id="masonryFolderName">Artes finales</span>
               </div>
-              <div class="folders-row">
+              <div class="folders-row" id="foldersRow">
                 <div class="folder-card"><div class="folder-vis"><div class="folder-tab"></div><div class="folder-body"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.3)"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div></div></div><div class="folder-name">Final-Final</div></div>
                 <div class="folder-card"><div class="folder-vis"><div class="folder-tab" style="background:linear-gradient(141deg,#8591ab,#3b4255)"></div><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.4),rgba(255,255,255,.4)),linear-gradient(141deg,#8591ab,#3b4255)"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.3)"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div></div></div><div class="folder-name">Archivos en JPG</div></div>
                 <div class="folder-card"><div class="folder-vis"><div class="folder-tab" style="background:linear-gradient(141deg,#667391,#22252f)"></div><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.35)),linear-gradient(141deg,#667391,#22252f)"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.15)"></div></div></div><div class="folder-name">Recursos PNG</div></div>
@@ -589,10 +589,14 @@ const TREE_DATA = [
     { id:'briefing',      label:'Briefing inicial', children:[
       { id:'planmedios',  label:'Plan de medios', children:[
         { id:'creaciones',label:'Creaciones', children:[
-          { id:'artesfinales', label:'Artes finales', children:[] }
-        ]}
-      ]}
-    ]}
+          { id:'artesfinales', label:'Artes finales', children:[
+            { id:'finalfinal',   label:'Final-Final',      children:[] },
+            { id:'archivosjpg',  label:'Archivos en JPG',  children:[] },
+            { id:'recursospng',  label:'Recursos PNG',     children:[] },
+          ]},
+        ]},
+      ]},
+    ]},
   ]},
   { id:'marketing',       label:'Marketing',             children:[] },
   { id:'eventofin',       label:'Evento Fin de año 2025',children:[] },
@@ -605,6 +609,52 @@ const treeState = {
   expanded: new Set(['campana2025','briefing','planmedios','creaciones']),
   selected: 'artesfinales',
 };
+
+const FOLDER_GRADIENTS = [
+  { tab:'linear-gradient(141deg,#b0b7c9,#515c78)', body:'linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,.5)),linear-gradient(141deg,#b0b7c9,#515c78)' },
+  { tab:'linear-gradient(141deg,#8591ab,#3b4255)', body:'linear-gradient(90deg,rgba(255,255,255,.4),rgba(255,255,255,.4)),linear-gradient(141deg,#8591ab,#3b4255)' },
+  { tab:'linear-gradient(141deg,#667391,#22252f)', body:'linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.35)),linear-gradient(141deg,#667391,#22252f)' },
+];
+
+function findNode(id, nodes) {
+  nodes = nodes || TREE_DATA;
+  for (const n of nodes) {
+    if (n.id === id) return n;
+    const found = findNode(id, n.children);
+    if (found) return found;
+  }
+  return null;
+}
+
+function renderFolderContent(node) {
+  const nameEl = document.getElementById('masonryFolderName');
+  const row    = document.getElementById('foldersRow');
+  if (!nameEl || !row) return;
+
+  nameEl.textContent = node.label;
+
+  if (!node.children || node.children.length === 0) {
+    row.style.display = 'none';
+    return;
+  }
+
+  row.style.display = '';
+  row.innerHTML = node.children.map((child, i) => {
+    const g = FOLDER_GRADIENTS[i % FOLDER_GRADIENTS.length];
+    return `<div class="folder-card">
+      <div class="folder-vis">
+        <div class="folder-tab" style="background:${g.tab}"></div>
+        <div class="folder-body" style="background:${g.body}">
+          <div class="fph"></div>
+          <div class="fph" style="background:rgba(255,255,255,.3)"></div>
+          <div class="fph" style="background:rgba(255,255,255,.25)"></div>
+          <div class="fph" style="background:rgba(255,255,255,.2)"></div>
+        </div>
+      </div>
+      <div class="folder-name">${child.label}</div>
+    </div>`;
+  }).join('');
+}
 
 function renderTree() {
   const panel = document.getElementById('treePanel');
@@ -643,7 +693,7 @@ function renderTreeNodes(nodes, container, level) {
     label.textContent = node.label;
     label.addEventListener('click', () => {
       treeState.selected = node.id;
-      document.getElementById('masonryFolderName').textContent = node.label;
+      renderFolderContent(node);
       renderTree();
     });
 
@@ -860,6 +910,7 @@ function lighten(hex, amt) {
 
 renderFolderList('');
 renderTree();
+renderFolderContent(findNode(treeState.selected));
 </script>
 </body>
 </html>
