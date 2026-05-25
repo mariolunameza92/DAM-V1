@@ -689,10 +689,10 @@ function renderTreeNodes(nodes, container, level) {
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded  = treeState.expanded.has(node.id);
     const isSelected  = treeState.selected === node.id;
-    const levelClass  = level > 0 ? ` l${level}` : '';
 
     const item = document.createElement('div');
-    item.className = `tree-item${levelClass}${isSelected ? ' sel' : ''}`;
+    item.className = `tree-item${isSelected ? ' sel' : ''}`;
+    item.style.paddingLeft = `${4 + level * 16}px`;
 
     // Ícono: expand/collapse si tiene hijos, decorativo si no
     const icon = document.createElement('span');
