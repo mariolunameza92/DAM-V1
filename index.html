@@ -92,8 +92,11 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 .tab{flex:1;padding:20px;text-align:center;cursor:pointer;font-size:16px;border-bottom:2px solid var(--g300);color:var(--g800);transition:border-color .2s}
 .tab.active{border-bottom-color:var(--g700);font-weight:700}
 
-.carp-grid{display:flex;gap:24px}
-.tree-panel{width:360px;flex-shrink:0;border-right:1px solid var(--g200);display:flex;flex-direction:column;gap:4px;padding-right:16px}
+.carp-grid{display:flex;gap:0}
+.tree-panel{width:360px;flex-shrink:0;display:flex;flex-direction:column;gap:4px;padding-right:8px;overflow:hidden;min-width:0}
+.resizer{width:24px;flex-shrink:0;cursor:col-resize;display:flex;align-items:center;justify-content:center;user-select:none}
+.resizer::after{content:'';width:1px;height:100%;background:var(--g200);transition:background .15s,width .15s,border-radius .15s}
+.resizer:hover::after,.resizer.dragging::after{background:var(--g500);width:3px;border-radius:3px}
 .tree-item{display:flex;align-items:center;gap:4px;padding:4px;border-radius:4px;font-size:12px;color:var(--g800)}
 .tree-item:hover{background:var(--g200)}
 .tree-item.sel{background:var(--g200)}
@@ -101,10 +104,10 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 .tree-icon{flex-shrink:0;opacity:.5;transition:opacity .15s}
 .tree-icon.expandable{cursor:pointer}
 .tree-icon.expandable:hover{opacity:1}
-.tree-label{flex:1;cursor:pointer;padding:2px 0;border-radius:3px}
+.tree-label{flex:1;cursor:pointer;padding:2px 0;border-radius:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .tree-label:hover{color:var(--g950)}
 .masonry-folder-label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--g700);margin-bottom:4px}
-.masonry-area{flex:1;display:flex;flex-direction:column;gap:24px}
+.masonry-area{flex:1;display:flex;flex-direction:column;gap:24px;overflow:hidden;min-width:0;padding-left:8px}
 .folders-row{display:flex;gap:24px;flex-wrap:wrap}
 .folder-card{display:flex;flex-direction:column;gap:12px;padding:4px;border-radius:12px 12px 4px 4px;cursor:pointer;transition:transform .15s;width:168px}
 .folder-card:hover{transform:translateY(-2px)}
@@ -349,6 +352,7 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
           </div>
           <div class="carp-grid">
             <div class="tree-panel" id="treePanel"></div>
+            <div class="resizer" id="treeResizer"></div>
             <div class="masonry-area">
               <div class="masonry-folder-label">
                 <span class="msi xs" style="color:var(--g500)">folder</span>
@@ -953,6 +957,40 @@ document.getElementById('foldersRow').addEventListener('dblclick', e => {
   const card = e.target.closest('[data-node-id]');
   if (card) navigateToFolder(card.dataset.nodeId);
 });
+
+/* ── Panel Splitter ─────────────────────────────────────────────── */
+(function () {
+  const TREE_MIN_W = 180;
+  const TREE_MAX_W = 360;
+  const resizer   = document.getElementById('treeResizer');
+  const treePanel = document.querySelector('.tree-panel');
+  let dragging = false, startX = 0, startW = 0;
+
+  resizer.addEventListener('mousedown', e => {
+    dragging = true;
+    startX   = e.clientX;
+    startW   = treePanel.offsetWidth;
+    resizer.classList.add('dragging');
+    document.body.style.cursor     = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const newW = Math.min(TREE_MAX_W, Math.max(TREE_MIN_W, startW + (e.clientX - startX)));
+    treePanel.style.width = newW + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    resizer.classList.remove('dragging');
+    document.body.style.cursor     = '';
+    document.body.style.userSelect = '';
+  });
+})();
+/* ─────────────────────────────────────────────────────────────── */
 </script>
 </body>
 </html>
