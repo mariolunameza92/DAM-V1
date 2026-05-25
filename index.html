@@ -641,7 +641,7 @@ function renderFolderContent(node) {
   row.style.display = '';
   row.innerHTML = node.children.map((child, i) => {
     const g = FOLDER_GRADIENTS[i % FOLDER_GRADIENTS.length];
-    return `<div class="folder-card">
+    return `<div class="folder-card" data-node-id="${child.id}">
       <div class="folder-vis">
         <div class="folder-tab" style="background:${g.tab}"></div>
         <div class="folder-body" style="background:${g.body}">
@@ -654,6 +654,27 @@ function renderFolderContent(node) {
       <div class="folder-name">${child.label}</div>
     </div>`;
   }).join('');
+}
+
+function getAncestorIds(targetId, nodes, path) {
+  nodes = nodes || TREE_DATA;
+  path  = path  || [];
+  for (const n of nodes) {
+    if (n.id === targetId) return path;
+    const result = getAncestorIds(targetId, n.children, [...path, n.id]);
+    if (result) return result;
+  }
+  return null;
+}
+
+function navigateToFolder(nodeId) {
+  const node = findNode(nodeId);
+  if (!node) return;
+  const ancestors = getAncestorIds(nodeId);
+  if (ancestors) ancestors.forEach(id => treeState.expanded.add(id));
+  treeState.selected = nodeId;
+  renderTree();
+  renderFolderContent(node);
 }
 
 function renderTree() {
@@ -911,6 +932,11 @@ function lighten(hex, amt) {
 renderFolderList('');
 renderTree();
 renderFolderContent(findNode(treeState.selected));
+
+document.getElementById('foldersRow').addEventListener('dblclick', e => {
+  const card = e.target.closest('[data-node-id]');
+  if (card) navigateToFolder(card.dataset.nodeId);
+});
 </script>
 </body>
 </html>
