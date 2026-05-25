@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEN — Digital Asset Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,300,0,0" rel="stylesheet">
+<style>
+:root {
+  --g50:  #f6f7f9;
+  --g100: #ecedf2;
+  --g200: #d5d9e2;
+  --g300: #b0b7c9;
+  --g500: #667391;
+  --g600: #515c78;
+  --g700: #424a62;
+  --g800: #3b4255;
+  --g950: #22252f;
+  --font-ui: 'Google Sans', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-height:100vh;overflow:hidden}
+.msi{font-family:"Material Symbols Outlined";font-weight:300;font-style:normal;font-size:20px;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-smoothing:antialiased;display:inline-flex;align-items:center;justify-content:center;user-select:none}
+.msi.sm{font-size:16px}
+.msi.xs{font-size:14px}
+
+.app{display:flex;height:100vh;overflow:hidden}
+
+.sidebar{width:188px;flex-shrink:0;background:var(--g100);border-right:1px solid var(--g200);display:flex;flex-direction:column;justify-content:space-between;padding:20px 0}
+.sb-top{display:flex;flex-direction:column;gap:20px}
+.logo{padding:8px 24px}
+.logo-name{font-family:var(--font-ui);font-weight:700;font-size:24px;line-height:1;color:var(--g950)}
+.logo-sub{font-family:var(--font-ui);font-size:8px;text-transform:uppercase;opacity:.5;letter-spacing:.04em;color:var(--g950)}
+.divider{height:1px;background:var(--g950);opacity:.1}
+.nav{display:flex;flex-direction:column;gap:4px;padding:0 16px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:4px;cursor:pointer;font-size:14px;color:var(--g950);text-decoration:none;transition:background .15s;border:none;background:transparent;width:100%;text-align:left;font-family:var(--font-ui)}
+.nav-item:hover{background:var(--g200)}
+.nav-item.active{background:var(--g200)}
+.nav-item .msi{opacity:.5}
+.nav-item.active .msi{opacity:1}
+.sb-bot{padding:0 16px}
+.storage-row{display:flex;justify-content:space-between;font-size:12px;padding:8px;font-family:var(--font-mono)}
+.progress-wrap{padding:0 8px 8px}
+.progress-track{height:2px;background:var(--g300);opacity:.5;border-radius:20px;position:relative;margin-bottom:8px}
+.progress-fill{height:2px;background:linear-gradient(to left,#333847,#8591ab);border-radius:20px;width:42%;position:absolute;top:0}
+.storage-lbl{font-size:12px;font-family:var(--font-mono)}
+.storage-lbl b{font-weight:700}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+.topbar{background:var(--g100);display:flex;align-items:center;gap:24px;padding:24px 24px 16px;flex-shrink:0}
+.page-title{font-size:20px;font-weight:700;white-space:nowrap;color:var(--g950)}
+.topbar-center{flex:1;display:flex;align-items:center;gap:4px}
+.searchbar{background:var(--g50);border:1.5px solid var(--g200);border-radius:80px;display:flex;align-items:center;gap:8px;padding:8px 16px;width:480px;font-size:12px;color:var(--g700);flex-shrink:0}
+.topbar-end{flex:1;display:flex;align-items:center;justify-content:flex-end;gap:24px}
+.icon-btn{width:32px;height:32px;border:1px solid var(--g200);border-radius:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent}
+.btn-dark{background:var(--g950);color:var(--g50);border:2px solid rgba(255,255,255,.1);border-radius:80px;padding:8px 16px;font-family:var(--font-mono);font-weight:700;font-size:12px;text-transform:uppercase;cursor:pointer;letter-spacing:.04em;display:flex;align-items:center;gap:6px;transition:opacity .15s;white-space:nowrap}
+.btn-dark:hover{opacity:.85}
+.btn-dark:disabled{opacity:.4;cursor:default}
+
+.content-scroll{flex:1;overflow-y:auto}
+.content{padding:24px;display:flex;flex-direction:column;gap:24px;position:relative}
+.content::before{content:'';position:absolute;top:0;right:0;width:70%;height:400px;pointer-events:none;background:radial-gradient(ellipse at 80% 0%,rgba(176,183,201,.45) 0%,transparent 60%),radial-gradient(ellipse at 100% 30%,rgba(81,92,120,.2) 0%,transparent 50%)}
+.section{display:none}
+.section.active{display:block}
+
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.sec-title{font-size:20px;font-weight:500;color:var(--g800)}
+.sec-actions{display:flex;align-items:center;gap:16px}
+.btn-outline{background:transparent;border:2px solid var(--g800);color:var(--g800);border-radius:80px;padding:8px 16px;font-family:var(--font-mono);font-weight:700;font-size:12px;text-transform:uppercase;cursor:pointer;letter-spacing:.04em;display:flex;align-items:center;gap:6px;transition:background .15s,color .15s}
+.btn-outline:hover{background:var(--g950);color:var(--g50)}
+.view-toggle{display:flex;gap:8px}
+.view-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--g100)}
+.view-btn.active{background:var(--g950)}
+
+.portals-cta{margin-bottom:20px}
+.table-wrap{padding:12px;border-radius:8px}
+.table-head{display:flex;gap:12px;font-size:14px;font-weight:500;color:var(--g500);text-transform:uppercase;margin-bottom:12px}
+.col{flex:1;font-size:14px;font-weight:500;color:var(--g800)}
+.table-row{display:flex;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--g200);border-radius:4px;transition:background .12s}
+.table-row:last-child{border-bottom:none}
+.table-row:hover{background:rgba(0,0,0,.03)}
+.portal-name-cell{display:flex;align-items:center;gap:8px}
+.portal-icon-box{width:40px;height:40px;border-radius:8px;background:var(--g100);border:1.5px solid var(--g200);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.content-cell{display:flex;gap:20px;align-items:center}
+.content-chip{display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;color:var(--g800);font-family:var(--font-mono)}
+.more-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);background:var(--g100);display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+.tabs{display:flex;border-radius:4px 4px 0 0;overflow:hidden;margin-bottom:24px}
+.tab{flex:1;padding:20px;text-align:center;cursor:pointer;font-size:16px;border-bottom:2px solid var(--g300);color:var(--g800);transition:border-color .2s}
+.tab.active{border-bottom-color:var(--g700);font-weight:700}
+
+.carp-grid{display:flex;gap:24px}
+.tree-panel{width:360px;flex-shrink:0;border-right:1px solid var(--g200);display:flex;flex-direction:column;gap:4px;padding-right:16px}
+.tree-item{display:flex;align-items:center;gap:4px;padding:4px;border-radius:4px;cursor:pointer;font-size:12px;color:var(--g800)}
+.tree-item:hover{background:var(--g200)}
+.tree-item.sel{background:var(--g200)}
+.tree-item.l1{padding-left:20px}.tree-item.l2{padding-left:36px}.tree-item.l3{padding-left:52px}.tree-item.l4{padding-left:68px}
+.masonry-area{flex:1;display:flex;flex-direction:column;gap:24px}
+.folders-row{display:flex;gap:24px;flex-wrap:wrap}
+.folder-card{display:flex;flex-direction:column;gap:12px;padding:4px;border-radius:12px 12px 4px 4px;cursor:pointer;transition:transform .15s;width:168px}
+.folder-card:hover{transform:translateY(-2px)}
+.folder-vis{width:168px;height:158px;position:relative}
+.folder-tab{position:absolute;top:0;left:0;width:68px;height:20px;background:linear-gradient(141deg,#b0b7c9,#515c78);border-radius:6px 6px 0 0}
+.folder-body{position:absolute;top:14%;left:0;right:0;bottom:0;background:linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,.5)),linear-gradient(141deg,#b0b7c9,#515c78);border-radius:8px;display:flex;flex-wrap:wrap;gap:5px;padding:16px 10px 10px;overflow:hidden}
+.fph{width:66px;height:49px;border-radius:5px;background:rgba(255,255,255,.4)}
+.folder-name{font-size:14px;color:var(--g800)}
+.masonry-cols{display:flex;gap:24px}
+.masonry-col{flex:1;display:flex;flex-direction:column;gap:24px}
+.asset-card{border-radius:8px;overflow:hidden;cursor:pointer;position:relative}
+.asset-ph{width:100%;border-radius:8px}
+.asset-hover{position:absolute;bottom:0;left:0;right:0;backdrop-filter:blur(40px);background:rgba(34,37,47,.4);padding:8px;border-radius:8px;display:flex;flex-direction:column;gap:4px;opacity:0;transition:opacity .2s}
+.asset-card:hover .asset-hover{opacity:1}
+.asset-name{font-size:12px;color:var(--g50);opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asset-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--g50);opacity:.5;font-family:var(--font-mono)}
+
+.overlay{position:fixed;inset:0;background:rgba(34,37,47,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--g50);border-radius:8px;padding:16px;width:364px;display:flex;flex-direction:column;gap:0;transform:translateY(14px);transition:transform .25s}
+.overlay.open .modal{transform:translateY(0)}
+.modal-close{align-self:flex-end;cursor:pointer;opacity:.4;transition:opacity .15s;margin-bottom:12px}
+.modal-close:hover{opacity:.9}
+.modal-title{font-weight:700;font-size:16px;color:var(--g800)}
+.modal-sub{font-weight:500;font-size:16px;color:var(--g600)}
+.step-bar{display:flex;gap:6px;align-items:center;margin:14px 0 18px}
+.step-dot{width:6px;height:6px;border-radius:50%;background:var(--g300);transition:background .2s,width .2s,border-radius .2s}
+.step-dot.active{background:var(--g950);width:16px;border-radius:10px}
+.field{background:var(--g50);border:1.5px solid var(--g200);border-radius:80px;padding:8px 16px;font-size:12px;color:var(--g700);width:100%;outline:none;font-family:var(--font-ui);transition:border-color .15s}
+.field:focus{border-color:var(--g500)}
+.field::placeholder{color:var(--g500)}
+.field-wrap{position:relative;width:100%;margin-top:10px;display:flex;align-items:center}
+.field-wrap .msi{position:absolute;left:14px;pointer-events:none;color:var(--g700)}
+.field-wrap .field{padding-left:36px}
+.folder-list{display:flex;flex-direction:column;gap:2px;margin-top:12px;max-height:220px;overflow-y:auto}
+.f-row{display:flex;align-items:center;gap:10px;padding:4px;border-radius:4px;transition:background .12s}
+.f-row:hover{background:rgba(0,0,0,.03)}
+.f-icon{width:36px;height:36px;border-radius:8px;background:var(--g100);border:1.5px solid var(--g200);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.f-info{flex:1;display:flex;flex-direction:column}
+.f-name{font-size:12px;color:var(--g800)}
+.f-count{font-size:11px;color:var(--g500);font-family:var(--font-mono)}
+.f-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);background:var(--g100);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s,border-color .15s}
+.f-btn.added{background:var(--g950);border-color:var(--g950)}
+.radio-group{display:flex;flex-direction:column;gap:12px;margin:4px 0}
+.radio-item{display:flex;align-items:center;gap:10px;cursor:pointer;padding:4px}
+.radio-circle{width:20px;height:20px;border-radius:50%;border:2px solid var(--g300);display:flex;align-items:center;justify-content:center;transition:border-color .15s;flex-shrink:0}
+.radio-circle.sel{border-color:var(--g950)}
+.radio-circle.sel::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--g950)}
+.radio-label{font-size:14px;color:var(--g800)}
+.radio-hint{font-size:11px;color:var(--g500);margin-left:auto}
+.theme-rows{display:flex;flex-direction:column;gap:0;margin:4px 0}
+.t-row{display:flex;align-items:center;gap:12px;padding:8px 4px;border-radius:4px;transition:background .12s}
+.t-row:hover{background:rgba(0,0,0,.03)}
+.t-info{flex:1;display:flex;flex-direction:column}
+.t-label{font-size:12px;color:var(--g800)}
+.t-hint{font-size:11px;color:var(--g500)}
+.t-add{width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);background:var(--g100);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s,border-color .15s}
+.t-add.done{background:var(--g950);border-color:var(--g950)}
+.inline-field{display:none;padding:4px 0 8px}
+.inline-field input{background:var(--g50);border:1.5px solid var(--g200);border-radius:6px;padding:7px 12px;font-size:12px;color:var(--g700);width:100%;outline:none;font-family:var(--font-ui);transition:border-color .15s}
+.inline-field input:focus{border-color:var(--g500)}
+.color-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--g200);cursor:pointer;flex-shrink:0;transition:transform .15s}
+.color-dot:hover{transform:scale(1.2)}
+.s-rows{display:flex;flex-direction:column;gap:2px;margin:4px 0}
+.s-row{display:flex;align-items:center;gap:12px;padding:6px 4px;border-radius:4px;transition:background .12s}
+.s-row:hover{background:rgba(0,0,0,.03)}
+.s-info{flex:1;display:flex;flex-direction:column}
+.s-label{font-size:12px;color:var(--g800)}
+.s-hint{font-size:11px;color:var(--g500)}
+.s-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);background:var(--g100);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s,border-color .15s}
+.s-btn.done{background:var(--g950);border-color:var(--g950)}
+.success-chip{display:flex;align-items:center;gap:8px;background:#f0fdf4;border-radius:8px;padding:10px 14px;font-size:12px;color:#16a34a;font-weight:600;margin-bottom:10px}
+.url-chip{background:var(--g100);border-radius:6px;padding:10px 14px;font-size:11px;color:var(--g500);font-family:var(--font-mono);word-break:break-all;margin-bottom:10px}
+.modal-footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.btn-ghost{border:1.5px solid var(--g950);background:transparent;color:var(--g950);border-radius:80px;padding:8px 16px;font-family:var(--font-mono);font-weight:700;font-size:10px;text-transform:uppercase;cursor:pointer;letter-spacing:.04em;transition:background .15s,color .15s}
+.btn-ghost:hover{background:var(--g950);color:var(--g50)}
+.btn-submit{background:var(--g950);color:var(--g50);border:2px solid rgba(255,255,255,.1);border-radius:80px;padding:8px 20px;font-family:var(--font-mono);font-weight:700;font-size:10px;text-transform:uppercase;cursor:pointer;letter-spacing:.04em;transition:opacity .15s}
+.btn-submit:hover{opacity:.85}
+.btn-submit:disabled{opacity:.4;cursor:default}
+
+.portal-screen{position:fixed;inset:0;background:var(--g50);z-index:200;display:none;flex-direction:column}
+.portal-screen.open{display:flex;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.p-topbar{background:white;border-bottom:1px solid var(--g200);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.p-logo-area{display:flex;align-items:center;gap:14px}
+.p-logo-box{width:38px;height:38px;border-radius:8px;background:var(--g950);display:flex;align-items:center;justify-content:center;font-family:var(--font-ui);font-weight:700;font-size:14px;color:white;flex-shrink:0}
+.p-name{font-size:18px;font-weight:700;color:var(--g950)}
+.p-desc{font-size:13px;color:var(--g500)}
+.p-back{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--g600);background:var(--g100);border:1px solid var(--g200);border-radius:80px;padding:7px 16px;transition:background .15s;font-family:var(--font-ui)}
+.p-back:hover{background:var(--g200)}
+.p-body{flex:1;overflow-y:auto;padding:40px 48px;max-width:1200px;margin:0 auto;width:100%}
+.p-hero{border-radius:12px;padding:36px;margin-bottom:40px;position:relative;overflow:hidden}
+.p-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,var(--g950),var(--g600))}
+.p-hero-content{position:relative;z-index:1}
+.p-hero-title{font-size:28px;font-weight:700;color:white;margin-bottom:8px}
+.p-hero-sub{font-size:14px;color:rgba(255,255,255,.6);margin-bottom:20px}
+.p-hero-row{display:flex;gap:14px;align-items:center}
+.p-hero-btn{padding:9px 22px;border-radius:80px;font-family:var(--font-mono);font-weight:700;font-size:11px;text-transform:uppercase;cursor:pointer;letter-spacing:.04em;border:none;color:white;transition:opacity .15s}
+.p-hero-btn:hover{opacity:.85}
+.p-access-badge{font-size:12px;color:rgba(255,255,255,.55)}
+.p-section{margin-bottom:40px}
+.p-section-title{font-size:16px;font-weight:600;color:var(--g800);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.p-section-title::after{content:'';flex:1;height:1px;background:var(--g200)}
+.p-folders{display:flex;gap:20px;flex-wrap:wrap}
+.p-folder{width:160px;cursor:pointer;transition:transform .15s}
+.p-folder:hover{transform:translateY(-3px)}
+.p-folder-vis{width:160px;height:120px;border-radius:8px;background:linear-gradient(90deg,rgba(255,255,255,.45),rgba(255,255,255,.45)),linear-gradient(141deg,var(--g300),var(--g800));display:flex;flex-wrap:wrap;gap:4px;padding:12px;overflow:hidden;margin-bottom:8px}
+.pfph{width:62px;height:44px;border-radius:4px;background:rgba(255,255,255,.35)}
+.p-folder-name{font-size:13px;color:var(--g800)}
+.p-masonry{display:flex;gap:16px}
+.p-col{flex:1;display:flex;flex-direction:column;gap:16px}
+.p-asset{border-radius:8px;cursor:pointer;transition:transform .15s}
+.p-asset:hover{transform:scale(1.015)}
+</style>
+</head>
+<body>
+
+<div class="app" id="appShell">
+  <aside class="sidebar">
+    <div class="sb-top">
+      <div class="logo">
+        <div class="logo-name">LEN</div>
+        <div class="logo-sub">Digital Asset Management</div>
+      </div>
+      <div class="divider"></div>
+      <nav class="nav">
+        <button class="nav-item" data-sec="inicio" onclick="switchSection('inicio')">
+          <span class="msi sm">home</span>Inicio
+        </button>
+        <button class="nav-item" data-sec="carpetas" onclick="switchSection('carpetas')">
+          <span class="msi sm">folder</span>Carpetas
+        </button>
+        <button class="nav-item" data-sec="faceids" onclick="switchSection('faceids')">
+          <span class="msi sm">ar_on_you</span>Face IDs
+        </button>
+        <button class="nav-item" data-sec="blacklist" onclick="switchSection('blacklist')">
+          <span class="msi sm">person_off</span>Black List
+        </button>
+        <button class="nav-item active" data-sec="portales" onclick="switchSection('portales')">
+          <span class="msi sm">captive_portal</span>Portales
+        </button>
+        <button class="nav-item" data-sec="analytics" onclick="switchSection('analytics')">
+          <span class="msi sm">analytics</span>Analytics
+        </button>
+        <button class="nav-item" data-sec="perfil" onclick="switchSection('perfil')">
+          <span class="msi sm">account_circle</span>Perfil
+        </button>
+      </nav>
+    </div>
+    <div class="sb-bot">
+      <div style="padding:8px 8px 0;opacity:.5"><span class="msi xs">database</span></div>
+      <div class="storage-row"><span>Almacenamiento</span><span>42%</span></div>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill"></div></div>
+        <div class="storage-lbl"><b>240GB de 500GB</b> usados</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <span class="page-title" id="pageTitle">Portales</span>
+      <div class="topbar-center">
+        <div class="searchbar">
+          <span class="msi xs" style="color:var(--g700)">search</span>
+          <span>Buscar por persona, objeto, color, escena, logo, etc</span>
+        </div>
+        <div class="topbar-end">
+          <button class="icon-btn"><span class="msi xs">dark_mode</span></button>
+          <button class="btn-dark">Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-scroll">
+      <div class="content">
+
+        <!-- PORTALES -->
+        <div class="section active" id="sec-portales">
+          <div class="sec-header">
+            <span class="sec-title">Lista completa</span>
+            <div class="view-toggle">
+              <button class="view-btn"><span class="msi xs">grid_view</span></button>
+              <button class="view-btn active"><span class="msi xs" style="color:white">lists</span></button>
+            </div>
+          </div>
+          <div class="portals-cta">
+            <button class="btn-dark" onclick="openModal()">
+              <span class="msi xs">add_circle</span>Crear Portal
+            </button>
+          </div>
+          <div class="table-wrap" id="portalsTable">
+            <div class="table-head">
+              <div class="col">Portal</div><div class="col">Contenido</div><div class="col">Registro</div><div class="col">Creado por</div>
+            </div>
+            <div class="table-row">
+              <div class="col"><div class="portal-name-cell"><div class="portal-icon-box"><span class="msi xs" style="color:var(--g500)">captive_portal</span></div>Marketing Content</div></div>
+              <div class="col"><div class="content-cell"><span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;16</span><span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;2,345</span></div></div>
+              <div class="col">14/May/2026</div>
+              <div class="col" style="display:flex;align-items:center;gap:12px"><span style="flex:1">Mario Luna</span><button class="more-btn"><span class="msi xs">more_horiz</span></button></div>
+            </div>
+            <div class="table-row">
+              <div class="col"><div class="portal-name-cell"><div class="portal-icon-box"><span class="msi xs" style="color:var(--g500)">captive_portal</span></div>Test 1</div></div>
+              <div class="col"><div class="content-cell"><span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;8</span><span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;10,684</span></div></div>
+              <div class="col">14/May/2026</div>
+              <div class="col" style="display:flex;align-items:center;gap:12px"><span style="flex:1">Tomás De Col</span><button class="more-btn"><span class="msi xs">more_horiz</span></button></div>
+            </div>
+            <div class="table-row">
+              <div class="col"><div class="portal-name-cell"><div class="portal-icon-box"><span class="msi xs" style="color:var(--g500)">captive_portal</span></div>Test 2</div></div>
+              <div class="col"><div class="content-cell"><span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;8</span><span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;10,684</span></div></div>
+              <div class="col">14/May/2026</div>
+              <div class="col" style="display:flex;align-items:center;gap:12px"><span style="flex:1">Tomás De Col</span><button class="more-btn"><span class="msi xs">more_horiz</span></button></div>
+            </div>
+            <div class="table-row">
+              <div class="col"><div class="portal-name-cell"><div class="portal-icon-box"><span class="msi xs" style="color:var(--g500)">captive_portal</span></div>Test 3</div></div>
+              <div class="col"><div class="content-cell"><span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;8</span><span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;10,684</span></div></div>
+              <div class="col">14/May/2026</div>
+              <div class="col" style="display:flex;align-items:center;gap:12px"><span style="flex:1">Tomás De Col</span><button class="more-btn"><span class="msi xs">more_horiz</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARPETAS -->
+        <div class="section" id="sec-carpetas">
+          <div class="tabs">
+            <div class="tab active" onclick="switchTab(this)">Recientes</div>
+            <div class="tab" onclick="switchTab(this)">Creadas</div>
+            <div class="tab" onclick="switchTab(this)">Compartidas</div>
+          </div>
+          <div class="sec-header">
+            <span class="sec-title">Carpetas recientes</span>
+            <div class="sec-actions">
+              <div style="display:flex;gap:16px">
+                <button class="btn-dark" style="font-size:11px"><span class="msi xs">create_new_folder</span>Crear Carpeta</button>
+                <button class="btn-outline"><span class="msi xs">upload</span>Subir Archivos</button>
+              </div>
+              <div class="view-toggle">
+                <button class="view-btn active"><span class="msi xs" style="color:white">grid_view</span></button>
+                <button class="view-btn"><span class="msi xs">lists</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="carp-grid">
+            <div class="tree-panel">
+              <div class="tree-item"><span class="msi xs">keyboard_arrow_down</span>Campaña 2025</div>
+              <div class="tree-item l1"><span class="msi xs">keyboard_arrow_down</span>Briefing inicial</div>
+              <div class="tree-item l2"><span class="msi xs">keyboard_arrow_down</span>Plan de medios</div>
+              <div class="tree-item l3"><span class="msi xs">keyboard_arrow_down</span>Creaciones</div>
+              <div class="tree-item l4 sel"><span class="msi xs">chevron_right</span>Artes finales</div>
+              <div class="tree-item"><span class="msi xs">chevron_right</span>Marketing</div>
+              <div class="tree-item"><span class="msi xs">chevron_right</span>Evento Fin de año 2025</div>
+              <div class="tree-item"><span class="msi xs">chevron_right</span>Imágenes para IG</div>
+              <div class="tree-item"><span class="msi xs">chevron_right</span>Archivos por aprobar</div>
+              <div class="tree-item"><span class="msi xs">chevron_right</span>Recursos Pauta 2026</div>
+            </div>
+            <div class="masonry-area">
+              <div class="folders-row">
+                <div class="folder-card"><div class="folder-vis"><div class="folder-tab"></div><div class="folder-body"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.3)"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div></div></div><div class="folder-name">Final-Final</div></div>
+                <div class="folder-card"><div class="folder-vis"><div class="folder-tab" style="background:linear-gradient(141deg,#8591ab,#3b4255)"></div><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.4),rgba(255,255,255,.4)),linear-gradient(141deg,#8591ab,#3b4255)"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.3)"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div></div></div><div class="folder-name">Archivos en JPG</div></div>
+                <div class="folder-card"><div class="folder-vis"><div class="folder-tab" style="background:linear-gradient(141deg,#667391,#22252f)"></div><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.35)),linear-gradient(141deg,#667391,#22252f)"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.15)"></div></div></div><div class="folder-name">Recursos PNG</div></div>
+              </div>
+              <div class="masonry-cols">
+                <div class="masonry-col">
+                  <div class="asset-card"><div class="asset-ph" style="height:147px;background:linear-gradient(135deg,#b0b7c9,#667391)"></div><div class="asset-hover"><div class="asset-name">Campaña_2025-03-12</div><div class="asset-meta"><span>WEBP</span><span>2.4 MB</span></div></div></div>
+                  <div class="asset-card"><div class="asset-ph" style="height:192px;background:linear-gradient(160deg,#d5d9e2,#8591ab)"></div><div class="asset-hover"><div class="asset-name">Evento_verano_2025</div><div class="asset-meta"><span>JPG</span><span>1.8 MB</span></div></div></div>
+                  <div class="asset-card"><div class="asset-ph" style="height:228px;background:linear-gradient(120deg,#667391,#3b4255)"></div><div class="asset-hover"><div class="asset-name">Producto_hero_final</div><div class="asset-meta"><span>PNG</span><span>3.1 MB</span></div></div></div>
+                </div>
+                <div class="masonry-col">
+                  <div class="asset-card"><div class="asset-ph" style="height:170px;background:linear-gradient(135deg,#8591ab,#515c78)"></div><div class="asset-hover"><div class="asset-name">Banner_IG_cuadrado</div><div class="asset-meta"><span>JPG</span><span>980 KB</span></div></div></div>
+                  <div class="asset-card"><div class="asset-ph" style="height:370px;background:linear-gradient(150deg,#3b4255,#22252f)"></div><div class="asset-hover"><div class="asset-name">Fotografía_equipo_2025</div><div class="asset-meta"><span>TIFF</span><span>8.2 MB</span></div></div></div>
+                </div>
+                <div class="masonry-col">
+                  <div class="asset-card"><div class="asset-ph" style="height:235px;background:linear-gradient(135deg,#515c78,#b0b7c9)"></div><div class="asset-hover"><div class="asset-name">Arte_final_portada</div><div class="asset-meta"><span>WEBP</span><span>2.7 MB</span></div></div></div>
+                  <div class="asset-card"><div class="asset-ph" style="height:155px;background:linear-gradient(160deg,#d5d9e2,#667391)"></div><div class="asset-hover"><div class="asset-name">Mockup_store_v3</div><div class="asset-meta"><span>AI</span><span>4.4 MB</span></div></div></div>
+                  <div class="asset-card"><div class="asset-ph" style="height:147px;background:linear-gradient(120deg,#22252f,#515c78)"></div><div class="asset-hover"><div class="asset-name">Recurso_dark_bg</div><div class="asset-meta"><span>PNG</span><span>1.2 MB</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" id="sec-inicio" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Inicio — en construcción</div>
+        <div class="section" id="sec-faceids" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Face IDs — en construcción</div>
+        <div class="section" id="sec-blacklist" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Black List — en construcción</div>
+        <div class="section" id="sec-analytics" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Analytics — en construcción</div>
+        <div class="section" id="sec-perfil" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Perfil — en construcción</div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal()"><span class="msi sm">close</span></div>
+
+    <div id="step-1">
+      <span class="modal-title">Crear Portal</span>
+      <div class="step-bar">
+        <div class="step-dot active" id="d1-1"></div><div class="step-dot" id="d1-2"></div><div class="step-dot" id="d1-3"></div><div class="step-dot" id="d1-4"></div>
+      </div>
+      <input class="field" id="inp-name" type="text" placeholder="Ingresa un nombre para el portal" oninput="onNameInput()"/>
+      <div class="field-wrap">
+        <span class="msi xs" style="position:absolute;left:14px;color:var(--g700)">search</span>
+        <input class="field" id="inp-search" type="text" placeholder="Busca el contenido a incluir" oninput="filterFolders(this.value)" style="padding-left:36px;margin-top:10px"/>
+      </div>
+      <div class="folder-list" id="folderList"></div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn-submit" id="btn1next" onclick="tryGoStep(2)" disabled>Continuar</button>
+      </div>
+    </div>
+
+    <div id="step-2" style="display:none">
+      <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
+      <span class="modal-sub">Configuración de accesos</span>
+      <div class="step-bar">
+        <div class="step-dot" id="d2-1"></div><div class="step-dot active" id="d2-2"></div><div class="step-dot" id="d2-3"></div><div class="step-dot" id="d2-4"></div>
+      </div>
+      <div class="radio-group">
+        <label class="radio-item" onclick="selectAccess('public')">
+          <div class="radio-circle sel" id="rc-pub"></div>
+          <span class="radio-label">Público</span>
+          <span class="radio-hint">Cualquiera con el link</span>
+        </label>
+        <label class="radio-item" onclick="selectAccess('private')">
+          <div class="radio-circle" id="rc-priv"></div>
+          <span class="radio-label">Con clave</span>
+          <span class="radio-hint">Requiere contraseña</span>
+        </label>
+      </div>
+      <div id="pwd-wrap" style="display:none;margin-top:8px">
+        <input class="field" id="inp-pwd" type="password" placeholder="Ingresa la clave de acceso"/>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="goStep(1)">Atrás</button>
+        <button class="btn-submit" onclick="goStep(3)">Continuar</button>
+      </div>
+    </div>
+
+    <div id="step-3" style="display:none">
+      <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
+      <span class="modal-sub">Configuración del tema</span>
+      <div class="step-bar">
+        <div class="step-dot" id="d3-1"></div><div class="step-dot" id="d3-2"></div><div class="step-dot active" id="d3-3"></div><div class="step-dot" id="d3-4"></div>
+      </div>
+      <div class="theme-rows">
+        <div class="t-row">
+          <div class="t-info"><span class="t-label">Logo</span><span class="t-hint">SVG o PNG — opcional</span></div>
+          <div id="logo-preview" style="display:none;width:24px;height:24px;border-radius:4px;overflow:hidden;flex-shrink:0"><img id="logo-img" style="width:100%;height:100%;object-fit:cover"/></div>
+          <button class="t-add" id="logo-add" onclick="document.getElementById('logo-file').click()"><span class="msi xs">add</span></button>
+          <input type="file" id="logo-file" accept=".svg,.png,.jpg" style="display:none" onchange="handleLogo(this)"/>
+        </div>
+        <div class="t-row">
+          <div class="t-info"><span class="t-label">Color de acento</span><span class="t-hint" id="accent-hint">#22252f</span></div>
+          <div class="color-dot" id="color-dot" style="background:#22252f" onclick="document.getElementById('color-pick').click()"></div>
+          <input type="color" id="color-pick" value="#22252f" style="opacity:0;width:0;height:0;position:absolute" oninput="handleAccent(this.value)"/>
+          <button class="t-add" onclick="document.getElementById('color-pick').click()"><span class="msi xs">add</span></button>
+        </div>
+        <div class="t-row">
+          <div class="t-info"><span class="t-label">Tipografía</span><span class="t-hint">Fuente del portal</span></div>
+          <select id="font-sel" style="font-size:11px;border:none;background:transparent;color:var(--g600);cursor:pointer;outline:none;font-family:var(--font-ui);flex-shrink:0" onchange="st.font=this.value">
+            <option>Google Sans</option><option>Georgia</option><option>Space Mono</option><option>Trebuchet MS</option>
+          </select>
+          <button class="t-add" onclick="document.getElementById('font-sel').focus()"><span class="msi xs">add</span></button>
+        </div>
+        <div class="t-row">
+          <div class="t-info"><span class="t-label">Título visible</span><span class="t-hint">Lo verán los visitantes del portal</span></div>
+          <button class="t-add" id="title-btn" onclick="toggleInline('title-wrap','title-btn','inp-title')"><span class="msi xs">add</span></button>
+        </div>
+        <div class="inline-field" id="title-wrap"><input type="text" id="inp-title" placeholder="Título del portal" oninput="st.title=this.value"/></div>
+        <div class="t-row">
+          <div class="t-info"><span class="t-label">Descripción</span><span class="t-hint">Texto de bienvenida del portal</span></div>
+          <button class="t-add" id="desc-btn" onclick="toggleInline('desc-wrap','desc-btn','inp-desc')"><span class="msi xs">add</span></button>
+        </div>
+        <div class="inline-field" id="desc-wrap"><input type="text" id="inp-desc" placeholder="Descripción breve del portal" oninput="st.desc=this.value"/></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="goStep(2)">Atrás</button>
+        <button class="btn-submit" onclick="goStep(4)">Continuar</button>
+      </div>
+    </div>
+
+    <div id="step-4" style="display:none">
+      <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
+      <span class="modal-sub">Compartir</span>
+      <div class="step-bar">
+        <div class="step-dot" id="d4-1"></div><div class="step-dot" id="d4-2"></div><div class="step-dot" id="d4-3"></div><div class="step-dot active" id="d4-4"></div>
+      </div>
+      <div class="success-chip"><span class="msi sm" style="color:#16a34a">check_circle</span>¡Portal creado exitosamente!</div>
+      <div class="url-chip">len.pe/portal/<span id="url-slug">mi-portal</span></div>
+      <div class="s-rows">
+        <div class="s-row">
+          <div class="s-info"><span class="s-label">Copiar Link del Portal</span><span class="s-hint">Copia la URL para compartir</span></div>
+          <button class="s-btn" id="copy-btn" onclick="copyLink()"><span class="msi xs">content_copy</span></button>
+        </div>
+        <div class="s-row">
+          <div class="s-info"><span class="s-label">Visitar el Portal</span><span class="s-hint">Abre el portal para previsualizar</span></div>
+          <button class="s-btn" onclick="openPortal()"><span class="msi xs">open_in_new</span></button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="goStep(3)">Atrás</button>
+        <button class="btn-submit" onclick="openPortal()">Ver Portal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL SCREEN -->
+<div class="portal-screen" id="portalScreen">
+  <div class="p-topbar">
+    <div class="p-logo-area">
+      <div class="p-logo-box" id="p-logo-box">L</div>
+      <div>
+        <div class="p-name" id="p-name">Mi Portal</div>
+        <div class="p-desc" id="p-desc">Selección de recursos</div>
+      </div>
+    </div>
+    <button class="p-back" onclick="closePortal()">
+      <span class="msi xs">arrow_back</span>Volver al DAM
+    </button>
+  </div>
+  <div class="p-body">
+    <div class="p-hero">
+      <div class="p-hero-bg" id="p-hero-bg"></div>
+      <div class="p-hero-content">
+        <div class="p-hero-title" id="p-hero-title">Mi Portal</div>
+        <div class="p-hero-sub" id="p-hero-sub">Selección de recursos para compartir</div>
+        <div class="p-hero-row">
+          <button class="p-hero-btn" id="p-hero-btn" style="background:var(--g950)">Explorar recursos</button>
+          <span class="p-access-badge" id="p-access-badge">🌐 Acceso público</span>
+        </div>
+      </div>
+    </div>
+    <div class="p-section">
+      <div class="p-section-title">Carpetas incluidas</div>
+      <div class="p-folders" id="p-folders"></div>
+    </div>
+    <div class="p-section">
+      <div class="p-section-title">Recursos disponibles</div>
+      <div class="p-masonry">
+        <div class="p-col">
+          <div class="p-asset" style="height:180px;background:linear-gradient(135deg,#b0b7c9,#667391)"></div>
+          <div class="p-asset" style="height:240px;background:linear-gradient(140deg,#d5d9e2,#8591ab)"></div>
+          <div class="p-asset" style="height:140px;background:linear-gradient(120deg,#667391,#3b4255)"></div>
+        </div>
+        <div class="p-col">
+          <div class="p-asset" style="height:300px;background:linear-gradient(150deg,#3b4255,#22252f)"></div>
+          <div class="p-asset" style="height:160px;background:linear-gradient(130deg,#8591ab,#515c78)"></div>
+          <div class="p-asset" style="height:200px;background:linear-gradient(145deg,#515c78,#b0b7c9)"></div>
+        </div>
+        <div class="p-col">
+          <div class="p-asset" style="height:200px;background:linear-gradient(135deg,#d5d9e2,#667391)"></div>
+          <div class="p-asset" style="height:260px;background:linear-gradient(160deg,#22252f,#515c78)"></div>
+          <div class="p-asset" style="height:200px;background:linear-gradient(125deg,#b0b7c9,#3b4255)"></div>
+        </div>
+        <div class="p-col">
+          <div class="p-asset" style="height:140px;background:linear-gradient(135deg,#515c78,#d5d9e2)"></div>
+          <div class="p-asset" style="height:280px;background:linear-gradient(155deg,#667391,#22252f)"></div>
+          <div class="p-asset" style="height:220px;background:linear-gradient(140deg,#8591ab,#667391)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const FOLDERS_DATA = [
+  {id:'marketing',      name:'Marketing',       count:'15 archivos'},
+  {id:'comunicaciones', name:'Comunicaciones',  count:'952 archivos'},
+  {id:'legal',          name:'Legal',           count:'81 archivos'},
+  {id:'agencia',        name:'Agencia XYZ',     count:'10.5K archivos'},
+  {id:'eventos',        name:'Eventos 2025',    count:'342 archivos'},
+  {id:'campania',       name:'Campaña Q2',      count:'128 archivos'},
+];
+
+const st = {
+  accent:'#22252f', font:'Google Sans', access:'public',
+  title:'', desc:'', selectedFolders: new Set(),
+};
+
+const TITLES = {inicio:'Inicio',carpetas:'Carpetas',faceids:'Face IDs',blacklist:'Black List',portales:'Portales',analytics:'Analytics',perfil:'Perfil'};
+
+function switchSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const sec = document.getElementById('sec-'+id);
+  if (sec) sec.classList.add('active');
+  const btn = document.querySelector(`.nav-item[data-sec="${id}"]`);
+  if (btn) btn.classList.add('active');
+  document.getElementById('pageTitle').textContent = TITLES[id] || id;
+}
+
+function switchTab(el) {
+  el.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function openModal() {
+  st.selectedFolders = new Set();
+  st.accent = '#22252f'; st.font = 'Google Sans'; st.access = 'public'; st.title = ''; st.desc = '';
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-search').value = '';
+  document.getElementById('inp-pwd').value = '';
+  document.getElementById('inp-title').value = '';
+  document.getElementById('inp-desc').value = '';
+  document.getElementById('pwd-wrap').style.display = 'none';
+  document.getElementById('title-wrap').style.display = 'none';
+  document.getElementById('desc-wrap').style.display = 'none';
+  document.getElementById('color-pick').value = '#22252f';
+  document.getElementById('color-dot').style.background = '#22252f';
+  document.getElementById('accent-hint').textContent = '#22252f';
+  document.getElementById('font-sel').value = 'Google Sans';
+  document.getElementById('logo-preview').style.display = 'none';
+  setDoneBtn('title-btn', false); setDoneBtn('desc-btn', false); setDoneBtn('logo-add', false);
+  document.getElementById('rc-pub').classList.add('sel');
+  document.getElementById('rc-priv').classList.remove('sel');
+  resetCopyBtn();
+  renderFolderList('');
+  showStep(1);
+  checkStep1();
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+
+document.getElementById('overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('overlay')) closeModal();
+});
+
+function showStep(n) {
+  [1,2,3,4].forEach(i => { document.getElementById('step-'+i).style.display = i===n ? 'block' : 'none'; });
+  for (let p=1; p<=4; p++) for (let d=1; d<=4; d++) {
+    const el = document.getElementById(`d${p}-${d}`);
+    if (el) el.className = 'step-dot' + (d===n ? ' active' : '');
+  }
+}
+
+function tryGoStep(n) { if (n===2 && !canContinueStep1()) return; goStep(n); }
+function goStep(n) { if (n===4) prepareStep4(); showStep(n); }
+function canContinueStep1() { return document.getElementById('inp-name').value.trim().length > 0 && st.selectedFolders.size > 0; }
+function checkStep1() {
+  const ok = canContinueStep1();
+  const btn = document.getElementById('btn1next');
+  btn.disabled = !ok; btn.style.opacity = ok ? '1' : '.4'; btn.style.cursor = ok ? 'pointer' : 'default';
+}
+function onNameInput() { checkStep1(); }
+
+function renderFolderList(filter) {
+  const q = filter.toLowerCase();
+  const items = FOLDERS_DATA.filter(f => !q || f.name.toLowerCase().includes(q));
+  document.getElementById('folderList').innerHTML = items.map(f => {
+    const sel = st.selectedFolders.has(f.id);
+    return `<div class="f-row">
+      <div class="f-icon"><span class="msi xs" style="color:var(--g500)">folder</span></div>
+      <div class="f-info"><span class="f-name">${f.name}</span><span class="f-count">${f.count}</span></div>
+      <button class="f-btn${sel?' added':''}" onclick="toggleFolder('${f.id}')">
+        ${sel ? `<span class="msi xs" style="color:white;font-size:13px">check</span>` : `<span class="msi xs">add</span>`}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function toggleFolder(id) {
+  if (st.selectedFolders.has(id)) st.selectedFolders.delete(id); else st.selectedFolders.add(id);
+  renderFolderList(document.getElementById('inp-search').value);
+  checkStep1();
+}
+function filterFolders(val) { renderFolderList(val); }
+
+function selectAccess(type) {
+  st.access = type;
+  document.getElementById('rc-pub').className  = 'radio-circle' + (type==='public'  ? ' sel' : '');
+  document.getElementById('rc-priv').className = 'radio-circle' + (type==='private' ? ' sel' : '');
+  document.getElementById('pwd-wrap').style.display = type==='private' ? 'block' : 'none';
+}
+
+function handleAccent(val) {
+  st.accent = val;
+  document.getElementById('color-dot').style.background = val;
+  document.getElementById('accent-hint').textContent = val;
+}
+
+function handleLogo(input) {
+  if (!input.files || !input.files[0]) return;
+  document.getElementById('logo-img').src = URL.createObjectURL(input.files[0]);
+  document.getElementById('logo-preview').style.display = 'block';
+  setDoneBtn('logo-add', true);
+}
+
+function toggleInline(wrapId, btnId, inputId) {
+  const wrap = document.getElementById(wrapId);
+  const open = wrap.style.display === 'block';
+  wrap.style.display = open ? 'none' : 'block';
+  setDoneBtn(btnId, !open);
+  if (!open) document.getElementById(inputId).focus();
+}
+
+function setDoneBtn(id, done) {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  btn.className = 't-add' + (done ? ' done' : '');
+  btn.innerHTML = done ? `<span class="msi xs" style="color:white;font-size:13px">check</span>` : `<span class="msi xs">add</span>`;
+}
+
+function prepareStep4() {
+  const raw = document.getElementById('inp-name').value.trim();
+  document.getElementById('url-slug').textContent = raw.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') || 'mi-portal';
+  resetCopyBtn();
+}
+
+function resetCopyBtn() {
+  const btn = document.getElementById('copy-btn');
+  if (!btn) return;
+  btn.className = 's-btn';
+  btn.innerHTML = `<span class="msi xs">content_copy</span>`;
+}
+
+function copyLink() {
+  const slug = document.getElementById('url-slug').textContent;
+  if (navigator.clipboard) navigator.clipboard.writeText('https://len.pe/portal/'+slug);
+  const btn = document.getElementById('copy-btn');
+  btn.className = 's-btn done';
+  btn.innerHTML = `<span class="msi xs" style="color:white;font-size:13px">check</span>`;
+}
+
+function openPortal() {
+  const rawName = document.getElementById('inp-name').value.trim() || 'Mi Portal';
+  const title = st.title || rawName;
+  const desc  = st.desc  || 'Selección de recursos para compartir';
+  const accent = st.accent;
+  const font  = document.getElementById('font-sel').value;
+  document.getElementById('p-name').textContent = title;
+  document.getElementById('p-desc').textContent = desc;
+  document.getElementById('p-hero-title').textContent = title;
+  document.getElementById('p-hero-sub').textContent = desc;
+  document.getElementById('p-logo-box').textContent = title.charAt(0).toUpperCase();
+  document.getElementById('p-logo-box').style.background = accent;
+  document.getElementById('p-hero-bg').style.background = `linear-gradient(135deg,${accent} 0%,${lighten(accent,45)} 100%)`;
+  document.getElementById('p-hero-btn').style.background = accent;
+  document.getElementById('p-access-badge').textContent = st.access==='public' ? '🌐 Acceso público' : '🔒 Acceso con clave';
+  document.getElementById('portalScreen').style.fontFamily = `'${font}', sans-serif`;
+  const selected = FOLDERS_DATA.filter(f => st.selectedFolders.has(f.id));
+  document.getElementById('p-folders').innerHTML = selected.map(f => {
+    const bg = `linear-gradient(90deg,rgba(255,255,255,.45),rgba(255,255,255,.45)),linear-gradient(141deg,${lighten(accent,60)} 0%,${accent} 100%)`;
+    return `<div class="p-folder"><div class="p-folder-vis" style="background:${bg}"><div class="pfph"></div><div class="pfph" style="background:rgba(255,255,255,.25)"></div><div class="pfph" style="background:rgba(255,255,255,.3)"></div><div class="pfph" style="background:rgba(255,255,255,.15)"></div></div><div class="p-folder-name">${f.name}</div></div>`;
+  }).join('');
+  closeModal();
+  document.getElementById('portalScreen').classList.add('open');
+  document.getElementById('appShell').style.display = 'none';
+  addToTable(title, selected.length, accent);
+}
+
+function closePortal() {
+  document.getElementById('portalScreen').classList.remove('open');
+  document.getElementById('appShell').style.display = 'flex';
+}
+
+function addToTable(title, fCount, accent) {
+  const today = new Date();
+  const d = `${today.getDate()}/${today.toLocaleString('es',{month:'short'})}/${today.getFullYear()}`;
+  const row = document.createElement('div');
+  row.className = 'table-row';
+  row.style.animation = 'fadeIn .3s ease';
+  row.innerHTML = `
+    <div class="col"><div class="portal-name-cell">
+      <div class="portal-icon-box" style="background:${accent};border-color:${accent}">
+        <span class="msi xs" style="color:white">captive_portal</span>
+      </div>${title}
+    </div></div>
+    <div class="col"><div class="content-cell"><span class="content-chip">📁 ${fCount}</span></div></div>
+    <div class="col">${d}</div>
+    <div class="col" style="display:flex;align-items:center;gap:12px">
+      <span style="flex:1">Tú</span>
+      <button class="more-btn"><span class="msi xs">more_horiz</span></button>
+    </div>`;
+  document.querySelector('#portalsTable .table-head').after(row);
+}
+
+function lighten(hex, amt) {
+  let r=parseInt(hex.slice(1,3),16)||0, g=parseInt(hex.slice(3,5),16)||0, b=parseInt(hex.slice(5,7),16)||0;
+  r=Math.min(255,r+amt); g=Math.min(255,g+amt); b=Math.min(255,b+amt);
+  return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+
+renderFolderList('');
+</script>
+</body>
+</html>
