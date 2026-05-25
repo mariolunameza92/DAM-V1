@@ -94,10 +94,16 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 
 .carp-grid{display:flex;gap:24px}
 .tree-panel{width:360px;flex-shrink:0;border-right:1px solid var(--g200);display:flex;flex-direction:column;gap:4px;padding-right:16px}
-.tree-item{display:flex;align-items:center;gap:4px;padding:4px;border-radius:4px;cursor:pointer;font-size:12px;color:var(--g800)}
+.tree-item{display:flex;align-items:center;gap:4px;padding:4px;border-radius:4px;font-size:12px;color:var(--g800)}
 .tree-item:hover{background:var(--g200)}
 .tree-item.sel{background:var(--g200)}
 .tree-item.l1{padding-left:20px}.tree-item.l2{padding-left:36px}.tree-item.l3{padding-left:52px}.tree-item.l4{padding-left:68px}
+.tree-icon{flex-shrink:0;opacity:.5;transition:opacity .15s}
+.tree-icon.expandable{cursor:pointer}
+.tree-icon.expandable:hover{opacity:1}
+.tree-label{flex:1;cursor:pointer;padding:2px 0;border-radius:3px}
+.tree-label:hover{color:var(--g950)}
+.masonry-folder-label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--g700);margin-bottom:4px}
 .masonry-area{flex:1;display:flex;flex-direction:column;gap:24px}
 .folders-row{display:flex;gap:24px;flex-wrap:wrap}
 .folder-card{display:flex;flex-direction:column;gap:12px;padding:4px;border-radius:12px 12px 4px 4px;cursor:pointer;transition:transform .15s;width:168px}
@@ -342,19 +348,12 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
             </div>
           </div>
           <div class="carp-grid">
-            <div class="tree-panel">
-              <div class="tree-item"><span class="msi xs">keyboard_arrow_down</span>Campaña 2025</div>
-              <div class="tree-item l1"><span class="msi xs">keyboard_arrow_down</span>Briefing inicial</div>
-              <div class="tree-item l2"><span class="msi xs">keyboard_arrow_down</span>Plan de medios</div>
-              <div class="tree-item l3"><span class="msi xs">keyboard_arrow_down</span>Creaciones</div>
-              <div class="tree-item l4 sel"><span class="msi xs">chevron_right</span>Artes finales</div>
-              <div class="tree-item"><span class="msi xs">chevron_right</span>Marketing</div>
-              <div class="tree-item"><span class="msi xs">chevron_right</span>Evento Fin de año 2025</div>
-              <div class="tree-item"><span class="msi xs">chevron_right</span>Imágenes para IG</div>
-              <div class="tree-item"><span class="msi xs">chevron_right</span>Archivos por aprobar</div>
-              <div class="tree-item"><span class="msi xs">chevron_right</span>Recursos Pauta 2026</div>
-            </div>
+            <div class="tree-panel" id="treePanel"></div>
             <div class="masonry-area">
+              <div class="masonry-folder-label">
+                <span class="msi xs" style="color:var(--g500)">folder</span>
+                <span id="masonryFolderName">Artes finales</span>
+              </div>
               <div class="folders-row">
                 <div class="folder-card"><div class="folder-vis"><div class="folder-tab"></div><div class="folder-body"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.3)"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div></div></div><div class="folder-name">Final-Final</div></div>
                 <div class="folder-card"><div class="folder-vis"><div class="folder-tab" style="background:linear-gradient(141deg,#8591ab,#3b4255)"></div><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.4),rgba(255,255,255,.4)),linear-gradient(141deg,#8591ab,#3b4255)"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.3)"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div></div></div><div class="folder-name">Archivos en JPG</div></div>
@@ -584,6 +583,79 @@ const st = {
 
 const TITLES = {inicio:'Inicio',carpetas:'Carpetas',faceids:'Face IDs',blacklist:'Black List',portales:'Portales',analytics:'Analytics',perfil:'Perfil'};
 
+/* ── Carpetas: árbol de navegación ─────────────────────────────── */
+const TREE_DATA = [
+  { id:'campana2025',     label:'Campaña 2025', children:[
+    { id:'briefing',      label:'Briefing inicial', children:[
+      { id:'planmedios',  label:'Plan de medios', children:[
+        { id:'creaciones',label:'Creaciones', children:[
+          { id:'artesfinales', label:'Artes finales', children:[] }
+        ]}
+      ]}
+    ]}
+  ]},
+  { id:'marketing',       label:'Marketing',             children:[] },
+  { id:'eventofin',       label:'Evento Fin de año 2025',children:[] },
+  { id:'imagenesig',      label:'Imágenes para IG',      children:[] },
+  { id:'archivosaprobar', label:'Archivos por aprobar',  children:[] },
+  { id:'recursospauta',   label:'Recursos Pauta 2026',   children:[] },
+];
+
+const treeState = {
+  expanded: new Set(['campana2025','briefing','planmedios','creaciones']),
+  selected: 'artesfinales',
+};
+
+function renderTree() {
+  const panel = document.getElementById('treePanel');
+  if (!panel) return;
+  panel.innerHTML = '';
+  renderTreeNodes(TREE_DATA, panel, 0);
+}
+
+function renderTreeNodes(nodes, container, level) {
+  nodes.forEach(node => {
+    const hasChildren = node.children && node.children.length > 0;
+    const isExpanded  = treeState.expanded.has(node.id);
+    const isSelected  = treeState.selected === node.id;
+    const levelClass  = level > 0 ? ` l${level}` : '';
+
+    const item = document.createElement('div');
+    item.className = `tree-item${levelClass}${isSelected ? ' sel' : ''}`;
+
+    // Ícono: expand/collapse si tiene hijos, decorativo si no
+    const icon = document.createElement('span');
+    icon.className = `msi xs tree-icon${hasChildren ? ' expandable' : ''}`;
+    icon.textContent = hasChildren && isExpanded ? 'keyboard_arrow_down' : 'chevron_right';
+    if (!hasChildren) icon.style.opacity = '0.25';
+    if (hasChildren) {
+      icon.addEventListener('click', e => {
+        e.stopPropagation();
+        if (treeState.expanded.has(node.id)) treeState.expanded.delete(node.id);
+        else treeState.expanded.add(node.id);
+        renderTree();
+      });
+    }
+
+    // Etiqueta: selecciona la carpeta
+    const label = document.createElement('span');
+    label.className = 'tree-label';
+    label.textContent = node.label;
+    label.addEventListener('click', () => {
+      treeState.selected = node.id;
+      document.getElementById('masonryFolderName').textContent = node.label;
+      renderTree();
+    });
+
+    item.appendChild(icon);
+    item.appendChild(label);
+    container.appendChild(item);
+
+    if (hasChildren && isExpanded) renderTreeNodes(node.children, container, level + 1);
+  });
+}
+/* ─────────────────────────────────────────────────────────────── */
+
 function switchSection(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -787,6 +859,7 @@ function lighten(hex, amt) {
 }
 
 renderFolderList('');
+renderTree();
 </script>
 </body>
 </html>
