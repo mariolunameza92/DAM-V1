@@ -585,7 +585,7 @@ const TITLES = {inicio:'Inicio',carpetas:'Carpetas',faceids:'Face IDs',blacklist
 
 /* ── Carpetas: árbol de navegación ─────────────────────────────── */
 const TREE_DATA = [
-  { id:'campana2025',     label:'Campaña 2025', children:[
+  { id:'campana2025',     label:'Campaña 2025', lastEdited: new Date('2026-05-20').getTime(), children:[
     { id:'briefing',      label:'Briefing inicial', children:[
       { id:'planmedios',  label:'Plan de medios', children:[
         { id:'creaciones',label:'Creaciones', children:[
@@ -598,16 +598,24 @@ const TREE_DATA = [
       ]},
     ]},
   ]},
-  { id:'marketing',       label:'Marketing',             children:[] },
-  { id:'eventofin',       label:'Evento Fin de año 2025',children:[] },
-  { id:'imagenesig',      label:'Imágenes para IG',      children:[] },
-  { id:'archivosaprobar', label:'Archivos por aprobar',  children:[] },
-  { id:'recursospauta',   label:'Recursos Pauta 2026',   children:[] },
+  { id:'marketing',       label:'Marketing',             lastEdited: new Date('2026-05-10').getTime(), children:[] },
+  { id:'eventofin',       label:'Evento Fin de año 2025',lastEdited: new Date('2026-03-15').getTime(), children:[] },
+  { id:'imagenesig',      label:'Imágenes para IG',      lastEdited: new Date('2026-04-28').getTime(), children:[] },
+  { id:'archivosaprobar', label:'Archivos por aprobar',  lastEdited: new Date('2026-05-24').getTime(), children:[] },
+  { id:'recursospauta',   label:'Recursos Pauta 2026',   lastEdited: new Date('2026-05-18').getTime(), children:[] },
 ];
 
 const treeState = {
   expanded: new Set(['campana2025','briefing','planmedios','creaciones']),
   selected: 'artesfinales',
+};
+
+let activeTab = 'recientes';
+
+const TAB_TITLES = {
+  recientes:   'Carpetas recientes',
+  creadas:     'Carpetas creadas',
+  compartidas: 'Carpetas compartidas',
 };
 
 const FOLDER_GRADIENTS = [
@@ -681,7 +689,10 @@ function renderTree() {
   const panel = document.getElementById('treePanel');
   if (!panel) return;
   panel.innerHTML = '';
-  renderTreeNodes(TREE_DATA, panel, 0);
+  const rootNodes = activeTab === 'recientes'
+    ? [...TREE_DATA].sort((a, b) => (b.lastEdited || 0) - (a.lastEdited || 0))
+    : TREE_DATA;
+  renderTreeNodes(rootNodes, panel, 0);
 }
 
 function renderTreeNodes(nodes, container, level) {
@@ -740,6 +751,11 @@ function switchSection(id) {
 function switchTab(el) {
   el.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
+  const key = { 'Recientes':'recientes', 'Creadas':'creadas', 'Compartidas':'compartidas' }[el.textContent.trim()] || 'recientes';
+  activeTab = key;
+  const titleEl = document.querySelector('#sec-carpetas .sec-title');
+  if (titleEl) titleEl.textContent = TAB_TITLES[key];
+  renderTree();
 }
 
 function openModal() {
