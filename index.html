@@ -6,6 +6,7 @@
 <title>LEN — Digital Asset Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,300,0,0" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <style>
 :root {
   --g50:  #f6f7f9;
@@ -63,7 +64,7 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 .content-scroll{flex:1;overflow-y:auto}
 .content{padding:24px;display:flex;flex-direction:column;gap:24px;position:relative}
 .content::before{content:'';position:absolute;top:0;right:0;width:70%;height:400px;pointer-events:none;background:radial-gradient(ellipse at 80% 0%,rgba(176,183,201,.45) 0%,transparent 60%),radial-gradient(ellipse at 100% 30%,rgba(81,92,120,.2) 0%,transparent 50%)}
-.section{display:none}
+.section{display:none;content-visibility:auto}
 .section.active{display:block}
 
 .sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
@@ -118,7 +119,7 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 .folder-name{font-size:14px;color:var(--g800)}
 .masonry-cols{display:flex;gap:24px}
 .masonry-col{flex:1;display:flex;flex-direction:column;gap:24px}
-.asset-card{border-radius:8px;overflow:hidden;cursor:pointer;position:relative}
+.asset-card{border-radius:8px;overflow:hidden;cursor:pointer;position:relative;content-visibility:auto;contain-intrinsic-size:0 200px}
 .asset-ph{width:100%;border-radius:8px}
 .asset-hover{position:absolute;bottom:8px;left:8px;right:8px;backdrop-filter:blur(40px);background:rgba(34,37,47,.4);padding:8px;border-radius:8px;display:flex;flex-direction:column;gap:4px;opacity:0;transition:opacity .2s}
 .asset-card:hover .asset-hover{opacity:1}
@@ -364,7 +365,7 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
             <div class="sec-actions">
               <div style="display:flex;gap:16px">
                 <button class="btn-dark" style="font-size:11px"><span class="msi xs">create_new_folder</span>Crear Carpeta</button>
-                <button class="btn-outline"><span class="msi xs">upload</span>Subir Archivos</button>
+                <button class="btn-outline" onclick="document.getElementById('uploadInput').click()"><span class="msi xs">upload</span>Subir Archivos</button>
               </div>
               <div class="view-toggle">
                 <button class="view-btn active"><span class="msi xs" style="color:white">grid_view</span></button>
@@ -507,6 +508,8 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
     </div>
   </main>
 </div>
+
+<input type="file" id="uploadInput" multiple accept="image/*" style="display:none">
 
 <!-- MODAL -->
 <div class="overlay" id="overlay">
@@ -736,6 +739,8 @@ const TAB_TITLES = {
   compartidas: 'Carpetas compartidas',
 };
 
+const uploadedAssets = {}; // folderId → [{name, ext, sizeStr, thumb, preview, originalUrl}]
+
 const FOLDER_IMAGES = {
   campana2025:     ['imgs/kristin-wilson-z3htkdHUh5w-unsplash.jpg','imgs/annie-spratt-g9KFpAfQ5bc-unsplash.jpg','imgs/compagnons-eTgMFFzroGc-unsplash.jpg','imgs/surface-HJgaV1qjHS0-unsplash.jpg'],
   marketing:       ['imgs/sixteen-miles-out-2oKdzcvs6fE-unsplash.jpg','imgs/dmytro-koplyk-IaXzpSeRWIw-unsplash.jpg','imgs/ahmed-B33BHYfQtIY-unsplash.jpg','imgs/alexis-presa-ggQCbltMcCk-unsplash.jpg'],
@@ -781,10 +786,23 @@ function findNode(id, nodes) {
 }
 
 function thumbsHTML(id) {
-  const imgs = FOLDER_IMAGES[id] || [];
-  const filled = imgs.map(src => `<div class="folder-thumb" style="background-image:url('${src}')"></div>`);
-  const empty  = Array(Math.max(0, 4 - imgs.length)).fill('<div class="folder-thumb"></div>');
-  return [...filled, ...empty].join('');
+  // Uploads tienen prioridad: usan versión thumb (~200px, 6-7 KB c/u) — seguros para mostrar × 4
+  const uploaded = uploadedAssets[id] || [];
+  if (uploaded.length > 0) {
+    const cells = [0,1,2,3].map(i => {
+      const a = uploaded[i];
+      return a && a.thumb
+        ? `<div class="folder-thumb"><img src="${a.thumb}" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block"></div>`
+        : '<div class="folder-thumb"></div>';
+    });
+    return cells.join('');
+  }
+  // Fallback demo (mientras initDemoImages procesa): solo 1 para no cargar full-res × 4
+  const demoImgs = FOLDER_IMAGES[id] || [];
+  const first = demoImgs[0]
+    ? `<div class="folder-thumb"><img src="${demoImgs[0]}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block"></div>`
+    : '<div class="folder-thumb"></div>';
+  return first + '<div class="folder-thumb"></div>'.repeat(3);
 }
 
 function renderFolderContent(node) {
@@ -809,18 +827,32 @@ function renderFolderContent(node) {
     row.style.display = 'none';
   }
 
-  // Assets masonry
+  // Assets masonry — 3 columnas: uploads (preview ~900px) + demo images
   if (cols) {
-    const imgs = FOLDER_IMAGES[node.id] || [];
-    if (imgs.length > 0) {
+    const FAKE_EXTS  = ['JPG','WEBP','PNG','JPG','PNG','WEBP','TIFF','AI'];
+    const FAKE_SIZES = ['2.4 MB','1.8 MB','3.1 MB','980 KB','2.7 MB','4.4 MB','8.2 MB','1.2 MB'];
+    const uploadedList = uploadedAssets[node.id] || [];
+    // Demo images solo como fallback mientras initDemoImages aún no procesó esta carpeta
+    const demoImgs = uploadedList.length === 0 ? (FOLDER_IMAGES[node.id] || []) : [];
+    const allItems = [
+      ...uploadedList.map(u => ({ src: u.preview, ext: u.ext, size: u.sizeStr, name: u.name })),
+      ...demoImgs.map((src, i) => ({
+        src, name: imgLabel(src),
+        ext:  FAKE_EXTS[i  % FAKE_EXTS.length],
+        size: FAKE_SIZES[i % FAKE_SIZES.length],
+      })),
+    ];
+    if (allItems.length > 0) {
       cols.style.display = '';
-      cols.innerHTML = [imgs.slice(0,2), imgs.slice(2,4)].map(col =>
-        `<div class="masonry-col">${col.map(src =>
+      const colData = [[], [], []];
+      allItems.forEach((item, i) => colData[i % 3].push(item));
+      cols.innerHTML = colData.map(col =>
+        `<div class="masonry-col">${col.map(({src, ext, size, name}) =>
           `<div class="asset-card">
-            <img src="${src}" style="width:100%;display:block">
+            <img src="${src}" loading="lazy" decoding="async" style="width:100%;display:block;border-radius:8px">
             <div class="asset-hover">
-              <div class="asset-name">${imgLabel(src)}</div>
-              <div class="asset-meta"><span>JPG</span><span></span></div>
+              <div class="asset-name">${name}</div>
+              <div class="asset-meta"><span>${ext}</span><span>${size}</span></div>
             </div>
           </div>`
         ).join('')}</div>`
@@ -910,6 +942,13 @@ function renderTreeNodes(nodes, container, level) {
 }
 /* ─────────────────────────────────────────────────────────────── */
 
+function animateWelcome() {
+  gsap.fromTo('.inicio-welcome',
+    { clipPath: 'inset(0 100% 0 0)', filter: 'blur(10px)' },
+    { clipPath: 'inset(0 0% 0 0)',   filter: 'blur(0px)', duration: 0.85, ease: 'power2.out', delay: 0.1 }
+  );
+}
+
 function switchSection(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -920,6 +959,7 @@ function switchSection(id) {
   document.getElementById('pageTitle').textContent = TITLES[id] || id;
   const sb = document.getElementById('topbarSearch');
   if (sb) sb.style.display = id === 'inicio' ? 'none' : '';
+  if (id === 'inicio') animateWelcome();
 }
 
 function switchTab(el) {
@@ -1180,11 +1220,148 @@ renderFolderList('');
 renderTree();
 renderFolderContent(findNode(treeState.selected));
 renderInicio();
+animateWelcome();
+initDemoImages(); // genera thumb + preview por canvas para cada imagen de demo
 
 document.getElementById('foldersRow').addEventListener('dblclick', e => {
   const card = e.target.closest('[data-node-id]');
   if (card) navigateToFolder(card.dataset.nodeId);
 });
+
+/* ── Optimización de imágenes al subir ─────────────────────────── */
+function formatBytes(bytes) {
+  if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  if (bytes >= 1024)        return Math.round(bytes / 1024) + ' KB';
+  return bytes + ' B';
+}
+
+function fileExt(filename) {
+  const m = filename.match(/\.([^.]+)$/);
+  return m ? m[1].toUpperCase() : 'IMG';
+}
+
+function resizeToDataURL(file, maxDim, quality) {
+  return new Promise(resolve => {
+    const img     = new Image();
+    const blobUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+      const cw = Math.max(1, Math.round(img.naturalWidth  * scale));
+      const ch = Math.max(1, Math.round(img.naturalHeight * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = cw; canvas.height = ch;
+      canvas.getContext('2d').drawImage(img, 0, 0, cw, ch);
+      URL.revokeObjectURL(blobUrl);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(blobUrl); resolve(null); };
+    img.src = blobUrl;
+  });
+}
+
+function showToast(msg, duration) {
+  duration = (duration === undefined) ? 2500 : duration;
+  let t = document.getElementById('_toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = '_toast';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--g950);color:var(--g50);padding:10px 20px;border-radius:80px;font-size:12px;font-family:var(--font-mono);z-index:9999;pointer-events:none;transition:opacity .3s;white-space:nowrap';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._tid);
+  if (duration > 0) t._tid = setTimeout(() => { t.style.opacity = '0'; }, duration);
+}
+
+async function processUpload(files) {
+  const folderId = treeState.selected;
+  if (!folderId) { showToast('Selecciona una carpeta primero'); return; }
+  const imgFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+  if (!imgFiles.length) return;
+
+  showToast(`Procesando ${imgFiles.length} imagen${imgFiles.length > 1 ? 'es' : ''}…`, 0);
+  if (!uploadedAssets[folderId]) uploadedAssets[folderId] = [];
+
+  for (const file of imgFiles) {
+    const [thumb, preview] = await Promise.all([
+      resizeToDataURL(file, 200, 0.65), // thumbnail para ícono de carpeta: ~200px → ~15-30 KB
+      resizeToDataURL(file, 900, 0.82), // preview para masonry: ~900px → ~60-150 KB
+    ]);
+    if (!thumb || !preview) continue;
+    uploadedAssets[folderId].push({
+      name:        file.name.replace(/\.[^/.]+$/, ''),
+      ext:         fileExt(file.name),
+      sizeStr:     formatBytes(file.size),
+      thumb,
+      preview,
+      originalUrl: URL.createObjectURL(file), // full-res, solo para vista detalle
+    });
+  }
+
+  showToast(`✓ ${imgFiles.length} imagen${imgFiles.length > 1 ? 'es subidas' : ' subida'}`);
+  const node = findNode(folderId);
+  if (node) renderFolderContent(node);
+}
+
+document.getElementById('uploadInput').addEventListener('change', e => {
+  processUpload(e.target.files);
+  e.target.value = '';
+});
+
+async function processDemoFromUrl(url) {
+  let blob;
+  try { blob = await fetch(url).then(r => r.blob()); }
+  catch(e) { return null; }
+
+  const blobUrl = URL.createObjectURL(blob);
+  const imgEl = await new Promise(res => {
+    const img = new Image();
+    img.onload  = () => res(img);
+    img.onerror = () => res(null);
+    img.src = blobUrl;
+  });
+  URL.revokeObjectURL(blobUrl);
+  if (!imgEl) return null;
+
+  const resizeTo = (maxDim, quality) => {
+    const sc = Math.min(1, maxDim / Math.max(imgEl.naturalWidth, imgEl.naturalHeight));
+    const c  = document.createElement('canvas');
+    c.width  = Math.max(1, Math.round(imgEl.naturalWidth  * sc));
+    c.height = Math.max(1, Math.round(imgEl.naturalHeight * sc));
+    c.getContext('2d').drawImage(imgEl, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', quality);
+  };
+
+  return {
+    name:        imgLabel(url),
+    ext:         fileExt(url.split('/').pop()),
+    sizeStr:     formatBytes(blob.size),
+    thumb:       resizeTo(200, 0.65),  // ~200px → ~15-30 KB
+    preview:     resizeTo(900, 0.82),  // ~900px → ~60-150 KB
+    originalUrl: url,
+  };
+}
+
+async function initDemoImages() {
+  showToast('Optimizando imágenes…', 0);
+  // Procesa 6 carpetas en paralelo, cada una secuencialmente para no saturar canvas
+  await Promise.all(
+    Object.entries(FOLDER_IMAGES).map(async ([folderId, urls]) => {
+      const assets = [];
+      for (const url of urls) {
+        const asset = await processDemoFromUrl(url);
+        if (asset) assets.push(asset);
+      }
+      uploadedAssets[folderId] = assets;
+    })
+  );
+  showToast('✓ Imágenes listas');
+  renderTree();
+  renderFolderContent(findNode(treeState.selected));
+  renderInicio();
+}
+/* ─────────────────────────────────────────────────────────────── */
 
 /* ── Panel Splitter ─────────────────────────────────────────────── */
 (function () {
