@@ -741,6 +741,22 @@ const TAB_TITLES = {
 
 const uploadedAssets = {}; // folderId → [{name, ext, sizeStr, thumb, preview, originalUrl}]
 
+/* ── Asset Cache (IndexedDB) ─────────────────────────────────────── */
+const assetDB = (() => {
+  const DB = 'dam_v1', VER = 1, STORE = 'assets';
+  const open = () => new Promise((res, rej) => {
+    const r = indexedDB.open(DB, VER);
+    r.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+    r.onsuccess = e => res(e.target.result);
+    r.onerror   = () => rej(r.error);
+  });
+  return {
+    async get(key)        { const db = await open(); return new Promise((res, rej) => { const r = db.transaction(STORE).objectStore(STORE).get(key); r.onsuccess = () => res(r.result ?? null); r.onerror = () => rej(r.error); }); },
+    async set(key, value) { const db = await open(); return new Promise((res, rej) => { const r = db.transaction(STORE,'readwrite').objectStore(STORE).put(value, key); r.onsuccess = () => res(); r.onerror = () => rej(r.error); }); },
+  };
+})();
+/* ─────────────────────────────────────────────────────────────── */
+
 const FOLDER_IMAGES = {
   campana2025:     ['imgs/kristin-wilson-z3htkdHUh5w-unsplash.jpg','imgs/annie-spratt-g9KFpAfQ5bc-unsplash.jpg','imgs/compagnons-eTgMFFzroGc-unsplash.jpg','imgs/surface-HJgaV1qjHS0-unsplash.jpg'],
   marketing:       ['imgs/sixteen-miles-out-2oKdzcvs6fE-unsplash.jpg','imgs/dmytro-koplyk-IaXzpSeRWIw-unsplash.jpg','imgs/ahmed-B33BHYfQtIY-unsplash.jpg','imgs/alexis-presa-ggQCbltMcCk-unsplash.jpg'],
@@ -1221,7 +1237,33 @@ renderTree();
 renderFolderContent(findNode(treeState.selected));
 renderInicio();
 animateWelcome();
-initDemoImages(); // genera thumb + preview por canvas para cada imagen de demo
+// Carga desde cache o procesa imágenes de demo
+(async function startupCache() {
+  try {
+    const [demoCache, userCache] = await Promise.all([
+      assetDB.get('dam_demo'),
+      assetDB.get('dam_user'),
+    ]);
+    // Restaura demo assets
+    if (demoCache) Object.assign(uploadedAssets, demoCache);
+    // Agrega uploads del usuario encima (sin originalUrl blob)
+    if (userCache) {
+      for (const [folderId, userAssets] of Object.entries(userCache)) {
+        if (!uploadedAssets[folderId]) uploadedAssets[folderId] = [];
+        uploadedAssets[folderId].push(...userAssets);
+      }
+    }
+    if (demoCache) {
+      // Cache hit: re-renderiza sin reprocesar
+      renderTree();
+      renderFolderContent(findNode(treeState.selected));
+      renderInicio();
+      return;
+    }
+  } catch(e) {}
+  // Cache miss o error: genera thumb + preview por canvas
+  initDemoImages();
+})();
 
 document.getElementById('foldersRow').addEventListener('dblclick', e => {
   const card = e.target.closest('[data-node-id]');
@@ -1283,25 +1325,38 @@ async function processUpload(files) {
   showToast(`Procesando ${imgFiles.length} imagen${imgFiles.length > 1 ? 'es' : ''}…`, 0);
   if (!uploadedAssets[folderId]) uploadedAssets[folderId] = [];
 
+  const newAssets = [];
   for (const file of imgFiles) {
     const [thumb, preview] = await Promise.all([
       resizeToDataURL(file, 200, 0.65), // thumbnail para ícono de carpeta: ~200px → ~15-30 KB
       resizeToDataURL(file, 900, 0.82), // preview para masonry: ~900px → ~60-150 KB
     ]);
     if (!thumb || !preview) continue;
-    uploadedAssets[folderId].push({
+    const asset = {
       name:        file.name.replace(/\.[^/.]+$/, ''),
       ext:         fileExt(file.name),
       sizeStr:     formatBytes(file.size),
       thumb,
       preview,
-      originalUrl: URL.createObjectURL(file), // full-res, solo para vista detalle
-    });
+      originalUrl: URL.createObjectURL(file), // full-res, solo para vista detalle (blob efímero)
+    };
+    uploadedAssets[folderId].push(asset);
+    newAssets.push(asset);
   }
 
   showToast(`✓ ${imgFiles.length} imagen${imgFiles.length > 1 ? 'es subidas' : ' subida'}`);
   const node = findNode(folderId);
   if (node) renderFolderContent(node);
+
+  // Guarda en cache (sin originalUrl blob que no sobrevive al refresh)
+  if (newAssets.length) {
+    assetDB.get('dam_user').then(store => {
+      store = store || {};
+      if (!store[folderId]) store[folderId] = [];
+      store[folderId].push(...newAssets.map(({ originalUrl, ...rest }) => rest));
+      return assetDB.set('dam_user', store);
+    }).catch(() => {});
+  }
 }
 
 document.getElementById('uploadInput').addEventListener('change', e => {
@@ -1345,6 +1400,7 @@ async function processDemoFromUrl(url) {
 
 async function initDemoImages() {
   showToast('Optimizando imágenes…', 0);
+  const demoSnap = {};
   // Procesa 6 carpetas en paralelo, cada una secuencialmente para no saturar canvas
   await Promise.all(
     Object.entries(FOLDER_IMAGES).map(async ([folderId, urls]) => {
@@ -1353,9 +1409,14 @@ async function initDemoImages() {
         const asset = await processDemoFromUrl(url);
         if (asset) assets.push(asset);
       }
-      uploadedAssets[folderId] = assets;
+      demoSnap[folderId] = assets;
+      // Demo primero; cualquier upload previo del usuario queda al final
+      const existing = uploadedAssets[folderId] || [];
+      uploadedAssets[folderId] = [...assets, ...existing];
     })
   );
+  // Guarda solo los assets de demo (fire-and-forget)
+  assetDB.set('dam_demo', demoSnap).catch(() => {});
   showToast('✓ Imágenes listas');
   renderTree();
   renderFolderContent(findNode(treeState.selected));
