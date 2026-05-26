@@ -803,6 +803,11 @@ function navigateToFolder(nodeId) {
   renderFolderContent(node);
 }
 
+function goToCarpeta(nodeId) {
+  switchSection('carpetas');
+  navigateToFolder(nodeId);
+}
+
 function renderTree() {
   const panel = document.getElementById('treePanel');
   if (!panel) return;
@@ -1097,7 +1102,7 @@ function renderInicio() {
       const node = findNode(id);
       if (!node) return '';
       const g = FOLDER_GRADIENTS[i % FOLDER_GRADIENTS.length];
-      return `<div class="folder-card">
+      return `<div class="folder-card" onclick="goToCarpeta('${id}')">
         <div class="folder-vis">
           <div class="folder-tab" style="background:${g.tab}"></div>
           <div class="folder-body" style="background:${g.body}">
