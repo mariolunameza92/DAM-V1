@@ -111,16 +111,16 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 .folders-row{display:flex;gap:24px;flex-wrap:wrap}
 .folder-card{display:flex;flex-direction:column;gap:12px;padding:4px;border-radius:12px 12px 4px 4px;cursor:pointer;transition:transform .15s;width:168px}
 .folder-card:hover{transform:translateY(-2px)}
-.folder-vis{width:168px;height:158px;position:relative}
-.folder-tab{position:absolute;top:0;left:0;width:68px;height:20px;background:linear-gradient(141deg,#b0b7c9,#515c78);border-radius:6px 6px 0 0}
-.folder-body{position:absolute;top:14%;left:0;right:0;bottom:0;background:linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,.5)),linear-gradient(141deg,#b0b7c9,#515c78);border-radius:8px;display:flex;flex-wrap:wrap;gap:5px;padding:16px 10px 10px;overflow:hidden}
-.fph{width:66px;height:49px;border-radius:5px;background:rgba(255,255,255,.4)}
+.folder-vis{width:168px;height:158px;position:relative;flex-shrink:0}
+.folder-svg{position:absolute;top:0;left:0;width:168px;height:158px;display:block}
+.folder-thumbs{position:absolute;top:24.59%;left:9.23%;right:9.23%;bottom:9.84%;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;overflow:hidden}
+.folder-thumb{flex:0 0 calc(50% - 2px);height:calc(50% - 2px);border-radius:5.65px;background:rgba(255,255,255,.2);background-size:cover;background-position:center;flex-shrink:0}
 .folder-name{font-size:14px;color:var(--g800)}
 .masonry-cols{display:flex;gap:24px}
 .masonry-col{flex:1;display:flex;flex-direction:column;gap:24px}
 .asset-card{border-radius:8px;overflow:hidden;cursor:pointer;position:relative}
 .asset-ph{width:100%;border-radius:8px}
-.asset-hover{position:absolute;bottom:0;left:0;right:0;backdrop-filter:blur(40px);background:rgba(34,37,47,.4);padding:8px;border-radius:8px;display:flex;flex-direction:column;gap:4px;opacity:0;transition:opacity .2s}
+.asset-hover{position:absolute;bottom:8px;left:8px;right:8px;backdrop-filter:blur(40px);background:rgba(34,37,47,.4);padding:8px;border-radius:8px;display:flex;flex-direction:column;gap:4px;opacity:0;transition:opacity .2s}
 .asset-card:hover .asset-hover{opacity:1}
 .asset-name{font-size:12px;color:var(--g50);opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .asset-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--g50);opacity:.5;font-family:var(--font-mono)}
@@ -381,11 +381,11 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
                 <span id="masonryFolderName">Artes finales</span>
               </div>
               <div class="folders-row" id="foldersRow">
-                <div class="folder-card"><div class="folder-vis"><div class="folder-tab"></div><div class="folder-body"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.3)"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div></div></div><div class="folder-name">Final-Final</div></div>
-                <div class="folder-card"><div class="folder-vis"><div class="folder-tab" style="background:linear-gradient(141deg,#8591ab,#3b4255)"></div><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.4),rgba(255,255,255,.4)),linear-gradient(141deg,#8591ab,#3b4255)"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.3)"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div></div></div><div class="folder-name">Archivos en JPG</div></div>
-                <div class="folder-card"><div class="folder-vis"><div class="folder-tab" style="background:linear-gradient(141deg,#667391,#22252f)"></div><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.35)),linear-gradient(141deg,#667391,#22252f)"><div class="fph"></div><div class="fph" style="background:rgba(255,255,255,.2)"></div><div class="fph" style="background:rgba(255,255,255,.25)"></div><div class="fph" style="background:rgba(255,255,255,.15)"></div></div></div><div class="folder-name">Recursos PNG</div></div>
+                <div class="folder-card" data-node-id="finalfinal"><div class="folder-vis"><canvas class="folder-tab-canvas" width="168" height="67" data-c1="#b0b7c9" data-c2="#515c78"></canvas><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,.5)),linear-gradient(141deg,#b0b7c9,#515c78)"></div><div class="folder-thumbs"><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div></div></div><div class="folder-name">Final-Final</div></div>
+                <div class="folder-card" data-node-id="archivosjpg"><div class="folder-vis"><canvas class="folder-tab-canvas" width="168" height="67" data-c1="#8591ab" data-c2="#3b4255"></canvas><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.4),rgba(255,255,255,.4)),linear-gradient(141deg,#8591ab,#3b4255)"></div><div class="folder-thumbs"><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div></div></div><div class="folder-name">Archivos en JPG</div></div>
+                <div class="folder-card" data-node-id="recursospng"><div class="folder-vis"><canvas class="folder-tab-canvas" width="168" height="67" data-c1="#667391" data-c2="#22252f"></canvas><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.35)),linear-gradient(141deg,#667391,#22252f)"></div><div class="folder-thumbs"><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div></div></div><div class="folder-name">Recursos PNG</div></div>
               </div>
-              <div class="masonry-cols">
+              <div class="masonry-cols" id="masonryCols">
                 <div class="masonry-col">
                   <div class="asset-card"><div class="asset-ph" style="height:147px;background:linear-gradient(135deg,#b0b7c9,#667391)"></div><div class="asset-hover"><div class="asset-name">Campaña_2025-03-12</div><div class="asset-meta"><span>WEBP</span><span>2.4 MB</span></div></div></div>
                   <div class="asset-card"><div class="asset-ph" style="height:192px;background:linear-gradient(160deg,#d5d9e2,#8591ab)"></div><div class="asset-hover"><div class="asset-name">Evento_verano_2025</div><div class="asset-meta"><span>JPG</span><span>1.8 MB</span></div></div></div>
@@ -736,11 +736,39 @@ const TAB_TITLES = {
   compartidas: 'Carpetas compartidas',
 };
 
-const FOLDER_GRADIENTS = [
-  { tab:'linear-gradient(141deg,#b0b7c9,#515c78)', body:'linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,.5)),linear-gradient(141deg,#b0b7c9,#515c78)' },
-  { tab:'linear-gradient(141deg,#8591ab,#3b4255)', body:'linear-gradient(90deg,rgba(255,255,255,.4),rgba(255,255,255,.4)),linear-gradient(141deg,#8591ab,#3b4255)' },
-  { tab:'linear-gradient(141deg,#667391,#22252f)', body:'linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.35)),linear-gradient(141deg,#667391,#22252f)' },
-];
+const FOLDER_IMAGES = {
+  campana2025:     ['imgs/kristin-wilson-z3htkdHUh5w-unsplash.jpg','imgs/annie-spratt-g9KFpAfQ5bc-unsplash.jpg','imgs/compagnons-eTgMFFzroGc-unsplash.jpg','imgs/surface-HJgaV1qjHS0-unsplash.jpg'],
+  marketing:       ['imgs/sixteen-miles-out-2oKdzcvs6fE-unsplash.jpg','imgs/dmytro-koplyk-IaXzpSeRWIw-unsplash.jpg','imgs/ahmed-B33BHYfQtIY-unsplash.jpg','imgs/alexis-presa-ggQCbltMcCk-unsplash.jpg'],
+  eventofin:       ['imgs/johannes-andersson-UCd78vfC8vU-unsplash.jpg','imgs/kristaps-ungurs-owcJsiIK7UU-unsplash.jpg','imgs/jeremy-bishop-EwKXn5CapA4-unsplash.jpg','imgs/goutham-krishna-h5wvMCdOV3w-unsplash.jpg'],
+  imagenesig:      ['imgs/robert-katzki-jbtfM0XBeRc-unsplash.jpg','imgs/felix-dubois-robert-CuEvrPd3NYc-unsplash.jpg','imgs/rodion-kutsaiev-pVoEPpLw818-unsplash.jpg','imgs/alexander-grey-p203ekCK4Ac-unsplash.jpg'],
+  archivosaprobar: ['imgs/eleni-afiontzi-gLU8GZpHtRA-unsplash.jpg','imgs/deon-fosu-ZQZrvL7DwiI-unsplash.jpg','imgs/tania-mousinho-YlpfE9uCakE-unsplash.jpg','imgs/tania-mousinho-6tCgnd2xNfI-unsplash.jpg'],
+  recursospauta:   ['imgs/evangeline-shaw-nwLTVwb7DbU-unsplash.jpg','imgs/jakob-dalbjorn-cuKJre3nyYc-unsplash.jpg','imgs/headway-F2KRf_QfCqw-unsplash.jpg','imgs/md-duran-rE9vgD_TXgM-unsplash.jpg'],
+};
+
+function imgLabel(src) {
+  return src.split('/').pop().replace(/-[A-Za-z0-9]{10,12}-unsplash\.jpg$/, '').replace(/-/g, ' ');
+}
+
+let _fIdx = 0;
+
+function folderSVG() {
+  const id = _fIdx++;
+  const a = `fg1_${id}`, b = `fg2_${id}`;
+  return `<svg class="folder-svg" width="168" height="158" viewBox="0 0 169 158" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M80.8717 8.307C82.837 10.6691 85.7507 12.0352 88.8235 12.0352H157.749C163.462 12.0354 168.093 16.6671 168.093 22.3799V55.7998C168.093 61.5124 163.462 66.1433 157.749 66.1436H10.3438C4.63116 66.1433 0.000240495 61.5124 0 55.7998V10.3451C0 4.63222 4.63124 0.000976562 10.3442 0.000976562H69.1111C72.1838 0.000976562 75.0975 1.36706 77.0628 3.72913L80.8717 8.307Z" fill="url(#${a})"/>
+    <path d="M80.8717 8.307C82.837 10.6691 85.7507 12.0352 88.8235 12.0352H157.749C163.462 12.0354 168.093 16.6671 168.093 22.3799V55.7998C168.093 61.5124 163.462 66.1433 157.749 66.1436H10.3438C4.63116 66.1433 0.000240495 61.5124 0 55.7998V10.3451C0 4.63222 4.63124 0.000976562 10.3442 0.000976562H69.1111C72.1838 0.000976562 75.0975 1.36706 77.0628 3.72913L80.8717 8.307Z" fill="white" fill-opacity="0.5"/>
+    <rect y="23.2744" width="168.093" height="134.474" rx="10.3442" fill="url(#${b})"/>
+    <rect y="23.2744" width="168.093" height="134.474" rx="10.3442" fill="white" fill-opacity="0.5"/>
+    <defs>
+      <linearGradient id="${a}" x1="84.0464" y1="-16.3698" x2="84.0464" y2="66.1435" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#b0b7c9"/><stop offset="1" stop-color="#515c78"/>
+      </linearGradient>
+      <linearGradient id="${b}" x1="0" y1="23.2744" x2="131.194" y2="187.267" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#b0b7c9"/><stop offset="1" stop-color="#515c78"/>
+      </linearGradient>
+    </defs>
+  </svg>`;
+}
 
 function findNode(id, nodes) {
   nodes = nodes || TREE_DATA;
@@ -752,34 +780,55 @@ function findNode(id, nodes) {
   return null;
 }
 
+function thumbsHTML(id) {
+  const imgs = FOLDER_IMAGES[id] || [];
+  const filled = imgs.map(src => `<div class="folder-thumb" style="background-image:url('${src}')"></div>`);
+  const empty  = Array(Math.max(0, 4 - imgs.length)).fill('<div class="folder-thumb"></div>');
+  return [...filled, ...empty].join('');
+}
+
 function renderFolderContent(node) {
   const nameEl = document.getElementById('masonryFolderName');
   const row    = document.getElementById('foldersRow');
+  const cols   = document.getElementById('masonryCols');
   if (!nameEl || !row) return;
 
   nameEl.textContent = node.label;
 
-  if (!node.children || node.children.length === 0) {
-    row.style.display = 'none';
-    return;
-  }
-
-  row.style.display = '';
-  row.innerHTML = node.children.map((child, i) => {
-    const g = FOLDER_GRADIENTS[i % FOLDER_GRADIENTS.length];
-    return `<div class="folder-card" data-node-id="${child.id}">
+  // Sub-folders
+  if (node.children && node.children.length > 0) {
+    row.style.display = '';
+    row.innerHTML = node.children.map(child => `<div class="folder-card" data-node-id="${child.id}">
       <div class="folder-vis">
-        <div class="folder-tab" style="background:${g.tab}"></div>
-        <div class="folder-body" style="background:${g.body}">
-          <div class="fph"></div>
-          <div class="fph" style="background:rgba(255,255,255,.3)"></div>
-          <div class="fph" style="background:rgba(255,255,255,.25)"></div>
-          <div class="fph" style="background:rgba(255,255,255,.2)"></div>
-        </div>
+        ${folderSVG()}
+        <div class="folder-thumbs">${thumbsHTML(child.id)}</div>
       </div>
       <div class="folder-name">${child.label}</div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
+  } else {
+    row.style.display = 'none';
+  }
+
+  // Assets masonry
+  if (cols) {
+    const imgs = FOLDER_IMAGES[node.id] || [];
+    if (imgs.length > 0) {
+      cols.style.display = '';
+      cols.innerHTML = [imgs.slice(0,2), imgs.slice(2,4)].map(col =>
+        `<div class="masonry-col">${col.map(src =>
+          `<div class="asset-card">
+            <img src="${src}" style="width:100%;display:block">
+            <div class="asset-hover">
+              <div class="asset-name">${imgLabel(src)}</div>
+              <div class="asset-meta"><span>JPG</span><span></span></div>
+            </div>
+          </div>`
+        ).join('')}</div>`
+      ).join('');
+    } else {
+      cols.style.display = 'none';
+    }
+  }
 }
 
 function getAncestorIds(targetId, nodes, path) {
@@ -1101,16 +1150,10 @@ function renderInicio() {
     fr.innerHTML = INICIO_FOLDER_IDS.map((id, i) => {
       const node = findNode(id);
       if (!node) return '';
-      const g = FOLDER_GRADIENTS[i % FOLDER_GRADIENTS.length];
       return `<div class="folder-card" onclick="goToCarpeta('${id}')">
         <div class="folder-vis">
-          <div class="folder-tab" style="background:${g.tab}"></div>
-          <div class="folder-body" style="background:${g.body}">
-            <div class="fph"></div>
-            <div class="fph" style="background:rgba(255,255,255,.3)"></div>
-            <div class="fph" style="background:rgba(255,255,255,.25)"></div>
-            <div class="fph" style="background:rgba(255,255,255,.2)"></div>
-          </div>
+          ${folderSVG()}
+          <div class="folder-thumbs">${thumbsHTML(id)}</div>
         </div>
         <div class="folder-name">${node.label}</div>
       </div>`;
