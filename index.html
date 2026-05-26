@@ -378,30 +378,11 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
             <div class="resizer" id="treeResizer"></div>
             <div class="masonry-area">
               <div class="masonry-folder-label">
-                <span class="msi xs" style="color:var(--g500)">folder</span>
-                <span id="masonryFolderName">Artes finales</span>
+                <span class="msi xs" id="masonryFolderIcon" style="color:var(--g500);display:none">folder</span>
+                <span id="masonryFolderName"></span>
               </div>
-              <div class="folders-row" id="foldersRow">
-                <div class="folder-card" data-node-id="finalfinal"><div class="folder-vis"><canvas class="folder-tab-canvas" width="168" height="67" data-c1="#b0b7c9" data-c2="#515c78"></canvas><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,.5)),linear-gradient(141deg,#b0b7c9,#515c78)"></div><div class="folder-thumbs"><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div></div></div><div class="folder-name">Final-Final</div></div>
-                <div class="folder-card" data-node-id="archivosjpg"><div class="folder-vis"><canvas class="folder-tab-canvas" width="168" height="67" data-c1="#8591ab" data-c2="#3b4255"></canvas><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.4),rgba(255,255,255,.4)),linear-gradient(141deg,#8591ab,#3b4255)"></div><div class="folder-thumbs"><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div></div></div><div class="folder-name">Archivos en JPG</div></div>
-                <div class="folder-card" data-node-id="recursospng"><div class="folder-vis"><canvas class="folder-tab-canvas" width="168" height="67" data-c1="#667391" data-c2="#22252f"></canvas><div class="folder-body" style="background:linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.35)),linear-gradient(141deg,#667391,#22252f)"></div><div class="folder-thumbs"><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div><div class="folder-thumb"></div></div></div><div class="folder-name">Recursos PNG</div></div>
-              </div>
-              <div class="masonry-cols" id="masonryCols">
-                <div class="masonry-col">
-                  <div class="asset-card"><div class="asset-ph" style="height:147px;background:linear-gradient(135deg,#b0b7c9,#667391)"></div><div class="asset-hover"><div class="asset-name">Campaña_2025-03-12</div><div class="asset-meta"><span>WEBP</span><span>2.4 MB</span></div></div></div>
-                  <div class="asset-card"><div class="asset-ph" style="height:192px;background:linear-gradient(160deg,#d5d9e2,#8591ab)"></div><div class="asset-hover"><div class="asset-name">Evento_verano_2025</div><div class="asset-meta"><span>JPG</span><span>1.8 MB</span></div></div></div>
-                  <div class="asset-card"><div class="asset-ph" style="height:228px;background:linear-gradient(120deg,#667391,#3b4255)"></div><div class="asset-hover"><div class="asset-name">Producto_hero_final</div><div class="asset-meta"><span>PNG</span><span>3.1 MB</span></div></div></div>
-                </div>
-                <div class="masonry-col">
-                  <div class="asset-card"><div class="asset-ph" style="height:170px;background:linear-gradient(135deg,#8591ab,#515c78)"></div><div class="asset-hover"><div class="asset-name">Banner_IG_cuadrado</div><div class="asset-meta"><span>JPG</span><span>980 KB</span></div></div></div>
-                  <div class="asset-card"><div class="asset-ph" style="height:370px;background:linear-gradient(150deg,#3b4255,#22252f)"></div><div class="asset-hover"><div class="asset-name">Fotografía_equipo_2025</div><div class="asset-meta"><span>TIFF</span><span>8.2 MB</span></div></div></div>
-                </div>
-                <div class="masonry-col">
-                  <div class="asset-card"><div class="asset-ph" style="height:235px;background:linear-gradient(135deg,#515c78,#b0b7c9)"></div><div class="asset-hover"><div class="asset-name">Arte_final_portada</div><div class="asset-meta"><span>WEBP</span><span>2.7 MB</span></div></div></div>
-                  <div class="asset-card"><div class="asset-ph" style="height:155px;background:linear-gradient(160deg,#d5d9e2,#667391)"></div><div class="asset-hover"><div class="asset-name">Mockup_store_v3</div><div class="asset-meta"><span>AI</span><span>4.4 MB</span></div></div></div>
-                  <div class="asset-card"><div class="asset-ph" style="height:147px;background:linear-gradient(120deg,#22252f,#515c78)"></div><div class="asset-hover"><div class="asset-name">Recurso_dark_bg</div><div class="asset-meta"><span>PNG</span><span>1.2 MB</span></div></div></div>
-                </div>
-              </div>
+              <div class="folders-row" id="foldersRow"></div>
+              <div class="masonry-cols" id="masonryCols"></div>
             </div>
           </div>
         </div>
@@ -727,8 +708,8 @@ const TREE_DATA = [
 ];
 
 const treeState = {
-  expanded: new Set(['campana2025','briefing','planmedios','creaciones']),
-  selected: 'artesfinales',
+  expanded: new Set(),
+  selected: null,
 };
 
 let activeTab = 'recientes';
@@ -822,11 +803,13 @@ function thumbsHTML(id) {
 }
 
 function renderFolderContent(node) {
-  const nameEl = document.getElementById('masonryFolderName');
-  const row    = document.getElementById('foldersRow');
-  const cols   = document.getElementById('masonryCols');
+  const nameEl  = document.getElementById('masonryFolderName');
+  const iconEl  = document.getElementById('masonryFolderIcon');
+  const row     = document.getElementById('foldersRow');
+  const cols    = document.getElementById('masonryCols');
   if (!nameEl || !row) return;
 
+  if (iconEl) iconEl.style.display = '';
   nameEl.textContent = node.label;
 
   // Sub-folders
@@ -866,6 +849,36 @@ function renderFolderContent(node) {
       cols.style.display = 'none';
     }
   }
+}
+
+function renderRootView() {
+  treeState.selected = null;
+  renderTree();
+
+  const nameEl  = document.getElementById('masonryFolderName');
+  const iconEl  = document.getElementById('masonryFolderIcon');
+  const row     = document.getElementById('foldersRow');
+  const cols    = document.getElementById('masonryCols');
+
+  if (iconEl) iconEl.style.display = 'none';
+  if (nameEl) nameEl.textContent = TAB_TITLES[activeTab];
+
+  const rootNodes = activeTab === 'recientes'
+    ? [...TREE_DATA].sort((a, b) => (b.lastEdited || 0) - (a.lastEdited || 0))
+    : TREE_DATA;
+
+  if (row) {
+    row.style.display = '';
+    row.innerHTML = rootNodes.map(node => `<div class="folder-card" data-node-id="${node.id}">
+      <div class="folder-vis">
+        ${folderSVG()}
+        <div class="folder-thumbs">${thumbsHTML(node.id)}</div>
+      </div>
+      <div class="folder-name">${node.label}</div>
+    </div>`).join('');
+  }
+
+  if (cols) cols.style.display = 'none';
 }
 
 function getAncestorIds(targetId, nodes, path) {
@@ -965,6 +978,7 @@ function switchSection(id) {
   const sb = document.getElementById('topbarSearch');
   if (sb) sb.style.display = id === 'inicio' ? 'none' : '';
   if (id === 'inicio') animateWelcome();
+  if (id === 'carpetas') renderRootView();
 }
 
 function switchTab(el) {
@@ -974,7 +988,7 @@ function switchTab(el) {
   activeTab = key;
   const titleEl = document.querySelector('#sec-carpetas .sec-title');
   if (titleEl) titleEl.textContent = TAB_TITLES[key];
-  renderTree();
+  renderRootView();
 }
 
 function openModal() {
@@ -1222,8 +1236,7 @@ function renderInicio() {
 }
 
 renderFolderList('');
-renderTree();
-renderFolderContent(findNode(treeState.selected));
+renderRootView();
 renderInicio();
 animateWelcome();
 // Carga desde cache o procesa imágenes de demo
@@ -1243,8 +1256,7 @@ animateWelcome();
       }
     }
     if (demoCache) {
-      renderTree();
-      renderFolderContent(findNode(treeState.selected));
+      renderRootView();
       renderInicio();
       return;
     }
@@ -1253,7 +1265,7 @@ animateWelcome();
   initDemoImages();
 })();
 
-document.getElementById('foldersRow').addEventListener('dblclick', e => {
+document.getElementById('foldersRow').addEventListener('click', e => {
   const card = e.target.closest('[data-node-id]');
   if (card) navigateToFolder(card.dataset.nodeId);
 });
@@ -1406,8 +1418,7 @@ async function initDemoImages() {
   // Guarda solo los assets de demo (fire-and-forget)
   assetDB.set('dam_demo', demoSnap).catch(() => {});
   showToast('✓ Imágenes listas');
-  renderTree();
-  renderFolderContent(findNode(treeState.selected));
+  renderRootView();
   renderInicio();
 }
 /* ─────────────────────────────────────────────────────────────── */
