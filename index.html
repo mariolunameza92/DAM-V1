@@ -126,10 +126,6 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 .asset-name{font-size:12px;color:var(--g50);opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .asset-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--g50);opacity:.5;font-family:var(--font-mono)}
 
-@keyframes _shimmer{0%{background-position:0% 0}100%{background-position:100% 0}}
-.shimmer{background:linear-gradient(90deg,var(--g200) 0%,var(--g100) 35%,#fff 50%,var(--g100) 65%,var(--g200) 100%);background-size:400% 100%;animation:_shimmer 1.6s ease-in-out infinite;border-radius:8px}
-.folder-thumb.shimmer{border-radius:5.65px}
-
 .overlay{position:fixed;inset:0;background:rgba(34,37,47,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.open{opacity:1;pointer-events:all}
 .modal{background:var(--g50);border-radius:8px;padding:16px;width:364px;display:flex;flex-direction:column;gap:0;transform:translateY(14px);transition:transform .25s}
@@ -817,8 +813,6 @@ function thumbsHTML(id) {
     });
     return cells.join('');
   }
-  // Shimmer mientras se procesan las imágenes
-  if (shimmerActive) return '<div class="folder-thumb shimmer"></div>'.repeat(4);
   // Fallback demo estático
   const demoImgs = FOLDER_IMAGES[id] || [];
   const first = demoImgs[0]
@@ -851,39 +845,25 @@ function renderFolderContent(node) {
 
   // Assets masonry — 3 columnas: uploads (preview ~900px) + demo images
   if (cols) {
-    const FAKE_EXTS  = ['JPG','WEBP','PNG','JPG','PNG','WEBP','TIFF','AI'];
-    const FAKE_SIZES = ['2.4 MB','1.8 MB','3.1 MB','980 KB','2.7 MB','4.4 MB','8.2 MB','1.2 MB'];
     const uploadedList = uploadedAssets[node.id] || [];
-
-    // Shimmer: no mostrar nada hasta que estén todas listas
-    if (shimmerActive && uploadedList.length === 0) {
+    const allItems = uploadedList.map(u => ({ src: u.preview, ext: u.ext, size: u.sizeStr, name: u.name }));
+    if (allItems.length > 0) {
       cols.style.display = '';
-      const shimmerCols = [[200, 270, 180], [320, 190], [240, 350, 170]];
-      cols.innerHTML = shimmerCols.map(col =>
-        `<div class="masonry-col">${col.map(h =>
-          `<div class="asset-card shimmer" style="height:${h}px"></div>`
+      const colData = [[], [], []];
+      allItems.forEach((item, i) => colData[i % 3].push(item));
+      cols.innerHTML = colData.map(col =>
+        `<div class="masonry-col">${col.map(({src, ext, size, name}) =>
+          `<div class="asset-card">
+            <img src="${src}" loading="lazy" decoding="async" style="width:100%;display:block;border-radius:8px">
+            <div class="asset-hover">
+              <div class="asset-name">${name}</div>
+              <div class="asset-meta"><span>${ext}</span><span>${size}</span></div>
+            </div>
+          </div>`
         ).join('')}</div>`
       ).join('');
     } else {
-      const allItems = uploadedList.map(u => ({ src: u.preview, ext: u.ext, size: u.sizeStr, name: u.name }));
-      if (allItems.length > 0) {
-        cols.style.display = '';
-        const colData = [[], [], []];
-        allItems.forEach((item, i) => colData[i % 3].push(item));
-        cols.innerHTML = colData.map(col =>
-          `<div class="masonry-col">${col.map(({src, ext, size, name}) =>
-            `<div class="asset-card">
-              <img src="${src}" loading="lazy" decoding="async" style="width:100%;display:block;border-radius:8px">
-              <div class="asset-hover">
-                <div class="asset-name">${name}</div>
-                <div class="asset-meta"><span>${ext}</span><span>${size}</span></div>
-              </div>
-            </div>`
-          ).join('')}</div>`
-        ).join('');
-      } else {
-        cols.style.display = 'none';
-      }
+      cols.style.display = 'none';
     }
   }
 }
@@ -1241,8 +1221,6 @@ function renderInicio() {
   }
 }
 
-let shimmerActive = true; // se apaga cuando todas las imágenes están listas
-
 renderFolderList('');
 renderTree();
 renderFolderContent(findNode(treeState.selected));
@@ -1265,8 +1243,6 @@ animateWelcome();
       }
     }
     if (demoCache) {
-      // Cache hit: apaga shimmer y re-renderiza con imágenes reales
-      shimmerActive = false;
       renderTree();
       renderFolderContent(findNode(treeState.selected));
       renderInicio();
@@ -1429,7 +1405,6 @@ async function initDemoImages() {
   );
   // Guarda solo los assets de demo (fire-and-forget)
   assetDB.set('dam_demo', demoSnap).catch(() => {});
-  shimmerActive = false; // todas listas: apaga shimmer
   showToast('✓ Imágenes listas');
   renderTree();
   renderFolderContent(findNode(treeState.selected));
