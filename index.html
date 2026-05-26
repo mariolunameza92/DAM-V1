@@ -221,6 +221,28 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 .p-col{flex:1;display:flex;flex-direction:column;gap:16px}
 .p-asset{border-radius:8px;cursor:pointer;transition:transform .15s}
 .p-asset:hover{transform:scale(1.015)}
+
+/* ── Inicio ─────────────────────────────────────────────────────── */
+.inicio-hero{display:flex;flex-direction:column;align-items:center;gap:24px;padding-top:48px}
+.inicio-welcome{font-size:32px;font-weight:500;color:var(--g800)}
+.inicio-search{background:var(--g50);border:4px solid var(--g200);border-radius:80px;display:flex;align-items:center;gap:8px;padding:16px 24px;width:600px;font-size:16px;color:var(--g700);cursor:text;flex-shrink:0}
+.filter-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+.filter-chip{display:flex;align-items:center;gap:4px;background:var(--g100);border:1px solid var(--g200);border-radius:8px;padding:8px;font-size:12px;color:var(--g700);cursor:pointer;font-family:var(--font-ui);transition:background .15s;line-height:1}
+.filter-chip:hover{background:var(--g200)}
+.face-stats-row{display:flex;gap:24px;align-items:flex-start;margin-top:48px;flex-wrap:wrap}
+.face-group{display:flex;flex-direction:column;gap:24px;flex-shrink:0;width:360px}
+.face-group-title{font-size:20px;font-weight:500;color:var(--g800)}
+.face-strip{background:var(--g50);border-radius:72px;height:78px;padding:12px;display:flex;align-items:flex-start}
+.face-av{width:54px;height:54px;border-radius:36px;border:1.5px solid var(--g200);flex-shrink:0;margin-right:-13.7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--font-mono);overflow:hidden;background:var(--g200)}
+.face-av:last-child{margin-right:0}
+.stats-group{display:flex;flex-direction:column;gap:24px}
+.stats-cards{display:flex;gap:8px}
+.stat-card{background:var(--g50);border-radius:8px;padding:12px;display:flex;gap:4px;align-items:flex-start;width:176px}
+.stat-info{display:flex;flex-direction:column;gap:4px}
+.stat-label{font-size:12px;color:var(--g800);line-height:1.2}
+.stat-value{font-family:var(--font-mono);font-weight:700;font-size:30px;color:var(--g800);line-height:1.2}
+.inicio-section{display:flex;flex-direction:column;gap:24px;margin-top:48px}
+.inicio-section .sec-header{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -234,7 +256,7 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
       </div>
       <div class="divider"></div>
       <nav class="nav">
-        <button class="nav-item" data-sec="inicio" onclick="switchSection('inicio')">
+        <button class="nav-item active" data-sec="inicio" onclick="switchSection('inicio')">
           <span class="msi sm">home</span>Inicio
         </button>
         <button class="nav-item" data-sec="carpetas" onclick="switchSection('carpetas')">
@@ -246,7 +268,7 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
         <button class="nav-item" data-sec="blacklist" onclick="switchSection('blacklist')">
           <span class="msi sm">person_off</span>Black List
         </button>
-        <button class="nav-item active" data-sec="portales" onclick="switchSection('portales')">
+        <button class="nav-item" data-sec="portales" onclick="switchSection('portales')">
           <span class="msi sm">captive_portal</span>Portales
         </button>
         <button class="nav-item" data-sec="analytics" onclick="switchSection('analytics')">
@@ -269,9 +291,9 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 
   <main class="main">
     <div class="topbar">
-      <span class="page-title" id="pageTitle">Portales</span>
+      <span class="page-title" id="pageTitle">Inicio</span>
       <div class="topbar-center">
-        <div class="searchbar">
+        <div class="searchbar" id="topbarSearch" style="display:none">
           <span class="msi xs" style="color:var(--g700)">search</span>
           <span>Buscar por persona, objeto, color, escena, logo, etc</span>
         </div>
@@ -286,7 +308,7 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
       <div class="content">
 
         <!-- PORTALES -->
-        <div class="section active" id="sec-portales">
+        <div class="section" id="sec-portales">
           <div class="sec-header">
             <span class="sec-title">Lista completa</span>
             <div class="view-toggle">
@@ -383,7 +405,99 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
           </div>
         </div>
 
-        <div class="section" id="sec-inicio" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Inicio — en construcción</div>
+        <div class="section active" id="sec-inicio">
+          <!-- Hero -->
+          <div class="inicio-hero">
+            <div class="inicio-welcome">¡Bienvenido de vuelta, Mario!</div>
+            <div class="inicio-search">
+              <span class="msi sm" style="color:var(--g700)">search</span>
+              <span>Buscar por persona, objeto, color, escena, logo, etc</span>
+            </div>
+            <div class="filter-chips">
+              <span style="font-size:12px;color:var(--g700)">Filtros:</span>
+              <button class="filter-chip"><span class="msi sm">ar_on_you</span>Face ID</button>
+              <button class="filter-chip"><span class="msi sm">copyright</span>Marca</button>
+              <button class="filter-chip"><span class="msi sm">toys</span>Objeto</button>
+              <button class="filter-chip"><span class="msi sm">palette</span>Color</button>
+              <button class="filter-chip"><span class="msi sm">crop_rotate</span>Orientación</button>
+              <button class="filter-chip"><span class="msi sm">groups</span># Personas</button>
+              <button class="filter-chip"><span class="msi sm">verified_user</span>Consentimiento</button>
+            </div>
+          </div>
+
+          <!-- Face IDs + Stats row -->
+          <div class="face-stats-row">
+            <div class="face-group">
+              <div class="face-group-title">Face ID Favoritos</div>
+              <div class="face-strip">
+                <div class="face-av" style="background:#e8d5c0;color:#7a5c3a">MR</div>
+                <div class="face-av" style="background:#c5d8e8;color:#2e5b7a">AR</div>
+                <div class="face-av" style="background:#d8e8c5;color:#3a6b2e">LP</div>
+                <div class="face-av" style="background:#e8c5d8;color:#7a2e5b">CP</div>
+                <div class="face-av" style="background:#e8e0c5;color:#7a6b2e">JF</div>
+                <div class="face-av" style="background:#c5c8e8;color:#2e357a">DM</div>
+                <div class="face-av" style="background:#e8cac5;color:#7a3a2e">NR</div>
+                <div class="face-av" style="background:#d5c5e8;color:#5c2e7a">KL</div>
+              </div>
+            </div>
+            <div class="face-group">
+              <div class="face-group-title">Face ID Recientes</div>
+              <div class="face-strip">
+                <div class="face-av" style="background:#c5e8e0;color:#2e7a6b">SM</div>
+                <div class="face-av" style="background:#e8d8c5;color:#7a5c2e">TG</div>
+                <div class="face-av" style="background:#c5dce8;color:#2e5c7a">YB</div>
+                <div class="face-av" style="background:#e8c5c5;color:#7a2e2e">IR</div>
+                <div class="face-av" style="background:#d0e8c5;color:#3e7a2e">VN</div>
+                <div class="face-av" style="background:#e8e8c5;color:#7a7a2e">OC</div>
+                <div class="face-av" style="background:#c5c5e8;color:#2e2e7a">PH</div>
+                <div class="face-av" style="background:#e8c5dc;color:#7a2e5c">ZW</div>
+              </div>
+            </div>
+            <div class="stats-group">
+              <div class="face-group-title">Actividad en el DAM</div>
+              <div class="stats-cards">
+                <div class="stat-card">
+                  <span class="msi xs" style="opacity:.5;margin-top:2px">image</span>
+                  <div class="stat-info">
+                    <div class="stat-label">Archivos totales</div>
+                    <div class="stat-value">21,021</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <span class="msi xs" style="opacity:.5;margin-top:2px">download</span>
+                  <div class="stat-info">
+                    <div class="stat-label">Descargas totales</div>
+                    <div class="stat-value">17,021</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carpetas recientes -->
+          <div class="inicio-section">
+            <div class="sec-header" style="margin-bottom:0">
+              <span class="sec-title">Carpetas recientes</span>
+              <div class="view-toggle">
+                <button class="view-btn active"><span class="msi xs" style="color:white">grid_view</span></button>
+                <button class="view-btn"><span class="msi xs">lists</span></button>
+              </div>
+            </div>
+            <div class="folders-row" id="inicio-folders"></div>
+          </div>
+
+          <!-- Archivos recientes -->
+          <div class="inicio-section">
+            <div class="sec-header" style="margin-bottom:0">
+              <span class="sec-title">Archivos recientes</span>
+              <div class="view-toggle">
+                <button class="view-btn active"><span class="msi xs" style="color:white">grid_view</span></button>
+                <button class="view-btn"><span class="msi xs">lists</span></button>
+              </div>
+            </div>
+            <div class="masonry-cols" id="inicio-assets"></div>
+          </div>
+        </div>
         <div class="section" id="sec-faceids" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Face IDs — en construcción</div>
         <div class="section" id="sec-blacklist" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Black List — en construcción</div>
         <div class="section" id="sec-analytics" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Analytics — en construcción</div>
@@ -750,6 +864,8 @@ function switchSection(id) {
   const btn = document.querySelector(`.nav-item[data-sec="${id}"]`);
   if (btn) btn.classList.add('active');
   document.getElementById('pageTitle').textContent = TITLES[id] || id;
+  const sb = document.getElementById('topbarSearch');
+  if (sb) sb.style.display = id === 'inicio' ? 'none' : '';
 }
 
 function switchTab(el) {
@@ -949,9 +1065,73 @@ function lighten(hex, amt) {
   return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
 }
 
+/* ── Inicio: folders + assets ───────────────────────────────────── */
+const INICIO_FOLDER_IDS = ['campana2025','marketing','eventofin','imagenesig','archivosaprobar','recursospauta'];
+
+const INICIO_ASSETS = [
+  [
+    {name:'Canon_2024-07-15_14-30', type:'JPG',  size:'2.1 MB', h:192, g:'linear-gradient(135deg,#b0b7c9,#667391)'},
+    {name:'Nikon_2024-07-15_15-45', type:'PNG',  size:'3.4 MB', h:262, g:'linear-gradient(140deg,#8591ab,#3b4255)'},
+    {name:'Sigma_2024-07-20_09-00', type:'WEBP', size:'1.8 MB', h:147, g:'linear-gradient(120deg,#667391,#515c78)'},
+  ],
+  [
+    {name:'GoPro_2024-07-16_11-15', type:'JPG',  size:'1.2 MB', h:147, g:'linear-gradient(130deg,#d5d9e2,#8591ab)'},
+    {name:'Sony_2024-07-16_09-00',  type:'TIFF', size:'8.7 MB', h:423, g:'linear-gradient(150deg,#3b4255,#22252f)'},
+    {name:'DJI_2024-07-17_13-30',   type:'JPG',  size:'2.4 MB', h:192, g:'linear-gradient(145deg,#515c78,#b0b7c9)'},
+  ],
+  [
+    {name:'Fujifilm_2024-07-18_10-00',    type:'WEBP', size:'2.8 MB', h:266, g:'linear-gradient(135deg,#b0b7c9,#424a62)'},
+    {name:'EPS-07-17_16-45',              type:'AI',   size:'0.5 MB', h:192, g:'linear-gradient(125deg,#22252f,#515c78)'},
+    {name:'Hasselblad_2024-07-19_17-45',  type:'PNG',  size:'5.1 MB', h:147, g:'linear-gradient(155deg,#667391,#8591ab)'},
+  ],
+  [
+    {name:'Pentax_2024-07-18_12-15', type:'WEBP', size:'3.2 MB', h:532, g:'linear-gradient(160deg,#3b4255,#667391)'},
+    {name:'Leica_2024-07-19_14-30',  type:'PSD',  size:'12.4 MB',h:192, g:'linear-gradient(140deg,#515c78,#22252f)'},
+  ],
+];
+
+function renderInicio() {
+  const fr = document.getElementById('inicio-folders');
+  if (fr) {
+    fr.innerHTML = INICIO_FOLDER_IDS.map((id, i) => {
+      const node = findNode(id);
+      if (!node) return '';
+      const g = FOLDER_GRADIENTS[i % FOLDER_GRADIENTS.length];
+      return `<div class="folder-card">
+        <div class="folder-vis">
+          <div class="folder-tab" style="background:${g.tab}"></div>
+          <div class="folder-body" style="background:${g.body}">
+            <div class="fph"></div>
+            <div class="fph" style="background:rgba(255,255,255,.3)"></div>
+            <div class="fph" style="background:rgba(255,255,255,.25)"></div>
+            <div class="fph" style="background:rgba(255,255,255,.2)"></div>
+          </div>
+        </div>
+        <div class="folder-name">${node.label}</div>
+      </div>`;
+    }).join('');
+  }
+
+  const ma = document.getElementById('inicio-assets');
+  if (ma) {
+    ma.innerHTML = INICIO_ASSETS.map(col =>
+      `<div class="masonry-col">${col.map(a =>
+        `<div class="asset-card" style="height:${a.h}px">
+          <div style="width:100%;height:100%;background:${a.g};border-radius:8px"></div>
+          <div class="asset-hover">
+            <div class="asset-name">${a.name}</div>
+            <div class="asset-meta"><span>${a.type}</span><span>${a.size}</span></div>
+          </div>
+        </div>`
+      ).join('')}</div>`
+    ).join('');
+  }
+}
+
 renderFolderList('');
 renderTree();
 renderFolderContent(findNode(treeState.selected));
+renderInicio();
 
 document.getElementById('foldersRow').addEventListener('dblclick', e => {
   const card = e.target.closest('[data-node-id]');
