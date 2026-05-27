@@ -1,11 +1,11 @@
 // Exports: FOLDERS_DATA, TREE_DATA, FOLDER_IMAGES, INICIO_FOLDER_IDS, INICIO_ASSETS, findNode(), getAncestorIds()
 export const FOLDERS_DATA = [
-  { id: 'marketing',      name: 'Marketing',      count: '15 archivos' },
-  { id: 'comunicaciones', name: 'Comunicaciones', count: '952 archivos' },
-  { id: 'legal',          name: 'Legal',          count: '81 archivos' },
-  { id: 'agencia',        name: 'Agencia XYZ',    count: '10.5K archivos' },
-  { id: 'eventos',        name: 'Eventos 2025',   count: '342 archivos' },
-  { id: 'campania',       name: 'Campaña Q2',     count: '128 archivos' },
+  { id: 'marketing',      name: 'Marketing',      count: '15 archivos',     imageId: 'marketing' },
+  { id: 'comunicaciones', name: 'Comunicaciones', count: '952 archivos',    imageId: 'recursospauta' },
+  { id: 'legal',          name: 'Legal',          count: '81 archivos',     imageId: 'archivosaprobar' },
+  { id: 'agencia',        name: 'Agencia XYZ',    count: '10.5K archivos',  imageId: 'imagenesig' },
+  { id: 'eventos',        name: 'Eventos 2025',   count: '342 archivos',    imageId: 'eventofin' },
+  { id: 'campania',       name: 'Campaña Q2',     count: '128 archivos',    imageId: 'campana2025' },
 ];
 
 export const TREE_DATA = [

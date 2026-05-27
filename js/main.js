@@ -43,7 +43,7 @@ export function goToCarpeta(nodeId) {
 // ── Session restore ───────────────────────────────────────────────
 function restoreSession() {
   loadUploadsFromSession();
-  loadPortalsFromSession().forEach(p => addToTable(p.title, p.fCount, p.accent, p.dateStr, true));
+  loadPortalsFromSession().forEach(p => addToTable(p.title, p.fCount, p.photoCount || 0, p.accent, p.folderIds || [], p.dateStr, true));
 }
 
 // ── Event listeners ───────────────────────────────────────────────
@@ -70,7 +70,8 @@ document.getElementById('portalsTable').addEventListener('click', e => {
   if (!cell) return;
   const row = cell.closest('.table-row');
   if (!row) return;
-  openPortalFromRow(row.dataset.portalTitle, row.dataset.portalAccent);
+  const folderIds = row.dataset.portalFolders ? row.dataset.portalFolders.split(',').filter(Boolean) : [];
+  openPortalFromRow(row.dataset.portalTitle, row.dataset.portalAccent, folderIds);
 });
 
 document.addEventListener('click', e => {
