@@ -2,7 +2,7 @@
 import { loadUploadsFromSession, loadPortalsFromSession } from './session.js';
 import { navigateToFolder, switchTab, showRecentFolders } from './features/carpetas/browser.js';
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
-import { renderInicio, initFaceFilters } from './features/inicio/inicio.js';
+import { renderInicio, initFaceFilters, initSearch } from './features/inicio/inicio.js';
 import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
 import { openPortal, closePortal, openPortalFromRow } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
@@ -143,3 +143,4 @@ renderInicio();
 animateWelcome();
 initDemoImages();
 initFaceFilters();
+initSearch();

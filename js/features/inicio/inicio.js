@@ -49,18 +49,119 @@ export function renderInicio() {
   ).join('');
 }
 
+// ── Search autocomplete ───────────────────────────────────────────────────────
+export function initSearch() {
+  const input = document.getElementById('inicio-search-input');
+  const suggestionsEl = document.getElementById('search-suggestions');
+  if (!input || !suggestionsEl) return;
+
+  const faces = Array.from(document.querySelectorAll('.face-av[data-face-id]')).map(el => ({
+    id: el.dataset.faceId,
+    name: el.dataset.faceName,
+    imgSrc: el.querySelector('img')?.src,
+  }));
+
+  let activeIdx = -1;
+
+  function items() { return Array.from(suggestionsEl.querySelectorAll('.search-suggestion')); }
+
+  function highlight(idx) {
+    items().forEach((el, i) => el.classList.toggle('kb-active', i === idx));
+    activeIdx = idx;
+  }
+
+  function hide() {
+    suggestionsEl.style.display = 'none';
+    suggestionsEl.innerHTML = '';
+    activeIdx = -1;
+  }
+
+  function select(face) {
+    input.value = '';
+    hide();
+    _pushToRecents(face.id);
+    _activeFaceFilter(face.id, face.name, face.imgSrc);
+  }
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    if (!q) { hide(); return; }
+    const matches = faces.filter(f => f.name.toLowerCase().includes(q));
+    if (!matches.length) { hide(); return; }
+
+    activeIdx = -1;
+    suggestionsEl.innerHTML = matches.map(f =>
+      `<div class="search-suggestion" data-face-id="${f.id}">
+        <div class="search-sug-avatar"><img src="${f.imgSrc}" alt="${f.name}"></div>
+        <span class="search-sug-name">${f.name}</span>
+        <span class="search-sug-tag"><span class="msi xs">ar_on_you</span>Face ID</span>
+      </div>`
+    ).join('');
+    suggestionsEl.style.display = '';
+
+    suggestionsEl.querySelectorAll('.search-suggestion').forEach((el, i) => {
+      el.addEventListener('mousedown', e => { e.preventDefault(); select(matches[i]); });
+    });
+  });
+
+  input.addEventListener('keydown', e => {
+    const list = items();
+    if (!list.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      highlight(Math.min(activeIdx + 1, list.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlight(Math.max(activeIdx - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const idx = activeIdx >= 0 ? activeIdx : 0;
+      const faceId = list[idx]?.dataset.faceId;
+      const face = faces.find(f => f.id === faceId);
+      if (face) select(face);
+    } else if (e.key === 'Escape') {
+      input.value = '';
+      hide();
+    }
+  });
+
+  input.addEventListener('blur', () => setTimeout(hide, 150));
+}
+
 // ── Face ID filter ────────────────────────────────────────────────────────────
 let _activeFaceId = null;
 
 export function initFaceFilters() {
-  document.querySelectorAll('.face-av[data-face-id]').forEach(av => {
-    av.addEventListener('click', () => {
-      const { faceId, faceName } = av.dataset;
-      const imgSrc = av.querySelector('img')?.src;
-      if (_activeFaceId === faceId) { _removeFaceFilter(); return; }
-      _activeFaceFilter(faceId, faceName, imgSrc);
-    });
+  document.getElementById('sec-inicio').addEventListener('click', e => {
+    const av = e.target.closest('.face-av[data-face-id]');
+    if (!av) return;
+    const { faceId, faceName } = av.dataset;
+    const imgSrc = av.querySelector('img')?.src;
+    if (_activeFaceId === faceId) { _removeFaceFilter(); return; }
+    _activeFaceFilter(faceId, faceName, imgSrc);
   });
+}
+
+function _pushToRecents(id) {
+  const strips = document.querySelectorAll('.face-strip');
+  const recientes = strips[1];
+  if (!recientes) return;
+
+  // Captura source ANTES de eliminar, por si solo existe en recientes
+  const source = document.querySelector(`.face-av[data-face-id="${id}"]`);
+  if (!source) return;
+  const clone = source.cloneNode(true);
+
+  // Ahora sí elimina el existente en recientes (si lo hay)
+  recientes.querySelector(`.face-av[data-face-id="${id}"]`)?.remove();
+
+  clone.classList.add('face-av-recent');
+  clone.addEventListener('animationend', () => clone.classList.remove('face-av-recent'), { once: true });
+  recientes.prepend(clone);
+
+  // Máximo 8 items en recientes
+  const all = recientes.querySelectorAll('.face-av');
+  if (all.length > 8) all[all.length - 1].remove();
 }
 
 function _activeFaceFilter(id, name, imgSrc) {

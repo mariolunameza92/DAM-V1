@@ -166,9 +166,12 @@
         <div class="section active" id="sec-inicio">
           <div class="inicio-hero">
             <div class="inicio-welcome">¡Bienvenido de vuelta, Mario!</div>
-            <div class="inicio-search">
-              <span class="msi sm" style="color:var(--g700)">search</span>
-              <span>Buscar por persona, objeto, color, escena, logo, etc</span>
+            <div class="inicio-search-wrap">
+              <div class="inicio-search">
+                <span class="msi sm" style="color:var(--g700)">search</span>
+                <input id="inicio-search-input" class="inicio-search-input" type="text" placeholder="Buscar por persona, objeto, color, escena, logo, etc" autocomplete="off" spellcheck="false">
+              </div>
+              <div id="search-suggestions" class="search-suggestions" style="display:none"></div>
             </div>
             <div class="filter-chips">
               <span style="font-size:12px;color:var(--g700)">Filtros:</span>
