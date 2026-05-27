@@ -172,7 +172,7 @@
             </div>
             <div class="filter-chips">
               <span style="font-size:12px;color:var(--g700)">Filtros:</span>
-              <button class="filter-chip"><span class="msi sm">ar_on_you</span>Face ID</button>
+              <button class="filter-chip" id="chip-faceid"><span class="msi sm">ar_on_you</span>Face ID</button>
               <button class="filter-chip"><span class="msi sm">copyright</span>Marca</button>
               <button class="filter-chip"><span class="msi sm">toys</span>Objeto</button>
               <button class="filter-chip"><span class="msi sm">palette</span>Color</button>
@@ -186,27 +186,27 @@
             <div class="face-group">
               <div class="face-group-title">Face ID Favoritos</div>
               <div class="face-strip">
-                <div class="face-av" style="background:#e8d5c0;color:#7a5c3a">MR</div>
-                <div class="face-av" style="background:#c5d8e8;color:#2e5b7a">AR</div>
-                <div class="face-av" style="background:#d8e8c5;color:#3a6b2e">LP</div>
-                <div class="face-av" style="background:#e8c5d8;color:#7a2e5b">CP</div>
-                <div class="face-av" style="background:#e8e0c5;color:#7a6b2e">JF</div>
-                <div class="face-av" style="background:#c5c8e8;color:#2e357a">DM</div>
-                <div class="face-av" style="background:#e8cac5;color:#7a3a2e">NR</div>
-                <div class="face-av" style="background:#d5c5e8;color:#5c2e7a">KL</div>
+                <div class="face-av" data-face-id="f1" data-face-name="Mario Reyes"><img src="assets/faces/f1.png" alt="MR"></div>
+                <div class="face-av" data-face-id="f2" data-face-name="Ana Ruiz"><img src="assets/faces/f2.png" alt="AR"></div>
+                <div class="face-av" data-face-id="f3" data-face-name="Luis Paredes"><img src="assets/faces/f3.png" alt="LP"></div>
+                <div class="face-av" data-face-id="f4" data-face-name="Carlos Pérez"><img src="assets/faces/f4.png" alt="CP"></div>
+                <div class="face-av" data-face-id="f5" data-face-name="Juan Flores"><img src="assets/faces/f5.png" alt="JF"></div>
+                <div class="face-av" data-face-id="f6" data-face-name="Diana Mora"><img src="assets/faces/f6.png" alt="DM"></div>
+                <div class="face-av" data-face-id="f7" data-face-name="Nicolás Ríos"><img src="assets/faces/f7.png" alt="NR"></div>
+                <div class="face-av" data-face-id="f8" data-face-name="Kevin León"><img src="assets/faces/f8.png" alt="KL"></div>
               </div>
             </div>
             <div class="face-group">
               <div class="face-group-title">Face ID Recientes</div>
               <div class="face-strip">
-                <div class="face-av" style="background:#c5e8e0;color:#2e7a6b">SM</div>
-                <div class="face-av" style="background:#e8d8c5;color:#7a5c2e">TG</div>
-                <div class="face-av" style="background:#c5dce8;color:#2e5c7a">YB</div>
-                <div class="face-av" style="background:#e8c5c5;color:#7a2e2e">IR</div>
-                <div class="face-av" style="background:#d0e8c5;color:#3e7a2e">VN</div>
-                <div class="face-av" style="background:#e8e8c5;color:#7a7a2e">OC</div>
-                <div class="face-av" style="background:#c5c5e8;color:#2e2e7a">PH</div>
-                <div class="face-av" style="background:#e8c5dc;color:#7a2e5c">ZW</div>
+                <div class="face-av" data-face-id="f9" data-face-name="Sara Muñoz"><img src="assets/faces/f9.png" alt="SM"></div>
+                <div class="face-av" data-face-id="f10" data-face-name="Tomás García"><img src="assets/faces/f10.png" alt="TG"></div>
+                <div class="face-av" data-face-id="f11" data-face-name="Yara Blanco"><img src="assets/faces/f11.png" alt="YB"></div>
+                <div class="face-av" data-face-id="f12" data-face-name="Isabel Ramos"><img src="assets/faces/f12.png" alt="IR"></div>
+                <div class="face-av" data-face-id="f13" data-face-name="Valeria Núñez"><img src="assets/faces/f13.png" alt="VN"></div>
+                <div class="face-av" data-face-id="f14" data-face-name="Omar Cruz"><img src="assets/faces/f14.png" alt="OC"></div>
+                <div class="face-av" data-face-id="f15" data-face-name="Pablo Herrera"><img src="assets/faces/f15.png" alt="PH"></div>
+                <div class="face-av" data-face-id="f16" data-face-name="Zoe Walker"><img src="assets/faces/f16.png" alt="ZW"></div>
               </div>
             </div>
             <div class="stats-group">
@@ -229,6 +229,8 @@
               </div>
             </div>
           </div>
+
+          <div id="face-filter-results" class="face-filter-results" style="display:none"></div>
 
           <div class="inicio-section">
             <div class="sec-header" style="margin-bottom:0">

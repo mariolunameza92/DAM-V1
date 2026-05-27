@@ -11,8 +11,10 @@
 .face-group{display:flex;flex-direction:column;gap:24px;width:360px}
 .face-group-title{font-size:20px;font-weight:500;color:var(--g800)}
 .face-strip{background:var(--g50);border-radius:72px;height:78px;padding:12px;display:flex;align-items:flex-start}
-.face-av{width:54px;height:54px;border-radius:36px;border:1.5px solid var(--g200);flex-shrink:0;margin-right:-13.7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--font-mono);overflow:hidden;background:var(--g200)}
+.face-av{width:54px;height:54px;border-radius:36px;border:1.5px solid var(--g200);flex-shrink:0;margin-right:-13.7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--font-mono);overflow:hidden;background:var(--g200);position:relative;z-index:0;cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1),z-index 0s,box-shadow .2s ease}
 .face-av:last-child{margin-right:0}
+.face-av:hover{transform:scale(1.25);z-index:10;box-shadow:0 0 12px rgba(0,0,0,.32)}
+.face-av img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 
 .stats-group{display:flex;flex-direction:column;gap:24px}
 .stats-cards{display:flex;gap:8px}
@@ -20,6 +22,24 @@
 .stat-info{display:flex;flex-direction:column;gap:4px}
 .stat-label{font-size:12px;color:var(--g800);line-height:1.2}
 .stat-value{font-family:var(--font-mono);font-weight:700;font-size:30px;color:var(--g800);line-height:1.2}
+
+/* Face filter chip activo */
+.face-chip-active{display:inline-flex;align-items:center;gap:6px;background:var(--g800);border-radius:8px;padding:4px 6px 4px 4px;color:white;font-size:12px;font-family:var(--font-ui);animation:chipIn .18s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes chipIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.face-chip-avatar{width:22px;height:22px;border-radius:50%;overflow:hidden;flex-shrink:0}
+.face-chip-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.face-chip-name{font-size:12px;line-height:1}
+.face-chip-remove{background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;padding:0;margin-left:2px;display:flex;align-items:center;transition:color .12s}
+.face-chip-remove:hover{color:white}
+
+/* Sección resultados de Face ID */
+@keyframes resultsIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.face-filter-results{margin-top:32px;animation:resultsIn .22s ease both}
+.face-results-header{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--g600);margin-bottom:16px}
+.face-results-header strong{color:var(--g800);font-weight:600}
+.face-results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:start}
+.face-results-grid .asset-card{content-visibility:visible;contain:none}
+.face-results-grid .asset-card img{border-radius:8px}
 
 .inicio-section{display:flex;flex-direction:column;gap:24px;margin-top:48px}
 .inicio-section .sec-header{margin-bottom:0}
