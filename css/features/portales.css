@@ -1,0 +1,11 @@
+.portals-cta{margin-bottom:20px}
+.table-wrap{padding:12px;border-radius:8px}
+.table-head{display:flex;gap:12px;font-size:14px;font-weight:500;color:var(--g500);text-transform:uppercase;margin-bottom:12px}
+.col{flex:1;font-size:14px;font-weight:500;color:var(--g800)}
+.table-row{display:flex;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--g200);border-radius:4px;transition:background .12s}
+.table-row:last-child{border-bottom:none}
+.table-row:hover{background:rgba(0,0,0,.03)}
+.portal-name-cell{display:flex;align-items:center;gap:8px}
+.portal-icon-box{width:40px;height:40px;border-radius:8px;background:var(--g100);border:1.5px solid var(--g200);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.content-cell{display:flex;gap:20px;align-items:center}
+.content-chip{display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;color:var(--g800);font-family:var(--font-mono)}

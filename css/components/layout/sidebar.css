@@ -1,0 +1,19 @@
+.sidebar{width:188px;flex-shrink:0;background:var(--g100);border-right:1px solid var(--g200);display:flex;flex-direction:column;justify-content:space-between;padding:20px 0}
+.sb-top{display:flex;flex-direction:column;gap:20px}
+.sb-bot{padding:0 16px}
+.logo{padding:8px 24px}
+.logo-name{font-family:var(--font-ui);font-weight:700;font-size:24px;line-height:1;color:var(--g950)}
+.logo-sub{font-family:var(--font-ui);font-size:8px;text-transform:uppercase;opacity:.5;letter-spacing:.04em;color:var(--g950)}
+.divider{height:1px;background:var(--g950);opacity:.1}
+.nav{display:flex;flex-direction:column;gap:4px;padding:0 16px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:4px;cursor:pointer;font-size:14px;color:var(--g950);text-decoration:none;transition:background .15s;border:none;background:transparent;width:100%;text-align:left;font-family:var(--font-ui)}
+.nav-item:hover{background:var(--g200)}
+.nav-item.active{background:var(--g200)}
+.nav-item .msi{opacity:.5}
+.nav-item.active .msi{opacity:1}
+.storage-row{display:flex;justify-content:space-between;font-size:12px;padding:8px;font-family:var(--font-mono)}
+.progress-wrap{padding:0 8px 8px}
+.progress-track{height:2px;background:var(--g300);opacity:.5;border-radius:20px;position:relative;margin-bottom:8px}
+.progress-fill{height:2px;background:linear-gradient(to left,#333847,#8591ab);border-radius:20px;width:42%;position:absolute;top:0}
+.storage-lbl{font-size:12px;font-family:var(--font-mono)}
+.storage-lbl b{font-weight:700}

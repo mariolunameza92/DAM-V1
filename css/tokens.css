@@ -1,0 +1,13 @@
+:root {
+  --g50:  #f6f7f9;
+  --g100: #ecedf2;
+  --g200: #d5d9e2;
+  --g300: #b0b7c9;
+  --g500: #667391;
+  --g600: #515c78;
+  --g700: #424a62;
+  --g800: #3b4255;
+  --g950: #22252f;
+  --font-ui: 'Google Sans', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
