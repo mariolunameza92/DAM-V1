@@ -17,8 +17,8 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
   row.dataset.portalFolders = ids.join(',');
   row.innerHTML = `
     <div class="col"><div class="portal-name-cell" style="cursor:pointer">
-      <div class="portal-icon-box" style="background:${accent};border-color:${accent}">
-        <span class="msi xs" style="color:white">captive_portal</span>
+      <div class="portal-icon-box">
+        <span class="msi xs" style="color:var(--g500)">captive_portal</span>
       </div>${title}
     </div></div>
     <div class="col"><div class="content-cell">
