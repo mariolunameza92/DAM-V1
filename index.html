@@ -142,8 +142,8 @@
             <span class="sec-title">Carpetas recientes</span>
             <div class="sec-actions">
               <div style="display:flex;gap:16px">
-                <button class="btn-dark" style="font-size:11px"><span class="msi xs">create_new_folder</span>Crear Carpeta</button>
-                <button class="btn-outline" onclick="document.getElementById('uploadInput').click()"><span class="msi xs">upload</span>Subir Archivos</button>
+                <button id="btnCrearCarpeta" class="btn-dark" style="font-size:11px;display:none"><span class="msi xs">create_new_folder</span>Crear Carpeta</button>
+                <button id="btnSubirArchivos" class="btn-outline" style="display:none" onclick="document.getElementById('uploadInput').click()"><span class="msi xs">upload</span>Subir Archivos</button>
               </div>
               <div class="view-toggle">
                 <button class="view-btn active"><span class="msi xs" style="color:white">grid_view</span></button>
@@ -155,10 +155,7 @@
             <div class="tree-panel" id="treePanel"></div>
             <div class="resizer" id="treeResizer"></div>
             <div class="masonry-area">
-              <div class="masonry-folder-label">
-                <span class="msi xs" style="color:var(--g500)">folder</span>
-                <span id="masonryFolderName">Artes finales</span>
-              </div>
+
               <div class="folders-row" id="foldersRow"></div>
               <div class="masonry-cols" id="masonryCols"></div>
             </div>

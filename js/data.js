@@ -9,7 +9,7 @@ export const FOLDERS_DATA = [
 ];
 
 export const TREE_DATA = [
-  { id: 'campana2025', label: 'Campaña 2025', lastEdited: new Date('2026-05-20').getTime(), children: [
+  { id: 'campana2025', label: 'Campaña 2025', owned: true,  lastEdited: new Date('2026-05-20').getTime(), children: [
     { id: 'briefing', label: 'Briefing inicial', children: [
       { id: 'planmedios', label: 'Plan de medios', children: [
         { id: 'creaciones', label: 'Creaciones', children: [
@@ -22,11 +22,11 @@ export const TREE_DATA = [
       ]},
     ]},
   ]},
-  { id: 'marketing',       label: 'Marketing',              lastEdited: new Date('2026-05-10').getTime(), children: [] },
-  { id: 'eventofin',       label: 'Evento Fin de año 2025', lastEdited: new Date('2026-03-15').getTime(), children: [] },
-  { id: 'imagenesig',      label: 'Imágenes para IG',       lastEdited: new Date('2026-04-28').getTime(), children: [] },
-  { id: 'archivosaprobar', label: 'Archivos por aprobar',   lastEdited: new Date('2026-05-24').getTime(), children: [] },
-  { id: 'recursospauta',   label: 'Recursos Pauta 2026',    lastEdited: new Date('2026-05-18').getTime(), children: [] },
+  { id: 'marketing',       label: 'Marketing',              owned: true,  lastEdited: new Date('2026-05-10').getTime(), children: [] },
+  { id: 'eventofin',       label: 'Evento Fin de año 2025', owned: true,  lastEdited: new Date('2026-03-15').getTime(), children: [] },
+  { id: 'imagenesig',      label: 'Imágenes para IG',       owned: false, lastEdited: new Date('2026-04-28').getTime(), children: [] },
+  { id: 'archivosaprobar', label: 'Archivos por aprobar',   owned: false, lastEdited: new Date('2026-05-24').getTime(), children: [] },
+  { id: 'recursospauta',   label: 'Recursos Pauta 2026',    owned: false, lastEdited: new Date('2026-05-18').getTime(), children: [] },
 ];
 
 export const FOLDER_IMAGES = {

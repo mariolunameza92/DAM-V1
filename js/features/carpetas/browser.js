@@ -5,8 +5,8 @@ import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { thumbsHTML } from '../shared/folder-card.js';
 
 export const treeState = {
-  expanded: new Set(['campana2025', 'briefing', 'planmedios', 'creaciones']),
-  selected: 'artesfinales',
+  expanded: new Set(),
+  selected: null,
 };
 
 export const carpetasState = { activeTab: 'recientes' };
@@ -17,13 +17,28 @@ const TAB_TITLES = {
   compartidas: 'Carpetas compartidas',
 };
 
-export function renderFolderContent(node) {
-  const nameEl = document.getElementById('masonryFolderName');
-  const row    = document.getElementById('foldersRow');
-  const cols   = document.getElementById('masonryCols');
-  if (!nameEl || !row) return;
+function _isOwned(nodeId) {
+  if (!nodeId) return false;
+  const ancestors = getAncestorIds(nodeId);
+  const rootId = ancestors && ancestors.length > 0 ? ancestors[0] : nodeId;
+  return TREE_DATA.find(n => n.id === rootId)?.owned === true;
+}
 
-  nameEl.textContent = node.label;
+function _updateActionButtons() {
+  const btnCrear = document.getElementById('btnCrearCarpeta');
+  const btnSubir = document.getElementById('btnSubirArchivos');
+  if (!btnCrear || !btnSubir) return;
+  const canEdit = _isOwned(treeState.selected);
+  btnCrear.style.display = canEdit ? '' : 'none';
+  btnSubir.style.display = canEdit ? '' : 'none';
+}
+
+export function renderFolderContent(node) {
+  if (!node) return;
+  const row  = document.getElementById('foldersRow');
+  const cols = document.getElementById('masonryCols');
+  if (!row) return;
+  _updateActionButtons();
 
   if (node.children && node.children.length > 0) {
     row.style.display = '';
@@ -75,14 +90,19 @@ export function renderFolderContent(node) {
   }
 }
 
+function _getFilteredRoots() {
+  switch (carpetasState.activeTab) {
+    case 'creadas':     return TREE_DATA.filter(n => n.owned === true);
+    case 'compartidas': return TREE_DATA.filter(n => n.owned === false);
+    default:            return [...TREE_DATA].sort((a, b) => (b.lastEdited || 0) - (a.lastEdited || 0));
+  }
+}
+
 export function renderTree() {
   const panel = document.getElementById('treePanel');
   if (!panel) return;
   panel.innerHTML = '';
-  const rootNodes = carpetasState.activeTab === 'recientes'
-    ? [...TREE_DATA].sort((a, b) => (b.lastEdited || 0) - (a.lastEdited || 0))
-    : TREE_DATA;
-  _renderNodes(rootNodes, panel, 0);
+  _renderNodes(_getFilteredRoots(), panel, 0);
 }
 
 function _renderNodes(nodes, container, level) {
@@ -140,7 +160,47 @@ export function switchTab(el) {
   el.classList.add('active');
   const key = { 'Recientes': 'recientes', 'Creadas': 'creadas', 'Compartidas': 'compartidas' }[el.textContent.trim()] || 'recientes';
   carpetasState.activeTab = key;
+  treeState.selected = null;
+  treeState.expanded = new Set();
   const titleEl = document.querySelector('#sec-carpetas .sec-title');
   if (titleEl) titleEl.textContent = TAB_TITLES[key];
   renderTree();
+  _renderRecentFoldersView();
+  _updateActionButtons();
+}
+
+export function showRecentFolders() {
+  treeState.selected = null;
+  treeState.expanded = new Set();
+  carpetasState.activeTab = 'recientes';
+
+  document.querySelectorAll('#sec-carpetas .tab').forEach(t =>
+    t.classList.toggle('active', t.textContent.trim() === 'Recientes')
+  );
+  const titleEl = document.querySelector('#sec-carpetas .sec-title');
+  if (titleEl) titleEl.textContent = TAB_TITLES.recientes;
+
+  renderTree();
+  _renderRecentFoldersView();
+  _updateActionButtons();
+}
+
+function _renderRecentFoldersView() {
+  const row  = document.getElementById('foldersRow');
+  const cols = document.getElementById('masonryCols');
+
+  const sorted = _getFilteredRoots();
+
+  if (row) {
+    row.style.display = '';
+    row.innerHTML = sorted.map(node => `<div class="folder-card" data-node-id="${node.id}">
+      <div class="folder-vis">
+        ${folderSVG()}
+        <div class="folder-thumbs">${thumbsHTML(node.id)}</div>
+      </div>
+      <div class="folder-name">${node.label}</div>
+    </div>`).join('');
+  }
+
+  if (cols) cols.style.display = 'none';
 }

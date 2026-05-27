@@ -1,7 +1,6 @@
 // Entry point: routing, session restore, event listeners globales, window.* bridge, init
-import { findNode } from './data.js';
 import { loadUploadsFromSession, loadPortalsFromSession } from './session.js';
-import { renderTree, renderFolderContent, navigateToFolder, treeState, switchTab } from './features/carpetas/browser.js';
+import { navigateToFolder, switchTab, showRecentFolders } from './features/carpetas/browser.js';
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio } from './features/inicio/inicio.js';
 import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
@@ -25,13 +24,15 @@ export function switchSection(id) {
   const sb = document.getElementById('topbarSearch');
   if (sb) sb.style.display = id === 'inicio' ? 'none' : '';
   if (id === 'inicio') animateWelcome();
+  if (id === 'carpetas') showRecentFolders();
 }
 
+let _introPlayed = false;
 export function animateWelcome() {
-  gsap.fromTo('.inicio-welcome',
-    { y: 22, opacity: 0 },
-    { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.1 }
-  );
+  if (_introPlayed) return;
+  _introPlayed = true;
+  const el = document.querySelector('.inicio-welcome');
+  if (el) el.classList.add('welcome-anim');
 }
 
 export function goToCarpeta(nodeId) {
@@ -118,8 +119,7 @@ Object.assign(window, {
 
 // ── Init ──────────────────────────────────────────────────────────
 restoreSession();
-renderTree();
-renderFolderContent(findNode(treeState.selected));
+showRecentFolders();
 renderInicio();
 animateWelcome();
 initDemoImages();
