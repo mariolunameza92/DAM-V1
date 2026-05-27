@@ -40,28 +40,6 @@ export const FOLDER_IMAGES = {
 
 export const INICIO_FOLDER_IDS = ['campana2025', 'marketing', 'eventofin', 'imagenesig', 'archivosaprobar', 'recursospauta'];
 
-export const INICIO_ASSETS = [
-  [
-    { name: 'Canon_2024-07-15_14-30',  type: 'JPG',  size: '2.1 MB', h: 192, g: 'linear-gradient(135deg,#b0b7c9,#667391)' },
-    { name: 'Nikon_2024-07-15_15-45',  type: 'PNG',  size: '3.4 MB', h: 262, g: 'linear-gradient(140deg,#8591ab,#3b4255)' },
-    { name: 'Sigma_2024-07-20_09-00',  type: 'WEBP', size: '1.8 MB', h: 147, g: 'linear-gradient(120deg,#667391,#515c78)' },
-  ],
-  [
-    { name: 'GoPro_2024-07-16_11-15',  type: 'JPG',  size: '1.2 MB', h: 147, g: 'linear-gradient(130deg,#d5d9e2,#8591ab)' },
-    { name: 'Sony_2024-07-16_09-00',   type: 'TIFF', size: '8.7 MB', h: 423, g: 'linear-gradient(150deg,#3b4255,#22252f)' },
-    { name: 'DJI_2024-07-17_13-30',    type: 'JPG',  size: '2.4 MB', h: 192, g: 'linear-gradient(145deg,#515c78,#b0b7c9)' },
-  ],
-  [
-    { name: 'Fujifilm_2024-07-18_10-00',   type: 'WEBP', size: '2.8 MB', h: 266, g: 'linear-gradient(135deg,#b0b7c9,#424a62)' },
-    { name: 'EPS-07-17_16-45',             type: 'AI',   size: '0.5 MB', h: 192, g: 'linear-gradient(125deg,#22252f,#515c78)' },
-    { name: 'Hasselblad_2024-07-19_17-45', type: 'PNG',  size: '5.1 MB', h: 147, g: 'linear-gradient(155deg,#667391,#8591ab)' },
-  ],
-  [
-    { name: 'Pentax_2024-07-18_12-15', type: 'WEBP', size: '3.2 MB', h: 532, g: 'linear-gradient(160deg,#3b4255,#667391)' },
-    { name: 'Leica_2024-07-19_14-30',  type: 'PSD',  size: '12.4 MB',h: 192, g: 'linear-gradient(140deg,#515c78,#22252f)' },
-  ],
-];
-
 export function findNode(id, nodes = TREE_DATA) {
   for (const n of nodes) {
     if (n.id === id) return n;

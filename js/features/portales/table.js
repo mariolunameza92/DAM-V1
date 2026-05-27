@@ -10,8 +10,10 @@ export function addToTable(title, fCount, accent, dateStr, silent) {
   const row = document.createElement('div');
   row.className = 'table-row';
   row.style.animation = 'fadeIn .3s ease';
+  row.dataset.portalTitle = title;
+  row.dataset.portalAccent = accent;
   row.innerHTML = `
-    <div class="col"><div class="portal-name-cell">
+    <div class="col"><div class="portal-name-cell" style="cursor:pointer">
       <div class="portal-icon-box" style="background:${accent};border-color:${accent}">
         <span class="msi xs" style="color:white">captive_portal</span>
       </div>${title}

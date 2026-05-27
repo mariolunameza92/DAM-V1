@@ -61,9 +61,9 @@ export function renderFolderContent(node) {
     const uploadedList = [...userList, ...demoList];
     const demoImgs     = uploadedList.length === 0 ? (FOLDER_IMAGES[node.id] || []) : [];
     const allItems = [
-      ...uploadedList.map(u => ({ src: u.preview, ext: u.ext, size: u.sizeStr, name: u.name })),
+      ...uploadedList.map(u => ({ src: u.preview, ext: u.ext, size: u.sizeStr, name: u.name, originalUrl: u.originalUrl || null })),
       ...demoImgs.map((src, i) => ({
-        src, name: imgLabel(src),
+        src, name: imgLabel(src), originalUrl: src,
         ext:  FAKE_EXTS[i  % FAKE_EXTS.length],
         size: FAKE_SIZES[i % FAKE_SIZES.length],
       })),
@@ -74,9 +74,10 @@ export function renderFolderContent(node) {
       const colData = [[], [], []];
       allItems.forEach((item, i) => colData[i % 3].push(item));
       cols.innerHTML = colData.map(col =>
-        `<div class="masonry-col">${col.map(({ src, ext, size, name }) =>
+        `<div class="masonry-col">${col.map(({ src, ext, size, name, originalUrl }) =>
           `<div class="asset-card">
             <img src="${src}" loading="lazy" decoding="async" style="width:100%;display:block;border-radius:8px">
+            <div class="asset-dl" data-url="${originalUrl || src}" data-filename="${name}.${ext.toLowerCase()}"><span class="msi sm">download</span></div>
             <div class="asset-hover">
               <div class="asset-name">${name}</div>
               <div class="asset-meta"><span>${ext}</span><span>${size}</span></div>

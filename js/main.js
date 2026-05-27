@@ -4,7 +4,7 @@ import { navigateToFolder, switchTab, showRecentFolders } from './features/carpe
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio } from './features/inicio/inicio.js';
 import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
-import { openPortal, closePortal } from './features/portales/portal-screen.js';
+import { openPortal, closePortal, openPortalFromRow } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
 
 const TITLES = {
@@ -65,6 +65,23 @@ document.getElementById('foldersRow').addEventListener('dblclick', e => {
   if (card) navigateToFolder(card.dataset.nodeId);
 });
 
+document.getElementById('portalsTable').addEventListener('click', e => {
+  const cell = e.target.closest('.portal-name-cell');
+  if (!cell) return;
+  const row = cell.closest('.table-row');
+  if (!row) return;
+  openPortalFromRow(row.dataset.portalTitle, row.dataset.portalAccent);
+});
+
+document.addEventListener('click', e => {
+  const dl = e.target.closest('.asset-dl[data-url]');
+  if (!dl) return;
+  const a = document.createElement('a');
+  a.href = dl.dataset.url;
+  a.download = dl.dataset.filename || 'download';
+  a.click();
+});
+
 // ── Panel splitter ────────────────────────────────────────────────
 (function () {
   const TREE_MIN_W = 180;
@@ -115,6 +132,7 @@ Object.assign(window, {
   onNameInput,
   openPortal,
   closePortal,
+  openPortalFromRow,
 });
 
 // ── Init ──────────────────────────────────────────────────────────

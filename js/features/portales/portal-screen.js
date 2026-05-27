@@ -11,19 +11,30 @@ export function openPortal() {
   const accent  = st.accent;
   const font    = document.getElementById('font-sel').value;
 
-  document.getElementById('p-name').textContent       = title;
-  document.getElementById('p-desc').textContent       = desc;
-  document.getElementById('p-hero-title').textContent = title;
-  document.getElementById('p-hero-sub').textContent   = desc;
-  document.getElementById('p-logo-box').textContent   = title.charAt(0).toUpperCase();
-  document.getElementById('p-logo-box').style.background  = accent;
-  document.getElementById('p-hero-bg').style.background   = `linear-gradient(135deg,${accent} 0%,${lighten(accent, 45)} 100%)`;
-  document.getElementById('p-hero-btn').style.background  = accent;
-  document.getElementById('p-access-badge').textContent   = st.access === 'public' ? '🌐 Acceso público' : '🔒 Acceso con clave';
+  _renderPortal(title, desc, accent, font, FOLDERS_DATA.filter(f => st.selectedFolders.has(f.id)));
+
+  closeModal();
+  document.getElementById('portalScreen').classList.add('open');
+  document.getElementById('appShell').style.display = 'none';
+  addToTable(title, FOLDERS_DATA.filter(f => st.selectedFolders.has(f.id)).length, accent);
+}
+
+export function openPortalFromRow(title, accent) {
+  _renderPortal(title, 'Selección de recursos para compartir', accent, 'Google Sans', FOLDERS_DATA);
+  document.getElementById('portalScreen').classList.add('open');
+  document.getElementById('appShell').style.display = 'none';
+}
+
+function _renderPortal(title, desc, accent, font, folders) {
+  document.getElementById('p-name').textContent        = title;
+  document.getElementById('p-desc').textContent        = desc;
+  document.getElementById('p-hero-title').textContent  = title;
+  document.getElementById('p-hero-sub').textContent    = desc;
+  document.getElementById('p-logo-box').textContent    = title.charAt(0).toUpperCase();
+  document.getElementById('p-logo-box').style.background = accent;
   document.getElementById('portalScreen').style.fontFamily = `'${font}', sans-serif`;
 
-  const selected = FOLDERS_DATA.filter(f => st.selectedFolders.has(f.id));
-  document.getElementById('p-folders').innerHTML = selected.map(f => {
+  document.getElementById('p-folders').innerHTML = folders.map(f => {
     const bg = `linear-gradient(90deg,rgba(255,255,255,.45),rgba(255,255,255,.45)),linear-gradient(141deg,${lighten(accent, 60)} 0%,${accent} 100%)`;
     return `<div class="p-folder">
       <div class="p-folder-vis" style="background:${bg}">
@@ -33,11 +44,6 @@ export function openPortal() {
       <div class="p-folder-name">${f.name}</div>
     </div>`;
   }).join('');
-
-  closeModal();
-  document.getElementById('portalScreen').classList.add('open');
-  document.getElementById('appShell').style.display = 'none';
-  addToTable(title, selected.length, accent);
 }
 
 export function closePortal() {
