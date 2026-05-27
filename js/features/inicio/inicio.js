@@ -1,10 +1,43 @@
-// Exports: renderInicio(), initFaceFilters()
+// Exports: renderInicio(), initFaceFilters(), initSearch(), typingWelcome(), initSectionReveal()
 import { INICIO_FOLDER_IDS, findNode } from '../../data.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { folderSVG } from '../../utils.js';
 import { thumbsHTML } from '../shared/folder-card.js';
 
 const NUM_COLS = 4;
+
+// ── Section reveal ───────────────────────────────────────────────────────────
+export function initSectionReveal() {
+  const sec = document.getElementById('sec-inicio');
+  const blocks = [
+    sec.querySelector('.inicio-hero'),
+    sec.querySelector('.face-stats-row'),
+    ...Array.from(sec.querySelectorAll('.inicio-section')),
+  ].filter(Boolean);
+
+  blocks.forEach((el, i) => {
+    setTimeout(() => el.classList.add('inicio-reveal'), i * 250);
+  });
+}
+
+// ── Typing effect ─────────────────────────────────────────────────────────────
+export function typingWelcome() {
+  const el = document.querySelector('.inicio-welcome');
+  if (!el) return;
+  const text = el.textContent.trim();
+
+  el.innerHTML = Array.from(text).map(c =>
+    c === ' ' ? ' ' : `<span class="typing-char">${c}</span>`
+  ).join('');
+
+  // Desvela el contenedor — los chars individuales siguen en opacity:0
+  el.style.opacity = '1';
+
+  const spans = el.querySelectorAll('.typing-char');
+  spans.forEach((span, i) => {
+    setTimeout(() => span.classList.add('typing-visible'), i * 25 + Math.random() * 10);
+  });
+}
 
 export function renderInicio() {
   const fr = document.getElementById('inicio-folders');

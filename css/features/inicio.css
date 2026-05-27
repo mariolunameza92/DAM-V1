@@ -1,6 +1,14 @@
-@keyframes welcomeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes welcomeIn{from{opacity:0}to{opacity:1}}
+@keyframes blockIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+#sec-inicio .inicio-hero,
+#sec-inicio .face-stats-row,
+#sec-inicio .inicio-section{opacity:0}
+#sec-inicio .inicio-welcome{opacity:0}
+.inicio-reveal{animation:blockIn .5s ease both}
 .inicio-hero{display:flex;flex-direction:column;align-items:center;gap:24px;padding-top:48px}
 .inicio-welcome{font-size:32px;font-weight:500;color:var(--g800)}
+.typing-char{opacity:0;transition:opacity .06s ease}
+.typing-char.typing-visible{opacity:1}
 .inicio-welcome.welcome-anim{animation:welcomeIn .35s cubic-bezier(.25,.46,.45,.94) both}
 .inicio-search-wrap{position:relative;width:600px;flex-shrink:0}
 .inicio-search{background:var(--g50);border:4px solid var(--g200);border-radius:80px;display:flex;align-items:center;gap:8px;padding:16px 24px;width:100%;box-sizing:border-box;font-size:16px;color:var(--g700)}
