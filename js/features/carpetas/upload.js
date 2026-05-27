@@ -98,7 +98,6 @@ async function _processDemoFromUrl(url) {
 }
 
 export async function initDemoImages() {
-  showToast('Optimizando imágenes…', 0);
   await Promise.all(
     Object.entries(FOLDER_IMAGES).map(async ([folderId, urls]) => {
       const assets = [];
@@ -109,7 +108,6 @@ export async function initDemoImages() {
       uploadedAssets[folderId] = assets;
     })
   );
-  showToast('✓ Imágenes listas');
   renderTree();
   renderFolderContent(findNode(treeState.selected));
   renderInicio();
