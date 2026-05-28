@@ -5,6 +5,7 @@
 #sec-inicio .inicio-section{opacity:0}
 #sec-inicio .inicio-welcome{opacity:0}
 .inicio-reveal{animation:blockIn .5s ease both}
+#sec-inicio .inicio-hero{z-index:1}
 .inicio-hero{display:flex;flex-direction:column;align-items:center;gap:24px;padding-top:48px}
 .inicio-welcome{font-size:32px;font-weight:500;color:var(--g800)}
 .typing-char{opacity:0;transition:opacity .06s ease}
