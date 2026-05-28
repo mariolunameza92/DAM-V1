@@ -72,7 +72,13 @@ document.getElementById('portalsTable').addEventListener('click', e => {
   const row = cell.closest('.table-row');
   if (!row) return;
   const folderIds = row.dataset.portalFolders ? row.dataset.portalFolders.split(',').filter(Boolean) : [];
-  openPortalFromRow(row.dataset.portalTitle, row.dataset.portalAccent, folderIds);
+  const params = new URLSearchParams({
+    portal: '1',
+    title: row.dataset.portalTitle || '',
+    accent: row.dataset.portalAccent || '',
+    folders: folderIds.join(','),
+  });
+  window.open(`${location.pathname}?${params}`, '_blank');
 });
 
 document.addEventListener('click', e => {
@@ -140,25 +146,37 @@ Object.assign(window, {
 // ── Init ──────────────────────────────────────────────────────────
 restoreSession();
 initImageDetail();
-initContextMenu();
-showRecentFolders();
-renderInicio();
-animateWelcome();
-initDemoImages();
-initFaceFilters();
-initSearch();
-initSectionReveal();
 
-// Hide topbar on scroll down, reveal on scroll up
-(function(){
-  const scroller = document.querySelector('.content-scroll');
-  const topbar   = document.querySelector('.topbar');
-  if (!scroller || !topbar) return;
-  let lastY = 0;
-  scroller.addEventListener('scroll', () => {
-    const y = scroller.scrollTop;
-    const hide = y > lastY && y > 40;
-    topbar.style.marginTop = hide ? `-${topbar.offsetHeight}px` : '';
-    lastY = y;
-  }, { passive: true });
-}());
+const _portalTab = new URLSearchParams(location.search).get('portal') === '1';
+
+if (_portalTab) {
+  const _p        = new URLSearchParams(location.search);
+  const _title     = _p.get('title') || 'Mi Portal';
+  const _accent    = _p.get('accent') || '#333';
+  const _folderIds = _p.get('folders') ? _p.get('folders').split(',').filter(Boolean) : [];
+  openPortalFromRow(_title, _accent, _folderIds);
+  initDemoImages().then(() => openPortalFromRow(_title, _accent, _folderIds));
+} else {
+  initContextMenu();
+  showRecentFolders();
+  renderInicio();
+  animateWelcome();
+  initDemoImages();
+  initFaceFilters();
+  initSearch();
+  initSectionReveal();
+
+  // Hide topbar on scroll down, reveal on scroll up
+  (function(){
+    const scroller = document.querySelector('.content-scroll');
+    const topbar   = document.querySelector('.topbar');
+    if (!scroller || !topbar) return;
+    let lastY = 0;
+    scroller.addEventListener('scroll', () => {
+      const y = scroller.scrollTop;
+      const hide = y > lastY && y > 40;
+      topbar.style.marginTop = hide ? `-${topbar.offsetHeight}px` : '';
+      lastY = y;
+    }, { passive: true });
+  }());
+}

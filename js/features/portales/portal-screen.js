@@ -33,12 +33,8 @@ export function openPortalFromRow(title, accent, folderIds = []) {
 }
 
 function _renderPortal(title, desc, accent, font, folders) {
-  document.getElementById('p-name').textContent       = title;
-  document.getElementById('p-desc').textContent       = desc;
   document.getElementById('p-hero-title').textContent = title;
   document.getElementById('p-hero-sub').textContent   = desc;
-  document.getElementById('p-logo-box').textContent   = title.charAt(0).toUpperCase();
-  document.getElementById('p-logo-box').style.background = accent;
   document.getElementById('portalScreen').style.fontFamily = `'${font}', sans-serif`;
 
   // Folders — real thumbnails via shared folder-card
@@ -92,6 +88,10 @@ function _renderPortal(title, desc, accent, font, folders) {
 }
 
 export function closePortal() {
+  if (new URLSearchParams(location.search).get('portal') === '1') {
+    window.close();
+    return;
+  }
   document.getElementById('portalScreen').classList.remove('open');
   document.getElementById('appShell').style.display = 'flex';
 }
