@@ -1,5 +1,5 @@
 .portal-screen{position:fixed;inset:0;background:var(--g100);z-index:200;display:none;flex-direction:column}
-.portal-screen.open{display:flex;animation:fadeIn .3s ease}
+.portal-screen.open{display:flex}
 
 /* Topbar */
 .p-topbar{background:white;border-bottom:1px solid var(--g200);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:2}

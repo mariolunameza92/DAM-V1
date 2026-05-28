@@ -25,6 +25,7 @@ export function openPortal() {
   document.getElementById('portalScreen').classList.add('open');
   document.getElementById('appShell').style.display = 'none';
   addToTable(title, selected.length, selected.length * 4, accent, selected.map(f => f.id));
+  _animatePortalIn();
 }
 
 export function openPortalFromRow(title, accent, folderIds = []) {
@@ -34,6 +35,7 @@ export function openPortalFromRow(title, accent, folderIds = []) {
   _renderPortal(title, 'Selección de recursos para compartir', accent, 'Google Sans', folders);
   document.getElementById('portalScreen').classList.add('open');
   document.getElementById('appShell').style.display = 'none';
+  _animatePortalIn();
 }
 
 function _renderPortal(title, desc, accent, font, folders) {
@@ -193,6 +195,19 @@ function _renderMasonry(rawAssets) {
       </div>`
     ).join('')}</div>`
   ).join('');
+}
+
+function _animatePortalIn() {
+  const screen = document.getElementById('portalScreen');
+  const blocks = [
+    screen.querySelector('.p-header-section'),
+    ...Array.from(screen.querySelectorAll('.p-section')),
+  ].filter(Boolean);
+
+  gsap.fromTo(blocks,
+    { opacity: 0, y: 16 },
+    { opacity: 1, y: 0, duration: 0.5, ease: 'power1.out', stagger: 0.25 }
+  );
 }
 
 document.getElementById('p-foldersBack').addEventListener('click', () => _exitFolder(true));
