@@ -2,63 +2,39 @@
 import { showToast } from '../../components/ui/toast.js';
 
 const DEMO_PERSONAS = [
-  { name: 'Mario Luna',     email: 'mario@lendam.io',    color: '#4a6cf7', role: 'Editor' },
-  { name: 'Ana Gómez',      email: 'ana@lendam.io',      color: '#e06b3f', role: 'Viewer' },
-  { name: 'Carlos Rivas',   email: 'carlos@lendam.io',   color: '#3fa66b', role: 'Editor' },
-  { name: 'Lucía Herrera',  email: 'lucia@lendam.io',    color: '#9b4fe0', role: 'Viewer' },
+  { name: 'Javier Ruiz',    email: 'javier.ruiz@workk.com',  color: '#4a6cf7', role: 'Editar' },
+  { name: 'Cesar Lanfranco', email: 'c.lanfranco@email.com', color: '#e06b3f', role: 'Ver' },
 ];
 
 const DEMO_GRUPOS = [
   {
-    name: 'Equipo Creativo',
+    name: 'Marketing',
+    expanded: true,
     members: [
-      { name: 'Mario Luna',    email: 'mario@lendam.io',   color: '#4a6cf7', role: 'Editor' },
-      { name: 'Ana Gómez',     email: 'ana@lendam.io',     color: '#e06b3f', role: 'Editor' },
+      { name: 'Carlos Riveros', email: 'carlos.riveros@mkt100.com', color: '#3fa66b', role: 'Editar' },
+      { name: 'Amy Ramirez',    email: 'amy.ramirez@mkt100.com',   color: '#9b4fe0', role: 'Ver' },
     ],
   },
-  {
-    name: 'Clientes',
-    members: [
-      { name: 'Carlos Rivas',  email: 'carlos@lendam.io',  color: '#3fa66b', role: 'Viewer' },
-      { name: 'Lucía Herrera', email: 'lucia@lendam.io',   color: '#9b4fe0', role: 'Viewer' },
-    ],
-  },
-];
-
-const CREAR_GRUPO_PERSONAS = [
-  { name: 'Mario Luna',    email: 'mario@lendam.io',   color: '#4a6cf7' },
-  { name: 'Ana Gómez',     email: 'ana@lendam.io',     color: '#e06b3f' },
-  { name: 'Carlos Rivas',  email: 'carlos@lendam.io',  color: '#3fa66b' },
+  { name: 'Agencia Grey', expanded: false, members: [] },
+  { name: 'Legal',        expanded: false, members: [] },
 ];
 
 // ── Menu singleton ────────────────────────────────────────────────
 let _menu = null;
-let _target = null; // { type: 'folder'|'asset', el, name }
+let _target = null;
 
 function _initMenu() {
   _menu = document.createElement('div');
   _menu.className = 'ctx-menu';
   _menu.innerHTML = `
-    <button class="ctx-item" data-action="share">
-      <span class="msi xs" style="margin-right:8px">group</span>Compartir
-    </button>
-    <button class="ctx-item" data-action="download">
-      <span class="msi xs" style="margin-right:8px">download</span>Descargar
-    </button>
-    <button class="ctx-item" data-action="duplicate">
-      <span class="msi xs" style="margin-right:8px">content_copy</span>Duplicar
-    </button>
+    <button class="ctx-item" data-action="share">Compartir</button>
+    <button class="ctx-item" data-action="download">Descargar</button>
+    <button class="ctx-item" data-action="duplicate">Duplicar</button>
     <div class="ctx-divider"></div>
-    <button class="ctx-item" data-action="move">
-      <span class="msi xs" style="margin-right:8px">drive_file_move</span>Mover a
-    </button>
-    <button class="ctx-item" data-action="rename">
-      <span class="msi xs" style="margin-right:8px">edit</span>Cambiar nombre
-    </button>
+    <button class="ctx-item" data-action="move">Mover a</button>
+    <button class="ctx-item" data-action="rename">Cambiar nombre</button>
     <div class="ctx-divider"></div>
-    <button class="ctx-item ctx-item--danger" data-action="delete">
-      <span class="msi xs" style="margin-right:8px">delete</span>Eliminar
-    </button>
+    <button class="ctx-item ctx-item--danger" data-action="delete">Eliminar</button>
   `;
   document.body.appendChild(_menu);
 
@@ -81,15 +57,13 @@ function _open(e, targetEl, type) {
     ? (targetEl.querySelector('.folder-name')?.textContent || 'Carpeta')
     : (targetEl.querySelector('.asset-name')?.textContent || 'Archivo');
 
-  // Remove active state from any previously highlighted card
   document.querySelectorAll('.ctx-active').forEach(el => el.classList.remove('ctx-active'));
   targetEl.classList.add('ctx-active');
-
   _target = { type, el: targetEl, name };
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const mw = 200, mh = 230;
+  const mw = 180, mh = 230;
   let x = e.clientX, y = e.clientY;
   if (x + mw > vw) x = vw - mw - 8;
   if (y + mh > vh) y = vh - mh - 8;
@@ -105,9 +79,7 @@ function _close() {
 }
 
 // ── Direct actions ────────────────────────────────────────────────
-function _doDownload() {
-  showToast(`Descargando "${_target.name}"…`);
-}
+function _doDownload() { showToast(`Descargando "${_target.name}"…`); }
 
 function _doDuplicate() {
   if (!_target?.el) return;
@@ -140,7 +112,6 @@ function _createOverlay(html) {
   overlay.innerHTML = html;
   document.body.appendChild(overlay);
   requestAnimationFrame(() => requestAnimationFrame(() => overlay.classList.add('open')));
-
   overlay.addEventListener('click', e => {
     if (e.target === overlay) _closeOverlay(overlay);
   });
@@ -153,90 +124,89 @@ function _closeOverlay(overlay) {
   setTimeout(() => overlay.remove(), 250);
 }
 
-// ── Compartir modal ───────────────────────────────────────────────
+// ── Person row HTML ───────────────────────────────────────────────
+function _personRowHTML(p, showRole = true) {
+  return `
+    <div class="ctx-person-row">
+      <div class="ctx-avatar-initials" style="background:${p.color}">${p.name.split(' ').map(w => w[0]).join('')}</div>
+      <div class="ctx-person-info">
+        <div class="ctx-person-name">${p.name}</div>
+        <div class="ctx-person-email">${p.email}</div>
+      </div>
+      ${showRole ? `
+        <button class="ctx-role-btn">
+          ${p.role}<span class="msi xs">keyboard_arrow_down</span>
+        </button>
+      ` : ''}
+    </div>
+  `;
+}
+
+// ── Personas tab ──────────────────────────────────────────────────
 function _personasTab() {
   return `
-    <div class="ctx-email-row" style="margin-bottom:12px">
-      <input class="ctx-search" placeholder="Buscar o agregar personas…" style="margin-bottom:0">
-      <button class="ctx-btn-sm ctx-btn-sm--primary">AGREGAR</button>
+    <div class="ctx-search-wrap">
+      <span class="msi xs">frame_inspect</span>
+      <input class="ctx-search" placeholder="Ingresa un nombre o correo">
     </div>
-    ${DEMO_PERSONAS.map(p => `
-      <div class="ctx-person-row">
-        <div class="ctx-avatar-initials" style="background:${p.color}">${p.name.split(' ').map(w=>w[0]).join('')}</div>
-        <div class="ctx-person-info">
-          <div class="ctx-person-name">${p.name}</div>
-          <div class="ctx-person-email">${p.email}</div>
-        </div>
-        <select class="ctx-role-select">
-          <option ${p.role==='Editor'?'selected':''}>Editor</option>
-          <option ${p.role==='Viewer'?'selected':''}>Viewer</option>
-          <option>Admin</option>
-        </select>
-      </div>
-    `).join('')}
+    <div class="ctx-people-list">
+      ${DEMO_PERSONAS.map(p => _personRowHTML(p)).join('')}
+    </div>
   `;
 }
 
-function _gruposTab(overlay) {
+// ── Grupos tab ────────────────────────────────────────────────────
+function _gruposTab() {
   return `
-    ${DEMO_GRUPOS.map((g, gi) => `
-      <div class="ctx-group" data-gi="${gi}">
-        <div class="ctx-group-header">
-          <span class="ctx-group-name">${g.name}</span>
-          <span class="msi xs ctx-group-chevron">keyboard_arrow_up</span>
+    <div class="ctx-search-wrap">
+      <span class="msi xs">frame_inspect</span>
+      <input class="ctx-search" placeholder="Ingresa un grupo">
+    </div>
+    <button class="ctx-btn-primary" data-action="abrir-crear-grupo">CREAR GRUPO</button>
+    <div class="ctx-groups-list">
+      ${DEMO_GRUPOS.map((g, gi) => `
+        <div class="ctx-group${g.expanded ? '' : ' collapsed'}" data-gi="${gi}">
+          <div class="ctx-group-header">
+            <span class="ctx-group-name">${g.name}</span>
+            <span class="msi xs ctx-group-chevron">keyboard_arrow_up</span>
+          </div>
+          <div class="ctx-group-body">
+            ${g.members.map(m => _personRowHTML(m)).join('')}
+            <button class="ctx-add-link" data-action="agregar-al-grupo" data-gi="${gi}">
+              <span class="msi xs">add</span> AGREGAR PERSONAS AL GRUPO
+            </button>
+          </div>
         </div>
-        <div class="ctx-group-body">
-          ${g.members.map(m => `
-            <div class="ctx-person-row">
-              <div class="ctx-avatar-initials" style="background:${m.color}">${m.name.split(' ').map(w=>w[0]).join('')}</div>
-              <div class="ctx-person-info">
-                <div class="ctx-person-name">${m.name}</div>
-                <div class="ctx-person-email">${m.email}</div>
-              </div>
-              <select class="ctx-role-select">
-                <option ${m.role==='Editor'?'selected':''}>Editor</option>
-                <option ${m.role==='Viewer'?'selected':''}>Viewer</option>
-              </select>
-            </div>
-          `).join('')}
-          <button class="ctx-add-link" data-action="crear-grupo">
-            <span class="msi xs">add</span> AGREGAR PERSONAS AL GRUPO
-          </button>
-        </div>
-      </div>
-    `).join('')}
+      `).join('')}
+    </div>
   `;
 }
 
+// ── Compartir modal ───────────────────────────────────────────────
 function _openShareModal() {
   const overlay = _createOverlay(`
     <div class="ctx-modal">
-      <div class="ctx-modal-header">
-        <span class="ctx-modal-title">Compartir</span>
+      <div class="ctx-modal-close-wrap">
         <button class="ctx-modal-close"><span class="msi xs">close</span></button>
       </div>
-      <div class="ctx-tabs">
-        <button class="ctx-tab-btn active" data-tab="personas">
-          <span class="msi xs">person</span> Personas
-        </button>
-        <button class="ctx-tab-btn" data-tab="grupos">
-          <span class="msi xs">group</span> Grupos
-        </button>
+      <div class="ctx-modal-head">
+        <span class="ctx-modal-title">Compartir</span>
+        <div class="ctx-tabs">
+          <button class="ctx-tab-btn active" data-tab="personas">
+            <span class="msi xs">account_circle</span> Personas
+          </button>
+          <button class="ctx-tab-btn" data-tab="grupos">
+            <span class="msi xs">group</span> Grupos
+          </button>
+        </div>
       </div>
       <div class="ctx-tab-body">
         <div class="ctx-tab-panel active" data-panel="personas">${_personasTab()}</div>
-        <div class="ctx-tab-panel" data-panel="grupos"></div>
-      </div>
-      <div style="padding:0 20px 20px;display:flex;justify-content:flex-end">
-        <button class="ctx-btn-primary" data-action="save-share">GUARDAR</button>
+        <div class="ctx-tab-panel" data-panel="grupos">${_gruposTab()}</div>
       </div>
     </div>
   `);
 
-  // Render grupos tab content
-  overlay.querySelector('[data-panel="grupos"]').innerHTML = _gruposTab(overlay);
-
-  // Tab switching
   overlay.querySelectorAll('.ctx-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       overlay.querySelectorAll('.ctx-tab-btn').forEach(b => b.classList.remove('active'));
@@ -246,17 +216,18 @@ function _openShareModal() {
     });
   });
 
-  // Group accordion toggle
   overlay.addEventListener('click', e => {
     const header = e.target.closest('.ctx-group-header');
     if (header) { header.closest('.ctx-group').classList.toggle('collapsed'); return; }
 
-    const addLink = e.target.closest('[data-action="crear-grupo"]');
-    if (addLink) { _openCrearGrupoModal(); return; }
-
-    if (e.target.closest('[data-action="save-share"]')) {
+    if (e.target.closest('[data-action="abrir-crear-grupo"]')) {
       _closeOverlay(overlay);
-      showToast('Cambios guardados');
+      _openCrearGrupoModal();
+      return;
+    }
+    if (e.target.closest('[data-action="agregar-al-grupo"]')) {
+      _closeOverlay(overlay);
+      _openCrearGrupoModal();
     }
   });
 }
@@ -265,41 +236,42 @@ function _openShareModal() {
 function _openCrearGrupoModal() {
   const overlay = _createOverlay(`
     <div class="ctx-modal">
-      <div class="ctx-modal-header">
-        <span class="ctx-modal-title">Crear grupo</span>
+      <div class="ctx-modal-close-wrap">
         <button class="ctx-modal-close"><span class="msi xs">close</span></button>
       </div>
+      <div class="ctx-modal-head">
+        <span class="ctx-modal-title">Crear grupo</span>
+      </div>
       <div class="ctx-form-body">
-        <input class="ctx-form-input" id="ctxGrupoName" placeholder="Nombre del grupo" autocomplete="off">
+        <input class="ctx-form-input" id="ctxGrupoName" placeholder="Ingresa un nombre del grupo" autocomplete="off">
         <div class="ctx-email-row">
-          <input class="ctx-search" id="ctxGrupoEmail" placeholder="Correo electrónico" style="margin-bottom:0" autocomplete="off">
-          <button class="ctx-btn-sm ctx-btn-sm--secondary" id="ctxGrupoAddBtn">AGREGAR</button>
+          <input class="ctx-form-input" id="ctxGrupoEmail" placeholder="Ingresa un nombre o correo" autocomplete="off" style="flex:1">
+          <button class="ctx-btn-primary" id="ctxGrupoAddBtn">AGREGAR</button>
         </div>
-        <div id="ctxGrupoList">
-          ${CREAR_GRUPO_PERSONAS.map(p => `
-            <div class="ctx-person-row">
-              <div class="ctx-avatar-initials" style="background:${p.color}">${p.name.split(' ').map(w=>w[0]).join('')}</div>
-              <div class="ctx-person-info">
-                <div class="ctx-person-name">${p.name}</div>
-                <div class="ctx-person-email">${p.email}</div>
-              </div>
-            </div>
-          `).join('')}
+        <div class="ctx-divider-or">
+          <div class="ctx-divider-or-line"></div>
+          <span class="ctx-divider-or-text">O</span>
+          <div class="ctx-divider-or-line"></div>
         </div>
-        <div class="ctx-secondary-actions">
-          <button class="ctx-btn-sm ctx-btn-sm--secondary">
-            <span class="msi xs" style="margin-right:4px">download</span>DESCARGAR PLANTILLA
+        <div class="ctx-import-row">
+          <button class="ctx-btn-outline">
+            <span class="msi xs">download</span>DESCARGAR PLANTILLA
           </button>
-          <button class="ctx-btn-sm ctx-btn-sm--secondary">
-            <span class="msi xs" style="margin-right:4px">upload_file</span>IMPORTAR CSV
+          <button class="ctx-btn-outline">
+            <span class="msi xs">upload</span>IMPORTAR CSV/EXCEL
           </button>
         </div>
-        <button class="ctx-btn-primary" id="ctxCrearGrupoBtn" style="align-self:flex-end">CREAR GRUPO</button>
+        <div class="ctx-people-list" id="ctxGrupoList">
+          ${[
+            { name: 'Carlos Riveros',  email: 'carlos.riveros@mkt100.com', color: '#3fa66b', role: 'Ver' },
+            { name: 'Cesar Lanfranco', email: 'c.lanfranco@mkt100.com',    color: '#e06b3f', role: 'Ver' },
+          ].map(p => _personRowHTML(p)).join('')}
+        </div>
+        <button class="ctx-btn-primary" id="ctxCrearGrupoBtn">CREAR GRUPO</button>
       </div>
     </div>
   `);
 
-  // Add person on click
   overlay.querySelector('#ctxGrupoAddBtn').addEventListener('click', () => {
     const input = overlay.querySelector('#ctxGrupoEmail');
     const email = input.value.trim();
@@ -308,15 +280,8 @@ function _openCrearGrupoModal() {
     const color  = colors[Math.floor(Math.random() * colors.length)];
     const name   = email.split('@')[0];
     const row = document.createElement('div');
-    row.className = 'ctx-person-row';
-    row.innerHTML = `
-      <div class="ctx-avatar-initials" style="background:${color}">${name[0].toUpperCase()}</div>
-      <div class="ctx-person-info">
-        <div class="ctx-person-name">${name}</div>
-        <div class="ctx-person-email">${email}</div>
-      </div>
-    `;
-    overlay.querySelector('#ctxGrupoList').appendChild(row);
+    row.innerHTML = _personRowHTML({ name, email, color, role: 'Ver' });
+    overlay.querySelector('#ctxGrupoList').appendChild(row.firstElementChild);
     input.value = '';
   });
 
@@ -331,11 +296,13 @@ function _openCrearGrupoModal() {
 function _openMoveModal() {
   const overlay = _createOverlay(`
     <div class="ctx-modal">
-      <div class="ctx-modal-header">
-        <span class="ctx-modal-title">Mover a</span>
+      <div class="ctx-modal-close-wrap">
         <button class="ctx-modal-close"><span class="msi xs">close</span></button>
       </div>
-      <div class="ctx-form-body">
+      <div class="ctx-modal-head">
+        <span class="ctx-modal-title">Mover a</span>
+      </div>
+      <div class="ctx-simple-form">
         <input class="ctx-form-input" id="ctxMoveInput" placeholder="Nombre de la carpeta destino" autocomplete="off">
         <button class="ctx-btn-primary" id="ctxMoveBtn" style="align-self:flex-end">MOVER</button>
       </div>
@@ -353,11 +320,13 @@ function _openMoveModal() {
 function _openRenameModal() {
   const overlay = _createOverlay(`
     <div class="ctx-modal">
-      <div class="ctx-modal-header">
-        <span class="ctx-modal-title">Cambiar nombre</span>
+      <div class="ctx-modal-close-wrap">
         <button class="ctx-modal-close"><span class="msi xs">close</span></button>
       </div>
-      <div class="ctx-form-body">
+      <div class="ctx-modal-head">
+        <span class="ctx-modal-title">Cambiar nombre</span>
+      </div>
+      <div class="ctx-simple-form">
         <input class="ctx-form-input" id="ctxRenameInput" value="${_target.name}" autocomplete="off">
         <button class="ctx-btn-primary" id="ctxRenameBtn" style="align-self:flex-end">CAMBIAR NOMBRE</button>
       </div>
@@ -370,7 +339,6 @@ function _openRenameModal() {
   const doRename = () => {
     const newName = input.value.trim();
     if (!newName) return;
-    // Update DOM label
     const labelEl = _target.type === 'folder'
       ? _target.el.querySelector('.folder-name')
       : _target.el.querySelector('.asset-name');
@@ -388,7 +356,6 @@ function _openRenameModal() {
 export function initContextMenu() {
   _initMenu();
 
-  // Dismiss on outside click / scroll
   document.addEventListener('click', e => {
     if (!_menu.classList.contains('open')) return;
     if (!_menu.contains(e.target)) _close();
@@ -396,7 +363,6 @@ export function initContextMenu() {
   document.addEventListener('scroll', _close, true);
 
   document.addEventListener('contextmenu', e => {
-    // Don't intercept inside the image detail overlay
     if (e.target.closest('#imgDetailOverlay')) return;
 
     const folderCard = e.target.closest('.folder-card');
