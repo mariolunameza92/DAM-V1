@@ -98,6 +98,9 @@ export function initSearch() {
   const suggestionsEl = document.getElementById('search-suggestions');
   if (!input || !suggestionsEl) return;
 
+  // Mueve el dropdown al <body> para escapar cualquier transform/overflow ancestor
+  document.body.appendChild(suggestionsEl);
+
   const faces = Array.from(document.querySelectorAll('.face-av[data-face-id]')).map(el => ({
     id: el.dataset.faceId,
     name: el.dataset.faceName,
@@ -111,6 +114,14 @@ export function initSearch() {
   function highlight(idx) {
     items().forEach((el, i) => el.classList.toggle('kb-active', i === idx));
     activeIdx = idx;
+  }
+
+  function positionDropdown() {
+    const wrap = input.closest('.inicio-search-wrap') || input.parentElement;
+    const rect = wrap.getBoundingClientRect();
+    suggestionsEl.style.top = (rect.bottom + 8) + 'px';
+    suggestionsEl.style.left = rect.left + 'px';
+    suggestionsEl.style.width = rect.width + 'px';
   }
 
   function hide() {
@@ -140,6 +151,7 @@ export function initSearch() {
         <span class="search-sug-tag"><span class="msi xs">ar_on_you</span>Face ID</span>
       </div>`
     ).join('');
+    positionDropdown();
     suggestionsEl.style.display = '';
 
     suggestionsEl.querySelectorAll('.search-suggestion').forEach((el, i) => {
