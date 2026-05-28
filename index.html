@@ -416,15 +416,19 @@
     </div>
     <div class="p-section">
       <div class="p-section-header">
-        <div class="p-section-title">Carpetas</div>
-        <div class="p-view-toggle">
-          <button class="p-view-btn active"><span class="msi xs">grid_view</span></button>
-          <button class="p-view-btn"><span class="msi xs">lists</span></button>
+        <div class="p-section-title-wrap">
+          <button class="p-folders-back" id="p-foldersBack"><span class="msi sm">arrow_back</span></button>
+          <div class="p-section-title" id="p-foldersTitle">Carpetas</div>
+        </div>
+        <div class="p-view-toggle" id="p-folder-view-toggle">
+          <button class="p-view-btn active" id="p-toggle-grid"><span class="msi xs">grid_view</span></button>
+          <button class="p-view-btn" id="p-toggle-list"><span class="msi xs">lists</span></button>
         </div>
       </div>
       <div class="p-folders" id="p-folders"></div>
+      <div class="p-folder-files" id="p-folder-files"></div>
     </div>
-    <div class="p-section">
+    <div class="p-section" id="p-section-archivos">
       <div class="p-section-header">
         <div class="p-section-title">Archivos</div>
         <div class="p-view-toggle">

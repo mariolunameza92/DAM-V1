@@ -11,7 +11,7 @@
 .p-back:hover{background:var(--g200)}
 
 /* Body */
-.p-body{flex:1;overflow-y:auto;overflow-x:clip;position:relative}
+.p-body{flex:1;overflow-y:auto;overflow-x:clip;position:relative;scrollbar-gutter:stable}
 
 /* Decorative gradient blob */
 .p-gradient-blob{position:absolute;top:-250px;right:-250px;width:889px;height:550px;background:radial-gradient(ellipse at 55% 45%, rgba(176,183,201,0.65) 0%, rgba(131,143,175,0.3) 45%, transparent 70%);pointer-events:none;z-index:0;filter:blur(50px);transform:rotate(-15deg)}
@@ -35,7 +35,11 @@
 /* Sections */
 .p-section{padding:0 48px 48px;position:relative;z-index:1}
 .p-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.p-section-title-wrap{display:flex;align-items:center;gap:8px}
 .p-section-title{font-size:20px;font-weight:500;color:var(--g800);font-family:var(--font-ui)}
+.p-folders-back{display:none;align-items:center;justify-content:center;width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);background:var(--g100);cursor:pointer;transition:background .15s;padding:0;flex-shrink:0}
+.p-folders-back:hover{background:var(--g200)}
+.p-folders-back .msi{color:var(--g700);font-size:18px}
 
 /* View toggle */
 .p-view-toggle{display:flex;gap:8px}
@@ -60,3 +64,17 @@
 .p-col{flex:1;display:flex;flex-direction:column;gap:24px}
 .p-asset{border-radius:8px;cursor:pointer;transition:transform .15s}
 .p-asset:hover{transform:scale(1.015)}
+
+/* Folder files panel */
+.p-folder-files{display:none}
+
+/* List view */
+.p-file-list{display:flex;flex-direction:column;gap:0}
+.p-file-row{display:flex;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid var(--g200);font-family:var(--font-ui)}
+.p-file-row:last-child{border-bottom:none}
+.p-file-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--g200)}
+.p-file-name{flex:1;font-size:14px;color:var(--g800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-file-ext{font-size:11px;color:var(--g600);background:var(--g100);border:1px solid var(--g200);border-radius:4px;padding:2px 6px;flex-shrink:0;font-weight:500}
+.p-file-size{font-size:12px;color:var(--g500);flex-shrink:0;min-width:52px;text-align:right}
+.p-file-dl{position:static;opacity:1;background:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;transition:background .15s;flex-shrink:0}
+.p-file-dl:hover{background:var(--g200)}
