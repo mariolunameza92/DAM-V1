@@ -187,12 +187,26 @@ export function initSearch() {
 let _activeFaceId = null;
 
 export function initFaceFilters() {
-  document.getElementById('sec-inicio').addEventListener('click', e => {
+  const sec = document.getElementById('sec-inicio');
+  const strips = sec.querySelectorAll('.face-strip');
+  const favoritosStrip = strips[0];
+  const recientesStrip = strips[1];
+
+  sec.addEventListener('click', e => {
     const av = e.target.closest('.face-av[data-face-id]');
     if (!av) return;
+
+    const fromFavoritos = favoritosStrip?.contains(av);
+    const fromRecientes = recientesStrip?.contains(av);
+    if (!fromFavoritos && !fromRecientes) return;
+
     const { faceId, faceName } = av.dataset;
     const imgSrc = av.querySelector('img')?.src;
+
     if (_activeFaceId === faceId) { _removeFaceFilter(); return; }
+
+    // Clicks en favoritos o recientes solo activan el filtro.
+    // Solo el buscador (initSearch) actualiza el strip de recientes.
     _activeFaceFilter(faceId, faceName, imgSrc);
   });
 }
