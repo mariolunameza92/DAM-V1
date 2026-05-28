@@ -1,6 +1,7 @@
 // Exports: initImageDetail(), openImageDetail(item, siblings?)
 // Sections register their items via registerSection() from shared/image-registry.js
 import { _registry } from '../shared/image-registry.js';
+import { assetCardHTML } from '../shared/asset-card.js';
 
 const CAMERAS = [
   { marca: 'SONY',     modelo: 'ILCE-7M4', exp: '1/500',  apertura: 'ƒ/3.2', focal: '70.0 mm', iso: '200' },
@@ -343,14 +344,6 @@ function _renderSimilar(currentItem) {
   const colData = [[], [], []];
   items.forEach((it, i) => colData[i % 3].push({ it, i }));
   cols.innerHTML = colData.map(col =>
-    `<div class="img-detail-similar-col">${col.map(({ it, i }) =>
-      `<div class="asset-card" data-section="__similar__" data-idx="${i}">
-        <img src="${it.src}" loading="lazy" decoding="async" style="width:100%;display:block;border-radius:8px">
-        <div class="asset-hover">
-          <div class="asset-name">${it.name}</div>
-          <div class="asset-meta"><span>${it.ext}</span><span>${it.size}</span></div>
-        </div>
-      </div>`
-    ).join('')}</div>`
+    `<div class="img-detail-similar-col">${col.map(({ it, i }) => assetCardHTML(it, '__similar__', i)).join('')}</div>`
   ).join('');
 }

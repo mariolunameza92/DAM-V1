@@ -4,6 +4,7 @@ import { folderSVG, imgLabel } from '../../utils.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { thumbsHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
+import { assetCardHTML } from '../shared/asset-card.js';
 
 export const treeState = {
   expanded: new Set(),
@@ -76,16 +77,7 @@ export function renderFolderContent(node) {
       const colData = [[], [], []];
       allItems.forEach((item, i) => colData[i % 3].push({ item, i }));
       cols.innerHTML = colData.map(col =>
-        `<div class="masonry-col">${col.map(({ item: { src, ext, size, name, originalUrl }, i }) =>
-          `<div class="asset-card" data-section="carpetas" data-idx="${i}">
-            <img src="${src}" loading="lazy" decoding="async" style="width:100%;display:block;border-radius:8px">
-            <div class="asset-dl" data-url="${originalUrl || src}" data-filename="${name}.${ext.toLowerCase()}"><span class="msi sm">download</span></div>
-            <div class="asset-hover">
-              <div class="asset-name">${name}</div>
-              <div class="asset-meta"><span>${ext}</span><span>${size}</span></div>
-            </div>
-          </div>`
-        ).join('')}</div>`
+        `<div class="masonry-col">${col.map(({ item, i }) => assetCardHTML(item, 'carpetas', i)).join('')}</div>`
       ).join('');
     } else {
       cols.style.display = 'none';

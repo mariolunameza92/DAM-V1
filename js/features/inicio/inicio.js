@@ -4,6 +4,7 @@ import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { folderSVG } from '../../utils.js';
 import { thumbsHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
+import { assetCardHTML } from '../shared/asset-card.js';
 
 const NUM_COLS = 4;
 
@@ -79,16 +80,7 @@ export function renderInicio() {
   normalizedAssets.forEach((a, i) => colData[i % NUM_COLS].push({ a, i }));
 
   ma.innerHTML = colData.map(col =>
-    `<div class="masonry-col">${col.map(({ a, i }) =>
-      `<div class="asset-card" data-section="inicio-main" data-idx="${i}">
-        <img src="${a.src}" decoding="async" style="width:100%;display:block;border-radius:8px">
-        <div class="asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}"><span class="msi sm">download</span></div>
-        <div class="asset-hover">
-          <div class="asset-name">${a.name}</div>
-          <div class="asset-meta"><span>${a.ext}</span><span>${a.size}</span></div>
-        </div>
-      </div>`
-    ).join('')}</div>`
+    `<div class="masonry-col">${col.map(({ a, i }) => assetCardHTML(a, 'inicio-main', i)).join('')}</div>`
   ).join('');
 }
 
@@ -287,15 +279,6 @@ function _renderFaceResults(name) {
 
   el.innerHTML =
     `<div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${normalizedPicks.length} resultados para <strong>${name}</strong></div>` +
-    `<div class="face-results-grid">${normalizedPicks.map((a, i) =>
-      `<div class="asset-card" data-section="inicio-faces" data-idx="${i}">
-        <img src="${a.src}" decoding="async" style="width:100%;display:block;border-radius:8px">
-        <div class="asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}"><span class="msi sm">download</span></div>
-        <div class="asset-hover">
-          <div class="asset-name">${a.name}</div>
-          <div class="asset-meta"><span>${a.ext}</span><span>${a.size}</span></div>
-        </div>
-      </div>`
-    ).join('')}</div>`;
+    `<div class="face-results-grid">${normalizedPicks.map((a, i) => assetCardHTML(a, 'inicio-faces', i)).join('')}</div>`;
   el.style.display = '';
 }
