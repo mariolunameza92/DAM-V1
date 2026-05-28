@@ -24,7 +24,13 @@
 
 /* Search bar */
 .p-search-bar{display:flex;align-items:center;gap:8px;background:var(--g50);border:4px solid var(--g200);border-radius:80px;padding:14px 24px;width:600px;max-width:100%;cursor:text;box-sizing:border-box}
-.p-search-placeholder{font-size:16px;color:var(--g700);font-family:var(--font-ui)}
+.p-search-input{border:none;background:none;outline:none;font-size:16px;color:var(--g800);font-family:var(--font-ui);flex:1;min-width:0}
+.p-search-input::placeholder{color:var(--g700)}
+
+/* Face filter results */
+.p-face-results{padding:0 48px 32px;animation:resultsIn .22s ease both}
+.p-face-results .face-results-header{font-family:var(--font-ui)}
+.p-face-results .face-results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:start}
 
 /* Filter chips */
 .p-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
@@ -67,6 +73,10 @@
 
 /* Folder files panel */
 .p-folder-files{display:none}
+
+/* Face count in folder header */
+.p-face-folder-count{display:none;align-items:center;gap:5px;font-size:13px;color:var(--g600);font-family:var(--font-ui)}
+.p-face-folder-count strong{color:var(--g800);font-weight:600}
 
 /* List view */
 .p-file-list{display:flex;flex-direction:column;gap:0}

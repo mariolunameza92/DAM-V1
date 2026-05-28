@@ -399,13 +399,14 @@
         <div class="p-header-title" id="p-hero-title">Nombre del Portal</div>
         <div class="p-header-desc" id="p-hero-sub">Descripción del portal</div>
       </div>
-      <div class="p-search-bar">
+      <div class="p-search-bar" id="p-search-wrap">
         <span class="msi sm" style="color:var(--g600)">search</span>
-        <span class="p-search-placeholder">Buscar por persona, objeto, color, escena, logo, etc</span>
+        <input type="text" class="p-search-input" id="p-search-input" placeholder="Buscar por persona, objeto, color, escena, logo, etc">
       </div>
+      <div id="p-search-suggestions" class="search-suggestions" style="display:none"></div>
       <div class="p-filters">
         <span class="p-filter-label">Filtros:</span>
-        <button class="p-filter-chip"><span class="msi xs">ar_on_you</span>Face ID</button>
+        <button class="p-filter-chip" id="p-chip-faceid"><span class="msi xs">ar_on_you</span>Face ID</button>
         <button class="p-filter-chip"><span class="msi xs">copyright</span>Marca</button>
         <button class="p-filter-chip"><span class="msi xs">featured_seasonal_and_gifts</span>Objeto</button>
         <button class="p-filter-chip"><span class="msi xs">palette</span>Color</button>
@@ -414,7 +415,8 @@
         <button class="p-filter-chip"><span class="msi xs">verified_user</span>Consentimiento</button>
       </div>
     </div>
-    <div class="p-section">
+    <div id="p-face-results" class="p-face-results" style="display:none"></div>
+    <div class="p-section" id="p-section-carpetas">
       <div class="p-section-header">
         <div class="p-section-title-wrap">
           <button class="p-folders-back" id="p-foldersBack"><span class="msi sm">arrow_back</span></button>
@@ -424,6 +426,7 @@
           <button class="p-view-btn active" id="p-toggle-grid"><span class="msi xs">grid_view</span></button>
           <button class="p-view-btn" id="p-toggle-list"><span class="msi xs">lists</span></button>
         </div>
+        <div class="p-face-folder-count" id="p-face-folder-count"></div>
       </div>
       <div class="p-folders" id="p-folders"></div>
       <div class="p-folder-files" id="p-folder-files"></div>

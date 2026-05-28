@@ -229,7 +229,6 @@ function _activeFaceFilter(id, name, imgSrc) {
   _activeFaceId = id;
 
   const target = document.getElementById('chip-faceid') || document.querySelector('.face-chip-active');
-
   const chip = document.createElement('div');
   chip.className = 'face-chip-active';
   chip.innerHTML =
@@ -237,8 +236,11 @@ function _activeFaceFilter(id, name, imgSrc) {
     `<span class="face-chip-name">${name}</span>` +
     `<button class="face-chip-remove" aria-label="Quitar filtro"><span class="msi xs">close</span></button>`;
   chip.querySelector('.face-chip-remove').addEventListener('click', _removeFaceFilter);
-
   target.replaceWith(chip);
+
+  const sec = document.getElementById('sec-inicio');
+  sec.querySelector('.face-stats-row').style.display = 'none';
+  sec.querySelectorAll('.inicio-section').forEach(el => { el.style.display = 'none'; });
 
   _renderFaceResults(name);
 }
@@ -253,7 +255,15 @@ function _removeFaceFilter() {
   chip.replaceWith(faceIdChip);
   const el = document.getElementById('face-filter-results');
   if (el) { el.style.display = 'none'; el.innerHTML = ''; }
+
+  const sec = document.getElementById('sec-inicio');
+  sec.querySelector('.face-stats-row').style.display = '';
+  sec.querySelectorAll('.inicio-section').forEach(el => { el.style.display = ''; });
 }
+
+let _faceResultsAssets = [];
+let _faceResultsName   = '';
+let _faceResultsView   = 'grid';
 
 function _renderFaceResults(name) {
   const el = document.getElementById('face-filter-results');
@@ -268,17 +278,50 @@ function _renderFaceResults(name) {
     return;
   }
 
-  const normalizedPicks = picks.map(a => ({
-    src: a.preview,
-    ext: a.ext.toUpperCase(),
-    size: a.sizeStr,
-    name: a.name,
-    originalUrl: a.originalUrl || a.preview,
+  _faceResultsName   = name;
+  _faceResultsView   = 'grid';
+  _faceResultsAssets = picks.map(a => ({
+    src: a.preview, ext: a.ext.toUpperCase(),
+    size: a.sizeStr, name: a.name, originalUrl: a.originalUrl || a.preview,
   }));
-  registerSection('inicio-faces', normalizedPicks);
+  registerSection('inicio-faces', _faceResultsAssets);
+
+  _drawFaceResults(el);
+  el.style.display = '';
+}
+
+function _drawFaceResults(el) {
+  const assets = _faceResultsAssets;
+  const name   = _faceResultsName;
+
+  const contentHTML = _faceResultsView === 'grid'
+    ? `<div class="face-results-grid">${assets.map((a, i) => assetCardHTML(a, 'inicio-faces', i)).join('')}</div>`
+    : `<div class="p-file-list">${assets.map(a =>
+        `<div class="p-file-row">
+          <img class="p-file-thumb" src="${a.src}" decoding="async">
+          <span class="p-file-name">${a.name}</span>
+          <span class="p-file-ext">${a.ext}</span>
+          <span class="p-file-size">${a.size}</span>
+          <div class="asset-dl p-file-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
+            <span class="msi sm">download</span>
+          </div>
+        </div>`
+      ).join('')}</div>`;
 
   el.innerHTML =
-    `<div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${normalizedPicks.length} resultados para <strong>${name}</strong></div>` +
-    `<div class="face-results-grid">${normalizedPicks.map((a, i) => assetCardHTML(a, 'inicio-faces', i)).join('')}</div>`;
-  el.style.display = '';
+    `<div class="face-results-header-row">
+      <div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${assets.length} resultados para <strong>${name}</strong></div>
+      <div class="p-view-toggle">
+        <button class="p-view-btn ${_faceResultsView === 'grid' ? 'active' : ''}" data-fv="grid"><span class="msi xs">grid_view</span></button>
+        <button class="p-view-btn ${_faceResultsView === 'list' ? 'active' : ''}" data-fv="list"><span class="msi xs">lists</span></button>
+      </div>
+    </div>` + contentHTML;
+
+  el.querySelectorAll('.p-view-btn[data-fv]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (_faceResultsView === btn.dataset.fv) return;
+      _faceResultsView = btn.dataset.fv;
+      _drawFaceResults(el);
+    });
+  });
 }

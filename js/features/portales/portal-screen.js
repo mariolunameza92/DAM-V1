@@ -6,10 +6,13 @@ import { folderSVG } from '../../utils.js';
 import { uploadedAssets } from '../../session.js';
 import { thumbsHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
+import { assetCardHTML } from '../shared/asset-card.js';
 
-let _portalFolders = [];
-let _folderAssets  = [];
-let _folderView    = 'grid';
+let _portalFolders      = [];
+let _folderAssets       = [];
+let _folderView         = 'grid';
+let _activePortalFaceId = null;
+let _faceActiveInFolder = false;
 
 export function openPortal() {
   const rawName  = document.getElementById('inp-name').value.trim() || 'Mi Portal';
@@ -45,6 +48,7 @@ function _renderPortal(title, desc, accent, font, folders) {
   document.getElementById('p-hero-sub').textContent   = desc;
   document.getElementById('portalScreen').style.fontFamily = `'${font}', sans-serif`;
 
+  _removeFacePortal();
   _exitFolder(false);
 
   // Folders — real thumbnails via shared folder-card
@@ -92,12 +96,21 @@ function _enterFolder(folderId, folderName) {
 function _exitFolder(restoreAll = true) {
   _folderAssets = [];
 
-  document.getElementById('p-foldersTitle').textContent      = 'Carpetas';
-  document.getElementById('p-foldersBack').style.display     = 'none';
-  document.getElementById('p-folders').style.display         = 'flex';
+  if (_faceActiveInFolder) {
+    _activePortalFaceId = null; _portalFaceAssets = []; _portalFaceName = '';
+    _faceActiveInFolder = false;
+    _clearFacePortalChip();
+    document.getElementById('p-face-folder-count').style.display = 'none';
+  }
+
+  document.getElementById('p-foldersTitle').textContent       = 'Carpetas';
+  document.getElementById('p-foldersBack').style.display      = 'none';
+  document.getElementById('p-folders').style.display          = 'flex';
   document.getElementById('p-section-archivos').style.display = 'block';
-  document.getElementById('p-folder-files').style.display    = 'none';
-  document.getElementById('p-folder-files').innerHTML        = '';
+  document.getElementById('p-section-carpetas').style.display = 'block';
+  document.getElementById('p-folder-files').style.display     = 'none';
+  document.getElementById('p-folder-files').innerHTML         = '';
+  document.getElementById('p-folder-view-toggle').style.display = 'flex';
   _setToggleActive('grid');
 
   if (restoreAll) {
@@ -197,6 +210,205 @@ function _renderMasonry(rawAssets) {
   ).join('');
 }
 
+// ── Portal search & Face ID filter ───────────────────────────────────────────
+function initPortalSearch() {
+  const input        = document.getElementById('p-search-input');
+  const suggestionsEl = document.getElementById('p-search-suggestions');
+  if (!input || !suggestionsEl) return;
+
+  document.body.appendChild(suggestionsEl);
+
+  let activeIdx = -1;
+
+  function items() { return Array.from(suggestionsEl.querySelectorAll('.search-suggestion')); }
+  function highlight(idx) { items().forEach((el, i) => el.classList.toggle('kb-active', i === idx)); activeIdx = idx; }
+
+  function positionDropdown() {
+    const rect = document.getElementById('p-search-wrap').getBoundingClientRect();
+    suggestionsEl.style.top   = (rect.bottom + 8) + 'px';
+    suggestionsEl.style.left  = rect.left + 'px';
+    suggestionsEl.style.width = rect.width + 'px';
+  }
+
+  function hide() { suggestionsEl.style.display = 'none'; suggestionsEl.innerHTML = ''; activeIdx = -1; }
+
+  function select(face) { input.value = ''; hide(); _activeFacePortal(face.id, face.name, face.imgSrc); }
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    if (!q) { hide(); return; }
+
+    const faces = Array.from(document.querySelectorAll('.face-av[data-face-id]')).map(el => ({
+      id: el.dataset.faceId, name: el.dataset.faceName, imgSrc: el.querySelector('img')?.src,
+    }));
+    const matches = faces.filter(f => f.name.toLowerCase().includes(q));
+    if (!matches.length) { hide(); return; }
+
+    activeIdx = -1;
+    suggestionsEl.innerHTML = matches.map(f =>
+      `<div class="search-suggestion" data-face-id="${f.id}">
+        <div class="search-sug-avatar"><img src="${f.imgSrc}" alt="${f.name}"></div>
+        <span class="search-sug-name">${f.name}</span>
+        <span class="search-sug-tag"><span class="msi xs">ar_on_you</span>Face ID</span>
+      </div>`
+    ).join('');
+    positionDropdown();
+    suggestionsEl.style.display = '';
+    suggestionsEl.querySelectorAll('.search-suggestion').forEach((el, i) => {
+      el.addEventListener('mousedown', e => { e.preventDefault(); select(matches[i]); });
+    });
+  });
+
+  input.addEventListener('keydown', e => {
+    const list = items();
+    if (!list.length) return;
+    if (e.key === 'ArrowDown')  { e.preventDefault(); highlight(Math.min(activeIdx + 1, list.length - 1)); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); highlight(Math.max(activeIdx - 1, 0)); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      const idx    = activeIdx >= 0 ? activeIdx : 0;
+      const faceId = list[idx]?.dataset.faceId;
+      const faces  = Array.from(document.querySelectorAll('.face-av[data-face-id]')).map(el => ({
+        id: el.dataset.faceId, name: el.dataset.faceName, imgSrc: el.querySelector('img')?.src,
+      }));
+      const face = faces.find(f => f.id === faceId);
+      if (face) select(face);
+    } else if (e.key === 'Escape') { input.value = ''; hide(); }
+  });
+
+  input.addEventListener('blur', () => setTimeout(hide, 150));
+}
+
+function _clearFacePortalChip() {
+  const active = document.querySelector('#portalScreen .face-chip-active');
+  if (!active) return;
+  const btn = document.createElement('button');
+  btn.id = 'p-chip-faceid'; btn.className = 'p-filter-chip';
+  btn.innerHTML = '<span class="msi xs">ar_on_you</span>Face ID';
+  active.replaceWith(btn);
+}
+
+function _activeFacePortal(id, name, imgSrc) {
+  _activePortalFaceId = id;
+  _faceActiveInFolder = _folderAssets.length > 0;
+
+  const chip = document.getElementById('p-chip-faceid');
+  if (!chip) return;
+  const active = document.createElement('div');
+  active.className = 'face-chip-active';
+  active.innerHTML =
+    `<div class="face-chip-avatar"><img src="${imgSrc}" alt="${name}"></div>` +
+    `<span class="face-chip-name">${name}</span>` +
+    `<button class="face-chip-remove"><span class="msi xs">close</span></button>`;
+  active.querySelector('.face-chip-remove').addEventListener('click', _removeFacePortal);
+  chip.replaceWith(active);
+
+  _renderPortalFaceResults(name);
+}
+
+function _removeFacePortal() {
+  const wasInFolder   = _faceActiveInFolder;
+  _activePortalFaceId = null;
+  _portalFaceAssets   = [];
+  _portalFaceName     = '';
+  _faceActiveInFolder = false;
+
+  _clearFacePortalChip();
+
+  if (wasInFolder) {
+    document.getElementById('p-folder-view-toggle').style.display = 'flex';
+    const countEl = document.getElementById('p-face-folder-count');
+    countEl.style.display = 'none'; countEl.innerHTML = '';
+    _renderFolderContent();
+  } else {
+    document.getElementById('p-section-carpetas').style.display = 'block';
+    document.getElementById('p-section-archivos').style.display = 'block';
+    const results = document.getElementById('p-face-results');
+    if (results) { results.style.display = 'none'; results.innerHTML = ''; }
+  }
+}
+
+let _portalFaceAssets = [];
+let _portalFaceName   = '';
+let _portalFaceView   = 'grid';
+
+function _renderPortalFaceResults(name) {
+  const all   = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  const picks = all.sort(() => Math.random() - 0.5).slice(0, 3);
+
+  _portalFaceName   = name;
+  _portalFaceView   = 'grid';
+  _portalFaceAssets = picks.map(a => ({
+    src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
+    name: a.name, originalUrl: a.originalUrl || a.preview,
+  }));
+  if (_portalFaceAssets.length > 0) registerSection('portal-faces', _portalFaceAssets);
+
+  _faceActiveInFolder ? _showPortalFaceInFolder() : _showPortalFaceDefault();
+}
+
+function _showPortalFaceDefault() {
+  document.getElementById('p-section-carpetas').style.display = 'none';
+  document.getElementById('p-section-archivos').style.display = 'none';
+  const el = document.getElementById('p-face-results');
+  if (!el) return;
+  if (_portalFaceAssets.length === 0) {
+    el.innerHTML = `<div class="face-results-header">No hay imágenes cargadas aún.</div>`;
+  } else {
+    _drawPortalFaceResults(el);
+  }
+  el.style.display = '';
+}
+
+function _showPortalFaceInFolder() {
+  document.getElementById('p-folder-view-toggle').style.display = 'none';
+  const countEl = document.getElementById('p-face-folder-count');
+  countEl.innerHTML = `<span class="msi xs">ar_on_you</span>&nbsp;${_portalFaceAssets.length} resultados para <strong>${_portalFaceName}</strong>`;
+  countEl.style.display = 'flex';
+
+  const el = document.getElementById('p-folder-files');
+  el.style.display = 'block';
+  el.innerHTML = _portalFaceAssets.length > 0
+    ? `<div class="face-results-grid">${_portalFaceAssets.map((a, i) => assetCardHTML(a, 'portal-faces', i)).join('')}</div>`
+    : `<div style="color:var(--g500);font-size:14px;padding:24px 0;font-family:var(--font-ui)">No hay imágenes disponibles.</div>`;
+}
+
+function _drawPortalFaceResults(el) {
+  const assets = _portalFaceAssets;
+  const name   = _portalFaceName;
+
+  const contentHTML = _portalFaceView === 'grid'
+    ? `<div class="face-results-grid">${assets.map((a, i) => assetCardHTML(a, 'portal-faces', i)).join('')}</div>`
+    : `<div class="p-file-list">${assets.map(a =>
+        `<div class="p-file-row">
+          <img class="p-file-thumb" src="${a.src}" decoding="async">
+          <span class="p-file-name">${a.name}</span>
+          <span class="p-file-ext">${a.ext}</span>
+          <span class="p-file-size">${a.size}</span>
+          <div class="asset-dl p-file-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
+            <span class="msi sm">download</span>
+          </div>
+        </div>`
+      ).join('')}</div>`;
+
+  el.innerHTML =
+    `<div class="face-results-header-row">
+      <div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${assets.length} resultados para <strong>${name}</strong></div>
+      <div class="p-view-toggle">
+        <button class="p-view-btn ${_portalFaceView === 'grid' ? 'active' : ''}" data-pfv="grid"><span class="msi xs">grid_view</span></button>
+        <button class="p-view-btn ${_portalFaceView === 'list' ? 'active' : ''}" data-pfv="list"><span class="msi xs">lists</span></button>
+      </div>
+    </div>` + contentHTML;
+
+  el.querySelectorAll('.p-view-btn[data-pfv]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (_portalFaceView === btn.dataset.pfv) return;
+      _portalFaceView = btn.dataset.pfv;
+      _drawPortalFaceResults(el);
+    });
+  });
+}
+
 function _animatePortalIn() {
   const screen = document.getElementById('portalScreen');
   const blocks = [
@@ -210,6 +422,7 @@ function _animatePortalIn() {
   );
 }
 
+initPortalSearch();
 document.getElementById('p-foldersBack').addEventListener('click', () => _exitFolder(true));
 
 document.getElementById('p-toggle-grid').addEventListener('click', () => {
