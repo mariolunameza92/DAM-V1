@@ -21,6 +21,7 @@
 <!-- Features -->
 <link rel="stylesheet" href="css/features/inicio.css">
 <link rel="stylesheet" href="css/features/carpetas.css">
+<link rel="stylesheet" href="css/features/image-detail.css">
 <link rel="stylesheet" href="css/features/portales.css">
 <link rel="stylesheet" href="css/features/portal-screen.css">
 </head>
@@ -444,6 +445,36 @@
       </div>
       <div class="p-masonry" id="p-masonry"></div>
     </div>
+  </div>
+</div>
+
+<!-- Image Detail Modal -->
+<div class="img-detail-overlay" id="imgDetailOverlay">
+  <div class="img-detail-modal">
+    <div class="img-detail-left">
+      <div class="img-detail-topbar">
+        <button class="img-detail-close" id="imgDetailClose">
+          <span class="msi sm">close</span>
+        </button>
+        <div class="img-detail-actions">
+          <span class="msi sm img-detail-icon">info</span>
+          <div class="img-detail-faces" id="imgDetailFaces"></div>
+          <span class="msi sm img-detail-icon">fullscreen</span>
+          <span class="msi sm img-detail-icon">share</span>
+          <span class="msi sm img-detail-icon">crop</span>
+          <span class="msi sm img-detail-icon" id="imgDetailDownloadBtn">download</span>
+          <span class="msi sm img-detail-icon">delete</span>
+        </div>
+      </div>
+      <div class="img-detail-img-wrap">
+        <img class="img-detail-main-img" id="imgDetailMainImg" src="" alt="">
+      </div>
+      <div class="img-detail-similar">
+        <p class="img-detail-similar-title">Imágenes similares</p>
+        <div class="img-detail-similar-cols" id="imgDetailSimilarCols"></div>
+      </div>
+    </div>
+    <div class="img-detail-right" id="imgDetailRight"></div>
   </div>
 </div>
 

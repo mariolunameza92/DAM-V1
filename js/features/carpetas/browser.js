@@ -3,6 +3,7 @@ import { TREE_DATA, FOLDER_IMAGES, findNode, getAncestorIds } from '../../data.j
 import { folderSVG, imgLabel } from '../../utils.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { thumbsHTML } from '../shared/folder-card.js';
+import { registerSection } from '../shared/image-registry.js';
 
 export const treeState = {
   expanded: new Set(),
@@ -70,12 +71,13 @@ export function renderFolderContent(node) {
     ];
 
     if (allItems.length > 0) {
+      registerSection('carpetas', allItems);
       cols.style.display = '';
       const colData = [[], [], []];
-      allItems.forEach((item, i) => colData[i % 3].push(item));
+      allItems.forEach((item, i) => colData[i % 3].push({ item, i }));
       cols.innerHTML = colData.map(col =>
-        `<div class="masonry-col">${col.map(({ src, ext, size, name, originalUrl }) =>
-          `<div class="asset-card">
+        `<div class="masonry-col">${col.map(({ item: { src, ext, size, name, originalUrl }, i }) =>
+          `<div class="asset-card" data-section="carpetas" data-idx="${i}">
             <img src="${src}" loading="lazy" decoding="async" style="width:100%;display:block;border-radius:8px">
             <div class="asset-dl" data-url="${originalUrl || src}" data-filename="${name}.${ext.toLowerCase()}"><span class="msi sm">download</span></div>
             <div class="asset-hover">

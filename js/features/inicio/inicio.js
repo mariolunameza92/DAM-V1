@@ -3,6 +3,7 @@ import { INICIO_FOLDER_IDS, findNode } from '../../data.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { folderSVG } from '../../utils.js';
 import { thumbsHTML } from '../shared/folder-card.js';
+import { registerSection } from '../shared/image-registry.js';
 
 const NUM_COLS = 4;
 
@@ -65,17 +66,26 @@ export function renderInicio() {
 
   if (allAssets.length === 0) { ma.innerHTML = ''; return; }
 
+  const normalizedAssets = allAssets.map(a => ({
+    src: a.preview,
+    ext: a.ext.toUpperCase(),
+    size: a.sizeStr,
+    name: a.name,
+    originalUrl: a.originalUrl || a.preview,
+  }));
+  registerSection('inicio-main', normalizedAssets);
+
   const colData = Array.from({ length: NUM_COLS }, () => []);
-  allAssets.forEach((a, i) => colData[i % NUM_COLS].push(a));
+  normalizedAssets.forEach((a, i) => colData[i % NUM_COLS].push({ a, i }));
 
   ma.innerHTML = colData.map(col =>
-    `<div class="masonry-col">${col.map(a =>
-      `<div class="asset-card">
-        <img src="${a.preview}" decoding="async" style="width:100%;display:block;border-radius:8px">
-        <div class="asset-dl" data-url="${a.originalUrl || a.preview}" data-filename="${a.name}.${a.ext.toLowerCase()}"><span class="msi sm">download</span></div>
+    `<div class="masonry-col">${col.map(({ a, i }) =>
+      `<div class="asset-card" data-section="inicio-main" data-idx="${i}">
+        <img src="${a.src}" decoding="async" style="width:100%;display:block;border-radius:8px">
+        <div class="asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}"><span class="msi sm">download</span></div>
         <div class="asset-hover">
           <div class="asset-name">${a.name}</div>
-          <div class="asset-meta"><span>${a.ext.toUpperCase()}</span><span>${a.sizeStr}</span></div>
+          <div class="asset-meta"><span>${a.ext}</span><span>${a.size}</span></div>
         </div>
       </div>`
     ).join('')}</div>`
@@ -240,15 +250,24 @@ function _renderFaceResults(name) {
     return;
   }
 
+  const normalizedPicks = picks.map(a => ({
+    src: a.preview,
+    ext: a.ext.toUpperCase(),
+    size: a.sizeStr,
+    name: a.name,
+    originalUrl: a.originalUrl || a.preview,
+  }));
+  registerSection('inicio-faces', normalizedPicks);
+
   el.innerHTML =
-    `<div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${picks.length} resultados para <strong>${name}</strong></div>` +
-    `<div class="face-results-grid">${picks.map(a =>
-      `<div class="asset-card">
-        <img src="${a.preview}" decoding="async" style="width:100%;display:block;border-radius:8px">
-        <div class="asset-dl" data-url="${a.originalUrl || a.preview}" data-filename="${a.name}.${a.ext.toLowerCase()}"><span class="msi sm">download</span></div>
+    `<div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${normalizedPicks.length} resultados para <strong>${name}</strong></div>` +
+    `<div class="face-results-grid">${normalizedPicks.map((a, i) =>
+      `<div class="asset-card" data-section="inicio-faces" data-idx="${i}">
+        <img src="${a.src}" decoding="async" style="width:100%;display:block;border-radius:8px">
+        <div class="asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}"><span class="msi sm">download</span></div>
         <div class="asset-hover">
           <div class="asset-name">${a.name}</div>
-          <div class="asset-meta"><span>${a.ext.toUpperCase()}</span><span>${a.sizeStr}</span></div>
+          <div class="asset-meta"><span>${a.ext}</span><span>${a.size}</span></div>
         </div>
       </div>`
     ).join('')}</div>`;

@@ -6,6 +6,7 @@ import { renderInicio, initFaceFilters, initSearch, typingWelcome, initSectionRe
 import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
 import { openPortal, closePortal, openPortalFromRow } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
+import { initImageDetail } from './features/carpetas/image-detail.js';
 
 const TITLES = {
   inicio: 'Inicio', carpetas: 'Carpetas', faceids: 'Face IDs',
@@ -137,6 +138,7 @@ Object.assign(window, {
 
 // ── Init ──────────────────────────────────────────────────────────
 restoreSession();
+initImageDetail();
 showRecentFolders();
 renderInicio();
 animateWelcome();
