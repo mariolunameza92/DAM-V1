@@ -60,7 +60,7 @@ document.getElementById('overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('overlay')) closeModal();
 });
 
-document.getElementById('foldersRow').addEventListener('dblclick', e => {
+document.getElementById('foldersRow').addEventListener('click', e => {
   const card = e.target.closest('[data-node-id]');
   if (card) navigateToFolder(card.dataset.nodeId);
 });
