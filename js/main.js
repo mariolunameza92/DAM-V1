@@ -7,6 +7,7 @@ import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccen
 import { openPortal, closePortal, openPortalFromRow } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
 import { initImageDetail } from './features/carpetas/image-detail.js';
+import { initContextMenu } from './features/shared/context-menu.js';
 
 const TITLES = {
   inicio: 'Inicio', carpetas: 'Carpetas', faceids: 'Face IDs',
@@ -139,6 +140,7 @@ Object.assign(window, {
 // ── Init ──────────────────────────────────────────────────────────
 restoreSession();
 initImageDetail();
+initContextMenu();
 showRecentFolders();
 renderInicio();
 animateWelcome();

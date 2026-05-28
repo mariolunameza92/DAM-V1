@@ -1,9 +1,10 @@
-import http.server
-import os
-import sys
+import http.server, socketserver
 
-os.chdir('/Users/lenadmin/Documents/GitHub/DAM-V1')
-port = int(os.environ.get('PORT', 3000))
-handler = http.server.SimpleHTTPRequestHandler
-with http.server.HTTPServer(('', port), handler) as httpd:
-    httpd.serve_forever()
+class H(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *a, **k):
+        super().__init__(*a, directory='/Users/lenadmin/Documents/GitHub/DAM-V1', **k)
+    def log_message(self, *a):
+        pass
+
+with socketserver.TCPServer(('', 3000), H) as s:
+    s.serve_forever()
