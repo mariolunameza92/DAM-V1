@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "len-dam",
-      "runtimeExecutable": "ruby",
-      "runtimeArgs": ["-run", "-e", "httpd", "/Users/lenadmin/Documents/GitHub/DAM-V1", "-p", "3000"],
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/Users/lenadmin/Documents/GitHub/DAM-V1/.claude/serve.py"],
       "port": 3000,
       "autoPort": false
     }

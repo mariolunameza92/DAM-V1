@@ -148,3 +148,17 @@ initDemoImages();
 initFaceFilters();
 initSearch();
 initSectionReveal();
+
+// Hide topbar on scroll down, reveal on scroll up
+(function(){
+  const scroller = document.querySelector('.content-scroll');
+  const topbar   = document.querySelector('.topbar');
+  if (!scroller || !topbar) return;
+  let lastY = 0;
+  scroller.addEventListener('scroll', () => {
+    const y = scroller.scrollTop;
+    const hide = y > lastY && y > 40;
+    topbar.style.marginTop = hide ? `-${topbar.offsetHeight}px` : '';
+    lastY = y;
+  }, { passive: true });
+}());
