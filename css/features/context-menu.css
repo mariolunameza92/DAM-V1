@@ -22,10 +22,13 @@
 }
 
 /* ── Right-click active state ──────────────────────────────────── */
-.folder-card.ctx-active,
-.asset-card.ctx-active {
+.folder-card.ctx-active {
   outline: 3px solid #d6d9e2;
   outline-offset: 0;
+}
+.asset-card.ctx-active {
+  outline: 3px solid #d6d9e2;
+  outline-offset: 4px;
 }
 .ctx-item {
   display: flex;

@@ -11,7 +11,7 @@
 .p-back:hover{background:var(--g200)}
 
 /* Body */
-.p-body{flex:1;overflow-y:auto;overflow-x:hidden;position:relative}
+.p-body{flex:1;overflow-y:auto;overflow-x:clip;position:relative}
 
 /* Decorative gradient blob */
 .p-gradient-blob{position:absolute;top:-250px;right:-250px;width:889px;height:550px;background:radial-gradient(ellipse at 55% 45%, rgba(176,183,201,0.65) 0%, rgba(131,143,175,0.3) 45%, transparent 70%);pointer-events:none;z-index:0;filter:blur(50px);transform:rotate(-15deg)}
