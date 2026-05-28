@@ -11,9 +11,9 @@
 .nav-item.active{background:var(--g200)}
 .nav-item .msi{opacity:.5}
 .nav-item.active .msi{opacity:1}
-.storage-row{display:flex;justify-content:space-between;font-size:12px;padding:8px;font-family:var(--font-mono)}
+.storage-row{display:flex;justify-content:space-between;font-size:12px;padding:8px;font-family:var(--font-ui)}
 .progress-wrap{padding:0 8px 8px}
 .progress-track{height:2px;background:var(--g300);opacity:.5;border-radius:20px;position:relative;margin-bottom:8px}
 .progress-fill{height:2px;background:linear-gradient(to left,#333847,#8591ab);border-radius:20px;width:42%;position:absolute;top:0}
-.storage-lbl{font-size:12px;font-family:var(--font-mono)}
+.storage-lbl{font-size:12px;font-family:var(--font-ui)}
 .storage-lbl b{font-weight:700}
