@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "len-dam",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["/Users/lenadmin/Documents/GitHub/DAM-V1/.claude/serve.py"],
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", ".", "--listen", "3000", "--no-clipboard"],
       "port": 3000,
       "autoPort": false
     }

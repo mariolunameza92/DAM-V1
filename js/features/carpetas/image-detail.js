@@ -2,6 +2,7 @@
 // Sections register their items via registerSection() from shared/image-registry.js
 import { _registry } from '../shared/image-registry.js';
 import { assetCardHTML } from '../shared/asset-card.js';
+import { initCrop } from './crop.js';
 
 const CAMERAS = [
   { marca: 'SONY',     modelo: 'ILCE-7M4', exp: '1/500',  apertura: 'ƒ/3.2', focal: '70.0 mm', iso: '200' },
@@ -89,7 +90,17 @@ export function initImageDetail() {
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && overlay.classList.contains('open')) _close();
+    if (e.key !== 'Escape') return;
+    const fsOverlay = document.getElementById('imgFullscreenOverlay');
+    if (fsOverlay.classList.contains('open')) { _closeFullscreen(); return; }
+    if (overlay.classList.contains('open')) _close();
+  });
+
+  // Fullscreen
+  document.getElementById('imgDetailFullscreenBtn').addEventListener('click', _openFullscreen);
+  document.getElementById('imgFullscreenClose').addEventListener('click', _closeFullscreen);
+  document.getElementById('imgFullscreenOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('imgFullscreenOverlay')) _closeFullscreen();
   });
 
   // Identify unknown person on Enter
@@ -134,6 +145,15 @@ export function initImageDetail() {
     openImageDetail(item);
   });
 
+  // Info toggle — show/hide right panel
+  document.getElementById('imgDetailInfoBtn').addEventListener('click', () => {
+    const modal = document.querySelector('.img-detail-modal');
+    const isHiding = !modal.classList.contains('info-hidden');
+    modal.classList.toggle('info-hidden', isHiding);
+    _renderSimilar(_currentItem, isHiding ? 4 : 3);
+    _animateRightPanel(isHiding);
+  });
+
   // Topbar download
   document.getElementById('imgDetailDownloadBtn').addEventListener('click', () => {
     if (!_currentItem) return;
@@ -144,11 +164,17 @@ export function initImageDetail() {
     a.click();
     document.body.removeChild(a);
   });
+
+  initCrop(() => _currentItem);
 }
 
 export function openImageDetail(item, siblings) {
   _currentItem = item;
   if (siblings) _siblingItems = siblings;
+  const modal = document.querySelector('.img-detail-modal');
+  modal.classList.remove('info-hidden');
+  modal.style.gridTemplateColumns = '';
+  modal.style.transition = '';
   _populate(item);
   const overlay = document.getElementById('imgDetailOverlay');
   overlay.classList.add('open');
@@ -169,6 +195,44 @@ function _identifyPerson(input, name) {
   };
   input.addEventListener('animationend', swap, { once: true });
   setTimeout(swap, 350);
+}
+
+function _animateRightPanel(isHiding) {
+  const modal = document.querySelector('.img-detail-modal');
+  const wrap  = document.getElementById('imgDetailRightWrap');
+  if (!modal || !wrap) return;
+
+  const modalW = modal.getBoundingClientRect().width;
+  const rightW = wrap.getBoundingClientRect().width;
+  const leftW  = modalW - rightW;
+
+  // Snapshot current state as px (disables fr-based sizing temporarily)
+  modal.style.transition         = 'none';
+  modal.style.gridTemplateColumns = `${leftW}px ${rightW}px`;
+  modal.offsetWidth; // force reflow
+
+  const targetRight = isHiding ? 0 : 364;
+  const targetLeft  = modalW - targetRight;
+
+  modal.style.transition         = 'grid-template-columns 0.32s ease';
+  modal.style.gridTemplateColumns = `${targetLeft}px ${targetRight}px`;
+
+  setTimeout(() => {
+    modal.style.transition         = '';
+    modal.style.gridTemplateColumns = isHiding ? `1fr 0px` : '';
+  }, 360);
+}
+
+function _openFullscreen() {
+  if (!_currentItem) return;
+  const fsOverlay = document.getElementById('imgFullscreenOverlay');
+  const fsImg     = document.getElementById('imgFullscreenImg');
+  fsImg.src = _currentItem.originalUrl || _currentItem.src;
+  fsOverlay.classList.add('open');
+}
+
+function _closeFullscreen() {
+  document.getElementById('imgFullscreenOverlay').classList.remove('open');
 }
 
 function _close() {
@@ -198,6 +262,7 @@ function _populate(item) {
   _renderSimilar(item);
 
   document.getElementById('imgDetailRight').scrollTop = 0;
+  document.getElementById('imgDetailRightWrap').scrollTop = 0;
   document.querySelector('.img-detail-left').scrollTop = 0;
 }
 
@@ -334,15 +399,17 @@ function _row(label, value) {
   </div>`;
 }
 
-function _renderSimilar(currentItem) {
+function _renderSimilar(currentItem, numCols = 3) {
   const cols = document.getElementById('imgDetailSimilarCols');
   if (!cols) return;
   const siblings = _siblingItems.filter(it => it.src !== currentItem.src);
   if (siblings.length === 0) { cols.innerHTML = ''; return; }
-  const items = siblings.slice(0, 6);
+  const maxItems = numCols === 4 ? 8 : 6;
+  const items = siblings.slice(0, maxItems);
   _registry.set('__similar__', items);
-  const colData = [[], [], []];
-  items.forEach((it, i) => colData[i % 3].push({ it, i }));
+  const colData = Array.from({ length: numCols }, () => []);
+  items.forEach((it, i) => colData[i % numCols].push({ it, i }));
+  cols.className = `img-detail-similar-cols${numCols === 4 ? ' cols-4' : ''}`;
   cols.innerHTML = colData.map(col =>
     `<div class="img-detail-similar-col">${col.map(({ it, i }) => assetCardHTML(it, '__similar__', i)).join('')}</div>`
   ).join('');

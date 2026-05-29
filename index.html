@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="css/features/inicio.css">
 <link rel="stylesheet" href="css/features/carpetas.css">
 <link rel="stylesheet" href="css/features/image-detail.css">
+<link rel="stylesheet" href="css/features/crop.css">
 <link rel="stylesheet" href="css/features/context-menu.css">
 <link rel="stylesheet" href="css/features/portales.css">
 <link rel="stylesheet" href="css/features/portal-screen.css">
@@ -453,25 +454,58 @@
           <span class="msi sm">close</span>
         </button>
         <div class="img-detail-actions">
-          <span class="msi sm img-detail-icon">info</span>
+          <span class="msi sm img-detail-icon" id="imgDetailInfoBtn">info</span>
           <div class="img-detail-faces" id="imgDetailFaces"></div>
-          <span class="msi sm img-detail-icon">fullscreen</span>
+          <span class="msi sm img-detail-icon" id="imgDetailFullscreenBtn">fullscreen</span>
           <span class="msi sm img-detail-icon">share</span>
-          <span class="msi sm img-detail-icon">crop</span>
+          <div class="img-detail-crop-wrap">
+            <span class="msi sm img-detail-icon" id="imgDetailCropBtn">crop</span>
+            <div class="crop-format-panel" id="cropFormatPanel"></div>
+          </div>
           <span class="msi sm img-detail-icon" id="imgDetailDownloadBtn">download</span>
           <span class="msi sm img-detail-icon">delete</span>
         </div>
       </div>
-      <div class="img-detail-img-wrap">
+      <div class="img-detail-img-wrap" style="position:relative;">
         <img class="img-detail-main-img" id="imgDetailMainImg" src="" alt="">
+        <div class="crop-overlay" id="cropOverlay">
+          <div class="crop-canvas-area" id="cropCanvasArea">
+            <div class="crop-box" id="cropBox">
+              <div class="crop-box-border"></div>
+              <div class="crop-box-grid"></div>
+              <div class="crop-handle" data-h="nw"></div>
+              <div class="crop-handle" data-h="ne"></div>
+              <div class="crop-handle" data-h="sw"></div>
+              <div class="crop-handle" data-h="se"></div>
+            </div>
+          </div>
+          <div class="crop-actions">
+            <button class="crop-btn-cancel" id="cropCancelBtn">
+              CANCELAR
+            </button>
+            <button class="crop-btn-confirm" id="cropConfirmBtn">
+              RECORTAR Y DESCARGAR
+            </button>
+          </div>
+        </div>
       </div>
       <div class="img-detail-similar">
         <p class="img-detail-similar-title">Imágenes similares</p>
         <div class="img-detail-similar-cols" id="imgDetailSimilarCols"></div>
       </div>
     </div>
-    <div class="img-detail-right" id="imgDetailRight"></div>
+    <div class="img-detail-right-wrap" id="imgDetailRightWrap">
+      <div class="img-detail-right" id="imgDetailRight"></div>
+    </div>
   </div>
+</div>
+
+<!-- Fullscreen viewer -->
+<div class="img-fullscreen-overlay" id="imgFullscreenOverlay">
+  <button class="img-fullscreen-close" id="imgFullscreenClose">
+    <span class="msi sm">close</span>
+  </button>
+  <img class="img-fullscreen-img" id="imgFullscreenImg" src="" alt="">
 </div>
 
 <script type="module" src="js/main.js"></script>

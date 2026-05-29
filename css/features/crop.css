@@ -1,0 +1,240 @@
+/* ── Crop icon wrapper ───────────────────────────────────────────── */
+.img-detail-crop-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Format panel ────────────────────────────────────────────────── */
+.crop-format-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.crop-format-panel.open {
+  pointer-events: all;
+  opacity: 1;
+  transform: translateY(0);
+}
+.crop-format-col {
+  background: var(--g50);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  padding: 6px;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+}
+.crop-format-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font-ui);
+  color: var(--g800);
+  cursor: pointer;
+  gap: 8px;
+  user-select: none;
+  transition: background 0.12s;
+}
+.crop-format-item:hover,
+.crop-format-item.active {
+  background: var(--g100);
+}
+.crop-format-item .msi {
+  color: var(--g500);
+  flex-shrink: 0;
+}
+.crop-format-sub-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.crop-format-sub-item:hover {
+  background: var(--g100);
+}
+.crop-format-sub-name {
+  font-size: 14px;
+  font-family: var(--font-ui);
+  color: var(--g800);
+}
+.crop-format-sub-dims {
+  font-size: 12px;
+  font-family: var(--font-ui);
+  color: var(--g500);
+}
+.crop-format-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font-ui);
+  color: var(--g700);
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: background 0.12s;
+}
+.crop-format-back:hover {
+  background: var(--g100);
+}
+.crop-format-back .msi {
+  color: var(--g500);
+}
+
+/* ── Crop mode on image-detail-left ─────────────────────────────── */
+.img-detail-left.crop-mode {
+  overflow: hidden;
+}
+.img-detail-left.crop-mode .img-detail-similar {
+  display: none;
+}
+.img-detail-left.crop-mode .img-detail-img-wrap {
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  background: #111;
+}
+.img-detail-left.crop-mode .img-detail-main-img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+/* ── Crop overlay (sits over img-wrap) ───────────────────────────── */
+.crop-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+}
+.crop-overlay.active {
+  display: flex;
+}
+.crop-canvas-area {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Crop box ────────────────────────────────────────────────────── */
+.crop-box {
+  position: absolute;
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.52);
+  cursor: move;
+  box-sizing: border-box;
+}
+.crop-box-border {
+  position: absolute;
+  inset: 0;
+  border: 2px dashed rgba(255,255,255,0.85);
+  pointer-events: none;
+}
+/* rule-of-thirds grid lines */
+.crop-box-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.crop-box-grid::before,
+.crop-box-grid::after {
+  content: '';
+  position: absolute;
+  background: rgba(255,255,255,0.2);
+}
+.crop-box-grid::before {
+  left: 33.33%; right: 33.33%; top: 0; bottom: 0; width: 1px; margin: auto;
+  box-shadow: 33.33% 0 0 rgba(255,255,255,0.2);
+}
+.crop-box-grid::after {
+  top: 33.33%; bottom: 33.33%; left: 0; right: 0; height: 1px; margin: auto;
+  box-shadow: 0 33.33% 0 rgba(255,255,255,0.2);
+}
+
+/* ── Corner handles ──────────────────────────────────────────────── */
+.crop-handle {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+}
+.crop-handle[data-h="nw"] { top: -1px;  left: -1px;  cursor: nw-resize; }
+.crop-handle[data-h="ne"] { top: -1px;  right: -1px; cursor: ne-resize; }
+.crop-handle[data-h="sw"] { bottom: -1px; left: -1px; cursor: sw-resize; }
+.crop-handle[data-h="se"] { bottom: -1px; right: -1px; cursor: se-resize; }
+.crop-handle::before {
+  content: '';
+  position: absolute;
+  background: #fff;
+}
+/* L-shape corners */
+.crop-handle[data-h="nw"]::before { top: 0; left: 0; width: 12px; height: 3px; box-shadow: 0 0 0 0 transparent; }
+.crop-handle[data-h="nw"]::after  { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 12px; background: #fff; }
+.crop-handle[data-h="ne"]::before { top: 0; right: 0; width: 12px; height: 3px; }
+.crop-handle[data-h="ne"]::after  { content: ''; position: absolute; top: 0; right: 0; width: 3px; height: 12px; background: #fff; }
+.crop-handle[data-h="sw"]::before { bottom: 0; left: 0; width: 12px; height: 3px; }
+.crop-handle[data-h="sw"]::after  { content: ''; position: absolute; bottom: 0; left: 0; width: 3px; height: 12px; background: #fff; }
+.crop-handle[data-h="se"]::before { bottom: 0; right: 0; width: 12px; height: 3px; }
+.crop-handle[data-h="se"]::after  { content: ''; position: absolute; bottom: 0; right: 0; width: 3px; height: 12px; background: #fff; }
+
+/* ── Crop action buttons ─────────────────────────────────────────── */
+.crop-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  flex-shrink: 0;
+  background: #111;
+}
+.crop-btn-cancel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 40px;
+  border: none;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.crop-btn-cancel:hover {
+  background: rgba(255,255,255,0.2);
+}
+.crop-btn-confirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 40px;
+  border: none;
+  background: var(--g900);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.crop-btn-confirm:hover {
+  background: var(--g950);
+}
