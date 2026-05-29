@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="css/components/ui/fields.css">
 <link rel="stylesheet" href="css/components/ui/modal.css">
 <link rel="stylesheet" href="css/components/ui/badges.css">
+<link rel="stylesheet" href="css/components/ui/list-view.css">
 <!-- Components: Layout -->
 <link rel="stylesheet" href="css/components/layout/sidebar.css">
 <link rel="stylesheet" href="css/components/layout/topbar.css">
@@ -149,8 +150,8 @@
                 <button id="btnSubirArchivos" class="btn-outline" style="display:none" onclick="document.getElementById('uploadInput').click()"><span class="msi xs">upload</span>Subir Archivos</button>
               </div>
               <div class="view-toggle">
-                <button class="view-btn active"><span class="msi xs" style="color:white">grid_view</span></button>
-                <button class="view-btn"><span class="msi xs">lists</span></button>
+                <button id="c-toggle-grid" class="view-btn active"><span class="msi xs">grid_view</span></button>
+                <button id="c-toggle-list" class="view-btn"><span class="msi xs">lists</span></button>
               </div>
             </div>
           </div>
@@ -242,8 +243,8 @@
             <div class="sec-header" style="margin-bottom:0">
               <span class="sec-title">Carpetas recientes</span>
               <div class="view-toggle">
-                <button class="view-btn active"><span class="msi xs" style="color:white">grid_view</span></button>
-                <button class="view-btn"><span class="msi xs">lists</span></button>
+                <button id="inicio-folders-grid" class="view-btn active"><span class="msi xs">grid_view</span></button>
+                <button id="inicio-folders-list" class="view-btn"><span class="msi xs">lists</span></button>
               </div>
             </div>
             <div class="folders-row" id="inicio-folders"></div>
@@ -253,8 +254,8 @@
             <div class="sec-header" style="margin-bottom:0">
               <span class="sec-title">Archivos recientes</span>
               <div class="view-toggle">
-                <button class="view-btn active"><span class="msi xs" style="color:white">grid_view</span></button>
-                <button class="view-btn"><span class="msi xs">lists</span></button>
+                <button id="inicio-assets-grid" class="view-btn active"><span class="msi xs">grid_view</span></button>
+                <button id="inicio-assets-list" class="view-btn"><span class="msi xs">lists</span></button>
               </div>
             </div>
             <div class="masonry-cols" id="inicio-assets"></div>
@@ -421,8 +422,8 @@
       <div class="p-section-header">
         <div class="p-section-title">Archivos</div>
         <div class="p-view-toggle">
-          <button class="p-view-btn active"><span class="msi xs">grid_view</span></button>
-          <button class="p-view-btn"><span class="msi xs">lists</span></button>
+          <button class="p-view-btn active" id="p-toggle-archivos-grid"><span class="msi xs">grid_view</span></button>
+          <button class="p-view-btn" id="p-toggle-archivos-list"><span class="msi xs">lists</span></button>
         </div>
       </div>
       <div class="p-masonry" id="p-masonry"></div>

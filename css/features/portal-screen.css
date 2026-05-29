@@ -79,13 +79,5 @@
 .p-face-folder-count::before{content:'·';margin-right:3px;color:var(--g400)}
 .p-face-folder-count strong{color:var(--g700);font-weight:600}
 
-/* List view */
-.p-file-list{display:flex;flex-direction:column;gap:0}
-.p-file-row{display:flex;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid var(--g200);font-family:var(--font-ui)}
-.p-file-row:last-child{border-bottom:none}
-.p-file-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--g200)}
-.p-file-name{flex:1;font-size:14px;color:var(--g800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.p-file-ext{font-size:11px;color:var(--g600);background:var(--g100);border:1px solid var(--g200);border-radius:4px;padding:2px 6px;flex-shrink:0;font-weight:500}
-.p-file-size{font-size:12px;color:var(--g500);flex-shrink:0;min-width:52px;text-align:right}
-.p-file-dl{position:static;opacity:1;background:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;transition:background .15s;flex-shrink:0}
-.p-file-dl:hover{background:var(--g200)}
+/* Portal folders list mode */
+.p-folders--list{display:block !important;overflow-x:visible;padding-bottom:0}

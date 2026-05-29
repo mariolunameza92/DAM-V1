@@ -1,16 +1,18 @@
 // Exports: openPortal(), closePortal(), openPortalFromRow()
 import { st, closeModal } from './modal.js';
 import { addToTable } from './table.js';
-import { FOLDERS_DATA } from '../../data.js';
+import { FOLDERS_DATA, FOLDER_IMAGES } from '../../data.js';
 import { folderSVG } from '../../utils.js';
-import { uploadedAssets } from '../../session.js';
+import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { thumbsHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
-import { assetCardHTML } from '../shared/asset-card.js';
+import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 
 let _portalFolders      = [];
 let _folderAssets       = [];
 let _folderView         = 'grid';
+let _topFoldersView     = 'grid';
+let _archivosView       = 'grid';
 let _activePortalFaceId = null;
 let _faceActiveInFolder = false;
 
@@ -70,7 +72,10 @@ function _attachPortalResize(folders) {
 }
 
 function _renderPortal(title, desc, accent, font, folders) {
-  _portalFolders = folders;
+  _portalFolders   = folders;
+  _topFoldersView  = 'grid';
+  _folderView      = 'grid';
+  _archivosView    = 'grid';
 
   document.getElementById('p-hero-title').textContent = title;
   document.getElementById('p-hero-sub').textContent   = desc;
@@ -78,32 +83,57 @@ function _renderPortal(title, desc, accent, font, folders) {
 
   _removeFacePortal();
   _exitFolder(false);
-
-  // Folders — real thumbnails via shared folder-card
-  document.getElementById('p-folders').innerHTML = folders.map(f =>
-    `<div class="p-folder" data-folder-id="${f.imageId || f.id}" data-folder-name="${f.name}">
-      <div class="folder-vis">
-        ${folderSVG()}
-        <div class="folder-thumbs">${thumbsHTML(f.imageId || f.id)}</div>
-      </div>
-      <div class="p-folder-name">${f.name}</div>
-    </div>`
-  ).join('');
-
-  _attachFolderClicks();
+  _renderTopFolders();
 
   // Archivos masonry — real images from all folders
   const allAssets = folders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
   _renderMasonry(allAssets);
+
+  // Reset archivos toggle
+  document.getElementById('p-toggle-archivos-grid')?.classList.add('active');
+  document.getElementById('p-toggle-archivos-list')?.classList.remove('active');
+}
+
+// ── Top-level folders render ──────────────────────────────────────────────────
+function _renderTopFolders() {
+  const el = document.getElementById('p-folders');
+  if (!el) return;
+
+  if (_topFoldersView === 'grid') {
+    el.style.display = '';
+    el.className = 'p-folders';
+    el.innerHTML = _portalFolders.map(f => {
+      const id = f.imageId || f.id;
+      return `<div class="p-folder" data-folder-id="${id}" data-folder-name="${f.name}">
+        <div class="folder-vis">
+          ${folderSVG()}
+          <div class="folder-thumbs">${thumbsHTML(id)}</div>
+        </div>
+        <div class="p-folder-name">${f.name}</div>
+      </div>`;
+    }).join('');
+  } else {
+    el.style.display = 'block';
+    el.className = 'p-folders p-folders--list';
+    el.innerHTML = _portalFolders.map(f => {
+      const id = f.imageId || f.id;
+      const source = (userUploadedAssets[id] && userUploadedAssets[id].length > 0)
+        ? userUploadedAssets[id] : (uploadedAssets[id] || []);
+      const demoImgs = FOLDER_IMAGES[id] || [];
+      const firstSrc = source[0]?.thumb || demoImgs[0] || '';
+      return `<div class="folder-row" data-folder-id="${id}" data-folder-name="${f.name}">
+        <div class="folder-row-thumb">${firstSrc ? `<img src="${firstSrc}" loading="lazy" decoding="async">` : ''}</div>
+        <span class="folder-row-name">${f.name}</span>
+        <span class="folder-row-arrow"><span class="msi xs">chevron_right</span></span>
+      </div>`;
+    }).join('');
+  }
+  _attachFolderClicks();
 }
 
 function _attachFolderClicks() {
-  document.querySelectorAll('#p-folders .p-folder').forEach(el => {
-    el.addEventListener('click', () => {
-      const folderId   = el.dataset.folderId;
-      const folderName = el.dataset.folderName;
-      _enterFolder(folderId, folderName);
-    });
+  document.querySelectorAll('#p-folders [data-folder-id]').forEach(el => {
+    el.addEventListener('click', () => _enterFolder(el.dataset.folderId, el.dataset.folderName));
   });
 }
 
@@ -133,15 +163,15 @@ function _exitFolder(restoreAll = true) {
 
   document.getElementById('p-foldersTitle').textContent       = 'Carpetas';
   document.getElementById('p-foldersBack').style.display      = 'none';
-  document.getElementById('p-folders').style.display          = 'flex';
   document.getElementById('p-section-archivos').style.display = 'block';
   document.getElementById('p-section-carpetas').style.display = 'block';
   document.getElementById('p-folder-files').style.display     = 'none';
   document.getElementById('p-folder-files').innerHTML         = '';
   document.getElementById('p-folder-view-toggle').style.display = 'flex';
-  _setToggleActive('grid');
+  _setToggleActive(_topFoldersView);
 
   if (restoreAll) {
+    _renderTopFolders();
     const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
     _renderMasonry(allAssets);
   }
@@ -150,6 +180,11 @@ function _exitFolder(restoreAll = true) {
 function _setToggleActive(view) {
   document.getElementById('p-toggle-grid').classList.toggle('active', view === 'grid');
   document.getElementById('p-toggle-list').classList.toggle('active', view === 'list');
+}
+
+function _setArchivosToggleActive(view) {
+  document.getElementById('p-toggle-archivos-grid')?.classList.toggle('active', view === 'grid');
+  document.getElementById('p-toggle-archivos-list')?.classList.toggle('active', view === 'list');
 }
 
 function _renderFolderContent() {
@@ -161,13 +196,14 @@ function _renderFolderContent() {
     return;
   }
 
+  const assets = _folderAssets.map(a => ({
+    src: a.preview, ext: a.ext.toUpperCase(),
+    size: a.sizeStr, name: a.name,
+    originalUrl: a.originalUrl || a.preview,
+  }));
+  registerSection('portal', assets);
+
   if (_folderView === 'grid') {
-    const assets = _folderAssets.map(a => ({
-      src: a.preview, ext: a.ext.toUpperCase(),
-      size: a.sizeStr, name: a.name,
-      originalUrl: a.originalUrl || a.preview,
-    }));
-    registerSection('portal', assets);
     const numCols = getNumCols();
     const cols = Array.from({ length: numCols }, () => []);
     assets.forEach((a, i) => cols[i % numCols].push({ a, i }));
@@ -186,17 +222,7 @@ function _renderFolderContent() {
       ).join('')}</div>`
     ).join('')}</div>`;
   } else {
-    el.innerHTML = `<div class="p-file-list">${_folderAssets.map(a =>
-      `<div class="p-file-row">
-        <img class="p-file-thumb" src="${a.preview}" decoding="async">
-        <span class="p-file-name">${a.name}</span>
-        <span class="p-file-ext">${a.ext.toUpperCase()}</span>
-        <span class="p-file-size">${a.sizeStr}</span>
-        <div class="asset-dl p-file-dl" data-url="${a.originalUrl || a.preview}" data-filename="${a.name}.${a.ext.toLowerCase()}">
-          <span class="msi sm">download</span>
-        </div>
-      </div>`
-    ).join('')}</div>`;
+    el.innerHTML = `<div class="file-list">${assets.map((a, i) => assetListRowHTML(a, 'portal', i)).join('')}</div>`;
   }
 }
 
@@ -217,6 +243,11 @@ function _renderMasonry(rawAssets) {
     originalUrl: a.originalUrl || a.preview,
   }));
   registerSection('portal', assets);
+
+  if (_archivosView === 'list') {
+    masonry.innerHTML = `<div class="file-list">${assets.map((a, i) => assetListRowHTML(a, 'portal', i)).join('')}</div>`;
+    return;
+  }
 
   const numCols = getNumCols();
   const cols = Array.from({ length: numCols }, () => []);
@@ -407,17 +438,7 @@ function _drawPortalFaceResults(el) {
 
   const contentHTML = _portalFaceView === 'grid'
     ? `<div class="face-results-grid">${assets.map((a, i) => assetCardHTML(a, 'portal-faces', i)).join('')}</div>`
-    : `<div class="p-file-list">${assets.map(a =>
-        `<div class="p-file-row">
-          <img class="p-file-thumb" src="${a.src}" decoding="async">
-          <span class="p-file-name">${a.name}</span>
-          <span class="p-file-ext">${a.ext}</span>
-          <span class="p-file-size">${a.size}</span>
-          <div class="asset-dl p-file-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
-            <span class="msi sm">download</span>
-          </div>
-        </div>`
-      ).join('')}</div>`;
+    : `<div class="file-list">${assets.map((a, i) => assetListRowHTML(a, 'portal-faces', i)).join('')}</div>`;
 
   el.innerHTML =
     `<div class="face-results-header-row">
@@ -453,18 +474,52 @@ function _animatePortalIn() {
 initPortalSearch();
 document.getElementById('p-foldersBack').addEventListener('click', () => _exitFolder(true));
 
+// ── Carpetas section toggle (context-aware: top folders vs folder content) ────
 document.getElementById('p-toggle-grid').addEventListener('click', () => {
-  if (_folderView === 'grid') return;
-  _folderView = 'grid';
-  _setToggleActive('grid');
-  _renderFolderContent();
+  const inFolder = document.getElementById('p-folder-files').style.display !== 'none';
+  if (inFolder) {
+    if (_folderView === 'grid') return;
+    _folderView = 'grid';
+    _setToggleActive('grid');
+    _renderFolderContent();
+  } else {
+    if (_topFoldersView === 'grid') return;
+    _topFoldersView = 'grid';
+    _setToggleActive('grid');
+    _renderTopFolders();
+  }
 });
 
 document.getElementById('p-toggle-list').addEventListener('click', () => {
-  if (_folderView === 'list') return;
-  _folderView = 'list';
-  _setToggleActive('list');
-  _renderFolderContent();
+  const inFolder = document.getElementById('p-folder-files').style.display !== 'none';
+  if (inFolder) {
+    if (_folderView === 'list') return;
+    _folderView = 'list';
+    _setToggleActive('list');
+    _renderFolderContent();
+  } else {
+    if (_topFoldersView === 'list') return;
+    _topFoldersView = 'list';
+    _setToggleActive('list');
+    _renderTopFolders();
+  }
+});
+
+// ── Archivos section toggle ───────────────────────────────────────────────────
+document.getElementById('p-toggle-archivos-grid').addEventListener('click', () => {
+  if (_archivosView === 'grid') return;
+  _archivosView = 'grid';
+  _setArchivosToggleActive('grid');
+  const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  _renderMasonry(allAssets);
+});
+
+document.getElementById('p-toggle-archivos-list').addEventListener('click', () => {
+  if (_archivosView === 'list') return;
+  _archivosView = 'list';
+  _setArchivosToggleActive('list');
+  const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  _renderMasonry(allAssets);
 });
 
 export function closePortal() {

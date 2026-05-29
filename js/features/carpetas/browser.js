@@ -2,9 +2,9 @@
 import { TREE_DATA, FOLDER_IMAGES, findNode, getAncestorIds } from '../../data.js';
 import { folderSVG, imgLabel } from '../../utils.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
-import { thumbsHTML } from '../shared/folder-card.js';
+import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
-import { assetCardHTML } from '../shared/asset-card.js';
+import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 
 export const treeState = {
   expanded: new Set(),
@@ -18,6 +18,8 @@ const TAB_TITLES = {
   creadas:     'Carpetas creadas',
   compartidas: 'Carpetas compartidas',
 };
+
+let _carpetasView = 'grid';
 
 function _isOwned(nodeId) {
   if (!nodeId) return false;
@@ -35,6 +37,11 @@ function _updateActionButtons() {
   btnSubir.style.display = canEdit ? '' : 'none';
 }
 
+function _setCarpetasToggleActive(view) {
+  document.getElementById('c-toggle-grid')?.classList.toggle('active', view === 'grid');
+  document.getElementById('c-toggle-list')?.classList.toggle('active', view === 'list');
+}
+
 export function renderFolderContent(node) {
   if (!node) return;
   const row  = document.getElementById('foldersRow');
@@ -44,13 +51,19 @@ export function renderFolderContent(node) {
 
   if (node.children && node.children.length > 0) {
     row.style.display = '';
-    row.innerHTML = node.children.map(child => `<div class="folder-card" data-node-id="${child.id}">
-      <div class="folder-vis">
-        ${folderSVG()}
-        <div class="folder-thumbs">${thumbsHTML(child.id)}</div>
-      </div>
-      <div class="folder-name">${child.label}</div>
-    </div>`).join('');
+    if (_carpetasView === 'grid') {
+      row.innerHTML = node.children.map(child => `<div class="folder-card" data-node-id="${child.id}">
+        <div class="folder-vis">
+          ${folderSVG()}
+          <div class="folder-thumbs">${thumbsHTML(child.id)}</div>
+        </div>
+        <div class="folder-name">${child.label}</div>
+      </div>`).join('');
+    } else {
+      row.innerHTML = `<div class="folder-list">${node.children.map(child =>
+        folderListRowHTML(child.id, child.label)
+      ).join('')}</div>`;
+    }
   } else {
     row.style.display = 'none';
   }
@@ -74,11 +87,15 @@ export function renderFolderContent(node) {
     if (allItems.length > 0) {
       registerSection('carpetas', allItems);
       cols.style.display = '';
-      const colData = [[], [], []];
-      allItems.forEach((item, i) => colData[i % 3].push({ item, i }));
-      cols.innerHTML = colData.map(col =>
-        `<div class="masonry-col">${col.map(({ item, i }) => assetCardHTML(item, 'carpetas', i)).join('')}</div>`
-      ).join('');
+      if (_carpetasView === 'grid') {
+        const colData = [[], [], []];
+        allItems.forEach((item, i) => colData[i % 3].push({ item, i }));
+        cols.innerHTML = colData.map(col =>
+          `<div class="masonry-col">${col.map(({ item, i }) => assetCardHTML(item, 'carpetas', i)).join('')}</div>`
+        ).join('');
+      } else {
+        cols.innerHTML = `<div class="file-list">${allItems.map((item, i) => assetListRowHTML(item, 'carpetas', i)).join('')}</div>`;
+      }
     } else {
       cols.style.display = 'none';
     }
@@ -183,19 +200,49 @@ export function showRecentFolders() {
 function _renderRecentFoldersView() {
   const row  = document.getElementById('foldersRow');
   const cols = document.getElementById('masonryCols');
-
   const sorted = _getFilteredRoots();
 
   if (row) {
     row.style.display = '';
-    row.innerHTML = sorted.map(node => `<div class="folder-card" data-node-id="${node.id}">
-      <div class="folder-vis">
-        ${folderSVG()}
-        <div class="folder-thumbs">${thumbsHTML(node.id)}</div>
-      </div>
-      <div class="folder-name">${node.label}</div>
-    </div>`).join('');
+    if (_carpetasView === 'grid') {
+      row.innerHTML = sorted.map(node => `<div class="folder-card" data-node-id="${node.id}">
+        <div class="folder-vis">
+          ${folderSVG()}
+          <div class="folder-thumbs">${thumbsHTML(node.id)}</div>
+        </div>
+        <div class="folder-name">${node.label}</div>
+      </div>`).join('');
+    } else {
+      row.innerHTML = `<div class="folder-list">${sorted.map(node =>
+        folderListRowHTML(node.id, node.label)
+      ).join('')}</div>`;
+    }
   }
 
   if (cols) cols.style.display = 'none';
 }
+
+// ── View toggle ───────────────────────────────────────────────────────────────
+document.getElementById('c-toggle-grid')?.addEventListener('click', () => {
+  if (_carpetasView === 'grid') return;
+  _carpetasView = 'grid';
+  _setCarpetasToggleActive('grid');
+  if (treeState.selected) {
+    const node = findNode(treeState.selected);
+    if (node) renderFolderContent(node);
+  } else {
+    _renderRecentFoldersView();
+  }
+});
+
+document.getElementById('c-toggle-list')?.addEventListener('click', () => {
+  if (_carpetasView === 'list') return;
+  _carpetasView = 'list';
+  _setCarpetasToggleActive('list');
+  if (treeState.selected) {
+    const node = findNode(treeState.selected);
+    if (node) renderFolderContent(node);
+  } else {
+    _renderRecentFoldersView();
+  }
+});

@@ -2,9 +2,9 @@
 import { INICIO_FOLDER_IDS, findNode } from '../../data.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { folderSVG } from '../../utils.js';
-import { thumbsHTML } from '../shared/folder-card.js';
+import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
-import { assetCardHTML } from '../shared/asset-card.js';
+import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 
 function getNumCols() {
   const w = window.innerWidth;
@@ -14,6 +14,9 @@ function getNumCols() {
   if (w < 2300)  return 5;
   return 6;
 }
+
+let _inicioFoldersView = 'grid';
+let _inicioAssetsView  = 'grid';
 
 // ── Section reveal ───────────────────────────────────────────────────────────
 export function initSectionReveal() {
@@ -48,9 +51,11 @@ export function typingWelcome() {
   });
 }
 
-export function renderInicio() {
+function _renderInicioFolders() {
   const fr = document.getElementById('inicio-folders');
-  if (fr) {
+  if (!fr) return;
+
+  if (_inicioFoldersView === 'grid') {
     fr.innerHTML = INICIO_FOLDER_IDS.map(id => {
       const node = findNode(id);
       if (!node) return '';
@@ -62,8 +67,16 @@ export function renderInicio() {
         <div class="folder-name">${node.label}</div>
       </div>`;
     }).join('');
+  } else {
+    fr.innerHTML = `<div class="folder-list">${INICIO_FOLDER_IDS.map(id => {
+      const node = findNode(id);
+      if (!node) return '';
+      return folderListRowHTML(id, node.label, `onclick="window.goToCarpeta('${id}')"`);
+    }).join('')}</div>`;
   }
+}
 
+function _renderInicioAssets() {
   const ma = document.getElementById('inicio-assets');
   if (!ma) return;
 
@@ -83,14 +96,53 @@ export function renderInicio() {
   }));
   registerSection('inicio-main', normalizedAssets);
 
-  const numCols = getNumCols();
-  const colData = Array.from({ length: numCols }, () => []);
-  normalizedAssets.forEach((a, i) => colData[i % numCols].push({ a, i }));
-
-  ma.innerHTML = colData.map(col =>
-    `<div class="masonry-col">${col.map(({ a, i }) => assetCardHTML(a, 'inicio-main', i)).join('')}</div>`
-  ).join('');
+  if (_inicioAssetsView === 'grid') {
+    const numCols = getNumCols();
+    const colData = Array.from({ length: numCols }, () => []);
+    normalizedAssets.forEach((a, i) => colData[i % numCols].push({ a, i }));
+    ma.innerHTML = colData.map(col =>
+      `<div class="masonry-col">${col.map(({ a, i }) => assetCardHTML(a, 'inicio-main', i)).join('')}</div>`
+    ).join('');
+  } else {
+    ma.innerHTML = `<div class="file-list">${normalizedAssets.map((a, i) => assetListRowHTML(a, 'inicio-main', i)).join('')}</div>`;
+  }
 }
+
+export function renderInicio() {
+  _renderInicioFolders();
+  _renderInicioAssets();
+}
+
+// ── View toggle wiring ────────────────────────────────────────────────────────
+document.getElementById('inicio-folders-grid')?.addEventListener('click', () => {
+  if (_inicioFoldersView === 'grid') return;
+  _inicioFoldersView = 'grid';
+  document.getElementById('inicio-folders-grid').classList.add('active');
+  document.getElementById('inicio-folders-list').classList.remove('active');
+  _renderInicioFolders();
+});
+document.getElementById('inicio-folders-list')?.addEventListener('click', () => {
+  if (_inicioFoldersView === 'list') return;
+  _inicioFoldersView = 'list';
+  document.getElementById('inicio-folders-grid').classList.remove('active');
+  document.getElementById('inicio-folders-list').classList.add('active');
+  _renderInicioFolders();
+});
+
+document.getElementById('inicio-assets-grid')?.addEventListener('click', () => {
+  if (_inicioAssetsView === 'grid') return;
+  _inicioAssetsView = 'grid';
+  document.getElementById('inicio-assets-grid').classList.add('active');
+  document.getElementById('inicio-assets-list').classList.remove('active');
+  _renderInicioAssets();
+});
+document.getElementById('inicio-assets-list')?.addEventListener('click', () => {
+  if (_inicioAssetsView === 'list') return;
+  _inicioAssetsView = 'list';
+  document.getElementById('inicio-assets-grid').classList.remove('active');
+  document.getElementById('inicio-assets-list').classList.add('active');
+  _renderInicioAssets();
+});
 
 // ── Search autocomplete ───────────────────────────────────────────────────────
 export function initSearch() {
@@ -205,8 +257,6 @@ export function initFaceFilters() {
 
     if (_activeFaceId === faceId) { _removeFaceFilter(); return; }
 
-    // Clicks en favoritos o recientes solo activan el filtro.
-    // Solo el buscador (initSearch) actualiza el strip de recientes.
     _activeFaceFilter(faceId, faceName, imgSrc);
   });
 }
@@ -216,19 +266,16 @@ function _pushToRecents(id) {
   const recientes = strips[1];
   if (!recientes) return;
 
-  // Captura source ANTES de eliminar, por si solo existe en recientes
   const source = document.querySelector(`.face-av[data-face-id="${id}"]`);
   if (!source) return;
   const clone = source.cloneNode(true);
 
-  // Ahora sí elimina el existente en recientes (si lo hay)
   recientes.querySelector(`.face-av[data-face-id="${id}"]`)?.remove();
 
   clone.classList.add('face-av-recent');
   clone.addEventListener('animationend', () => clone.classList.remove('face-av-recent'), { once: true });
   recientes.prepend(clone);
 
-  // Máximo 8 items en recientes
   const all = recientes.querySelectorAll('.face-av');
   if (all.length > 8) all[all.length - 1].remove();
 }
@@ -304,17 +351,7 @@ function _drawFaceResults(el) {
 
   const contentHTML = _faceResultsView === 'grid'
     ? `<div class="face-results-grid">${assets.map((a, i) => assetCardHTML(a, 'inicio-faces', i)).join('')}</div>`
-    : `<div class="p-file-list">${assets.map(a =>
-        `<div class="p-file-row">
-          <img class="p-file-thumb" src="${a.src}" decoding="async">
-          <span class="p-file-name">${a.name}</span>
-          <span class="p-file-ext">${a.ext}</span>
-          <span class="p-file-size">${a.size}</span>
-          <div class="asset-dl p-file-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
-            <span class="msi sm">download</span>
-          </div>
-        </div>`
-      ).join('')}</div>`;
+    : `<div class="file-list">${assets.map((a, i) => assetListRowHTML(a, 'inicio-faces', i)).join('')}</div>`;
 
   el.innerHTML =
     `<div class="face-results-header-row">
