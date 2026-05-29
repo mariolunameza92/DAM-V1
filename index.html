@@ -324,40 +324,25 @@
 
     <div id="step-3" style="display:none">
       <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
-      <span class="modal-sub">Configuración del tema</span>
+      <span class="modal-sub">Título del portal</span>
       <div class="step-bar">
         <div class="step-dot" id="d3-1"></div><div class="step-dot" id="d3-2"></div><div class="step-dot active" id="d3-3"></div><div class="step-dot" id="d3-4"></div>
       </div>
       <div class="theme-rows">
         <div class="t-row">
-          <div class="t-info"><span class="t-label">Logo</span><span class="t-hint">SVG o PNG — opcional</span></div>
-          <div id="logo-preview" style="display:none;width:24px;height:24px;border-radius:4px;overflow:hidden;flex-shrink:0"><img id="logo-img" style="width:100%;height:100%;object-fit:cover"/></div>
-          <button class="t-add" id="logo-add" onclick="document.getElementById('logo-file').click()"><span class="msi xs">add</span></button>
-          <input type="file" id="logo-file" accept=".svg,.png,.jpg" style="display:none" onchange="handleLogo(this)"/>
+          <div class="t-info"><span class="t-label">Título visible</span><span class="t-hint">Lo verán los visitantes del portal</span></div>
         </div>
+        <div class="inline-field" id="title-wrap" style="display:block"><input type="text" id="inp-title" placeholder="Título del portal"/></div>
         <div class="t-row">
-          <div class="t-info"><span class="t-label">Color de acento</span><span class="t-hint" id="accent-hint">#22252f</span></div>
-          <div class="color-dot" id="color-dot" style="background:#22252f" onclick="document.getElementById('color-pick').click()"></div>
-          <input type="color" id="color-pick" value="#22252f" style="opacity:0;width:0;height:0;position:absolute" oninput="handleAccent(this.value)"/>
-          <button class="t-add" onclick="document.getElementById('color-pick').click()"><span class="msi xs">add</span></button>
+          <div class="t-info"><span class="t-label">Descripción</span><span class="t-hint">Texto de bienvenida del portal</span></div>
         </div>
+        <div class="inline-field" id="desc-wrap" style="display:block"><input type="text" id="inp-desc" placeholder="Descripción breve del portal"/></div>
         <div class="t-row">
           <div class="t-info"><span class="t-label">Tipografía</span><span class="t-hint">Fuente del portal</span></div>
           <select id="font-sel" style="font-size:11px;border:none;background:transparent;color:var(--g600);cursor:pointer;outline:none;font-family:var(--font-ui);flex-shrink:0">
             <option>Google Sans</option><option>Georgia</option><option>Space Mono</option><option>Trebuchet MS</option>
           </select>
-          <button class="t-add" onclick="document.getElementById('font-sel').focus()"><span class="msi xs">add</span></button>
         </div>
-        <div class="t-row">
-          <div class="t-info"><span class="t-label">Título visible</span><span class="t-hint">Lo verán los visitantes del portal</span></div>
-          <button class="t-add" id="title-btn" onclick="toggleInline('title-wrap','title-btn','inp-title')"><span class="msi xs">add</span></button>
-        </div>
-        <div class="inline-field" id="title-wrap"><input type="text" id="inp-title" placeholder="Título del portal"/></div>
-        <div class="t-row">
-          <div class="t-info"><span class="t-label">Descripción</span><span class="t-hint">Texto de bienvenida del portal</span></div>
-          <button class="t-add" id="desc-btn" onclick="toggleInline('desc-wrap','desc-btn','inp-desc')"><span class="msi xs">add</span></button>
-        </div>
-        <div class="inline-field" id="desc-wrap"><input type="text" id="inp-desc" placeholder="Descripción breve del portal"/></div>
       </div>
       <div class="modal-footer">
         <button class="btn-ghost" onclick="goStep(2)">Atrás</button>
@@ -422,12 +407,12 @@
         <div class="p-section-title-wrap">
           <button class="p-folders-back" id="p-foldersBack"><span class="msi sm">arrow_back</span></button>
           <div class="p-section-title" id="p-foldersTitle">Carpetas</div>
+          <div class="p-face-folder-count" id="p-face-folder-count"></div>
         </div>
         <div class="p-view-toggle" id="p-folder-view-toggle">
           <button class="p-view-btn active" id="p-toggle-grid"><span class="msi xs">grid_view</span></button>
           <button class="p-view-btn" id="p-toggle-list"><span class="msi xs">lists</span></button>
         </div>
-        <div class="p-face-folder-count" id="p-face-folder-count"></div>
       </div>
       <div class="p-folders" id="p-folders"></div>
       <div class="p-folder-files" id="p-folder-files"></div>

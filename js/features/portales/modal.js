@@ -17,17 +17,9 @@ export function openModal() {
   document.getElementById('inp-title').value = '';
   document.getElementById('inp-desc').value  = '';
   document.getElementById('pwd-wrap').style.display   = 'none';
-  document.getElementById('title-wrap').style.display = 'none';
-  document.getElementById('desc-wrap').style.display  = 'none';
-  document.getElementById('color-pick').value          = '#22252f';
-  document.getElementById('color-dot').style.background = '#22252f';
-  document.getElementById('accent-hint').textContent  = '#22252f';
+  document.getElementById('title-wrap').style.display = 'block';
+  document.getElementById('desc-wrap').style.display  = 'block';
   document.getElementById('font-sel').value            = 'Google Sans';
-  document.getElementById('logo-preview').style.display = 'none';
-
-  setDoneBtn('title-btn', false);
-  setDoneBtn('desc-btn', false);
-  setDoneBtn('logo-add', false);
   document.getElementById('rc-pub').classList.add('sel');
   document.getElementById('rc-priv').classList.remove('sel');
 

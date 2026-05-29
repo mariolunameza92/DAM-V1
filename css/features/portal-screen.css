@@ -55,7 +55,7 @@
 .p-view-btn.active .msi{color:white}
 
 /* Folders */
-.p-folders{display:flex;gap:24px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px}
+.p-folders{display:flex;gap:24px;flex-wrap:nowrap;overflow-x:auto;padding-top:4px;padding-bottom:8px}
 .p-folders::-webkit-scrollbar{height:4px}
 .p-folders::-webkit-scrollbar-track{background:transparent}
 .p-folders::-webkit-scrollbar-thumb{background:var(--g200);border-radius:4px}
@@ -75,8 +75,9 @@
 .p-folder-files{display:none}
 
 /* Face count in folder header */
-.p-face-folder-count{display:none;align-items:center;gap:5px;font-size:13px;color:var(--g600);font-family:var(--font-ui)}
-.p-face-folder-count strong{color:var(--g800);font-weight:600}
+.p-face-folder-count{display:none;align-items:center;gap:5px;font-size:13px;color:var(--g500);font-family:var(--font-ui)}
+.p-face-folder-count::before{content:'·';margin-right:3px;color:var(--g400)}
+.p-face-folder-count strong{color:var(--g700);font-weight:600}
 
 /* List view */
 .p-file-list{display:flex;flex-direction:column;gap:0}
