@@ -6,7 +6,14 @@ import { thumbsHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML } from '../shared/asset-card.js';
 
-const NUM_COLS = 4;
+function getNumCols() {
+  const w = window.innerWidth;
+  if (w <= 1024) return 2;
+  if (w <= 1440) return 3;
+  if (w <= 1920) return 4;
+  if (w < 2300)  return 5;
+  return 6;
+}
 
 // ── Section reveal ───────────────────────────────────────────────────────────
 export function initSectionReveal() {
@@ -76,8 +83,9 @@ export function renderInicio() {
   }));
   registerSection('inicio-main', normalizedAssets);
 
-  const colData = Array.from({ length: NUM_COLS }, () => []);
-  normalizedAssets.forEach((a, i) => colData[i % NUM_COLS].push({ a, i }));
+  const numCols = getNumCols();
+  const colData = Array.from({ length: numCols }, () => []);
+  normalizedAssets.forEach((a, i) => colData[i % numCols].push({ a, i }));
 
   ma.innerHTML = colData.map(col =>
     `<div class="masonry-col">${col.map(({ a, i }) => assetCardHTML(a, 'inicio-main', i)).join('')}</div>`

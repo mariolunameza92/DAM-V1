@@ -154,17 +154,22 @@ function _buildSubMenu(panel, platform) {
 // ── Crop mode ────────────────────────────────────────────────────────
 
 function _enterCropMode(aspectRatio) {
-  _cropActive   = true;
-  _aspectRatio  = aspectRatio;
+  _cropActive  = true;
+  _aspectRatio = aspectRatio;
 
   const left    = document.querySelector('.img-detail-left');
   const overlay = document.getElementById('cropOverlay');
   left.classList.add('crop-mode');
   overlay.classList.add('active');
 
-  // Wait for layout to settle then init box
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
+      // Push image up so it never goes behind the action buttons
+      const actions = document.querySelector('.crop-actions');
+      const imgWrap = document.querySelector('.img-detail-img-wrap');
+      if (actions && imgWrap) {
+        imgWrap.style.paddingBottom = `${actions.getBoundingClientRect().height}px`;
+      }
       _computeImgRect();
       _initBox();
       _renderBox();
@@ -178,6 +183,7 @@ function _exitCropMode() {
   const overlay = document.getElementById('cropOverlay');
   left.classList.remove('crop-mode');
   overlay.classList.remove('active');
+  document.querySelector('.img-detail-img-wrap').style.paddingBottom = '';
 }
 
 // Compute the rendered image rect inside the canvas area

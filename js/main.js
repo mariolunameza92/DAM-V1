@@ -160,6 +160,12 @@ if (_portalTab) {
   initContextMenu();
   showRecentFolders();
   renderInicio();
+  let _iniColCount = null;
+  window.addEventListener('resize', () => {
+    const w = window.innerWidth;
+    const cols = w <= 1024 ? 2 : w <= 1440 ? 3 : w <= 1920 ? 4 : w < 2300 ? 5 : 6;
+    if (cols !== _iniColCount) { _iniColCount = cols; renderInicio(); }
+  });
   animateWelcome();
   initDemoImages();
   initFaceFilters();

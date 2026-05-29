@@ -14,6 +14,17 @@ let _folderView         = 'grid';
 let _activePortalFaceId = null;
 let _faceActiveInFolder = false;
 
+function getNumCols() {
+  const w = window.innerWidth;
+  if (w <= 1024) return 2;
+  if (w <= 1440) return 3;
+  if (w <= 1920) return 4;
+  if (w < 2300)  return 5;
+  return 6;
+}
+
+let _portalResizeHandler = null;
+
 export function openPortal() {
   const rawName  = document.getElementById('inp-name').value.trim() || 'Mi Portal';
   const title    = st.title  || rawName;
@@ -29,6 +40,7 @@ export function openPortal() {
   document.getElementById('appShell').style.display = 'none';
   addToTable(title, selected.length, selected.length * 4, accent, selected.map(f => f.id));
   _animatePortalIn();
+  _attachPortalResize(selected);
 }
 
 export function openPortalFromRow(title, accent, folderIds = []) {
@@ -39,6 +51,22 @@ export function openPortalFromRow(title, accent, folderIds = []) {
   document.getElementById('portalScreen').classList.add('open');
   document.getElementById('appShell').style.display = 'none';
   _animatePortalIn();
+  _attachPortalResize(folders);
+}
+
+function _attachPortalResize(folders) {
+  if (_portalResizeHandler) window.removeEventListener('resize', _portalResizeHandler);
+  let _cols = getNumCols();
+  _portalResizeHandler = () => {
+    const next = getNumCols();
+    if (next !== _cols) {
+      _cols = next;
+      const allAssets = folders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+      _renderMasonry(allAssets);
+      if (_folderView === 'grid') _renderFolderContent();
+    }
+  };
+  window.addEventListener('resize', _portalResizeHandler);
 }
 
 function _renderPortal(title, desc, accent, font, folders) {
@@ -140,9 +168,9 @@ function _renderFolderContent() {
       originalUrl: a.originalUrl || a.preview,
     }));
     registerSection('portal', assets);
-    const NUM_COLS = 4;
-    const cols = Array.from({ length: NUM_COLS }, () => []);
-    assets.forEach((a, i) => cols[i % NUM_COLS].push({ a, i }));
+    const numCols = getNumCols();
+    const cols = Array.from({ length: numCols }, () => []);
+    assets.forEach((a, i) => cols[i % numCols].push({ a, i }));
     el.innerHTML = `<div class="p-masonry">${cols.map(col =>
       `<div class="masonry-col">${col.map(({ a, i }) =>
         `<div class="asset-card" data-section="portal" data-idx="${i}">
@@ -190,9 +218,9 @@ function _renderMasonry(rawAssets) {
   }));
   registerSection('portal', assets);
 
-  const NUM_COLS = 4;
-  const cols = Array.from({ length: NUM_COLS }, () => []);
-  assets.forEach((a, i) => cols[i % NUM_COLS].push({ a, i }));
+  const numCols = getNumCols();
+  const cols = Array.from({ length: numCols }, () => []);
+  assets.forEach((a, i) => cols[i % numCols].push({ a, i }));
 
   masonry.innerHTML = cols.map(col =>
     `<div class="masonry-col">${col.map(({ a, i }) =>
@@ -446,4 +474,8 @@ export function closePortal() {
   }
   document.getElementById('portalScreen').classList.remove('open');
   document.getElementById('appShell').style.display = 'flex';
+  if (_portalResizeHandler) {
+    window.removeEventListener('resize', _portalResizeHandler);
+    _portalResizeHandler = null;
+  }
 }
