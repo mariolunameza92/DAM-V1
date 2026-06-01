@@ -12,7 +12,7 @@
 .step-dot{width:6px;height:6px;border-radius:50%;background:var(--g300);transition:background .2s,width .2s,border-radius .2s}
 .step-dot.active{background:var(--g950);width:16px;border-radius:10px}
 
-.folder-list{display:flex;flex-direction:column;gap:2px;margin-top:12px;max-height:220px;overflow-y:auto}
+.modal .folder-list{display:flex;flex-direction:column;gap:2px;margin-top:12px;max-height:220px;overflow-y:auto}
 .f-row{display:flex;align-items:center;gap:10px;padding:4px;border-radius:4px;transition:background .12s}
 .f-row:hover{background:rgba(0,0,0,.03)}
 .f-icon{width:36px;height:36px;border-radius:8px;background:var(--g100);border:1.5px solid var(--g200);display:flex;align-items:center;justify-content:center;flex-shrink:0}

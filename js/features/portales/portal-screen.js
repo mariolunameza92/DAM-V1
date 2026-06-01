@@ -115,7 +115,7 @@ function _renderTopFolders() {
     }).join('');
   } else {
     el.style.display = 'block';
-    el.style.overflowX = 'hidden';  // elimina scroll horizontal en vista lista
+    el.style.overflowX = 'clip';  // clip sin crear scroll container (evita forzar overflow-y:auto)
     el.className = 'p-folders p-folders--list';
     el.innerHTML = _portalFolders.map(f => {
       const id = f.imageId || f.id;
