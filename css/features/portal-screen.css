@@ -80,4 +80,4 @@
 .p-face-folder-count strong{color:var(--g700);font-weight:600}
 
 /* Portal folders list mode */
-.p-folders--list{display:block !important;overflow-x:visible;padding-bottom:0}
+.p-folders--list{display:block !important;overflow-x:hidden;padding-bottom:0}

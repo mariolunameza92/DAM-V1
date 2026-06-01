@@ -101,6 +101,7 @@ function _renderTopFolders() {
 
   if (_topFoldersView === 'grid') {
     el.style.display = '';
+    el.style.overflowX = '';   // restaura overflow-x:auto del CSS
     el.className = 'p-folders';
     el.innerHTML = _portalFolders.map(f => {
       const id = f.imageId || f.id;
@@ -114,6 +115,7 @@ function _renderTopFolders() {
     }).join('');
   } else {
     el.style.display = 'block';
+    el.style.overflowX = 'hidden';  // elimina scroll horizontal en vista lista
     el.className = 'p-folders p-folders--list';
     el.innerHTML = _portalFolders.map(f => {
       const id = f.imageId || f.id;

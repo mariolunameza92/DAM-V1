@@ -1,3 +1,9 @@
+/* Cuando el contenedor tiene contenido de lista, no genera scroll horizontal */
+.folders-row:has(> .folder-list),
+.masonry-cols:has(> .file-list),
+.p-masonry:has(> .file-list),
+.p-folder-files:has(> .file-list) { overflow-x: hidden }
+
 /* Shared list view — files */
 .file-list{display:flex;flex-direction:column;gap:0;width:100%}
 .file-row{display:flex;align-items:center;gap:16px;padding:10px 4px;border-bottom:1px solid var(--g200);font-family:var(--font-ui);border-radius:4px}
