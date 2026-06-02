@@ -3,6 +3,7 @@
 import { _registry } from '../shared/image-registry.js';
 import { assetCardHTML } from '../shared/asset-card.js';
 import { initCrop } from './crop.js';
+import { FACE_REGISTRY } from '../../events-registry.js';
 
 const CAMERAS = [
   { marca: 'SONY',     modelo: 'ILCE-7M4', exp: '1/500',  apertura: 'ƒ/3.2', focal: '70.0 mm', iso: '200' },
@@ -12,37 +13,14 @@ const CAMERAS = [
   { marca: 'GOPRO',    modelo: 'HERO12',   exp: '1/2000', apertura: 'ƒ/2.8', focal: '14.0 mm', iso: '800' },
 ];
 
-function _getAvailableFaces() {
-  return Array.from(document.querySelectorAll('.face-av[data-face-id]')).map(el => ({
-    id:   el.dataset.faceId,
-    name: el.dataset.faceName,
-    src:  el.querySelector('img')?.src || '',
-  }));
-}
-
-const NF_FACES = [
-  'imgs/nf%201.png',
-  'imgs/nf%202.png',
-  'imgs/nf%203.png',
-  'imgs/nf%204.png',
-];
-
-// Demo: always 1. Real logic: all faces detected in the image that have no Face ID match.
-function _pickUnknownFaces(h) {
-  return [NF_FACES[(h + 13) % NF_FACES.length]];
-}
-
-function _pickFaces(h) {
-  const all = _getAvailableFaces();
-  if (all.length === 0) return [];
-  const count = (h % 2) + 1; // 1 o 2 identificados (máx 2)
-  const result = [];
-  const used = new Set();
-  for (let i = 0; result.length < count; i++) {
-    const idx = (h + i * 3) % all.length;
-    if (!used.has(idx)) { result.push(all[idx]); used.add(idx); }
-  }
-  return result;
+function _facesForItem(item) {
+  if (!item.faceIds || item.faceIds.length === 0) return [];
+  return item.faceIds
+    .map(id => {
+      const f = FACE_REGISTRY[id];
+      return f ? { id, name: f.name, src: f.selfieUrl } : null;
+    })
+    .filter(Boolean);
 }
 
 const TAGS_POOL = [
@@ -122,7 +100,12 @@ export function initImageDetail() {
   });
 
   // Click similar image → navigate within modal
+  // stopPropagation is critical: _populate() re-renders #imgDetailSimilarCols innerHTML,
+  // which detaches e.target from the DOM. Without stopPropagation, the document handler
+  // below would fire, find the detached card's section ('__similar__'), and overwrite
+  // _siblingItems with the current (shrinking) similar set — reducing it every click.
   document.getElementById('imgDetailSimilarCols').addEventListener('click', e => {
+    e.stopPropagation();
     if (e.target.closest('.asset-dl')) return;
     const card = e.target.closest('.asset-card[data-section]');
     if (!card) return;
@@ -250,7 +233,7 @@ function _populate(item) {
   mainImg.src = '';
   mainImg.src = item.originalUrl || item.src;
 
-  const faces = _pickFaces(h);
+  const faces = _facesForItem(item);
   document.getElementById('imgDetailFaces').innerHTML = faces.map(f =>
     `<div class="img-detail-face-dot" title="${f.name}">
        <img src="${f.src}" alt="${f.name}">
@@ -273,7 +256,6 @@ function _buildRight(item, h, faces) {
   const camDate       = _pick(CAM_DATES, h);
   const camTime       = _pick(CAM_TIMES, h + 1);
   const summary       = _pick(SMART_SUMMARIES, h);
-  const unknownFaces  = _pickUnknownFaces(h);
 
   const numTags = 7 + (h % 7);
   const tags = [];
@@ -303,18 +285,18 @@ function _buildRight(item, h, faces) {
           <span class="msi xs img-detail-section-chevron">keyboard_arrow_up</span>
         </div>
         <div class="img-detail-section-body">
-          ${faces.map(f => `
+          ${faces.length > 0
+            ? faces.map(f => `
             <div class="img-detail-person">
-              <img class="img-detail-person-avatar" src="${f.src}" alt="${f.name}">
-              <span class="img-detail-person-name">${f.name}</span>
+              <img class="img-detail-person-avatar" src="${f.src}" alt="${f.name || '?'}">
+              ${f.name
+                ? `<span class="img-detail-person-name">${f.name}</span>`
+                : `<input class="img-detail-person-input" type="text" placeholder="Asignar nombre…" autocomplete="off">`
+              }
             </div>
-          `).join('')}
-          ${unknownFaces.map(src => `
-            <div class="img-detail-person">
-              <img class="img-detail-person-avatar" src="${src}" alt="No identificado">
-              <input class="img-detail-person-input" type="text" placeholder="Ingresa un nombre">
-            </div>
-          `).join('')}
+          `).join('')
+            : `<p style="color:var(--g500);font-size:13px;font-family:var(--font-ui)">Sin personas identificadas</p>`
+          }
         </div>
       </div>
 
@@ -402,10 +384,23 @@ function _row(label, value) {
 function _renderSimilar(currentItem, numCols = 3) {
   const cols = document.getElementById('imgDetailSimilarCols');
   if (!cols) return;
-  const siblings = _siblingItems.filter(it => it.src !== currentItem.src);
-  if (siblings.length === 0) { cols.innerHTML = ''; return; }
+  let pool = _siblingItems.filter(it => it.src !== currentItem.src);
+
+  // Group by shoot time: photos within 60 s of each other are from the same burst/session.
+  // Falls back to same-event-folder filter when modTime is not available.
+  if (currentItem.modTime) {
+    const t = currentItem.modTime;
+    const burst = pool.filter(it => it.modTime != null && Math.abs(it.modTime - t) <= 60_000);
+    if (burst.length > 0) pool = burst;
+  } else if (currentItem.originalUrl) {
+    const folder = currentItem.originalUrl.slice(0, currentItem.originalUrl.lastIndexOf('/'));
+    const sameFolder = pool.filter(it => it.originalUrl && it.originalUrl.startsWith(folder + '/'));
+    if (sameFolder.length > 0) pool = sameFolder;
+  }
+
+  if (pool.length === 0) { cols.innerHTML = ''; return; }
   const maxItems = numCols === 4 ? 8 : 6;
-  const items = siblings.slice(0, maxItems);
+  const items = pool.slice(0, maxItems);
   _registry.set('__similar__', items);
   const colData = Array.from({ length: numCols }, () => []);
   items.forEach((it, i) => colData[i % numCols].push({ it, i }));

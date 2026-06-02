@@ -93,6 +93,8 @@ function _renderInicioAssets() {
     size: a.sizeStr,
     name: a.name,
     originalUrl: a.originalUrl || a.preview,
+    faceIds: a.faceIds || [],
+    modTime: a.modTime || null,
   }));
   registerSection('inicio-main', normalizedAssets);
 
@@ -238,6 +240,54 @@ export function initSearch() {
 // ── Face ID filter ────────────────────────────────────────────────────────────
 let _activeFaceId = null;
 
+const _AV_W    = 54;    // face-av width px
+const _AV_STEP = 40.3;  // effective step after negative margin overlap
+const _STRIP_PAD = 24;  // 12px * 2 sides
+
+function _trimFaceStrips() {
+  const strips = Array.from(document.querySelectorAll('#sec-inicio .face-strip'));
+  if (!strips.length) return;
+
+  // Measure the face-group (parent), not the strip — strip is align-self:flex-start so its
+  // clientWidth reflects only current visible avatars, not available space
+  const innerW = strips[0].parentElement.clientWidth - _STRIP_PAD;
+  if (innerW <= 0) return;
+
+  // Max avatars that fit: (N-1)*step + AV_W ≤ innerW
+  const maxFit = Math.max(1, Math.floor((innerW - _AV_W) / _AV_STEP) + 1);
+
+  // Collect real avatars per strip
+  const data = strips.map(strip => ({
+    strip,
+    avatars: Array.from(strip.querySelectorAll('.face-av:not(.face-av-more)')),
+  }));
+
+  // Decide the SHARED visible count so both strips grow/shrink in sync
+  const maxTotal     = Math.max(...data.map(d => d.avatars.length));
+  const needsClip    = maxTotal > maxFit;
+  const sharedVisible = needsClip ? Math.max(1, maxFit - 1) : Infinity;
+
+  data.forEach(({ strip, avatars }) => {
+    strip.querySelector('.face-av-more')?.remove();
+
+    if (!needsClip || avatars.length <= sharedVisible) {
+      avatars.forEach(av => { av.style.display = ''; });
+      return;
+    }
+
+    const hidden = avatars.length - sharedVisible;
+    avatars.forEach((av, i) => { av.style.display = i < sharedVisible ? '' : 'none'; });
+
+    const more = document.createElement('div');
+    more.className   = 'face-av face-av-more';
+    more.textContent = `+${hidden}`;
+    more.title       = `${hidden} personas más`;
+    strip.appendChild(more);
+  });
+}
+
+let _trimDebounce = null;
+
 export function initFaceFilters() {
   const sec = document.getElementById('sec-inicio');
   const strips = sec.querySelectorAll('.face-strip');
@@ -259,6 +309,13 @@ export function initFaceFilters() {
 
     _activeFaceFilter(faceId, faceName, imgSrc);
   });
+
+  _trimFaceStrips();
+
+  window.addEventListener('resize', () => {
+    clearTimeout(_trimDebounce);
+    _trimDebounce = setTimeout(_trimFaceStrips, 150);
+  });
 }
 
 function _pushToRecents(id) {
@@ -266,18 +323,25 @@ function _pushToRecents(id) {
   const recientes = strips[1];
   if (!recientes) return;
 
-  const source = document.querySelector(`.face-av[data-face-id="${id}"]`);
+  // Source: look in favoritos strip (strips[0]) to avoid cloning a hidden duplicate
+  const source = strips[0].querySelector(`.face-av[data-face-id="${id}"]`)
+               || document.querySelector(`.face-av[data-face-id="${id}"]`);
   if (!source) return;
   const clone = source.cloneNode(true);
+  clone.style.display = ''; // ensure visible regardless of trim state
 
   recientes.querySelector(`.face-av[data-face-id="${id}"]`)?.remove();
+  recientes.querySelector('.face-av-more')?.remove(); // remove bubble before prepend
 
   clone.classList.add('face-av-recent');
   clone.addEventListener('animationend', () => clone.classList.remove('face-av-recent'), { once: true });
   recientes.prepend(clone);
 
-  const all = recientes.querySelectorAll('.face-av');
-  if (all.length > 8) all[all.length - 1].remove();
+  // Keep DOM lean — max 20 real avatars in recientes
+  const all = Array.from(recientes.querySelectorAll('.face-av:not(.face-av-more)'));
+  if (all.length > 20) all[all.length - 1].remove();
+
+  _trimFaceStrips();
 }
 
 function _activeFaceFilter(id, name, imgSrc) {
@@ -297,7 +361,7 @@ function _activeFaceFilter(id, name, imgSrc) {
   sec.querySelector('.face-stats-row').style.display = 'none';
   sec.querySelectorAll('.inicio-section').forEach(el => { el.style.display = 'none'; });
 
-  _renderFaceResults(name);
+  _renderFaceResults(id, name);
 }
 
 function _removeFaceFilter() {
@@ -320,12 +384,12 @@ let _faceResultsAssets = [];
 let _faceResultsName   = '';
 let _faceResultsView   = 'grid';
 
-function _renderFaceResults(name) {
+function _renderFaceResults(id, name) {
   const el = document.getElementById('face-filter-results');
   if (!el) return;
 
   const all = [...Object.values(uploadedAssets).flat(), ...Object.values(userUploadedAssets).flat()];
-  const picks = all.sort(() => Math.random() - 0.5).slice(0, 3);
+  const picks = all.filter(a => a.faceIds && a.faceIds.includes(id));
 
   if (picks.length === 0) {
     el.innerHTML = `<p class="face-results-header">No hay imágenes cargadas aún.</p>`;
@@ -338,6 +402,8 @@ function _renderFaceResults(name) {
   _faceResultsAssets = picks.map(a => ({
     src: a.preview, ext: a.ext.toUpperCase(),
     size: a.sizeStr, name: a.name, originalUrl: a.originalUrl || a.preview,
+    faceIds: a.faceIds,
+    modTime: a.modTime || null,
   }));
   registerSection('inicio-faces', _faceResultsAssets);
 

@@ -1,44 +1,27 @@
-// Exports: FOLDERS_DATA, TREE_DATA, FOLDER_IMAGES, INICIO_FOLDER_IDS, INICIO_ASSETS, findNode(), getAncestorIds()
+// Exports: FOLDERS_DATA, TREE_DATA, FOLDER_IMAGES, INICIO_FOLDER_IDS, findNode(), getAncestorIds()
+import { FOLDER_IMAGES_EVENTS } from './events-registry.js';
+
 export const FOLDERS_DATA = [
-  { id: 'marketing',      name: 'Marketing',      count: '15 archivos',     imageId: 'marketing' },
-  { id: 'comunicaciones', name: 'Comunicaciones', count: '952 archivos',    imageId: 'recursospauta' },
-  { id: 'legal',          name: 'Legal',          count: '81 archivos',     imageId: 'archivosaprobar' },
-  { id: 'agencia',        name: 'Agencia XYZ',    count: '10.5K archivos',  imageId: 'imagenesig' },
-  { id: 'eventos',        name: 'Eventos 2025',   count: '342 archivos',    imageId: 'eventofin' },
-  { id: 'campania',       name: 'Campaña Q2',     count: '128 archivos',    imageId: 'campana2025' },
+  { id: 'colorrun',    name: 'Color Run 2026',           count: '4 archivos',   imageId: 'colorrun' },
+  { id: 'lima42k',     name: 'Lima 42K 2026',            count: '12 archivos',  imageId: 'lima42k' },
+  { id: 'masmujeres',  name: 'Más mujeres en meta 2026', count: '4 archivos',   imageId: 'masmujeres' },
+  { id: 'onsquad',     name: 'On Squad Race Lima 2026',  count: '4 archivos',   imageId: 'onsquad' },
+  { id: 'rimac',       name: 'Rimac Bienestar Fest',     count: '5 archivos',   imageId: 'rimac' },
+  { id: 'wingslife',   name: 'Wings for Life 2026',      count: '4 archivos',   imageId: 'wingslife' },
 ];
 
 export const TREE_DATA = [
-  { id: 'campana2025', label: 'Campaña 2025', owned: true,  lastEdited: new Date('2026-05-20').getTime(), children: [
-    { id: 'briefing', label: 'Briefing inicial', children: [
-      { id: 'planmedios', label: 'Plan de medios', children: [
-        { id: 'creaciones', label: 'Creaciones', children: [
-          { id: 'artesfinales', label: 'Artes finales', children: [
-            { id: 'finalfinal',  label: 'Final-Final',     children: [] },
-            { id: 'archivosjpg', label: 'Archivos en JPG', children: [] },
-            { id: 'recursospng', label: 'Recursos PNG',    children: [] },
-          ]},
-        ]},
-      ]},
-    ]},
-  ]},
-  { id: 'marketing',       label: 'Marketing',              owned: true,  lastEdited: new Date('2026-05-10').getTime(), children: [] },
-  { id: 'eventofin',       label: 'Evento Fin de año 2025', owned: true,  lastEdited: new Date('2026-03-15').getTime(), children: [] },
-  { id: 'imagenesig',      label: 'Imágenes para IG',       owned: false, lastEdited: new Date('2026-04-28').getTime(), children: [] },
-  { id: 'archivosaprobar', label: 'Archivos por aprobar',   owned: false, lastEdited: new Date('2026-05-24').getTime(), children: [] },
-  { id: 'recursospauta',   label: 'Recursos Pauta 2026',    owned: false, lastEdited: new Date('2026-05-18').getTime(), children: [] },
+  { id: 'colorrun',   label: 'Color Run 2026',           owned: true,  lastEdited: new Date('2026-04-15').getTime(), children: [] },
+  { id: 'lima42k',    label: 'Lima 42K 2026',            owned: true,  lastEdited: new Date('2026-03-10').getTime(), children: [] },
+  { id: 'masmujeres', label: 'Más mujeres en meta 2026', owned: true,  lastEdited: new Date('2026-02-20').getTime(), children: [] },
+  { id: 'onsquad',    label: 'On Squad Race Lima 2026',  owned: false, lastEdited: new Date('2026-05-01').getTime(), children: [] },
+  { id: 'rimac',      label: 'Rimac Bienestar Fest',     owned: false, lastEdited: new Date('2026-01-28').getTime(), children: [] },
+  { id: 'wingslife',  label: 'Wings for Life 2026',      owned: true,  lastEdited: new Date('2026-05-10').getTime(), children: [] },
 ];
 
-export const FOLDER_IMAGES = {
-  campana2025:     ['imgs/kristin-wilson-z3htkdHUh5w-unsplash.jpg','imgs/annie-spratt-g9KFpAfQ5bc-unsplash.jpg','imgs/compagnons-eTgMFFzroGc-unsplash.jpg','imgs/surface-HJgaV1qjHS0-unsplash.jpg'],
-  marketing:       ['imgs/sixteen-miles-out-2oKdzcvs6fE-unsplash.jpg','imgs/dmytro-koplyk-IaXzpSeRWIw-unsplash.jpg','imgs/ahmed-B33BHYfQtIY-unsplash.jpg','imgs/alexis-presa-ggQCbltMcCk-unsplash.jpg'],
-  eventofin:       ['imgs/johannes-andersson-UCd78vfC8vU-unsplash.jpg','imgs/kristaps-ungurs-owcJsiIK7UU-unsplash.jpg','imgs/jeremy-bishop-EwKXn5CapA4-unsplash.jpg','imgs/goutham-krishna-h5wvMCdOV3w-unsplash.jpg'],
-  imagenesig:      ['imgs/robert-katzki-jbtfM0XBeRc-unsplash.jpg','imgs/felix-dubois-robert-CuEvrPd3NYc-unsplash.jpg','imgs/rodion-kutsaiev-pVoEPpLw818-unsplash.jpg','imgs/alexander-grey-p203ekCK4Ac-unsplash.jpg'],
-  archivosaprobar: ['imgs/eleni-afiontzi-gLU8GZpHtRA-unsplash.jpg','imgs/deon-fosu-ZQZrvL7DwiI-unsplash.jpg','imgs/tania-mousinho-YlpfE9uCakE-unsplash.jpg','imgs/tania-mousinho-6tCgnd2xNfI-unsplash.jpg'],
-  recursospauta:   ['imgs/evangeline-shaw-nwLTVwb7DbU-unsplash.jpg','imgs/jakob-dalbjorn-cuKJre3nyYc-unsplash.jpg','imgs/headway-F2KRf_QfCqw-unsplash.jpg','imgs/md-duran-rE9vgD_TXgM-unsplash.jpg'],
-};
+export const FOLDER_IMAGES = FOLDER_IMAGES_EVENTS;
 
-export const INICIO_FOLDER_IDS = ['campana2025', 'marketing', 'eventofin', 'imagenesig', 'archivosaprobar', 'recursospauta'];
+export const INICIO_FOLDER_IDS = ['colorrun', 'lima42k', 'masmujeres', 'onsquad', 'rimac', 'wingslife'];
 
 export function findNode(id, nodes = TREE_DATA) {
   for (const n of nodes) {

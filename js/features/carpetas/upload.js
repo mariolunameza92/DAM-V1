@@ -7,6 +7,7 @@ import { FOLDER_IMAGES } from '../../data.js';
 import { treeState, renderTree, renderFolderContent } from './browser.js';
 import { renderInicio } from '../inicio/inicio.js';
 import { findNode } from '../../data.js';
+import { annotateDemoFaces } from '../../events-registry.js';
 
 export function resizeToDataURL(file, maxDim, quality) {
   return new Promise(resolve => {
@@ -59,11 +60,25 @@ export async function processUpload(files) {
 
 async function _processDemoFromUrl(url) {
   const cached = await idbGet(url);
-  if (cached) return cached;
+  if (cached) {
+    // Backfill modTime for cached entries that predate this field
+    if (!cached.modTime) {
+      try {
+        const head = await fetch(url, { method: 'HEAD' });
+        const lm = head.headers.get('Last-Modified');
+        if (lm) { cached.modTime = new Date(lm).getTime(); idbSet(url, cached); }
+      } catch {}
+    }
+    return cached;
+  }
 
-  let blob;
-  try { blob = await fetch(url).then(r => r.blob()); }
+  let resp;
+  try { resp = await fetch(url); }
   catch (e) { return null; }
+
+  const lm = resp.headers.get('Last-Modified');
+  const modTime = lm ? new Date(lm).getTime() : null;
+  const blob = await resp.blob();
 
   const blobUrl = URL.createObjectURL(blob);
   const imgEl = await new Promise(res => {
@@ -91,6 +106,7 @@ async function _processDemoFromUrl(url) {
     thumb:       resizeTo(200, 0.65),
     preview:     resizeTo(900, 0.82),
     originalUrl: url,
+    modTime,
   };
 
   idbSet(url, result);
@@ -108,6 +124,7 @@ export async function initDemoImages() {
       uploadedAssets[folderId] = assets;
     })
   );
+  annotateDemoFaces(uploadedAssets);
   renderTree();
   renderFolderContent(findNode(treeState.selected));
   renderInicio();

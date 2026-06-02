@@ -31,7 +31,12 @@ export function lighten(hex, amt) {
 }
 
 export function imgLabel(src) {
-  return src.split('/').pop().replace(/-[A-Za-z0-9]{10,12}-unsplash\.jpg$/, '').replace(/-/g, ' ');
+  return src.split('/').pop()
+    .replace(/\.[^.]+$/, '')
+    .replace(/-[A-Za-z0-9]{10,12}-unsplash$/, '')
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 export function formatBytes(bytes) {

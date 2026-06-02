@@ -76,7 +76,7 @@ export function renderFolderContent(node) {
     const uploadedList = [...userList, ...demoList];
     const demoImgs     = uploadedList.length === 0 ? (FOLDER_IMAGES[node.id] || []) : [];
     const allItems = [
-      ...uploadedList.map(u => ({ src: u.preview, ext: u.ext, size: u.sizeStr, name: u.name, originalUrl: u.originalUrl || null })),
+      ...uploadedList.map(u => ({ src: u.preview, ext: u.ext, size: u.sizeStr, name: u.name, originalUrl: u.originalUrl || null, faceIds: u.faceIds || [], modTime: u.modTime || null })),
       ...demoImgs.map((src, i) => ({
         src, name: imgLabel(src), originalUrl: src,
         ext:  FAKE_EXTS[i  % FAKE_EXTS.length],

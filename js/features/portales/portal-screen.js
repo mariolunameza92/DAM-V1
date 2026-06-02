@@ -364,7 +364,7 @@ function _activeFacePortal(id, name, imgSrc) {
   active.querySelector('.face-chip-remove').addEventListener('click', _removeFacePortal);
   chip.replaceWith(active);
 
-  _renderPortalFaceResults(name);
+  _renderPortalFaceResults(id, name);
 }
 
 function _removeFacePortal() {
@@ -393,9 +393,11 @@ let _portalFaceAssets = [];
 let _portalFaceName   = '';
 let _portalFaceView   = 'grid';
 
-function _renderPortalFaceResults(name) {
-  const all   = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
-  const picks = all.sort(() => Math.random() - 0.5).slice(0, 3);
+function _renderPortalFaceResults(id, name) {
+  const source = _faceActiveInFolder
+    ? _folderAssets
+    : _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  const picks = source.filter(a => a.faceIds && a.faceIds.includes(id));
 
   _portalFaceName   = name;
   _portalFaceView   = 'grid';
