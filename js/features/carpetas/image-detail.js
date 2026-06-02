@@ -20,7 +20,8 @@ function _facesForItem(item) {
       const f = FACE_REGISTRY[id];
       return f ? { id, name: f.name, src: f.selfieUrl } : null;
     })
-    .filter(Boolean);
+    .filter(Boolean)
+    .sort((a, b) => (a.name ? 0 : 1) - (b.name ? 0 : 1));
 }
 
 const TAGS_POOL = [
@@ -41,9 +42,13 @@ const CAM_DATES = ['13/05/2026', '14/05/2026', '01/04/2026', '22/03/2026', '10/0
 const CAM_TIMES = ['08:01', '09:30', '12:15', '14:22', '17:45'];
 
 const SMART_SUMMARIES = [
-  'This image shows a group of runners participating in a marathon. The runners are wearing numbered bibs and athletic gear, with some wearing...',
-  'This photograph documents an outdoor event in an urban environment. Multiple participants are visible, dressed in athletic attire and...',
-  'This image captures a dynamic sporting event with several individuals engaged in physical activity. The setting appears to be an...',
+  'Fotografía tomada durante una maratón urbana en Lima. Se observa un grupo de corredores en plena carrera, luciendo dorsales numerados y ropa deportiva técnica. El ambiente es dinámico, con espectadores animando a los participantes desde los laterales de la pista.',
+  'Imagen que captura el momento de cruce de meta en una competencia de running. Los atletas muestran expresiones de esfuerzo y determinación. Se aprecian elementos de branding de los patrocinadores del evento en el fondo.',
+  'Escena grupal en una carrera de calle con múltiples participantes en diferentes momentos de su recorrido. La iluminación natural y el entorno urbano generan un encuadre vibrante y lleno de energía competitiva.',
+  'Toma de campo abierto durante una jornada de atletismo. Corredores de distintas categorías avanzan en formación, con vestimenta deportiva y accesorios de hidratación visibles. El recorrido transcurre por una avenida principal de la ciudad.',
+  'Fotografía de evento deportivo masivo con decenas de participantes. La composición muestra la diversidad de los corredores en edad y género. Al fondo se distinguen carpas de organización y vallas publicitarias del evento.',
+  'Imagen tomada en los primeros kilómetros de una carrera popular. El pelotón aún está compacto y el ritmo es elevado. Se identifican corredores de élite en la parte delantera, separados del grupo general.',
+  'Captura del ambiente previo a la largada oficial. Los atletas realizan calentamiento y estiramiento en la zona de partida. El escenario refleja la expectativa y concentración típicas de un evento de alto rendimiento.',
 ];
 
 function _hash(str) {
@@ -90,6 +95,16 @@ export function initImageDetail() {
     if (!name) return;
     e.preventDefault();
     _identifyPerson(input, name);
+  });
+
+  // Smart Summary expand/collapse
+  overlay.addEventListener('click', e => {
+    const link = e.target.closest('.img-detail-meta-link');
+    if (!link) return;
+    const text = link.previousElementSibling;
+    if (!text || !text.classList.contains('img-detail-meta-text')) return;
+    const collapsed = text.classList.toggle('is-clamped');
+    link.textContent = collapsed ? 'Ver más' : 'Ver menos';
   });
 
   // Accordion toggle
@@ -242,6 +257,12 @@ function _populate(item) {
 
   document.getElementById('imgDetailRight').innerHTML = _buildRight(item, h, faces);
 
+  const summaryText = document.querySelector('#imgDetailRight .img-detail-meta-text.is-clamped');
+  if (summaryText) {
+    const link = summaryText.nextElementSibling;
+    if (link && summaryText.scrollHeight <= summaryText.clientHeight) link.style.display = 'none';
+  }
+
   _renderSimilar(item);
 
   document.getElementById('imgDetailRight').scrollTop = 0;
@@ -308,7 +329,7 @@ function _buildRight(item, h, faces) {
         <div class="img-detail-section-body">
           <div class="img-detail-meta-section">
             <p class="img-detail-meta-label">Smart Summary</p>
-            <p class="img-detail-meta-text">${summary}</p>
+            <p class="img-detail-meta-text is-clamped">${summary}</p>
             <span class="img-detail-meta-link">Ver más</span>
           </div>
           <div class="img-detail-meta-section">
