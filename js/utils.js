@@ -1,4 +1,4 @@
-// Exports: folderSVG(), lighten(), imgLabel(), formatBytes(), fileExt(), getNumCols(), positionDropdown()
+// Exports: folderSVG(), lighten(), imgLabel(), formatBytes(), fileExt(), getNumCols(), positionDropdown(), hexToOklch(), generateShadeScale()
 let _fIdx = 0;
 
 export function folderSVG() {
@@ -66,4 +66,43 @@ export function positionDropdown(suggestionsEl, anchorEl) {
   suggestionsEl.style.top   = (rect.bottom + 8) + 'px';
   suggestionsEl.style.left  = rect.left + 'px';
   suggestionsEl.style.width = rect.width + 'px';
+}
+
+// ── OKLCH color utilities ─────────────────────────────────────────────────────
+export function hexToOklch(hex) {
+  hex = hex.replace(/^#/, '');
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  if (!/^[0-9a-f]{6}$/i.test(hex)) return { L: 0.20, C: 0.02, H: 240 };
+  const r = parseInt(hex.slice(0, 2), 16) / 255;
+  const g = parseInt(hex.slice(2, 4), 16) / 255;
+  const b = parseInt(hex.slice(4, 6), 16) / 255;
+  const lin = v => v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  const rl = lin(r), gl = lin(g), bl = lin(b);
+  const X = 0.4124564*rl + 0.3575761*gl + 0.1804375*bl;
+  const Y = 0.2126729*rl + 0.7151522*gl + 0.0721750*bl;
+  const Z = 0.0193339*rl + 0.1191920*gl + 0.9503041*bl;
+  const lms = v => Math.sign(v) * Math.pow(Math.abs(v), 1/3);
+  const l_ = lms(0.8189330101*X + 0.3618667424*Y - 0.1288597137*Z);
+  const m_ = lms(0.0329845436*X + 0.9293118715*Y + 0.0361456387*Z);
+  const s_ = lms(0.0482003018*X + 0.2643662691*Y + 0.6338517070*Z);
+  const La = 0.2104542553*l_ + 0.7936177850*m_ - 0.0040720468*s_;
+  const a  = 1.9779984951*l_ - 2.4285922050*m_ + 0.4505937099*s_;
+  const bk = 0.0259040371*l_ + 0.7827717662*m_ - 0.8086757660*s_;
+  const C  = Math.sqrt(a*a + bk*bk);
+  let H    = (Math.atan2(bk, a) * 180 / Math.PI) % 360;
+  if (H < 0) H += 360;
+  return { L: La, C, H };
+}
+
+// Genera 11 stops (50→950) preservando matiz; C sigue campana con pico en 500.
+export function generateShadeScale(hex) {
+  const { C, H } = hexToOklch(hex);
+  const lStops   = [0.970, 0.940, 0.882, 0.790, 0.680, 0.570, 0.460, 0.360, 0.260, 0.170, 0.110];
+  const cFactors = [0.12,  0.22,  0.38,  0.62,  0.85,  1.00,  0.95,  0.85,  0.72,  0.58,  0.45];
+  const names    = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+  return names.map((name, i) => {
+    const l = lStops[i];
+    const c = Math.min(C * cFactors[i], 0.32);
+    return { name, l, c, h: H, css: `oklch(${l.toFixed(3)} ${c.toFixed(4)} ${H.toFixed(2)})` };
+  });
 }

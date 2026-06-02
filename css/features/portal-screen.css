@@ -1,8 +1,8 @@
-.portal-screen{position:fixed;inset:0;background:var(--g100);z-index:200;display:none;flex-direction:column;--brand-l:0.20;--brand-c:0.02;--brand-h:240;--brand-text-l:0.99;--color-accent:oklch(var(--brand-l) var(--brand-c) var(--brand-h));--color-accent-hover:oklch(calc(var(--brand-l) - 0.08) var(--brand-c) var(--brand-h));--color-accent-subtle:oklch(0.97 calc(var(--brand-c) * 0.25) var(--brand-h));--color-accent-text:oklch(var(--brand-text-l) 0 0);--color-accent-dark:oklch(calc(var(--brand-l) * 0.5) var(--brand-c) var(--brand-h));--color-accent-dark-text:oklch(0.99 0 0)}
+.portal-screen{position:fixed;inset:0;background:var(--g100);z-index:200;display:none;flex-direction:column;--color-accent:#22252f;--color-accent-hover:#16181f;--color-accent-text:#fff;--color-accent-subtle:#f2f3f7;--color-accent-dark:#e8eaf0;--color-accent-dark-text:#2e3550}
 .portal-screen.open{display:flex}
 
 /* Topbar */
-.p-topbar{background:white;border-bottom:1px solid var(--g200);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:2}
+.p-topbar{background:var(--g50);border-bottom:1px solid var(--g200);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:2}
 .p-logo-area{display:flex;align-items:center;gap:14px}
 .p-logo-box{width:38px;height:38px;border-radius:8px;background:var(--g950);display:flex;align-items:center;justify-content:center;font-family:var(--font-ui);font-weight:700;font-size:14px;color:white;flex-shrink:0}
 .p-name{font-size:18px;font-weight:700;color:var(--g950)}
@@ -19,6 +19,9 @@
 /* Header: hero section */
 .p-header-section{display:flex;flex-direction:column;align-items:center;gap:24px;padding:56px 24px 40px;position:relative;z-index:1}
 .p-portal-logo{height:40px;object-fit:contain;display:block}
+/* SVG logo recolored with currentColor — color token adapts to theme automatically */
+.p-portal-logo-svg{height:40px;color:var(--g900);align-items:center}
+.p-portal-logo-svg svg{height:40px;width:auto;display:block}
 .p-header-texts{display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;max-width:640px;width:100%}
 .p-header-title{font-size:36px;font-weight:700;color:var(--g800);line-height:1.1;font-family:var(--font-ui)}
 .p-header-desc{font-size:16px;color:var(--g600);font-family:var(--font-ui);line-height:1.5}
@@ -95,13 +98,44 @@
 /* Portal folders list mode */
 .p-folders--list{display:block !important;overflow-x:clip;padding-bottom:0}
 
-/* Dark theme: invert gray token scale */
-.portal-screen[data-theme="dark"]{--g50:#22252f;--g100:#2a2f3c;--g200:#3b4255;--g300:#424a62;--g400:#515c78;--g500:#667391;--g600:#8b95ad;--g700:#b0b7c9;--g800:#d5d9e2;--g900:#ecedf2;--g950:#f6f7f9;background:var(--g100)}
-.portal-screen[data-theme="dark"] .p-topbar{background:var(--g50);border-bottom-color:var(--g200)}
-.portal-screen[data-theme="dark"] .p-gradient-blob{background:radial-gradient(ellipse at 55% 45%, rgba(15,18,30,0.7) 0%, rgba(25,30,50,0.35) 45%, transparent 70%)}
+/* Dark theme — --g* tokens overridden in JS; only layout-specific rules here */
+.portal-screen[data-theme="dark"]{background:var(--g100)}
+.portal-screen[data-theme="dark"] .p-gradient-blob{opacity:.3;filter:blur(60px)}
 
-/* Dark theme: download button uses accent color (Figma pattern) */
-.portal-screen[data-theme="dark"] .asset-dl{background:var(--color-accent);backdrop-filter:none;color:var(--color-accent-text)}
+/* Portal parallel masonry */
+.p-masonry-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
+.p-img-card{position:relative;border-radius:8px;overflow:hidden;cursor:pointer}
+.p-img-card img{width:100%;display:block}
+
+/* Download button: always visible, accent bg + guaranteed contrast icon */
+.portal-screen .p-dl-btn{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:50%;background:var(--color-accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:1;transform:none;backdrop-filter:none;transition:transform .15s,opacity .15s;z-index:2}
+.portal-screen .p-dl-btn:hover{transform:scale(1.1);opacity:.85}
+.portal-screen .p-dl-btn .msi{color:var(--color-accent-text);font-size:18px}
+
+/* Secondary CTA button (hidden by default, shown when needed) */
+.p-secondary-cta{display:flex;align-items:center;gap:6px;padding:10px 22px;border-radius:80px;border:none;background:var(--color-accent-dark);color:var(--color-accent-dark-text);font-size:14px;font-family:var(--font-ui);font-weight:500;cursor:pointer;transition:opacity .15s}
+.p-secondary-cta:hover{opacity:.82}
+.p-secondary-cta .msi{font-size:16px}
+
+/* Suppress carpetas hover overlay in portal */
+.portal-screen .asset-hover{display:none}
+
+/* Portal lightbox */
+.p-lightbox{position:absolute;inset:0;z-index:50;display:flex;align-items:center;justify-content:center}
+.p-lb-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.88);cursor:pointer}
+.p-lb-img{position:relative;z-index:1;max-width:90%;max-height:88vh;border-radius:8px;object-fit:contain;user-select:none;display:block;animation:lbIn .18s ease}
+@keyframes lbIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.p-lb-top{position:absolute;top:20px;right:20px;z-index:2;display:flex;gap:8px}
+.p-lb-btn{width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.52);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;transition:background .15s;flex-shrink:0;backdrop-filter:blur(8px)}
+.p-lb-btn:hover{background:rgba(0,0,0,.75)}
+.p-lb-btn:disabled{opacity:.3;cursor:default}
+.p-lb-btn .msi{font-size:22px;color:white}
+.p-lb-dl{background:var(--color-accent)}
+.p-lb-dl:hover{background:var(--color-accent-hover)}
+.p-lb-dl .msi{color:var(--color-accent-text)}
+.p-lb-prev,.p-lb-next{position:absolute;top:50%;transform:translateY(-50%);z-index:2}
+.p-lb-prev{left:20px}
+.p-lb-next{right:20px}
 
 /* Dark theme: active tab uses near-white (not accent) — matches Figma */
 .portal-screen[data-theme="dark"] .p-tab.active{color:var(--g950);border-bottom-color:var(--g950)}

@@ -1,9 +1,11 @@
 // Exports: st (estado del modal), openModal(), closeModal(), showStep(n), goStep(n), tryGoStep(n), selectAccess(), handleAccent(), handleLogo(), toggleInline(), renderFolderList(), toggleFolder(), filterFolders(), copyLink(), onNameInput(), setDoneBtn(), prepareStep4(), resetCopyBtn()
 import { FOLDERS_DATA } from '../../data.js';
+import { generateShadeScale } from '../../utils.js';
 
 export const st = {
   accent: '#22252f', font: 'Google Sans', access: 'public',
   theme: 'light', title: '', desc: '', selectedFolders: new Set(),
+  logoSvgText: '',
 };
 
 export function openModal() {
@@ -22,6 +24,7 @@ export function openModal() {
   document.getElementById('desc-wrap').style.display   = 'none';
   document.getElementById('accent-wrap').style.display = 'none';
   document.getElementById('logo-preview').style.display = 'none';
+  st.logoSvgText = '';
   document.getElementById('color-dot').style.background = '#22252f';
   document.getElementById('color-picker').value = '#22252f';
   document.getElementById('font-sel').value = 'Google Sans';
@@ -38,6 +41,7 @@ export function openModal() {
   renderFolderList('');
   showStep(1);
   checkStep1();
+  _updateAccentPreview();
   document.getElementById('overlay').classList.add('open');
 }
 
@@ -117,6 +121,7 @@ export function handleAccent(val) {
   if (dot) dot.style.background = val;
   if (picker && /^#[0-9a-fA-F]{6}$/.test(val)) picker.value = val;
   _checkContrastWarning();
+  _updateAccentPreview();
 }
 
 export function handleTheme(val) {
@@ -124,6 +129,7 @@ export function handleTheme(val) {
   document.getElementById('theme-light').classList.toggle('active', val === 'light');
   document.getElementById('theme-dark').classList.toggle('active', val === 'dark');
   _checkContrastWarning();
+  _updateAccentPreview();
 }
 
 function _relativeLuminance(hex) {
@@ -143,11 +149,49 @@ function _checkContrastWarning() {
   warn.style.display = show ? '' : 'none';
 }
 
+function _updateAccentPreview() {
+  const strip = document.getElementById('ap-swatches');
+  if (!strip) return;
+
+  const shades = generateShadeScale(st.accent || '#22252f');
+
+  strip.innerHTML = shades.map(s =>
+    `<div style="flex:1;background:${s.css}"></div>`
+  ).join('');
+
+  // Light context always uses 600/100 stops
+  const lp = shades[6], ls = shades[1], lsT = shades[7];
+  _apPreviewBtn('ap-lp', lp.css,  `oklch(${lp.l >= 0.62 ? 0.15 : 0.99} 0 0)`);
+  _apPreviewBtn('ap-ls', ls.css,  lsT.css);
+
+  // Dark context always uses 500/800 stops
+  const dp = shades[5], ds = shades[8], dsT = shades[2];
+  _apPreviewBtn('ap-dp', dp.css,  `oklch(${dp.l >= 0.62 ? 0.15 : 0.99} 0 0)`);
+  _apPreviewBtn('ap-ds', ds.css,  dsT.css);
+}
+
+function _apPreviewBtn(id, bg, color) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.background = bg;
+  el.style.color      = color;
+}
+
 export function handleLogo(input) {
   if (!input.files || !input.files[0]) return;
-  document.getElementById('logo-img').src = URL.createObjectURL(input.files[0]);
+  const file = input.files[0];
+  document.getElementById('logo-img').src = URL.createObjectURL(file);
   document.getElementById('logo-preview').style.display = 'block';
   setDoneBtn('logo-add', true);
+
+  const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
+  if (isSvg) {
+    const reader = new FileReader();
+    reader.onload = e => { st.logoSvgText = e.target.result; };
+    reader.readAsText(file);
+  } else {
+    st.logoSvgText = '';
+  }
 }
 
 export function toggleInline(wrapId, btnId, inputId) {

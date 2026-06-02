@@ -2,7 +2,7 @@
 import { st, closeModal } from './modal.js';
 import { addToTable } from './table.js';
 import { FOLDERS_DATA } from '../../data.js';
-import { getNumCols, positionDropdown } from '../../utils.js';
+import { getNumCols, positionDropdown, generateShadeScale } from '../../utils.js';
 import { uploadedAssets } from '../../session.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
@@ -10,61 +10,62 @@ import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 let _portalFolders      = [];
 let _activeTabIdx       = 0;
 let _portalResizeHandler = null;
+let _lbAssets = [];
+let _lbIdx    = 0;
 
-// ── OKLCH accent system ───────────────────────────────────────────────────────
-function hexToOklch(hex) {
-  hex = hex.replace(/^#/, '');
-  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
-  if (!/^[0-9a-f]{6}$/i.test(hex)) return { L: 0.20, C: 0.02, H: 240 };
+// ── SVG logo recoloring ───────────────────────────────────────────────────────
+function _recolorSvg(svgText) {
+  const doc = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+  if (doc.querySelector('parsererror')) return null;
 
-  const r = parseInt(hex.slice(0, 2), 16) / 255;
-  const g = parseInt(hex.slice(2, 4), 16) / 255;
-  const b = parseInt(hex.slice(4, 6), 16) / 255;
+  const neutral = v => !v || v === 'none' || v === 'transparent';
+  const walk = el => {
+    for (const attr of ['fill', 'stroke']) {
+      if (!neutral(el.getAttribute(attr))) el.setAttribute(attr, 'currentColor');
+    }
+    const s = el.getAttribute('style');
+    if (s) el.setAttribute('style', s
+      .replace(/\bfill\s*:\s*(?!none|transparent)[^;]+/gi, 'fill:currentColor')
+      .replace(/\bstroke\s*:\s*(?!none|transparent)[^;]+/gi, 'stroke:currentColor'));
+    for (const child of el.children) walk(child);
+  };
 
-  const lin = v => v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-  const rl = lin(r), gl = lin(g), bl = lin(b);
-
-  const X = 0.4124564 * rl + 0.3575761 * gl + 0.1804375 * bl;
-  const Y = 0.2126729 * rl + 0.7151522 * gl + 0.0721750 * bl;
-  const Z = 0.0193339 * rl + 0.1191920 * gl + 0.9503041 * bl;
-
-  const lms  = v => Math.sign(v) * Math.pow(Math.abs(v), 1 / 3);
-  const l_ = lms(0.8189330101 * X + 0.3618667424 * Y - 0.1288597137 * Z);
-  const m_ = lms(0.0329845436 * X + 0.9293118715 * Y + 0.0361456387 * Z);
-  const s_ = lms(0.0482003018 * X + 0.2643662691 * Y + 0.6338517070 * Z);
-
-  const La = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
-  const a  = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
-  const bk = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
-
-  const C = Math.sqrt(a * a + bk * bk);
-  let H = (Math.atan2(bk, a) * 180 / Math.PI) % 360;
-  if (H < 0) H += 360;
-  return { L: La, C, H };
+  const root = doc.documentElement;
+  walk(root);
+  root.setAttribute('fill', 'currentColor');
+  root.removeAttribute('width');
+  root.removeAttribute('height');
+  root.setAttribute('aria-hidden', 'true');
+  return new XMLSerializer().serializeToString(doc);
 }
 
+// ── OKLCH accent system ───────────────────────────────────────────────────────
 function _applyPortalTheme(el, accentHex, theme) {
   el.dataset.theme = theme || 'light';
+  const shades = generateShadeScale(accentHex || '#22252f');
+  const isDark  = theme === 'dark';
 
-  let { L, C, H } = hexToOklch(accentHex || '#22252f');
+  // Replace every --g* token with accent-tinted shades.
+  // Light: 50→950 in natural order. Dark: inverted so g50=darkest, g950=lightest.
+  const gNames = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+  gNames.forEach((name, i) => {
+    el.style.setProperty(`--g${name}`, (isDark ? shades[10 - i] : shades[i]).css);
+  });
 
-  // Ensure accent is visible against the theme background
-  if (theme === 'dark') {
-    if (L < 0.55) {
-      L = 0.65;
-      C = Math.max(C, 0.10); // chroma floor: ensures visible color, not just gray
-    }
-  } else {
-    if (L > 0.80) L = 0.70;
-  }
+  // Semantic accent tokens (primary btn, secondary btn, subtle bg)
+  const primary      = shades[isDark ? 5 : 6];   // 500 dark · 600 light
+  const primaryTxt   = `oklch(${primary.l >= 0.62 ? 0.15 : 0.99} 0 0)`;
+  const hover        = shades[isDark ? 4 : 7];   // 400 dark · 700 light
+  const secondary    = shades[isDark ? 8 : 1];   // 800 dark · 100 light
+  const secondaryTxt = shades[isDark ? 2 : 7];   // 200 dark · 700 light
+  const subtle       = shades[isDark ? 10 : 0];  // 950 dark · 50 light
 
-  // Text on accent: light text for dark accent, dark text for light accent
-  const textL = L >= 0.62 ? 0.15 : 0.99;
-
-  el.style.setProperty('--brand-l', L.toFixed(4));
-  el.style.setProperty('--brand-c', C.toFixed(4));
-  el.style.setProperty('--brand-h', H.toFixed(2));
-  el.style.setProperty('--brand-text-l', textL.toFixed(2));
+  el.style.setProperty('--color-accent',           primary.css);
+  el.style.setProperty('--color-accent-hover',     hover.css);
+  el.style.setProperty('--color-accent-text',      primaryTxt);
+  el.style.setProperty('--color-accent-subtle',    subtle.css);
+  el.style.setProperty('--color-accent-dark',      secondary.css);
+  el.style.setProperty('--color-accent-dark-text', secondaryTxt.css);
 }
 
 // ── Public entry points ───────────────────────────────────────────────────────
@@ -122,11 +123,25 @@ function _renderPortal(title, desc, accent, theme, font, logoSrc, folders) {
   portalEl.style.fontFamily = `'${font}', sans-serif`;
   _applyPortalTheme(portalEl, accent, theme);
 
-  const logoArea = portalEl.querySelector('#p-header-logo');
-  const logoImg  = portalEl.querySelector('#p-logo-img');
-  if (logoSrc && logoSrc !== window.location.href && logoArea && logoImg) {
-    logoImg.src = logoSrc;
-    logoArea.style.display = 'block';
+  const logoArea     = portalEl.querySelector('#p-header-logo');
+  const logoImg      = portalEl.querySelector('#p-logo-img');
+  const logoSvgWrap  = portalEl.querySelector('#p-logo-svg');
+
+  if (logoSrc && logoSrc !== window.location.href && logoArea) {
+    if (st.logoSvgText && logoSvgWrap) {
+      const recolored = _recolorSvg(st.logoSvgText);
+      if (recolored) {
+        logoSvgWrap.innerHTML = recolored;
+        logoSvgWrap.style.display = 'flex';
+        if (logoImg) logoImg.style.display = 'none';
+        logoArea.style.display = 'block';
+      }
+    } else if (logoImg) {
+      logoImg.src = logoSrc;
+      logoImg.style.display = 'block';
+      if (logoSvgWrap) logoSvgWrap.style.display = 'none';
+      logoArea.style.display = 'block';
+    }
   } else if (logoArea) {
     logoArea.style.display = 'none';
   }
@@ -200,19 +215,22 @@ function _renderMasonry(rawAssets) {
   assets.forEach((a, i) => cols[i % numCols].push({ a, i }));
 
   masonry.innerHTML = cols.map(col =>
-    `<div class="masonry-col">${col.map(({ a, i }) =>
-      `<div class="asset-card" data-section="portal" data-idx="${i}">
-        <img src="${a.src}" decoding="async" style="width:100%;display:block;border-radius:8px">
-        <div class="asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
-          <span class="msi sm">download</span>
-        </div>
-        <div class="asset-hover">
-          <div class="asset-name">${a.name}</div>
-          <div class="asset-meta"><span>${a.ext}</span><span>${a.size}</span></div>
-        </div>
+    `<div class="p-masonry-col">${col.map(({ a, i }) =>
+      `<div class="p-img-card" data-idx="${i}">
+        <img src="${a.src}" decoding="async" loading="lazy">
+        <button class="p-dl-btn asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
+          <span class="msi">download</span>
+        </button>
       </div>`
     ).join('')}</div>`
   ).join('');
+
+  masonry.querySelectorAll('.p-img-card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('.p-dl-btn')) return;
+      _openLightbox(assets, parseInt(card.dataset.idx));
+    });
+  });
 }
 
 // ── Resize ────────────────────────────────────────────────────────────────────
@@ -424,6 +442,53 @@ export function clearDorsalSearch() {
   _renderTabs();
 }
 
+// ── Lightbox ──────────────────────────────────────────────────────────────────
+function _openLightbox(assets, idx) {
+  _lbAssets = assets;
+  _lbIdx    = idx;
+  _lbUpdate();
+  document.getElementById('p-lightbox').style.display = 'flex';
+}
+
+function _closeLightbox() {
+  document.getElementById('p-lightbox').style.display = 'none';
+}
+
+function _lbUpdate() {
+  const a = _lbAssets[_lbIdx];
+  if (!a) return;
+  document.getElementById('p-lb-img').src = a.src;
+  const dlBtn = document.getElementById('p-lb-dl');
+  dlBtn.dataset.url      = a.originalUrl;
+  dlBtn.dataset.filename = `${a.name}.${a.ext.toLowerCase()}`;
+  document.getElementById('p-lb-prev').disabled = _lbIdx === 0;
+  document.getElementById('p-lb-next').disabled = _lbIdx === _lbAssets.length - 1;
+}
+
+function _initPortalLightbox() {
+  document.getElementById('p-lb-backdrop').addEventListener('click', _closeLightbox);
+  document.getElementById('p-lb-close').addEventListener('click', _closeLightbox);
+  document.getElementById('p-lb-prev').addEventListener('click', () => {
+    if (_lbIdx > 0) { _lbIdx--; _lbUpdate(); }
+  });
+  document.getElementById('p-lb-next').addEventListener('click', () => {
+    if (_lbIdx < _lbAssets.length - 1) { _lbIdx++; _lbUpdate(); }
+  });
+  document.getElementById('p-lb-dl').addEventListener('click', () => {
+    const btn = document.getElementById('p-lb-dl');
+    const a = document.createElement('a');
+    a.href = btn.dataset.url;
+    a.download = btn.dataset.filename || 'download';
+    a.click();
+  });
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('p-lightbox').style.display === 'none') return;
+    if (e.key === 'ArrowLeft')  { if (_lbIdx > 0) { _lbIdx--; _lbUpdate(); } }
+    if (e.key === 'ArrowRight') { if (_lbIdx < _lbAssets.length - 1) { _lbIdx++; _lbUpdate(); } }
+    if (e.key === 'Escape') _closeLightbox();
+  });
+}
+
 // ── Animation ─────────────────────────────────────────────────────────────────
 function _animatePortalIn() {
   const screen = document.getElementById('portalScreen');
@@ -439,3 +504,4 @@ function _animatePortalIn() {
 }
 
 initPortalSearch();
+_initPortalLightbox();

@@ -362,6 +362,25 @@
             <input type="text" id="inp-accent" placeholder="#22252f" oninput="handleAccent(this.value)" style="flex:1"/>
           </div>
         </div>
+        <div id="accent-preview" class="ap-wrap">
+          <div id="ap-swatches" style="display:flex;height:18px"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr">
+            <div class="ap-body ap-body-light">
+              <span class="ap-label">Light</span>
+              <div class="ap-btns">
+                <button class="ap-btn" id="ap-lp">Primary</button>
+                <button class="ap-btn" id="ap-ls">Secondary</button>
+              </div>
+            </div>
+            <div class="ap-body ap-body-dark">
+              <span class="ap-label">Dark</span>
+              <div class="ap-btns">
+                <button class="ap-btn" id="ap-dp">Primary</button>
+                <button class="ap-btn" id="ap-ds">Secondary</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="t-row">
           <div class="t-info"><span class="t-label">Tema</span><span class="t-hint">Apariencia del portal</span></div>
           <div class="theme-toggle-btns">
@@ -431,7 +450,10 @@
   <div class="p-body">
     <div class="p-gradient-blob"></div>
     <div class="p-header-section">
-      <div id="p-header-logo" style="display:none"><img id="p-logo-img" src="" alt="Logo" class="p-portal-logo"></div>
+      <div id="p-header-logo" style="display:none">
+        <img id="p-logo-img" class="p-portal-logo" src="" alt="Logo">
+        <div id="p-logo-svg" class="p-portal-logo-svg" style="display:none"></div>
+      </div>
       <div class="p-header-texts">
         <div class="p-header-title" id="p-hero-title">Nombre del Portal</div>
         <div class="p-header-desc" id="p-hero-sub">Descripción del portal</div>
@@ -447,6 +469,9 @@
           <button class="p-dorsal-btn" id="p-dorsal-btn" onclick="handleDorsalSearch()"><span class="msi sm">search</span></button>
         </div>
       </div>
+      <button class="p-secondary-cta" id="p-secondary-cta" style="display:none">
+        <span class="msi" style="font-size:16px">download</span>Descargar todo
+      </button>
       <div id="p-search-suggestions" class="search-suggestions" style="display:none"></div>
       <div class="p-active-chip-area" id="p-active-chip-area" style="display:none">
         <button class="p-filter-chip" id="p-chip-faceid"><span class="msi xs">ar_on_you</span>Face ID</button>
@@ -460,6 +485,16 @@
     <div class="p-section p-content-section" id="p-content-section">
       <div class="p-masonry" id="p-masonry"></div>
     </div>
+  </div>
+  <div id="p-lightbox" class="p-lightbox" style="display:none">
+    <div class="p-lb-backdrop" id="p-lb-backdrop"></div>
+    <img id="p-lb-img" class="p-lb-img" src="" alt="">
+    <div class="p-lb-top">
+      <button class="p-lb-btn p-lb-dl" id="p-lb-dl"><span class="msi">download</span></button>
+      <button class="p-lb-btn p-lb-close" id="p-lb-close"><span class="msi">close</span></button>
+    </div>
+    <button class="p-lb-btn p-lb-prev" id="p-lb-prev"><span class="msi">chevron_left</span></button>
+    <button class="p-lb-btn p-lb-next" id="p-lb-next"><span class="msi">chevron_right</span></button>
   </div>
 </div>
 
