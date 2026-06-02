@@ -1,5 +1,6 @@
 // Exports: addToTable(title, fCount, photoCount, accent, folderIds, dateStr?, silent?) — inserta fila en tabla de portales y persiste en session
 import { pushPortal } from '../../session.js';
+import { showToast } from '../../components/ui/toast.js';
 
 export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr, silent) {
   const today = new Date();
@@ -28,7 +29,93 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
     <div class="col">${d}</div>
     <div class="col" style="display:flex;align-items:center;gap:12px">
       <span style="flex:1">Tú</span>
-      <button class="more-btn"><span class="msi xs">more_horiz</span></button>
+      <button class="more-btn portal-more-btn"><span class="msi xs">more_horiz</span></button>
     </div>`;
   document.querySelector('#portalsTable .table-head').after(row);
 }
+
+// ── Portal row dropdown (event delegation — one listener for all rows) ────────
+let _portalMenu      = null;
+let _portalMenuAnchor = null;
+
+function _initPortalMenu() {
+  _portalMenu = document.createElement('div');
+  _portalMenu.className = 'ctx-menu';
+  _portalMenu.innerHTML = `
+    <button class="ctx-item ctx-item--danger" data-action="delete">
+      <span class="msi xs" style="color:#e53e3e;vertical-align:middle;margin-right:4px">delete</span>Eliminar
+    </button>`;
+  document.body.appendChild(_portalMenu);
+
+  _portalMenu.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const anchor = _portalMenuAnchor;
+    _closePortalMenu();
+    if (btn.dataset.action === 'delete') _deletePortalRow(anchor);
+  });
+}
+
+function _openPortalMenu(anchorBtn) {
+  _portalMenuAnchor = anchorBtn;
+
+  const rect = anchorBtn.getBoundingClientRect();
+  const mw = 160, mh = 52;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let x = rect.right - mw;
+  let y = rect.bottom + 4;
+  if (x < 8) x = 8;
+  if (y + mh > vh) y = rect.top - mh - 4;
+
+  _portalMenu.style.left = x + 'px';
+  _portalMenu.style.top  = y + 'px';
+  _portalMenu.classList.add('open');
+}
+
+function _closePortalMenu() {
+  _portalMenu?.classList.remove('open');
+  _portalMenuAnchor = null;
+}
+
+function _deletePortalRow(anchor) {
+  const row = anchor?.closest('.table-row');
+  if (!row) return;
+  const title = row.dataset.portalTitle || 'Portal';
+  row.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+  row.style.opacity    = '0';
+  row.style.transform  = 'scale(0.97)';
+  setTimeout(() => row.remove(), 220);
+  showToast(`"${title}" eliminado`);
+}
+
+// Single delegated listener on document — handles all .portal-more-btn clicks
+document.addEventListener('click', e => {
+  // Close menu if click is outside it
+  if (_portalMenu?.classList.contains('open') && !_portalMenu.contains(e.target)) {
+    const isMoreBtn = e.target.closest('.portal-more-btn');
+    if (!isMoreBtn || isMoreBtn !== _portalMenuAnchor) {
+      _closePortalMenu();
+      if (isMoreBtn) return; // will be handled below
+    }
+  }
+
+  const btn = e.target.closest('.portal-more-btn');
+  if (!btn) return;
+  e.stopPropagation();
+
+  if (!_portalMenu) _initPortalMenu();
+
+  if (_portalMenu.classList.contains('open') && _portalMenuAnchor === btn) {
+    _closePortalMenu();
+  } else {
+    _openPortalMenu(btn);
+  }
+});
+
+// Also mark static HTML rows' more-btns with the portal class on load
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#portalsTable .table-row .more-btn:not(.portal-more-btn)').forEach(btn => {
+    btn.classList.add('portal-more-btn');
+  });
+});

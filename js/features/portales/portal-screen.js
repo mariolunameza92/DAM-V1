@@ -1,222 +1,183 @@
-// Exports: openPortal(), closePortal(), openPortalFromRow()
+// Exports: openPortal(), closePortal(), openPortalFromRow(), handleDorsalSearch(), clearDorsalSearch()
 import { st, closeModal } from './modal.js';
 import { addToTable } from './table.js';
-import { FOLDERS_DATA, FOLDER_IMAGES } from '../../data.js';
-import { folderSVG, getNumCols, positionDropdown } from '../../utils.js';
-import { uploadedAssets, userUploadedAssets } from '../../session.js';
-import { thumbsHTML } from '../shared/folder-card.js';
+import { FOLDERS_DATA } from '../../data.js';
+import { getNumCols, positionDropdown } from '../../utils.js';
+import { uploadedAssets } from '../../session.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 
 let _portalFolders      = [];
-let _folderAssets       = [];
-let _folderView         = 'grid';
-let _topFoldersView     = 'grid';
-let _archivosView       = 'grid';
-let _activePortalFaceId = null;
-let _faceActiveInFolder = false;
-
+let _activeTabIdx       = 0;
 let _portalResizeHandler = null;
 
+// ── OKLCH accent system ───────────────────────────────────────────────────────
+function hexToOklch(hex) {
+  hex = hex.replace(/^#/, '');
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  if (!/^[0-9a-f]{6}$/i.test(hex)) return { L: 0.20, C: 0.02, H: 240 };
+
+  const r = parseInt(hex.slice(0, 2), 16) / 255;
+  const g = parseInt(hex.slice(2, 4), 16) / 255;
+  const b = parseInt(hex.slice(4, 6), 16) / 255;
+
+  const lin = v => v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  const rl = lin(r), gl = lin(g), bl = lin(b);
+
+  const X = 0.4124564 * rl + 0.3575761 * gl + 0.1804375 * bl;
+  const Y = 0.2126729 * rl + 0.7151522 * gl + 0.0721750 * bl;
+  const Z = 0.0193339 * rl + 0.1191920 * gl + 0.9503041 * bl;
+
+  const lms  = v => Math.sign(v) * Math.pow(Math.abs(v), 1 / 3);
+  const l_ = lms(0.8189330101 * X + 0.3618667424 * Y - 0.1288597137 * Z);
+  const m_ = lms(0.0329845436 * X + 0.9293118715 * Y + 0.0361456387 * Z);
+  const s_ = lms(0.0482003018 * X + 0.2643662691 * Y + 0.6338517070 * Z);
+
+  const La = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+  const a  = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+  const bk = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+  const C = Math.sqrt(a * a + bk * bk);
+  let H = (Math.atan2(bk, a) * 180 / Math.PI) % 360;
+  if (H < 0) H += 360;
+  return { L: La, C, H };
+}
+
+function _applyPortalTheme(el, accentHex, theme) {
+  el.dataset.theme = theme || 'light';
+
+  let { L, C, H } = hexToOklch(accentHex || '#22252f');
+
+  // Ensure accent is visible against the theme background
+  if (theme === 'dark') {
+    if (L < 0.55) {
+      L = 0.65;
+      C = Math.max(C, 0.10); // chroma floor: ensures visible color, not just gray
+    }
+  } else {
+    if (L > 0.80) L = 0.70;
+  }
+
+  // Text on accent: light text for dark accent, dark text for light accent
+  const textL = L >= 0.62 ? 0.15 : 0.99;
+
+  el.style.setProperty('--brand-l', L.toFixed(4));
+  el.style.setProperty('--brand-c', C.toFixed(4));
+  el.style.setProperty('--brand-h', H.toFixed(2));
+  el.style.setProperty('--brand-text-l', textL.toFixed(2));
+}
+
+// ── Public entry points ───────────────────────────────────────────────────────
 export function openPortal() {
-  const rawName  = document.getElementById('inp-name').value.trim() || 'Mi Portal';
-  const title    = st.title  || rawName;
-  const desc     = st.desc   || 'Selección de recursos para compartir';
-  const accent   = st.accent;
-  const font     = document.getElementById('font-sel').value;
+  const rawName = document.getElementById('inp-name').value.trim() || 'Mi Portal';
+  const title   = st.title  || rawName;
+  const desc    = st.desc   || 'Selección de recursos para compartir';
+  const accent  = st.accent;
+  const theme   = st.theme || 'light';
+  const font    = document.getElementById('font-sel').value;
+  const logoSrc = document.getElementById('logo-img')?.src || '';
   const selected = FOLDERS_DATA.filter(f => st.selectedFolders.has(f.id));
 
-  _renderPortal(title, desc, accent, font, selected);
-
+  _renderPortal(title, desc, accent, theme, font, logoSrc, selected);
   closeModal();
   document.getElementById('portalScreen').classList.add('open');
   document.getElementById('appShell').style.display = 'none';
   addToTable(title, selected.length, selected.length * 4, accent, selected.map(f => f.id));
   _animatePortalIn();
-  _attachPortalResize(selected);
+  _attachPortalResize();
 }
 
 export function openPortalFromRow(title, accent, folderIds = []) {
   const folders = folderIds.length > 0
     ? FOLDERS_DATA.filter(f => folderIds.includes(f.id))
     : FOLDERS_DATA;
-  _renderPortal(title, 'Selección de recursos para compartir', accent, 'Google Sans', folders);
+  _renderPortal(title, 'Selección de recursos para compartir', accent, 'light', 'Google Sans', '', folders);
   document.getElementById('portalScreen').classList.add('open');
   document.getElementById('appShell').style.display = 'none';
   _animatePortalIn();
-  _attachPortalResize(folders);
+  _attachPortalResize();
 }
 
-function _attachPortalResize(folders) {
-  if (_portalResizeHandler) window.removeEventListener('resize', _portalResizeHandler);
-  let _cols = getNumCols();
-  _portalResizeHandler = () => {
-    const next = getNumCols();
-    if (next !== _cols) {
-      _cols = next;
-      const allAssets = folders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
-      _renderMasonry(allAssets);
-      if (_folderView === 'grid') _renderFolderContent();
-    }
-  };
-  window.addEventListener('resize', _portalResizeHandler);
+export function closePortal() {
+  if (new URLSearchParams(location.search).get('portal') === '1') {
+    window.close();
+    return;
+  }
+  document.getElementById('portalScreen').classList.remove('open');
+  document.getElementById('appShell').style.display = 'flex';
+  if (_portalResizeHandler) {
+    window.removeEventListener('resize', _portalResizeHandler);
+    _portalResizeHandler = null;
+  }
 }
 
-function _renderPortal(title, desc, accent, font, folders) {
-  _portalFolders   = folders;
-  _topFoldersView  = 'grid';
-  _folderView      = 'grid';
-  _archivosView    = 'grid';
+// ── Core render ───────────────────────────────────────────────────────────────
+function _renderPortal(title, desc, accent, theme, font, logoSrc, folders) {
+  _portalFolders = folders;
+  _activeTabIdx  = 0;
 
+  const portalEl = document.getElementById('portalScreen');
   document.getElementById('p-hero-title').textContent = title;
   document.getElementById('p-hero-sub').textContent   = desc;
-  document.getElementById('portalScreen').style.fontFamily = `'${font}', sans-serif`;
+  portalEl.style.fontFamily = `'${font}', sans-serif`;
+  _applyPortalTheme(portalEl, accent, theme);
 
-  _removeFacePortal();
-  _exitFolder(false);
-  _renderTopFolders();
-
-  // Archivos masonry — real images from all folders
-  const allAssets = folders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
-  _renderMasonry(allAssets);
-
-  // Reset archivos toggle
-  document.getElementById('p-toggle-archivos-grid')?.classList.add('active');
-  document.getElementById('p-toggle-archivos-list')?.classList.remove('active');
-}
-
-// ── Top-level folders render ──────────────────────────────────────────────────
-function _renderTopFolders() {
-  const el = document.getElementById('p-folders');
-  if (!el) return;
-
-  if (_topFoldersView === 'grid') {
-    el.style.display = '';
-    el.style.overflowX = '';   // restaura overflow-x:auto del CSS
-    el.className = 'p-folders';
-    el.innerHTML = _portalFolders.map(f => {
-      const id = f.imageId || f.id;
-      return `<div class="p-folder" data-folder-id="${id}" data-folder-name="${f.name}">
-        <div class="folder-vis">
-          ${folderSVG()}
-          <div class="folder-thumbs">${thumbsHTML(id)}</div>
-        </div>
-        <div class="p-folder-name">${f.name}</div>
-      </div>`;
-    }).join('');
-  } else {
-    el.style.display = 'block';
-    el.style.overflowX = 'clip';  // clip sin crear scroll container (evita forzar overflow-y:auto)
-    el.className = 'p-folders p-folders--list';
-    el.innerHTML = _portalFolders.map(f => {
-      const id = f.imageId || f.id;
-      const source = (userUploadedAssets[id] && userUploadedAssets[id].length > 0)
-        ? userUploadedAssets[id] : (uploadedAssets[id] || []);
-      const demoImgs = FOLDER_IMAGES[id] || [];
-      const firstSrc = source[0]?.thumb || demoImgs[0] || '';
-      return `<div class="folder-row" data-folder-id="${id}" data-folder-name="${f.name}">
-        <div class="folder-row-thumb">${firstSrc ? `<img src="${firstSrc}" loading="lazy" decoding="async">` : ''}</div>
-        <span class="folder-row-name">${f.name}</span>
-        <span class="folder-row-arrow"><span class="msi xs">chevron_right</span></span>
-      </div>`;
-    }).join('');
-  }
-  _attachFolderClicks();
-}
-
-function _attachFolderClicks() {
-  document.querySelectorAll('#p-folders [data-folder-id]').forEach(el => {
-    el.addEventListener('click', () => _enterFolder(el.dataset.folderId, el.dataset.folderName));
-  });
-}
-
-function _enterFolder(folderId, folderName) {
-  _folderAssets = uploadedAssets[folderId] || [];
-  _folderView   = 'grid';
-
-  document.getElementById('p-foldersTitle').textContent      = folderName;
-  document.getElementById('p-foldersBack').style.display     = 'flex';
-  document.getElementById('p-folders').style.display         = 'none';
-  document.getElementById('p-section-archivos').style.display = 'none';
-  document.getElementById('p-folder-files').style.display    = 'block';
-
-  _setToggleActive('grid');
-  _renderFolderContent();
-}
-
-function _exitFolder(restoreAll = true) {
-  _folderAssets = [];
-
-  if (_faceActiveInFolder) {
-    _activePortalFaceId = null; _portalFaceAssets = []; _portalFaceName = '';
-    _faceActiveInFolder = false;
-    _clearFacePortalChip();
-    document.getElementById('p-face-folder-count').style.display = 'none';
+  const logoArea = portalEl.querySelector('#p-header-logo');
+  const logoImg  = portalEl.querySelector('#p-logo-img');
+  if (logoSrc && logoSrc !== window.location.href && logoArea && logoImg) {
+    logoImg.src = logoSrc;
+    logoArea.style.display = 'block';
+  } else if (logoArea) {
+    logoArea.style.display = 'none';
   }
 
-  document.getElementById('p-foldersTitle').textContent       = 'Carpetas';
-  document.getElementById('p-foldersBack').style.display      = 'none';
-  document.getElementById('p-section-archivos').style.display = 'block';
-  document.getElementById('p-section-carpetas').style.display = 'block';
-  document.getElementById('p-folder-files').style.display     = 'none';
-  document.getElementById('p-folder-files').innerHTML         = '';
-  document.getElementById('p-folder-view-toggle').style.display = 'flex';
-  _setToggleActive(_topFoldersView);
+  _clearFacePortalChip();
+  _clearDorsalState();
+  document.getElementById('p-face-results').style.display = 'none';
+  document.getElementById('p-face-results').innerHTML     = '';
+  document.getElementById('p-active-chip-area').style.display = 'none';
+  document.getElementById('p-content-section').style.display  = '';
 
-  if (restoreAll) {
-    _renderTopFolders();
-    const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
-    _renderMasonry(allAssets);
-  }
+  _renderTabs();
 }
 
-function _setToggleActive(view) {
-  document.getElementById('p-toggle-grid').classList.toggle('active', view === 'grid');
-  document.getElementById('p-toggle-list').classList.toggle('active', view === 'list');
-}
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function _renderTabs() {
+  const tabsSection = document.getElementById('p-tabs-section');
+  const tabsBar     = document.getElementById('p-tabs-bar');
 
-function _setArchivosToggleActive(view) {
-  document.getElementById('p-toggle-archivos-grid')?.classList.toggle('active', view === 'grid');
-  document.getElementById('p-toggle-archivos-list')?.classList.toggle('active', view === 'list');
-}
-
-function _renderFolderContent() {
-  const el = document.getElementById('p-folder-files');
-  if (!el) return;
-
-  if (_folderAssets.length === 0) {
-    el.innerHTML = `<div style="color:var(--g500);font-size:14px;padding:24px 0;font-family:var(--font-ui)">Las imágenes demo cargan en un momento…</div>`;
+  if (_portalFolders.length <= 1) {
+    tabsSection.style.display = 'none';
+    const folder = _portalFolders[0];
+    const assets = folder ? (uploadedAssets[folder.imageId || folder.id] || []) : [];
+    _renderMasonry(assets);
     return;
   }
 
-  const assets = _folderAssets.map(a => ({
-    src: a.preview, ext: a.ext.toUpperCase(),
-    size: a.sizeStr, name: a.name,
-    originalUrl: a.originalUrl || a.preview,
-  }));
-  registerSection('portal', assets);
+  tabsSection.style.display = '';
+  tabsBar.innerHTML = _portalFolders.map((f, i) =>
+    `<button class="p-tab${i === 0 ? ' active' : ''}" data-tab-idx="${i}">${f.name}</button>`
+  ).join('');
 
-  if (_folderView === 'grid') {
-    const numCols = getNumCols();
-    const cols = Array.from({ length: numCols }, () => []);
-    assets.forEach((a, i) => cols[i % numCols].push({ a, i }));
-    el.innerHTML = `<div class="p-masonry">${cols.map(col =>
-      `<div class="masonry-col">${col.map(({ a, i }) =>
-        `<div class="asset-card" data-section="portal" data-idx="${i}">
-          <img src="${a.src}" decoding="async" style="width:100%;display:block;border-radius:8px">
-          <div class="asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
-            <span class="msi sm">download</span>
-          </div>
-          <div class="asset-hover">
-            <div class="asset-name">${a.name}</div>
-            <div class="asset-meta"><span>${a.ext}</span><span>${a.size}</span></div>
-          </div>
-        </div>`
-      ).join('')}</div>`
-    ).join('')}</div>`;
-  } else {
-    el.innerHTML = `<div class="file-list">${assets.map((a, i) => assetListRowHTML(a, 'portal', i)).join('')}</div>`;
-  }
+  tabsBar.querySelectorAll('.p-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.tabIdx);
+      if (idx === _activeTabIdx) return;
+      _activeTabIdx = idx;
+      tabsBar.querySelectorAll('.p-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      _renderActiveTab();
+    });
+  });
+
+  _renderActiveTab();
+}
+
+function _renderActiveTab() {
+  const folder = _portalFolders[_activeTabIdx];
+  if (!folder) return;
+  const assets = uploadedAssets[folder.imageId || folder.id] || [];
+  _renderMasonry(assets);
 }
 
 function _renderMasonry(rawAssets) {
@@ -229,21 +190,13 @@ function _renderMasonry(rawAssets) {
   }
 
   const assets = rawAssets.map(a => ({
-    src: a.preview,
-    ext: a.ext.toUpperCase(),
-    size: a.sizeStr,
-    name: a.name,
-    originalUrl: a.originalUrl || a.preview,
+    src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
+    name: a.name, originalUrl: a.originalUrl || a.preview,
   }));
   registerSection('portal', assets);
 
-  if (_archivosView === 'list') {
-    masonry.innerHTML = `<div class="file-list">${assets.map((a, i) => assetListRowHTML(a, 'portal', i)).join('')}</div>`;
-    return;
-  }
-
   const numCols = getNumCols();
-  const cols = Array.from({ length: numCols }, () => []);
+  const cols    = Array.from({ length: numCols }, () => []);
   assets.forEach((a, i) => cols[i % numCols].push({ a, i }));
 
   masonry.innerHTML = cols.map(col =>
@@ -262,33 +215,39 @@ function _renderMasonry(rawAssets) {
   ).join('');
 }
 
-// ── Portal search & Face ID filter ───────────────────────────────────────────
+// ── Resize ────────────────────────────────────────────────────────────────────
+function _attachPortalResize() {
+  if (_portalResizeHandler) window.removeEventListener('resize', _portalResizeHandler);
+  let _cols = getNumCols();
+  _portalResizeHandler = () => {
+    const next = getNumCols();
+    if (next !== _cols) { _cols = next; _renderActiveTab(); }
+  };
+  window.addEventListener('resize', _portalResizeHandler);
+}
+
+// ── Face ID search ────────────────────────────────────────────────────────────
 function initPortalSearch() {
-  const input        = document.getElementById('p-search-input');
+  const input         = document.getElementById('p-search-input');
   const suggestionsEl = document.getElementById('p-search-suggestions');
   if (!input || !suggestionsEl) return;
 
   document.body.appendChild(suggestionsEl);
 
   let activeIdx = -1;
-
   function items() { return Array.from(suggestionsEl.querySelectorAll('.search-suggestion')); }
   function highlight(idx) { items().forEach((el, i) => el.classList.toggle('kb-active', i === idx)); activeIdx = idx; }
-
   function hide() { suggestionsEl.style.display = 'none'; suggestionsEl.innerHTML = ''; activeIdx = -1; }
-
   function select(face) { input.value = ''; hide(); _activeFacePortal(face.id, face.name, face.imgSrc); }
 
   input.addEventListener('input', () => {
     const q = input.value.trim().toLowerCase();
     if (!q) { hide(); return; }
-
     const faces = Array.from(document.querySelectorAll('.face-av[data-face-id]')).map(el => ({
       id: el.dataset.faceId, name: el.dataset.faceName, imgSrc: el.querySelector('img')?.src,
     }));
     const matches = faces.filter(f => f.name.toLowerCase().includes(q));
     if (!matches.length) { hide(); return; }
-
     activeIdx = -1;
     suggestionsEl.innerHTML = matches.map(f =>
       `<div class="search-suggestion" data-face-id="${f.id}">
@@ -307,8 +266,8 @@ function initPortalSearch() {
   input.addEventListener('keydown', e => {
     const list = items();
     if (!list.length) return;
-    if (e.key === 'ArrowDown')  { e.preventDefault(); highlight(Math.min(activeIdx + 1, list.length - 1)); }
-    else if (e.key === 'ArrowUp')   { e.preventDefault(); highlight(Math.max(activeIdx - 1, 0)); }
+    if (e.key === 'ArrowDown')    { e.preventDefault(); highlight(Math.min(activeIdx + 1, list.length - 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); highlight(Math.max(activeIdx - 1, 0)); }
     else if (e.key === 'Enter') {
       e.preventDefault();
       const idx    = activeIdx >= 0 ? activeIdx : 0;
@@ -325,7 +284,7 @@ function initPortalSearch() {
 }
 
 function _clearFacePortalChip() {
-  const active = document.querySelector('#portalScreen .face-chip-active');
+  const active = document.querySelector('#portalScreen .face-chip-active:not(#p-dorsal-chip)');
   if (!active) return;
   const btn = document.createElement('button');
   btn.id = 'p-chip-faceid'; btn.className = 'p-filter-chip';
@@ -334,9 +293,7 @@ function _clearFacePortalChip() {
 }
 
 function _activeFacePortal(id, name, imgSrc) {
-  _activePortalFaceId = id;
-  _faceActiveInFolder = _folderAssets.length > 0;
-
+  _clearDorsalState();
   const chip = document.getElementById('p-chip-faceid');
   if (!chip) return;
   const active = document.createElement('div');
@@ -347,30 +304,17 @@ function _activeFacePortal(id, name, imgSrc) {
     `<button class="face-chip-remove"><span class="msi xs">close</span></button>`;
   active.querySelector('.face-chip-remove').addEventListener('click', _removeFacePortal);
   chip.replaceWith(active);
-
+  document.getElementById('p-active-chip-area').style.display = 'flex';
   _renderPortalFaceResults(id, name);
 }
 
 function _removeFacePortal() {
-  const wasInFolder   = _faceActiveInFolder;
-  _activePortalFaceId = null;
-  _portalFaceAssets   = [];
-  _portalFaceName     = '';
-  _faceActiveInFolder = false;
-
   _clearFacePortalChip();
-
-  if (wasInFolder) {
-    document.getElementById('p-folder-view-toggle').style.display = 'flex';
-    const countEl = document.getElementById('p-face-folder-count');
-    countEl.style.display = 'none'; countEl.innerHTML = '';
-    _renderFolderContent();
-  } else {
-    document.getElementById('p-section-carpetas').style.display = 'block';
-    document.getElementById('p-section-archivos').style.display = 'block';
-    const results = document.getElementById('p-face-results');
-    if (results) { results.style.display = 'none'; results.innerHTML = ''; }
-  }
+  document.getElementById('p-active-chip-area').style.display = 'none';
+  const results = document.getElementById('p-face-results');
+  if (results) { results.style.display = 'none'; results.innerHTML = ''; }
+  document.getElementById('p-content-section').style.display = '';
+  _renderTabs();
 }
 
 let _portalFaceAssets = [];
@@ -378,11 +322,8 @@ let _portalFaceName   = '';
 let _portalFaceView   = 'grid';
 
 function _renderPortalFaceResults(id, name) {
-  const source = _faceActiveInFolder
-    ? _folderAssets
-    : _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
-  const picks = source.filter(a => a.faceIds && a.faceIds.includes(id));
-
+  const source = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  const picks  = source.filter(a => a.faceIds && a.faceIds.includes(id));
   _portalFaceName   = name;
   _portalFaceView   = 'grid';
   _portalFaceAssets = picks.map(a => ({
@@ -391,12 +332,9 @@ function _renderPortalFaceResults(id, name) {
   }));
   if (_portalFaceAssets.length > 0) registerSection('portal-faces', _portalFaceAssets);
 
-  _faceActiveInFolder ? _showPortalFaceInFolder() : _showPortalFaceDefault();
-}
+  document.getElementById('p-tabs-section').style.display    = 'none';
+  document.getElementById('p-content-section').style.display = 'none';
 
-function _showPortalFaceDefault() {
-  document.getElementById('p-section-carpetas').style.display = 'none';
-  document.getElementById('p-section-archivos').style.display = 'none';
   const el = document.getElementById('p-face-results');
   if (!el) return;
   if (_portalFaceAssets.length === 0) {
@@ -407,27 +345,12 @@ function _showPortalFaceDefault() {
   el.style.display = '';
 }
 
-function _showPortalFaceInFolder() {
-  document.getElementById('p-folder-view-toggle').style.display = 'none';
-  const countEl = document.getElementById('p-face-folder-count');
-  countEl.innerHTML = `<span class="msi xs">ar_on_you</span>&nbsp;${_portalFaceAssets.length} resultados para <strong>${_portalFaceName}</strong>`;
-  countEl.style.display = 'flex';
-
-  const el = document.getElementById('p-folder-files');
-  el.style.display = 'block';
-  el.innerHTML = _portalFaceAssets.length > 0
-    ? `<div class="face-results-grid">${_portalFaceAssets.map((a, i) => assetCardHTML(a, 'portal-faces', i)).join('')}</div>`
-    : `<div style="color:var(--g500);font-size:14px;padding:24px 0;font-family:var(--font-ui)">No hay imágenes disponibles.</div>`;
-}
-
 function _drawPortalFaceResults(el) {
   const assets = _portalFaceAssets;
   const name   = _portalFaceName;
-
   const contentHTML = _portalFaceView === 'grid'
     ? `<div class="face-results-grid">${assets.map((a, i) => assetCardHTML(a, 'portal-faces', i)).join('')}</div>`
     : `<div class="file-list">${assets.map((a, i) => assetListRowHTML(a, 'portal-faces', i)).join('')}</div>`;
-
   el.innerHTML =
     `<div class="face-results-header-row">
       <div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${assets.length} resultados para <strong>${name}</strong></div>
@@ -436,7 +359,6 @@ function _drawPortalFaceResults(el) {
         <button class="p-view-btn ${_portalFaceView === 'list' ? 'active' : ''}" data-pfv="list"><span class="msi xs">lists</span></button>
       </div>
     </div>` + contentHTML;
-
   el.querySelectorAll('.p-view-btn[data-pfv]').forEach(btn => {
     btn.addEventListener('click', () => {
       if (_portalFaceView === btn.dataset.pfv) return;
@@ -446,13 +368,70 @@ function _drawPortalFaceResults(el) {
   });
 }
 
+// ── Dorsal search ─────────────────────────────────────────────────────────────
+export function handleDorsalSearch() {
+  const input = document.getElementById('p-dorsal-input');
+  const val   = input?.value.trim();
+  if (!val) return;
+  input.value = '';
+
+  _clearFacePortalChip();
+
+  const chip = document.getElementById('p-dorsal-chip');
+  if (chip) {
+    chip.style.display = 'flex';
+    chip.innerHTML =
+      `<span class="msi xs" style="color:var(--g600)">tag</span>` +
+      `<span class="face-chip-name">Dorsal #${val}</span>` +
+      `<button class="face-chip-remove" onclick="clearDorsalSearch()"><span class="msi xs">close</span></button>`;
+  }
+  document.getElementById('p-active-chip-area').style.display = 'flex';
+  document.getElementById('p-tabs-section').style.display    = 'none';
+  document.getElementById('p-content-section').style.display = 'none';
+
+  const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  const assets = allAssets.map(a => ({
+    src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
+    name: a.name, originalUrl: a.originalUrl || a.preview,
+  }));
+  if (assets.length > 0) registerSection('portal-dorsal', assets);
+
+  const el = document.getElementById('p-face-results');
+  if (!el) return;
+  if (assets.length === 0) {
+    el.innerHTML = `<div class="face-results-header">No hay imágenes cargadas aún.</div>`;
+  } else {
+    el.innerHTML =
+      `<div class="face-results-header-row">
+        <div class="face-results-header"><span class="msi xs">tag</span>&nbsp;${assets.length} resultados para dorsal <strong>#${val}</strong></div>
+      </div>
+      <div class="face-results-grid">${assets.map((a, i) => assetCardHTML(a, 'portal-dorsal', i)).join('')}</div>`;
+  }
+  el.style.display = '';
+}
+
+function _clearDorsalState() {
+  const chip = document.getElementById('p-dorsal-chip');
+  if (chip) { chip.style.display = 'none'; chip.innerHTML = ''; }
+}
+
+export function clearDorsalSearch() {
+  _clearDorsalState();
+  document.getElementById('p-active-chip-area').style.display = 'none';
+  const results = document.getElementById('p-face-results');
+  if (results) { results.style.display = 'none'; results.innerHTML = ''; }
+  document.getElementById('p-content-section').style.display = '';
+  _renderTabs();
+}
+
+// ── Animation ─────────────────────────────────────────────────────────────────
 function _animatePortalIn() {
   const screen = document.getElementById('portalScreen');
   const blocks = [
     screen.querySelector('.p-header-section'),
+    screen.querySelector('.p-tabs-section'),
     ...Array.from(screen.querySelectorAll('.p-section')),
   ].filter(Boolean);
-
   gsap.fromTo(blocks,
     { opacity: 0, y: 16 },
     { opacity: 1, y: 0, duration: 0.5, ease: 'power1.out', stagger: 0.25 }
@@ -460,65 +439,3 @@ function _animatePortalIn() {
 }
 
 initPortalSearch();
-document.getElementById('p-foldersBack').addEventListener('click', () => _exitFolder(true));
-
-// ── Carpetas section toggle (context-aware: top folders vs folder content) ────
-document.getElementById('p-toggle-grid').addEventListener('click', () => {
-  const inFolder = document.getElementById('p-folder-files').style.display !== 'none';
-  if (inFolder) {
-    if (_folderView === 'grid') return;
-    _folderView = 'grid';
-    _setToggleActive('grid');
-    _renderFolderContent();
-  } else {
-    if (_topFoldersView === 'grid') return;
-    _topFoldersView = 'grid';
-    _setToggleActive('grid');
-    _renderTopFolders();
-  }
-});
-
-document.getElementById('p-toggle-list').addEventListener('click', () => {
-  const inFolder = document.getElementById('p-folder-files').style.display !== 'none';
-  if (inFolder) {
-    if (_folderView === 'list') return;
-    _folderView = 'list';
-    _setToggleActive('list');
-    _renderFolderContent();
-  } else {
-    if (_topFoldersView === 'list') return;
-    _topFoldersView = 'list';
-    _setToggleActive('list');
-    _renderTopFolders();
-  }
-});
-
-// ── Archivos section toggle ───────────────────────────────────────────────────
-document.getElementById('p-toggle-archivos-grid').addEventListener('click', () => {
-  if (_archivosView === 'grid') return;
-  _archivosView = 'grid';
-  _setArchivosToggleActive('grid');
-  const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
-  _renderMasonry(allAssets);
-});
-
-document.getElementById('p-toggle-archivos-list').addEventListener('click', () => {
-  if (_archivosView === 'list') return;
-  _archivosView = 'list';
-  _setArchivosToggleActive('list');
-  const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
-  _renderMasonry(allAssets);
-});
-
-export function closePortal() {
-  if (new URLSearchParams(location.search).get('portal') === '1') {
-    window.close();
-    return;
-  }
-  document.getElementById('portalScreen').classList.remove('open');
-  document.getElementById('appShell').style.display = 'flex';
-  if (_portalResizeHandler) {
-    window.removeEventListener('resize', _portalResizeHandler);
-    _portalResizeHandler = null;
-  }
-}

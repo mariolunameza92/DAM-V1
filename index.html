@@ -340,25 +340,59 @@
 
     <div id="step-3" style="display:none">
       <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
-      <span class="modal-sub">Título del portal</span>
+      <span class="modal-sub">Configuración del tema</span>
       <div class="step-bar">
         <div class="step-dot" id="d3-1"></div><div class="step-dot" id="d3-2"></div><div class="step-dot active" id="d3-3"></div><div class="step-dot" id="d3-4"></div>
       </div>
       <div class="theme-rows">
         <div class="t-row">
-          <div class="t-info"><span class="t-label">Título visible</span><span class="t-hint">Lo verán los visitantes del portal</span></div>
+          <div class="t-info"><span class="t-label">Logo</span><span class="t-hint">En formato SVG o PNG</span></div>
+          <button class="t-add" id="logo-add" onclick="document.getElementById('logo-input').click()"><span class="msi xs">add</span></button>
+          <input type="file" id="logo-input" accept=".svg,.png,image/svg+xml,image/png" style="display:none" onchange="handleLogo(this)"/>
         </div>
-        <div class="inline-field" id="title-wrap" style="display:block"><input type="text" id="inp-title" placeholder="Título del portal"/></div>
+        <div id="logo-preview" style="display:none;padding:0 4px 8px"><img id="logo-img" src="" alt="Logo" style="height:28px;border-radius:4px;object-fit:contain"></div>
         <div class="t-row">
-          <div class="t-info"><span class="t-label">Descripción</span><span class="t-hint">Texto de bienvenida del portal</span></div>
+          <div class="t-info"><span class="t-label">Color de acento</span><span class="t-hint">Seleccionar o ingresar hexadecimal</span></div>
+          <button class="t-add" id="accent-add" onclick="toggleInline('accent-wrap','accent-add','inp-accent')"><span class="msi xs">add</span></button>
         </div>
-        <div class="inline-field" id="desc-wrap" style="display:block"><input type="text" id="inp-desc" placeholder="Descripción breve del portal"/></div>
+        <div class="inline-field" id="accent-wrap">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div id="color-dot" class="color-dot" style="background:#22252f" onclick="document.getElementById('color-picker').click()"></div>
+            <input type="color" id="color-picker" value="#22252f" oninput="handleAccent(this.value)" style="width:0;height:0;opacity:0;position:absolute;pointer-events:none">
+            <input type="text" id="inp-accent" placeholder="#22252f" oninput="handleAccent(this.value)" style="flex:1"/>
+          </div>
+        </div>
+        <div class="t-row">
+          <div class="t-info"><span class="t-label">Tema</span><span class="t-hint">Apariencia del portal</span></div>
+          <div class="theme-toggle-btns">
+            <button class="theme-opt active" id="theme-light" onclick="handleTheme('light')"><span class="msi xs">light_mode</span>Light</button>
+            <button class="theme-opt" id="theme-dark" onclick="handleTheme('dark')"><span class="msi xs">dark_mode</span>Dark</button>
+          </div>
+        </div>
+        <div id="contrast-warn" class="contrast-warn" style="display:none">
+          <span class="msi xs" style="color:#d97706;flex-shrink:0;margin-top:1px">tips_and_updates</span>
+          <div class="contrast-warn-text">
+            <span class="contrast-warn-title">Contraste ajustado automáticamente</span>
+            <span class="contrast-warn-body">Este acento es muy oscuro para tema Dark — lo optimizamos para garantizar legibilidad. Para ver tu marca con mayor fidelidad, te sugerimos usar tema Light.</span>
+          </div>
+          <button class="contrast-warn-cta" onclick="handleTheme('light')">Usar Light</button>
+        </div>
         <div class="t-row">
           <div class="t-info"><span class="t-label">Tipografía</span><span class="t-hint">Fuente del portal</span></div>
           <select id="font-sel" style="font-size:11px;border:none;background:transparent;color:var(--g600);cursor:pointer;outline:none;font-family:var(--font-ui);flex-shrink:0">
             <option>Google Sans</option><option>Georgia</option><option>Space Mono</option><option>Trebuchet MS</option>
           </select>
         </div>
+        <div class="t-row">
+          <div class="t-info"><span class="t-label">Título</span><span class="t-hint">Nombre visible para los visitantes</span></div>
+          <button class="t-add" id="title-add" onclick="toggleInline('title-wrap','title-add','inp-title')"><span class="msi xs">add</span></button>
+        </div>
+        <div class="inline-field" id="title-wrap"><input type="text" id="inp-title" placeholder="Título del portal"/></div>
+        <div class="t-row">
+          <div class="t-info"><span class="t-label">Descripción</span><span class="t-hint">Texto breve de bienvenida</span></div>
+          <button class="t-add" id="desc-add" onclick="toggleInline('desc-wrap','desc-add','inp-desc')"><span class="msi xs">add</span></button>
+        </div>
+        <div class="inline-field" id="desc-wrap"><input type="text" id="inp-desc" placeholder="Descripción breve del portal"/></div>
       </div>
       <div class="modal-footer">
         <button class="btn-ghost" onclick="goStep(2)">Atrás</button>
@@ -397,50 +431,33 @@
   <div class="p-body">
     <div class="p-gradient-blob"></div>
     <div class="p-header-section">
+      <div id="p-header-logo" style="display:none"><img id="p-logo-img" src="" alt="Logo" class="p-portal-logo"></div>
       <div class="p-header-texts">
         <div class="p-header-title" id="p-hero-title">Nombre del Portal</div>
         <div class="p-header-desc" id="p-hero-sub">Descripción del portal</div>
       </div>
-      <div class="p-search-bar" id="p-search-wrap">
-        <span class="msi sm" style="color:var(--g600)">search</span>
-        <input type="text" class="p-search-input" id="p-search-input" placeholder="Buscar por persona, objeto, color, escena, logo, etc">
+      <div class="p-hero-ctas">
+        <div class="p-search-bar" id="p-search-wrap">
+          <span class="msi sm" style="color:var(--g600)">ar_on_you</span>
+          <input type="text" class="p-search-input" id="p-search-input" placeholder="Buscar por Face ID">
+        </div>
+        <div class="p-dorsal-bar" id="p-dorsal-wrap">
+          <span class="msi sm" style="color:var(--g600)">tag</span>
+          <input type="text" class="p-search-input" id="p-dorsal-input" placeholder="Número de dorsal" onkeydown="if(event.key==='Enter')handleDorsalSearch()">
+          <button class="p-dorsal-btn" id="p-dorsal-btn" onclick="handleDorsalSearch()"><span class="msi sm">search</span></button>
+        </div>
       </div>
       <div id="p-search-suggestions" class="search-suggestions" style="display:none"></div>
-      <div class="p-filters">
-        <span class="p-filter-label">Filtros:</span>
+      <div class="p-active-chip-area" id="p-active-chip-area" style="display:none">
         <button class="p-filter-chip" id="p-chip-faceid"><span class="msi xs">ar_on_you</span>Face ID</button>
-        <button class="p-filter-chip"><span class="msi xs">copyright</span>Marca</button>
-        <button class="p-filter-chip"><span class="msi xs">featured_seasonal_and_gifts</span>Objeto</button>
-        <button class="p-filter-chip"><span class="msi xs">palette</span>Color</button>
-        <button class="p-filter-chip"><span class="msi xs">responsive_layout</span>Orientación</button>
-        <button class="p-filter-chip"><span class="msi xs">groups</span># Personas</button>
-        <button class="p-filter-chip"><span class="msi xs">verified_user</span>Consentimiento</button>
+        <div id="p-dorsal-chip" class="face-chip-active" style="display:none"></div>
       </div>
     </div>
     <div id="p-face-results" class="p-face-results" style="display:none"></div>
-    <div class="p-section" id="p-section-carpetas">
-      <div class="p-section-header">
-        <div class="p-section-title-wrap">
-          <button class="p-folders-back" id="p-foldersBack"><span class="msi sm">arrow_back</span></button>
-          <div class="p-section-title" id="p-foldersTitle">Carpetas</div>
-          <div class="p-face-folder-count" id="p-face-folder-count"></div>
-        </div>
-        <div class="p-view-toggle" id="p-folder-view-toggle">
-          <button class="p-view-btn active" id="p-toggle-grid"><span class="msi xs">grid_view</span></button>
-          <button class="p-view-btn" id="p-toggle-list"><span class="msi xs">lists</span></button>
-        </div>
-      </div>
-      <div class="p-folders" id="p-folders"></div>
-      <div class="p-folder-files" id="p-folder-files"></div>
+    <div class="p-tabs-section" id="p-tabs-section" style="display:none">
+      <div class="p-tabs-bar" id="p-tabs-bar"></div>
     </div>
-    <div class="p-section" id="p-section-archivos">
-      <div class="p-section-header">
-        <div class="p-section-title">Archivos</div>
-        <div class="p-view-toggle">
-          <button class="p-view-btn active" id="p-toggle-archivos-grid"><span class="msi xs">grid_view</span></button>
-          <button class="p-view-btn" id="p-toggle-archivos-list"><span class="msi xs">lists</span></button>
-        </div>
-      </div>
+    <div class="p-section p-content-section" id="p-content-section">
       <div class="p-masonry" id="p-masonry"></div>
     </div>
   </div>

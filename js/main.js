@@ -4,8 +4,8 @@ import { loadUploadsFromSession, loadPortalsFromSession } from './session.js';
 import { navigateToFolder, switchTab, showRecentFolders } from './features/carpetas/browser.js';
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio, initFaceFilters, initSearch, typingWelcome, initSectionReveal } from './features/inicio/inicio.js';
-import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
-import { openPortal, closePortal, openPortalFromRow } from './features/portales/portal-screen.js';
+import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
+import { openPortal, closePortal, openPortalFromRow, handleDorsalSearch, clearDorsalSearch } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
 import { initImageDetail } from './features/carpetas/image-detail.js';
 import { initContextMenu } from './features/shared/context-menu.js';
@@ -28,6 +28,7 @@ export function switchSection(id) {
   if (sb) sb.style.display = id === 'inicio' ? 'none' : '';
   if (id === 'inicio') animateWelcome();
   if (id === 'carpetas') showRecentFolders();
+  location.hash = id;
 }
 
 let _introPlayed = false;
@@ -133,6 +134,7 @@ Object.assign(window, {
   tryGoStep,
   selectAccess,
   handleAccent,
+  handleTheme,
   handleLogo,
   toggleInline,
   filterFolders,
@@ -142,6 +144,8 @@ Object.assign(window, {
   openPortal,
   closePortal,
   openPortalFromRow,
+  handleDorsalSearch,
+  clearDorsalSearch,
 });
 
 // ── Init ──────────────────────────────────────────────────────────
@@ -166,7 +170,7 @@ if (_portalTab) {
     const cols = getNumCols();
     if (cols !== _iniColCount) { _iniColCount = cols; renderInicio(); }
   });
-  animateWelcome();
+  switchSection(location.hash.replace('#', '') || 'inicio');
   initDemoImages();
   initFaceFilters();
   initSearch();
