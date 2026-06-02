@@ -1,19 +1,10 @@
 // Exports: renderInicio(), initFaceFilters(), initSearch(), typingWelcome(), initSectionReveal()
 import { INICIO_FOLDER_IDS, findNode } from '../../data.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
-import { folderSVG } from '../../utils.js';
+import { folderSVG, getNumCols, positionDropdown } from '../../utils.js';
 import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
-
-function getNumCols() {
-  const w = window.innerWidth;
-  if (w <= 1024) return 2;
-  if (w <= 1440) return 3;
-  if (w <= 1920) return 4;
-  if (w < 2300)  return 5;
-  return 6;
-}
 
 let _inicioFoldersView = 'grid';
 let _inicioAssetsView  = 'grid';
@@ -170,14 +161,6 @@ export function initSearch() {
     activeIdx = idx;
   }
 
-  function positionDropdown() {
-    const wrap = input.closest('.inicio-search-wrap') || input.parentElement;
-    const rect = wrap.getBoundingClientRect();
-    suggestionsEl.style.top = (rect.bottom + 8) + 'px';
-    suggestionsEl.style.left = rect.left + 'px';
-    suggestionsEl.style.width = rect.width + 'px';
-  }
-
   function hide() {
     suggestionsEl.style.display = 'none';
     suggestionsEl.innerHTML = '';
@@ -205,7 +188,7 @@ export function initSearch() {
         <span class="search-sug-tag"><span class="msi xs">ar_on_you</span>Face ID</span>
       </div>`
     ).join('');
-    positionDropdown();
+    positionDropdown(suggestionsEl, input.closest('.inicio-search-wrap') || input.parentElement);
     suggestionsEl.style.display = '';
 
     suggestionsEl.querySelectorAll('.search-suggestion').forEach((el, i) => {

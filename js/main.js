@@ -1,4 +1,5 @@
 // Entry point: routing, session restore, event listeners globales, window.* bridge, init
+import { getNumCols } from './utils.js';
 import { loadUploadsFromSession, loadPortalsFromSession } from './session.js';
 import { navigateToFolder, switchTab, showRecentFolders } from './features/carpetas/browser.js';
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
@@ -162,8 +163,7 @@ if (_portalTab) {
   renderInicio();
   let _iniColCount = null;
   window.addEventListener('resize', () => {
-    const w = window.innerWidth;
-    const cols = w <= 1024 ? 2 : w <= 1440 ? 3 : w <= 1920 ? 4 : w < 2300 ? 5 : 6;
+    const cols = getNumCols();
     if (cols !== _iniColCount) { _iniColCount = cols; renderInicio(); }
   });
   animateWelcome();

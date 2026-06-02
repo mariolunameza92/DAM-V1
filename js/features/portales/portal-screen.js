@@ -2,7 +2,7 @@
 import { st, closeModal } from './modal.js';
 import { addToTable } from './table.js';
 import { FOLDERS_DATA, FOLDER_IMAGES } from '../../data.js';
-import { folderSVG } from '../../utils.js';
+import { folderSVG, getNumCols, positionDropdown } from '../../utils.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { thumbsHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
@@ -15,15 +15,6 @@ let _topFoldersView     = 'grid';
 let _archivosView       = 'grid';
 let _activePortalFaceId = null;
 let _faceActiveInFolder = false;
-
-function getNumCols() {
-  const w = window.innerWidth;
-  if (w <= 1024) return 2;
-  if (w <= 1440) return 3;
-  if (w <= 1920) return 4;
-  if (w < 2300)  return 5;
-  return 6;
-}
 
 let _portalResizeHandler = null;
 
@@ -284,13 +275,6 @@ function initPortalSearch() {
   function items() { return Array.from(suggestionsEl.querySelectorAll('.search-suggestion')); }
   function highlight(idx) { items().forEach((el, i) => el.classList.toggle('kb-active', i === idx)); activeIdx = idx; }
 
-  function positionDropdown() {
-    const rect = document.getElementById('p-search-wrap').getBoundingClientRect();
-    suggestionsEl.style.top   = (rect.bottom + 8) + 'px';
-    suggestionsEl.style.left  = rect.left + 'px';
-    suggestionsEl.style.width = rect.width + 'px';
-  }
-
   function hide() { suggestionsEl.style.display = 'none'; suggestionsEl.innerHTML = ''; activeIdx = -1; }
 
   function select(face) { input.value = ''; hide(); _activeFacePortal(face.id, face.name, face.imgSrc); }
@@ -313,7 +297,7 @@ function initPortalSearch() {
         <span class="search-sug-tag"><span class="msi xs">ar_on_you</span>Face ID</span>
       </div>`
     ).join('');
-    positionDropdown();
+    positionDropdown(suggestionsEl, document.getElementById('p-search-wrap'));
     suggestionsEl.style.display = '';
     suggestionsEl.querySelectorAll('.search-suggestion').forEach((el, i) => {
       el.addEventListener('mousedown', e => { e.preventDefault(); select(matches[i]); });

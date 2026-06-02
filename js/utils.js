@@ -1,4 +1,4 @@
-// Exports: folderSVG(), lighten(), imgLabel(), formatBytes(), fileExt()
+// Exports: folderSVG(), lighten(), imgLabel(), formatBytes(), fileExt(), getNumCols(), positionDropdown()
 let _fIdx = 0;
 
 export function folderSVG() {
@@ -48,4 +48,22 @@ export function formatBytes(bytes) {
 export function fileExt(filename) {
   const m = filename.match(/\.([^.]+)$/);
   return m ? m[1].toUpperCase() : 'IMG';
+}
+
+// Breakpoints: 1024 / 1440 / 1920 / 2300. Usada en masonry de inicio, portal y resize de main.
+export function getNumCols() {
+  const w = window.innerWidth;
+  if (w <= 1024) return 2;
+  if (w <= 1440) return 3;
+  if (w <= 1920) return 4;
+  if (w < 2300)  return 5;
+  return 6;
+}
+
+// Posiciona un dropdown de sugerencias justo debajo de anchorEl.
+export function positionDropdown(suggestionsEl, anchorEl) {
+  const rect = anchorEl.getBoundingClientRect();
+  suggestionsEl.style.top   = (rect.bottom + 8) + 'px';
+  suggestionsEl.style.left  = rect.left + 'px';
+  suggestionsEl.style.width = rect.width + 'px';
 }
