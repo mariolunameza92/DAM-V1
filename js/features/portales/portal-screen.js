@@ -1,15 +1,18 @@
 // Exports: openPortal(), closePortal(), openPortalFromRow(), handleDorsalSearch(), clearDorsalSearch()
-import { st, closeModal } from './modal.js';
+import { st, closeModal, getEditingRow, clearEditingRow } from './modal.js';
 import { addToTable } from './table.js';
-import { FOLDERS_DATA } from '../../data.js';
-import { getNumCols, positionDropdown, generateShadeScale } from '../../utils.js';
+import { FOLDERS_DATA, findNode } from '../../data.js';
+import { getNumCols, positionDropdown, generateShadeScale, hexToOklch } from '../../utils.js';
 import { uploadedAssets } from '../../session.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 
-let _portalFolders      = [];
-let _activeTabIdx       = 0;
+let _portalFolders       = [];
+let _activeTabIdx        = 0;
 let _portalResizeHandler = null;
+let _navMode             = 'masonry'; // 'masonry' | 'tabs' | 'folder-grid'
+let _navItems            = [];
+let _drillFolder         = null;
 let _lbAssets = [];
 let _lbIdx    = 0;
 
@@ -42,8 +45,9 @@ function _recolorSvg(svgText) {
 // ── OKLCH accent system ───────────────────────────────────────────────────────
 function _applyPortalTheme(el, accentHex, theme) {
   el.dataset.theme = theme || 'light';
-  const shades = generateShadeScale(accentHex || '#22252f');
-  const isDark  = theme === 'dark';
+  const shades    = generateShadeScale(accentHex || '#22252f');
+  const { C, H }  = hexToOklch(accentHex || '#22252f');
+  const isDark    = theme === 'dark';
 
   // Replace every --g* token with accent-tinted shades.
   // Light: 50→950 in natural order. Dark: inverted so g50=darkest, g950=lightest.
@@ -66,6 +70,21 @@ function _applyPortalTheme(el, accentHex, theme) {
   el.style.setProperty('--color-accent-subtle',    subtle.css);
   el.style.setProperty('--color-accent-dark',      secondary.css);
   el.style.setProperty('--color-accent-dark-text', secondaryTxt.css);
+
+  // Near-white and near-black with the accent hue embedded — no alpha compositing
+  el.style.setProperty('--portal-bg-whisper', `oklch(0.986 ${(C * 0.05).toFixed(4)} ${H.toFixed(2)})`);
+  el.style.setProperty('--portal-bg-deep',    `oklch(0.058 ${(C * 0.18).toFixed(4)} ${H.toFixed(2)})`);
+
+  // Decorative blob — accent-tinted, different stops for light vs dark
+  const blobInner = isDark ? shades[7] : shades[2];
+  const blobMid   = isDark ? shades[8] : shades[3];
+  el.style.setProperty('--portal-blob-inner', `oklch(${blobInner.l.toFixed(3)} ${blobInner.c.toFixed(4)} ${H.toFixed(2)} / 0.55)`);
+  el.style.setProperty('--portal-blob-mid',   `oklch(${blobMid.l.toFixed(3)} ${blobMid.c.toFixed(4)} ${H.toFixed(2)} / 0.28)`);
+
+  // Visor secondary buttons — shade-900 tinted, always dark context so icon always light
+  const visorBtn = shades[9];
+  el.style.setProperty('--visor-btn-bg',   `oklch(${visorBtn.l.toFixed(3)} ${visorBtn.c.toFixed(4)} ${H.toFixed(2)} / 0.72)`);
+  el.style.setProperty('--visor-btn-icon', `oklch(${visorBtn.l >= 0.5 ? 0.15 : 0.95} 0 0)`);
 }
 
 // ── Public entry points ───────────────────────────────────────────────────────
@@ -83,7 +102,18 @@ export function openPortal() {
   closeModal();
   document.getElementById('portalScreen').classList.add('open');
   document.getElementById('appShell').style.display = 'none';
-  addToTable(title, selected.length, selected.length * 4, accent, selected.map(f => f.id));
+
+  const editRow = getEditingRow();
+  if (editRow) {
+    editRow.dataset.portalAccent  = accent;
+    editRow.dataset.portalTitle   = title;
+    editRow.dataset.portalFolders = selected.map(f => f.id).join(',');
+    const nameEl = editRow.querySelector('.portal-name-cell');
+    if (nameEl) nameEl.childNodes[nameEl.childNodes.length - 1].textContent = title;
+    clearEditingRow();
+  } else {
+    addToTable(title, selected.length, selected.length * 4, accent, selected.map(f => f.id));
+  }
   _animatePortalIn();
   _attachPortalResize();
 }
@@ -153,46 +183,123 @@ function _renderPortal(title, desc, accent, theme, font, logoSrc, folders) {
   document.getElementById('p-active-chip-area').style.display = 'none';
   document.getElementById('p-content-section').style.display  = '';
 
-  _renderTabs();
+  _renderNavigation();
 }
 
-// ── Tabs ──────────────────────────────────────────────────────────────────────
-function _renderTabs() {
-  const tabsSection = document.getElementById('p-tabs-section');
-  const tabsBar     = document.getElementById('p-tabs-bar');
+// ── Navigation — 3-state smart detection ─────────────────────────────────────
+function _getChildrenOf(folderId) {
+  const node   = findNode(folderId);
+  if (!node?.children?.length) return [];
+  const parent = FOLDERS_DATA.find(f => f.id === folderId);
+  return node.children.map(child => ({
+    id:      child.id,
+    name:    child.label,
+    imageId: parent?.imageId || folderId,
+  }));
+}
 
-  if (_portalFolders.length <= 1) {
-    tabsSection.style.display = 'none';
-    const folder = _portalFolders[0];
-    const assets = folder ? (uploadedAssets[folder.imageId || folder.id] || []) : [];
-    _renderMasonry(assets);
-    return;
+function _resolveNav(folders) {
+  if (!folders.length) return { mode: 'masonry', items: folders };
+  if (folders.length === 1) {
+    const children = _getChildrenOf(folders[0].id);
+    if (!children.length) return { mode: 'masonry', items: folders };
+    return { mode: children.length > 6 ? 'folder-grid' : 'tabs', items: children };
   }
-
-  tabsSection.style.display = '';
-  tabsBar.innerHTML = _portalFolders.map((f, i) =>
-    `<button class="p-tab${i === 0 ? ' active' : ''}" data-tab-idx="${i}">${f.name}</button>`
-  ).join('');
-
-  tabsBar.querySelectorAll('.p-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const idx = parseInt(btn.dataset.tabIdx);
-      if (idx === _activeTabIdx) return;
-      _activeTabIdx = idx;
-      tabsBar.querySelectorAll('.p-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      _renderActiveTab();
-    });
-  });
-
-  _renderActiveTab();
+  return { mode: folders.length > 6 ? 'folder-grid' : 'tabs', items: folders };
 }
 
-function _renderActiveTab() {
-  const folder = _portalFolders[_activeTabIdx];
-  if (!folder) return;
-  const assets = uploadedAssets[folder.imageId || folder.id] || [];
-  _renderMasonry(assets);
+function _renderNavigation() {
+  const { mode, items } = _resolveNav(_portalFolders);
+  _navMode     = mode;
+  _navItems    = items;
+  _drillFolder = null;
+
+  const tabsSec  = document.getElementById('p-tabs-section');
+  const grid     = document.getElementById('p-folder-grid');
+  const masonry  = document.getElementById('p-masonry');
+  const drillBar = document.getElementById('p-drill-back');
+  drillBar.style.display = 'none';
+
+  if (mode === 'masonry') {
+    tabsSec.style.display = 'none';
+    grid.style.display    = 'none';
+    masonry.style.display = '';
+    const f = _portalFolders[0];
+    _renderMasonry(f ? (uploadedAssets[f.imageId || f.id] || []) : []);
+
+  } else if (mode === 'tabs') {
+    tabsSec.style.display = '';
+    grid.style.display    = 'none';
+    masonry.style.display = '';
+    _activeTabIdx = 0;
+    const bar = document.getElementById('p-tabs-bar');
+    bar.innerHTML = items.map((item, i) =>
+      `<button class="p-tab${i === 0 ? ' active' : ''}" data-tab-idx="${i}">${item.name}</button>`
+    ).join('');
+    bar.querySelectorAll('.p-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.tabIdx);
+        if (idx === _activeTabIdx) return;
+        _activeTabIdx = idx;
+        bar.querySelectorAll('.p-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        _renderActiveItem();
+      });
+    });
+    _renderActiveItem();
+
+  } else {
+    tabsSec.style.display = 'none';
+    grid.style.display    = '';
+    masonry.style.display = 'none';
+    _renderFolderGrid(items);
+  }
+}
+
+function _renderActiveItem() {
+  const item = _navMode === 'masonry' ? _portalFolders[0] : _navItems[_activeTabIdx];
+  if (!item) return;
+  _renderMasonry(uploadedAssets[item.imageId || item.id] || []);
+}
+
+function _renderFolderGrid(items) {
+  const grid = document.getElementById('p-folder-grid');
+  grid.innerHTML = items.map(item => {
+    const assets = uploadedAssets[item.imageId || item.id] || [];
+    const thumb  = assets[0]?.preview || '';
+    const count  = assets.length;
+    return `<div class="p-folder-card" data-folder-id="${item.id}">
+      <div class="p-folder-card-thumb">
+        ${thumb
+          ? `<img src="${thumb}" alt="" decoding="async" loading="lazy">`
+          : `<div class="p-folder-card-empty"><span class="msi">photo_library</span></div>`}
+      </div>
+      <div class="p-folder-card-info">
+        <span class="p-folder-card-name">${item.name}</span>
+        <span class="p-folder-card-count">${count > 0 ? `${count} foto${count !== 1 ? 's' : ''}` : 'Próximamente'}</span>
+      </div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('.p-folder-card').forEach((card, i) => {
+    card.addEventListener('click', () => _drillInto(items[i]));
+  });
+}
+
+function _drillInto(folder) {
+  _drillFolder = folder;
+  document.getElementById('p-folder-grid').style.display     = 'none';
+  document.getElementById('p-masonry').style.display         = '';
+  document.getElementById('p-drill-back').style.display      = 'flex';
+  document.getElementById('p-drill-folder-name').textContent = folder.name;
+  _renderMasonry(uploadedAssets[folder.imageId || folder.id] || []);
+}
+
+function _drillBack() {
+  _drillFolder = null;
+  document.getElementById('p-masonry').style.display     = 'none';
+  document.getElementById('p-folder-grid').style.display = '';
+  document.getElementById('p-drill-back').style.display  = 'none';
+  _renderFolderGrid(_navItems);
 }
 
 function _renderMasonry(rawAssets) {
@@ -239,7 +346,14 @@ function _attachPortalResize() {
   let _cols = getNumCols();
   _portalResizeHandler = () => {
     const next = getNumCols();
-    if (next !== _cols) { _cols = next; _renderActiveTab(); }
+    if (next !== _cols) {
+      _cols = next;
+      if (_drillFolder) {
+        _renderMasonry(uploadedAssets[_drillFolder.imageId || _drillFolder.id] || []);
+      } else if (_navMode !== 'folder-grid') {
+        _renderActiveItem();
+      }
+    }
   };
   window.addEventListener('resize', _portalResizeHandler);
 }
@@ -332,7 +446,7 @@ function _removeFacePortal() {
   const results = document.getElementById('p-face-results');
   if (results) { results.style.display = 'none'; results.innerHTML = ''; }
   document.getElementById('p-content-section').style.display = '';
-  _renderTabs();
+  _renderNavigation();
 }
 
 let _portalFaceAssets = [];
@@ -439,7 +553,7 @@ export function clearDorsalSearch() {
   const results = document.getElementById('p-face-results');
   if (results) { results.style.display = 'none'; results.innerHTML = ''; }
   document.getElementById('p-content-section').style.display = '';
-  _renderTabs();
+  _renderNavigation();
 }
 
 // ── Lightbox ──────────────────────────────────────────────────────────────────
@@ -505,3 +619,4 @@ function _animatePortalIn() {
 
 initPortalSearch();
 _initPortalLightbox();
+document.getElementById('p-drill-back-btn')?.addEventListener('click', _drillBack);

@@ -11,8 +11,20 @@ export const FOLDERS_DATA = [
 ];
 
 export const TREE_DATA = [
-  { id: 'colorrun',   label: 'Color Run 2026',           owned: true,  lastEdited: new Date('2026-04-15').getTime(), children: [] },
-  { id: 'lima42k',    label: 'Lima 42K 2026',            owned: true,  lastEdited: new Date('2026-03-10').getTime(), children: [] },
+  { id: 'colorrun',   label: 'Color Run 2026',           owned: true,  lastEdited: new Date('2026-04-15').getTime(), children: [
+    { id: 'colorrun-salida',     label: 'Salida',      children: [] },
+    { id: 'colorrun-recorrido',  label: 'Recorrido',   children: [] },
+    { id: 'colorrun-meta',       label: 'Meta',        children: [] },
+  ]},
+  { id: 'lima42k',    label: 'Lima 42K 2026',            owned: true,  lastEdited: new Date('2026-03-10').getTime(), children: [
+    { id: 'lima42k-largada', label: 'Largada',   children: [] },
+    { id: 'lima42k-km5',     label: 'Km 5',      children: [] },
+    { id: 'lima42k-km10',    label: 'Km 10',     children: [] },
+    { id: 'lima42k-km20',    label: 'Km 20',     children: [] },
+    { id: 'lima42k-km30',    label: 'Km 30',     children: [] },
+    { id: 'lima42k-km40',    label: 'Km 40',     children: [] },
+    { id: 'lima42k-meta',    label: 'Meta',      children: [] },
+  ]},
   { id: 'masmujeres', label: 'Más mujeres en meta 2026', owned: true,  lastEdited: new Date('2026-02-20').getTime(), children: [] },
   { id: 'onsquad',    label: 'On Squad Race Lima 2026',  owned: false, lastEdited: new Date('2026-05-01').getTime(), children: [] },
   { id: 'rimac',      label: 'Rimac Bienestar Fest',     owned: false, lastEdited: new Date('2026-01-28').getTime(), children: [] },

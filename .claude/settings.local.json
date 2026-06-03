@@ -8,7 +8,11 @@
       "mcp__Claude_Preview__preview_start",
       "mcp__862e49d2-99a7-4a51-b0da-40cd03d6e7f9__get_design_context",
       "mcp__862e49d2-99a7-4a51-b0da-40cd03d6e7f9__get_screenshot",
-      "Bash(ls /Users/lenadmin/.nvm/versions/node/ 2>/dev/null | tail -1)"
+      "Bash(ls /Users/lenadmin/.nvm/versions/node/ 2>/dev/null | tail -1)",
+      "PowerShell(Get-Command npx -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command python -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command python3 -ErrorAction SilentlyContinue)",
+      "PowerShell(\\(Get-Command node\\).Source)"
     ]
   }
 }

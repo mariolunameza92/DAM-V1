@@ -8,7 +8,26 @@ export const st = {
   logoSvgText: '',
 };
 
+let _editingRow = null;
+export function getEditingRow()   { return _editingRow; }
+export function clearEditingRow() { _editingRow = null; }
+
+function _setStep4EditMode(isEdit) {
+  const step4 = document.getElementById('step-4');
+  if (!step4) return;
+  const titleEl = step4.querySelector('.modal-title');
+  const chipEl  = step4.querySelector('.success-chip');
+  const submitEl = step4.querySelector('.btn-submit');
+  if (titleEl)  titleEl.textContent  = isEdit ? 'Editar Portal' : 'Crear Portal';
+  if (chipEl)   chipEl.innerHTML     = isEdit
+    ? `<span class="msi sm" style="color:#16a34a">check_circle</span>¡Cambios guardados!`
+    : `<span class="msi sm" style="color:#16a34a">check_circle</span>¡Portal creado exitosamente!`;
+  if (submitEl) submitEl.textContent = isEdit ? 'Guardar y ver' : 'Ver Portal';
+}
+
 export function openModal() {
+  _editingRow = null;
+  _setStep4EditMode(false);
   st.selectedFolders = new Set();
   st.accent = '#22252f'; st.font = 'Google Sans'; st.access = 'public';
   st.theme = 'light'; st.title = ''; st.desc = '';
@@ -223,6 +242,46 @@ export function resetCopyBtn() {
   if (!btn) return;
   btn.className = 's-btn';
   btn.innerHTML = `<span class="msi xs">content_copy</span>`;
+}
+
+export function openModalEdit(rowEl) {
+  _editingRow = rowEl;
+  const accent    = rowEl.dataset.portalAccent || '#22252f';
+  const title     = rowEl.dataset.portalTitle  || '';
+  const folderIds = (rowEl.dataset.portalFolders || '').split(',').filter(Boolean);
+
+  st.selectedFolders = new Set(folderIds);
+  st.accent = accent; st.font = 'Google Sans'; st.access = 'public';
+  st.theme = 'light'; st.title = title; st.desc = ''; st.logoSvgText = '';
+
+  document.getElementById('inp-name').value   = title;
+  document.getElementById('inp-search').value = '';
+  document.getElementById('inp-pwd').value    = '';
+  document.getElementById('inp-title').value  = '';
+  document.getElementById('inp-desc').value   = '';
+  document.getElementById('inp-accent').value = '';
+  document.getElementById('pwd-wrap').style.display    = 'none';
+  document.getElementById('title-wrap').style.display  = 'none';
+  document.getElementById('desc-wrap').style.display   = 'none';
+  document.getElementById('accent-wrap').style.display = 'none';
+  document.getElementById('logo-preview').style.display = 'none';
+  document.getElementById('color-dot').style.background = accent;
+  document.getElementById('color-picker').value = /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#22252f';
+  document.getElementById('font-sel').value = 'Google Sans';
+  document.getElementById('rc-pub').classList.add('sel');
+  document.getElementById('rc-priv').classList.remove('sel');
+  document.getElementById('theme-light').classList.add('active');
+  document.getElementById('theme-dark').classList.remove('active');
+  setDoneBtn('logo-add', false); setDoneBtn('accent-add', false);
+  setDoneBtn('title-add', false); setDoneBtn('desc-add', false);
+
+  resetCopyBtn();
+  renderFolderList('');
+  _setStep4EditMode(true);
+  showStep(1);
+  checkStep1();
+  _updateAccentPreview();
+  document.getElementById('overlay').classList.add('open');
 }
 
 export function copyLink() {

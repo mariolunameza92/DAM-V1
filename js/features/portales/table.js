@@ -1,6 +1,7 @@
 // Exports: addToTable(title, fCount, photoCount, accent, folderIds, dateStr?, silent?) — inserta fila en tabla de portales y persiste en session
 import { pushPortal } from '../../session.js';
 import { showToast } from '../../components/ui/toast.js';
+import { openModalEdit } from './modal.js';
 
 export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr, silent) {
   const today = new Date();
@@ -42,9 +43,12 @@ function _initPortalMenu() {
   _portalMenu = document.createElement('div');
   _portalMenu.className = 'ctx-menu';
   _portalMenu.innerHTML = `
-    <button class="ctx-item ctx-item--danger" data-action="delete">
-      <span class="msi xs" style="color:#e53e3e;vertical-align:middle;margin-right:4px">delete</span>Eliminar
-    </button>`;
+    <button class="ctx-item" data-action="view"><span class="msi xs" style="vertical-align:middle;margin-right:6px">open_in_new</span>Ver portal</button>
+    <button class="ctx-item" data-action="edit"><span class="msi xs" style="vertical-align:middle;margin-right:6px">edit</span>Editar</button>
+    <button class="ctx-item" data-action="share"><span class="msi xs" style="vertical-align:middle;margin-right:6px">share</span>Compartir</button>
+    <button class="ctx-item" data-action="duplicate"><span class="msi xs" style="vertical-align:middle;margin-right:6px">content_copy</span>Duplicar</button>
+    <div class="ctx-divider"></div>
+    <button class="ctx-item ctx-item--danger" data-action="delete"><span class="msi xs" style="color:#e53e3e;vertical-align:middle;margin-right:6px">delete</span>Eliminar</button>`;
   document.body.appendChild(_portalMenu);
 
   _portalMenu.addEventListener('click', e => {
@@ -52,7 +56,25 @@ function _initPortalMenu() {
     if (!btn) return;
     const anchor = _portalMenuAnchor;
     _closePortalMenu();
-    if (btn.dataset.action === 'delete') _deletePortalRow(anchor);
+    const row = anchor?.closest('.table-row');
+
+    if (btn.dataset.action === 'view') {
+      row?.querySelector('.portal-name-cell')?.click();
+    } else if (btn.dataset.action === 'edit') {
+      if (row) openModalEdit(row);
+    } else if (btn.dataset.action === 'share') {
+      const slug = (row?.dataset.portalTitle || 'portal').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      if (navigator.clipboard) navigator.clipboard.writeText(`https://len.pe/portal/${slug}`);
+      showToast('Link copiado al portapapeles');
+    } else if (btn.dataset.action === 'duplicate') {
+      if (row) {
+        const folderIds = (row.dataset.portalFolders || '').split(',').filter(Boolean);
+        addToTable(`${row.dataset.portalTitle || 'Portal'} (copia)`, folderIds.length, 0, row.dataset.portalAccent || '#22252f', folderIds);
+        showToast('Portal duplicado');
+      }
+    } else if (btn.dataset.action === 'delete') {
+      _deletePortalRow(anchor);
+    }
   });
 }
 
@@ -60,7 +82,7 @@ function _openPortalMenu(anchorBtn) {
   _portalMenuAnchor = anchorBtn;
 
   const rect = anchorBtn.getBoundingClientRect();
-  const mw = 160, mh = 52;
+  const mw = 180, mh = 200;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   let x = rect.right - mw;
