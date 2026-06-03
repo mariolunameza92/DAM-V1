@@ -26,15 +26,24 @@
 .p-header-title{font-size:36px;font-weight:700;color:var(--g800);line-height:1.1;font-family:var(--font-ui)}
 .p-header-desc{font-size:16px;color:var(--g600);font-family:var(--font-ui);line-height:1.5}
 
-/* Hero CTAs: two bars side by side */
-.p-hero-ctas{display:flex;gap:12px;width:100%;max-width:720px;flex-wrap:wrap}
-.p-search-bar{display:flex;align-items:center;gap:8px;background:var(--g50);border:4px solid var(--g200);border-radius:80px;padding:14px 24px;flex:1;min-width:220px;cursor:text;box-sizing:border-box}
-.p-dorsal-bar{display:flex;align-items:center;gap:8px;background:var(--g50);border:4px solid var(--g200);border-radius:80px;padding:10px 10px 10px 24px;flex:1;min-width:220px;cursor:text;box-sizing:border-box}
-.p-search-input{border:none;background:none;outline:none;font-size:15px;color:var(--g800);font-family:var(--font-ui);flex:1;min-width:0}
+/* Hero CTAs: selfie + dorsal + buscar */
+.p-hero-ctas{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:720px}
+.p-selfie-btn{display:flex;align-items:center;gap:8px;background:var(--portal-btn-selfie,var(--color-accent));color:var(--portal-btn-selfie-text,var(--color-accent-text));border:none;border-radius:80px;padding:12px 20px;font-size:14px;font-weight:600;font-family:var(--font-ui);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s}
+.p-selfie-btn:hover{background:var(--portal-btn-selfie-hover,var(--color-accent-hover))}
+.p-selfie-btn .msi{font-size:18px}
+.p-selfie-avatar{position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.p-selfie-img{width:46px;height:46px;border-radius:50%;object-fit:cover;display:block;border:2.5px solid var(--color-accent)}
+.p-selfie-remove{position:absolute;top:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:var(--g800);border:1.5px solid var(--g50);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .15s}
+.p-selfie-remove:hover{background:var(--g950)}
+.p-selfie-remove .msi{font-size:11px;color:var(--g100)}
+.p-dorsal-input-wrap{flex:none;display:flex;align-items:center;background:var(--g50);border:2px solid var(--g200);border-radius:80px;padding:11px 20px;width:10rem}
+.p-dorsal-input-wrap .p-search-input{width:100%;min-width:0}
+.p-search-input{border:none;background:none;outline:none;font-size:14px;color:var(--g800);font-family:var(--font-ui);flex:1;min-width:0;width:100%}
 .p-search-input::placeholder{color:var(--g500)}
-.p-dorsal-btn{width:38px;height:38px;border-radius:80px;background:var(--color-accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .15s}
-.p-dorsal-btn:hover{opacity:.82}
-.p-dorsal-btn .msi{color:var(--color-accent-text);font-size:18px}
+.p-buscar-btn{display:flex;align-items:center;background:var(--color-accent);color:var(--color-accent-text);border:none;border-radius:80px;padding:12px 24px;font-size:14px;font-weight:600;font-family:var(--font-ui);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s}
+.p-buscar-btn:hover{background:var(--color-accent-hover)}
+/* Face-ID-only mode: hide dorsal input */
+.p-hero-ctas--faceid .p-dorsal-input-wrap{display:none}
 
 /* Active filter chip area */
 .p-active-chip-area{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
@@ -127,18 +136,20 @@
 .p-drill-back-btn .msi{font-size:18px;color:var(--g700)}
 .p-drill-folder-name{font-size:16px;font-weight:600;color:var(--g800);font-family:var(--font-ui)}
 
-/* Folder grid */
-.p-folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(192px,1fr));gap:20px;padding-top:4px}
-.p-folder-card{cursor:pointer;border-radius:12px;overflow:hidden;background:var(--g50);border:1px solid var(--g200);transition:transform .15s,box-shadow .15s}
-.p-folder-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px var(--g200)}
-.p-folder-card-thumb{aspect-ratio:4/3;overflow:hidden;background:var(--g100);position:relative}
-.p-folder-card-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
-.p-folder-card:hover .p-folder-card-thumb img{transform:scale(1.04)}
-.p-folder-card-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.p-folder-card-empty .msi{font-size:32px;color:var(--g300)}
-.p-folder-card-info{padding:12px 14px;display:flex;flex-direction:column;gap:3px}
-.p-folder-card-name{font-size:13px;font-weight:600;color:var(--g800);font-family:var(--font-ui);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.p-folder-card-count{font-size:12px;color:var(--g500);font-family:var(--font-ui)}
+/* Folder grid — 2×2 mosaic collage */
+.p-folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(384px,1fr));gap:24px;padding-top:4px}
+.p-folder-card{cursor:pointer;border-radius:14px;overflow:hidden;background:var(--g50);border:1px solid var(--g200);transition:box-shadow .18s,border-color .18s}
+.p-folder-card:hover{box-shadow:0 10px 30px var(--g200);border-color:var(--color-accent)}
+.p-folder-card-mosaic{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;aspect-ratio:1/1;background:var(--g200);overflow:hidden}
+.p-fc-cell{overflow:hidden;background:var(--g100)}
+.p-fc-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.p-folder-card:hover .p-fc-cell img{transform:scale(1.015)}
+.p-fc-cell--empty{background:var(--g100)}
+.p-folder-card-empty{grid-column:1 / -1;grid-row:1 / -1;display:flex;align-items:center;justify-content:center;background:var(--g100)}
+.p-folder-card-empty .msi{font-size:44px;color:var(--g300)}
+.p-folder-card-info{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.p-folder-card-name{font-size:15px;font-weight:600;color:var(--g800);font-family:var(--font-ui);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-folder-card-count{font-size:13px;color:var(--color-accent);font-weight:600;font-family:var(--font-ui);white-space:nowrap;display:flex;align-items:center;gap:4px}
 
 /* Portal lightbox */
 .p-lightbox{position:absolute;inset:0;z-index:50;display:flex;align-items:center;justify-content:center}
@@ -164,3 +175,42 @@
 .portal-screen .face-chip-active{background:var(--color-accent);color:var(--color-accent-text);border-color:var(--color-accent)}
 .portal-screen .face-chip-active .face-chip-remove{color:var(--color-accent-text);opacity:.7}
 .portal-screen .face-chip-active .face-chip-remove:hover{opacity:1}
+
+/* ── Mobile / tablet: prevent overflow & overlap ─────────────────────────────── */
+@media (max-width: 768px){
+  /* Tighter chrome so content keeps its width */
+  .p-topbar{padding:14px 18px}
+  .p-header-section{padding:36px 18px 28px;gap:18px}
+  .p-header-title{font-size:26px}
+  .p-header-desc{font-size:14px}
+  .p-section{padding:0 18px 32px}
+  .p-tabs-section{padding:0 18px}
+  .p-face-results{padding:0 18px 24px}
+
+  /* Hero CTAs stay inline at desktop size, centered — the three fit comfortably
+     at tablet width, so no stretching needed. */
+
+  /* Folder grid: 384px min would overflow → single column */
+  .p-folder-grid{grid-template-columns:1fr;gap:16px}
+
+  /* Face results: 3 cols too tight on phones */
+  .p-face-results .face-results-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* Masonry: smaller gaps give images more width in 2 cols */
+  .p-masonry{gap:12px}
+  .p-masonry-col{gap:12px}
+
+  /* Lightbox nav closer to edges so it doesn't crowd the image */
+  .p-lb-prev{left:10px}
+  .p-lb-next{right:10px}
+  .p-lb-top{top:14px;left:14px;right:14px}
+}
+
+/* ── Phone: selfie + dorsal share line 1 (50/50), buscar full-width on line 2 ──── */
+@media (max-width: 520px){
+  .p-hero-ctas{flex-wrap:wrap;gap:8px}
+  /* explicit 50% basis (minus half the 8px gap) → exact 50/50 split on line 1 */
+  .p-selfie-btn{flex:1 1 calc(50% - 4px);justify-content:center;padding:12px 10px;min-width:0}
+  .p-dorsal-input-wrap{flex:1 1 calc(50% - 4px);width:auto;min-width:0}
+  .p-buscar-btn{flex:1 1 100%;justify-content:center}
+}

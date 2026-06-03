@@ -5,7 +5,7 @@ import { navigateToFolder, switchTab, showRecentFolders } from './features/carpe
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio, initFaceFilters, initSearch, typingWelcome, initSectionReveal } from './features/inicio/inicio.js';
 import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
-import { openPortal, closePortal, openPortalFromRow, handleDorsalSearch, clearDorsalSearch } from './features/portales/portal-screen.js';
+import { openPortal, closePortal, openPortalFromRow, handleDorsalSearch, clearDorsalSearch, handlePortalSearch } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
 import { initImageDetail } from './features/carpetas/image-detail.js';
 import { initContextMenu } from './features/shared/context-menu.js';
@@ -73,14 +73,11 @@ document.getElementById('portalsTable').addEventListener('click', e => {
   if (!cell) return;
   const row = cell.closest('.table-row');
   if (!row) return;
+  const title     = row.dataset.portalTitle   || '';
+  const accent    = row.dataset.portalAccent  || '';
+  const theme     = row.dataset.portalTheme   || 'light';
   const folderIds = row.dataset.portalFolders ? row.dataset.portalFolders.split(',').filter(Boolean) : [];
-  const params = new URLSearchParams({
-    portal: '1',
-    title:  row.dataset.portalTitle || '',
-    accent: row.dataset.portalAccent || '',
-    folders: folderIds.join(','),
-    theme:  row.dataset.portalTheme || 'light',
-  });
+  const params = new URLSearchParams({ portal: '1', title, accent, folders: folderIds.join(','), theme });
   window.open(`${location.pathname}?${params}`, '_blank');
 });
 
@@ -147,6 +144,7 @@ Object.assign(window, {
   openPortalFromRow,
   handleDorsalSearch,
   clearDorsalSearch,
+  handlePortalSearch,
 });
 
 // ── Init ──────────────────────────────────────────────────────────

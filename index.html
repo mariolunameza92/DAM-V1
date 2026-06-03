@@ -108,7 +108,7 @@
             <div class="table-head">
               <div class="col">Portal</div><div class="col">Contenido</div><div class="col">Registro</div><div class="col">Creado por</div>
             </div>
-            <div class="table-row" data-portal-title="Lima 42K 2026" data-portal-accent="#4F7BEA" data-portal-folders="lima42k" data-portal-theme="dark">
+            <div class="table-row" data-portal-title="Lima 42K 2026" data-portal-accent="#D5FF22" data-portal-folders="lima42k" data-portal-theme="dark">
               <div class="col"><div class="portal-name-cell" style="cursor:pointer"><div class="portal-icon-box"><span class="msi xs" style="color:var(--g500)">captive_portal</span></div>Lima 42K 2026</div></div>
               <div class="col"><div class="content-cell"><span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;7</span><span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;12</span></div></div>
               <div class="col">1/Jun/2026</div>
@@ -452,16 +452,19 @@
         <div class="p-header-title" id="p-hero-title">Nombre del Portal</div>
         <div class="p-header-desc" id="p-hero-sub">Descripción del portal</div>
       </div>
-      <div class="p-hero-ctas">
-        <div class="p-search-bar" id="p-search-wrap">
-          <span class="msi sm" style="color:var(--g600)">ar_on_you</span>
-          <input type="text" class="p-search-input" id="p-search-input" placeholder="Buscar por Face ID">
+      <div class="p-hero-ctas" id="p-hero-ctas">
+        <button class="p-selfie-btn" id="p-selfie-btn">
+          <span class="msi sm">ar_on_you</span>Sube tu selfie
+        </button>
+        <div class="p-selfie-avatar" id="p-selfie-avatar" style="display:none">
+          <img id="p-selfie-img" class="p-selfie-img" src="" alt="">
+          <button class="p-selfie-remove" id="p-selfie-remove"><span class="msi">close</span></button>
         </div>
-        <div class="p-dorsal-bar" id="p-dorsal-wrap">
-          <span class="msi sm" style="color:var(--g600)">tag</span>
-          <input type="text" class="p-search-input" id="p-dorsal-input" placeholder="Número de dorsal" onkeydown="if(event.key==='Enter')handleDorsalSearch()">
-          <button class="p-dorsal-btn" id="p-dorsal-btn" onclick="handleDorsalSearch()"><span class="msi sm">search</span></button>
+        <div class="p-dorsal-input-wrap" id="p-dorsal-wrap">
+          <input type="text" class="p-search-input" id="p-dorsal-input" placeholder="Ingresa Nº dorsal" onkeydown="if(event.key==='Enter')handlePortalSearch()">
         </div>
+        <button class="p-buscar-btn" id="p-buscar-btn">Buscar</button>
+        <input type="file" id="p-selfie-file" accept="image/*" style="display:none">
       </div>
       <button class="p-secondary-cta" id="p-secondary-cta" style="display:none">
         <span class="msi" style="font-size:16px">download</span>Descargar todo

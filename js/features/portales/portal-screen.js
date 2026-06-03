@@ -13,6 +13,7 @@ let _portalResizeHandler = null;
 let _navMode             = 'masonry'; // 'masonry' | 'tabs' | 'folder-grid'
 let _navItems            = [];
 let _drillFolder         = null;
+let _selfieUploaded      = false;
 let _lbAssets = [];
 let _lbIdx    = 0;
 
@@ -43,6 +44,17 @@ function _recolorSvg(svgText) {
 }
 
 // ── OKLCH accent system ───────────────────────────────────────────────────────
+function _pickSelfieShade(shades, isDark, primaryIdx) {
+  const bgL = isDark ? 0.058 : 0.986;
+  const dir  = isDark ? -1 : 1; // dark bg → go lighter; light bg → go darker
+  for (let dist = 2; dist <= 5; dist++) {
+    const idx = Math.max(0, Math.min(10, primaryIdx + dir * dist));
+    const contrast = (Math.max(shades[idx].l, bgL) + 0.05) / (Math.min(shades[idx].l, bgL) + 0.05);
+    if (contrast >= 3.5) return idx;
+  }
+  return Math.max(0, Math.min(10, primaryIdx + dir * 2));
+}
+
 function _applyPortalTheme(el, accentHex, theme) {
   el.dataset.theme = theme || 'light';
   const shades    = generateShadeScale(accentHex || '#22252f');
@@ -81,6 +93,14 @@ function _applyPortalTheme(el, accentHex, theme) {
   el.style.setProperty('--portal-blob-inner', `oklch(${blobInner.l.toFixed(3)} ${blobInner.c.toFixed(4)} ${H.toFixed(2)} / 0.55)`);
   el.style.setProperty('--portal-blob-mid',   `oklch(${blobMid.l.toFixed(3)} ${blobMid.c.toFixed(4)} ${H.toFixed(2)} / 0.28)`);
 
+  // Selfie button — auto-selected shade with guaranteed contrast, distinct from primary
+  const selfieIdx = _pickSelfieShade(shades, isDark, isDark ? 5 : 6);
+  const selfieSh  = shades[selfieIdx];
+  const selfieHov = shades[Math.max(0, Math.min(10, selfieIdx + (isDark ? 1 : -1)))];
+  el.style.setProperty('--portal-btn-selfie',      selfieSh.css);
+  el.style.setProperty('--portal-btn-selfie-hover', selfieHov.css);
+  el.style.setProperty('--portal-btn-selfie-text',  `oklch(${selfieSh.l >= 0.5 ? 0.15 : 0.99} 0 0)`);
+
   // Visor secondary buttons — shade-900 tinted, always dark context so icon always light
   const visorBtn = shades[9];
   el.style.setProperty('--visor-btn-bg',   `oklch(${visorBtn.l.toFixed(3)} ${visorBtn.c.toFixed(4)} ${H.toFixed(2)} / 0.72)`);
@@ -90,7 +110,7 @@ function _applyPortalTheme(el, accentHex, theme) {
 // ── Public entry points ───────────────────────────────────────────────────────
 export function openPortal() {
   const rawName = document.getElementById('inp-name').value.trim() || 'Mi Portal';
-  const title   = st.title  || rawName;
+  const title   = rawName;
   const desc    = st.desc   || 'Selección de recursos para compartir';
   const accent  = st.accent;
   const theme   = st.theme || 'light';
@@ -108,6 +128,7 @@ export function openPortal() {
     editRow.dataset.portalAccent  = accent;
     editRow.dataset.portalTitle   = title;
     editRow.dataset.portalFolders = selected.map(f => f.id).join(',');
+    editRow.dataset.portalTheme   = theme;
     const nameEl = editRow.querySelector('.portal-name-cell');
     if (nameEl) nameEl.childNodes[nameEl.childNodes.length - 1].textContent = title;
     clearEditingRow();
@@ -178,6 +199,7 @@ function _renderPortal(title, desc, accent, theme, font, logoSrc, folders) {
 
   _clearFacePortalChip();
   _clearDorsalState();
+  _resetSelfie();
   document.getElementById('p-face-results').style.display = 'none';
   document.getElementById('p-face-results').innerHTML     = '';
   document.getElementById('p-active-chip-area').style.display = 'none';
@@ -266,17 +288,21 @@ function _renderFolderGrid(items) {
   const grid = document.getElementById('p-folder-grid');
   grid.innerHTML = items.map(item => {
     const assets = uploadedAssets[item.imageId || item.id] || [];
-    const thumb  = assets[0]?.preview || '';
     const count  = assets.length;
+    // 2×2 mosaic: 4 cells — fill with the first photos, empty cells get a placeholder tint
+    const cells = Array.from({ length: 4 }, (_, i) => {
+      const src = assets[i]?.preview;
+      return src
+        ? `<div class="p-fc-cell"><img src="${src}" alt="" decoding="async" loading="lazy"></div>`
+        : `<div class="p-fc-cell p-fc-cell--empty"></div>`;
+    }).join('');
     return `<div class="p-folder-card" data-folder-id="${item.id}">
-      <div class="p-folder-card-thumb">
-        ${thumb
-          ? `<img src="${thumb}" alt="" decoding="async" loading="lazy">`
-          : `<div class="p-folder-card-empty"><span class="msi">photo_library</span></div>`}
+      <div class="p-folder-card-mosaic">
+        ${count > 0 ? cells : `<div class="p-folder-card-empty"><span class="msi">photo_library</span></div>`}
       </div>
       <div class="p-folder-card-info">
         <span class="p-folder-card-name">${item.name}</span>
-        <span class="p-folder-card-count">${count > 0 ? `${count} foto${count !== 1 ? 's' : ''}` : 'Próximamente'}</span>
+        <span class="p-folder-card-count">${count > 0 ? `<span class="msi xs">image</span>${count}` : 'Próximamente'}</span>
       </div>
     </div>`;
   }).join('');
@@ -358,61 +384,83 @@ function _attachPortalResize() {
   window.addEventListener('resize', _portalResizeHandler);
 }
 
-// ── Face ID search ────────────────────────────────────────────────────────────
-function initPortalSearch() {
-  const input         = document.getElementById('p-search-input');
-  const suggestionsEl = document.getElementById('p-search-suggestions');
-  if (!input || !suggestionsEl) return;
+// ── Selfie & search ───────────────────────────────────────────────────────────
+function _resetSelfie() {
+  const img    = document.getElementById('p-selfie-img');
+  const avatar = document.getElementById('p-selfie-avatar');
+  const btn    = document.getElementById('p-selfie-btn');
+  if (img)    img.src = '';
+  if (avatar) avatar.style.display = 'none';
+  if (btn)    btn.style.display    = '';
+  _selfieUploaded = false;
+}
 
-  document.body.appendChild(suggestionsEl);
-
-  let activeIdx = -1;
-  function items() { return Array.from(suggestionsEl.querySelectorAll('.search-suggestion')); }
-  function highlight(idx) { items().forEach((el, i) => el.classList.toggle('kb-active', i === idx)); activeIdx = idx; }
-  function hide() { suggestionsEl.style.display = 'none'; suggestionsEl.innerHTML = ''; activeIdx = -1; }
-  function select(face) { input.value = ''; hide(); _activeFacePortal(face.id, face.name, face.imgSrc); }
-
-  input.addEventListener('input', () => {
-    const q = input.value.trim().toLowerCase();
-    if (!q) { hide(); return; }
-    const faces = Array.from(document.querySelectorAll('.face-av[data-face-id]')).map(el => ({
-      id: el.dataset.faceId, name: el.dataset.faceName, imgSrc: el.querySelector('img')?.src,
-    }));
-    const matches = faces.filter(f => f.name.toLowerCase().includes(q));
-    if (!matches.length) { hide(); return; }
-    activeIdx = -1;
-    suggestionsEl.innerHTML = matches.map(f =>
-      `<div class="search-suggestion" data-face-id="${f.id}">
-        <div class="search-sug-avatar"><img src="${f.imgSrc}" alt="${f.name}"></div>
-        <span class="search-sug-name">${f.name}</span>
-        <span class="search-sug-tag"><span class="msi xs">ar_on_you</span>Face ID</span>
-      </div>`
-    ).join('');
-    positionDropdown(suggestionsEl, document.getElementById('p-search-wrap'));
-    suggestionsEl.style.display = '';
-    suggestionsEl.querySelectorAll('.search-suggestion').forEach((el, i) => {
-      el.addEventListener('mousedown', e => { e.preventDefault(); select(matches[i]); });
+function _searchBySelfie() {
+  _clearDorsalState();
+  const chip = document.getElementById('p-chip-faceid');
+  if (chip) {
+    const selfieUrl = document.getElementById('p-selfie-img')?.src || '';
+    const active = document.createElement('div');
+    active.className = 'face-chip-active';
+    active.innerHTML =
+      `<div class="face-chip-avatar"><img src="${selfieUrl}" alt=""></div>` +
+      `<span class="face-chip-name">Tu selfie</span>` +
+      `<button class="face-chip-remove"><span class="msi xs">close</span></button>`;
+    active.querySelector('.face-chip-remove').addEventListener('click', () => {
+      _removeFacePortal();
+      _resetSelfie();
     });
+    chip.replaceWith(active);
+  }
+  document.getElementById('p-active-chip-area').style.display = 'flex';
+  document.getElementById('p-tabs-section').style.display     = 'none';
+  document.getElementById('p-content-section').style.display  = 'none';
+
+  const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  const assets = allAssets.map(a => ({
+    src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
+    name: a.name, originalUrl: a.originalUrl || a.preview,
+  }));
+  if (assets.length > 0) registerSection('portal-faces', assets);
+
+  const el = document.getElementById('p-face-results');
+  if (!el) return;
+  el.innerHTML = assets.length === 0
+    ? `<div class="face-results-header">No hay imágenes cargadas aún.</div>`
+    : `<div class="face-results-header-row">
+        <div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${assets.length} resultado${assets.length !== 1 ? 's' : ''} encontrados</div>
+       </div>
+       <div class="face-results-grid">${assets.map((a, i) => assetCardHTML(a, 'portal-faces', i)).join('')}</div>`;
+  el.style.display = '';
+}
+
+export function handlePortalSearch() {
+  const dorsalVal = document.getElementById('p-dorsal-input')?.value.trim();
+  if (dorsalVal)        handleDorsalSearch();
+  else if (_selfieUploaded) _searchBySelfie();
+}
+
+function _initSelfieSearch() {
+  const selfieBtn    = document.getElementById('p-selfie-btn');
+  const selfieFile   = document.getElementById('p-selfie-file');
+  const selfieAvatar = document.getElementById('p-selfie-avatar');
+  const selfieRemove = document.getElementById('p-selfie-remove');
+  const buscarBtn    = document.getElementById('p-buscar-btn');
+
+  selfieBtn?.addEventListener('click', () => selfieFile?.click());
+
+  selfieFile?.addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    document.getElementById('p-selfie-img').src = URL.createObjectURL(file);
+    selfieBtn.style.display    = 'none';
+    selfieAvatar.style.display = 'flex';
+    _selfieUploaded = true;
+    selfieFile.value = '';
   });
 
-  input.addEventListener('keydown', e => {
-    const list = items();
-    if (!list.length) return;
-    if (e.key === 'ArrowDown')    { e.preventDefault(); highlight(Math.min(activeIdx + 1, list.length - 1)); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); highlight(Math.max(activeIdx - 1, 0)); }
-    else if (e.key === 'Enter') {
-      e.preventDefault();
-      const idx    = activeIdx >= 0 ? activeIdx : 0;
-      const faceId = list[idx]?.dataset.faceId;
-      const faces  = Array.from(document.querySelectorAll('.face-av[data-face-id]')).map(el => ({
-        id: el.dataset.faceId, name: el.dataset.faceName, imgSrc: el.querySelector('img')?.src,
-      }));
-      const face = faces.find(f => f.id === faceId);
-      if (face) select(face);
-    } else if (e.key === 'Escape') { input.value = ''; hide(); }
-  });
-
-  input.addEventListener('blur', () => setTimeout(hide, 150));
+  selfieRemove?.addEventListener('click', _resetSelfie);
+  buscarBtn?.addEventListener('click', handlePortalSearch);
 }
 
 function _clearFacePortalChip() {
@@ -619,6 +667,6 @@ function _animatePortalIn() {
   );
 }
 
-initPortalSearch();
+_initSelfieSearch();
 _initPortalLightbox();
 document.getElementById('p-drill-back-btn')?.addEventListener('click', _drillBack);
