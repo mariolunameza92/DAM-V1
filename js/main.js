@@ -76,9 +76,10 @@ document.getElementById('portalsTable').addEventListener('click', e => {
   const folderIds = row.dataset.portalFolders ? row.dataset.portalFolders.split(',').filter(Boolean) : [];
   const params = new URLSearchParams({
     portal: '1',
-    title: row.dataset.portalTitle || '',
+    title:  row.dataset.portalTitle || '',
     accent: row.dataset.portalAccent || '',
     folders: folderIds.join(','),
+    theme:  row.dataset.portalTheme || 'light',
   });
   window.open(`${location.pathname}?${params}`, '_blank');
 });
@@ -158,9 +159,10 @@ if (_portalTab) {
   const _p        = new URLSearchParams(location.search);
   const _title     = _p.get('title') || 'Mi Portal';
   const _accent    = _p.get('accent') || '#333';
+  const _theme     = _p.get('theme') || 'light';
   const _folderIds = _p.get('folders') ? _p.get('folders').split(',').filter(Boolean) : [];
-  openPortalFromRow(_title, _accent, _folderIds);
-  initDemoImages().then(() => openPortalFromRow(_title, _accent, _folderIds));
+  openPortalFromRow(_title, _accent, _folderIds, _theme);
+  initDemoImages().then(() => openPortalFromRow(_title, _accent, _folderIds, _theme));
 } else {
   initContextMenu();
   showRecentFolders();

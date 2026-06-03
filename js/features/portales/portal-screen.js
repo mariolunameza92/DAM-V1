@@ -118,11 +118,11 @@ export function openPortal() {
   _attachPortalResize();
 }
 
-export function openPortalFromRow(title, accent, folderIds = []) {
+export function openPortalFromRow(title, accent, folderIds = [], theme = 'light') {
   const folders = folderIds.length > 0
     ? FOLDERS_DATA.filter(f => folderIds.includes(f.id))
     : FOLDERS_DATA;
-  _renderPortal(title, 'Selección de recursos para compartir', accent, 'light', 'Google Sans', '', folders);
+  _renderPortal(title, 'Selección de recursos para compartir', accent, theme, 'Google Sans', '', folders);
   document.getElementById('portalScreen').classList.add('open');
   document.getElementById('appShell').style.display = 'none';
   _animatePortalIn();
@@ -575,18 +575,20 @@ function _lbUpdate() {
   const dlBtn = document.getElementById('p-lb-dl');
   dlBtn.dataset.url      = a.originalUrl;
   dlBtn.dataset.filename = `${a.name}.${a.ext.toLowerCase()}`;
-  document.getElementById('p-lb-prev').disabled = _lbIdx === 0;
-  document.getElementById('p-lb-next').disabled = _lbIdx === _lbAssets.length - 1;
+  document.getElementById('p-lb-prev').disabled = false;
+  document.getElementById('p-lb-next').disabled = false;
 }
 
 function _initPortalLightbox() {
   document.getElementById('p-lb-backdrop').addEventListener('click', _closeLightbox);
   document.getElementById('p-lb-close').addEventListener('click', _closeLightbox);
   document.getElementById('p-lb-prev').addEventListener('click', () => {
-    if (_lbIdx > 0) { _lbIdx--; _lbUpdate(); }
+    _lbIdx = (_lbIdx - 1 + _lbAssets.length) % _lbAssets.length;
+    _lbUpdate();
   });
   document.getElementById('p-lb-next').addEventListener('click', () => {
-    if (_lbIdx < _lbAssets.length - 1) { _lbIdx++; _lbUpdate(); }
+    _lbIdx = (_lbIdx + 1) % _lbAssets.length;
+    _lbUpdate();
   });
   document.getElementById('p-lb-dl').addEventListener('click', () => {
     const btn = document.getElementById('p-lb-dl');
@@ -597,8 +599,8 @@ function _initPortalLightbox() {
   });
   document.addEventListener('keydown', e => {
     if (document.getElementById('p-lightbox').style.display === 'none') return;
-    if (e.key === 'ArrowLeft')  { if (_lbIdx > 0) { _lbIdx--; _lbUpdate(); } }
-    if (e.key === 'ArrowRight') { if (_lbIdx < _lbAssets.length - 1) { _lbIdx++; _lbUpdate(); } }
+    if (e.key === 'ArrowLeft')  { _lbIdx = (_lbIdx - 1 + _lbAssets.length) % _lbAssets.length; _lbUpdate(); }
+    if (e.key === 'ArrowRight') { _lbIdx = (_lbIdx + 1) % _lbAssets.length; _lbUpdate(); }
     if (e.key === 'Escape') _closeLightbox();
   });
 }
