@@ -390,19 +390,26 @@ function _renderMasonry(rawAssets) {
   }));
   registerSection('portal', assets);
 
-  const numCols = getPortalNumCols();
-  const cols    = Array.from({ length: numCols }, () => []);
-  assets.forEach((a, i) => cols[i % numCols].push({ a, i }));
+  const maxCols = getPortalNumCols();
+  const numCols = Math.min(maxCols, assets.length);
+  masonry.style.columnCount = String(numCols);
+  if (numCols < maxCols) {
+    masonry.style.maxWidth = Math.round(numCols / maxCols * 100) + '%';
+    masonry.style.marginLeft  = 'auto';
+    masonry.style.marginRight = 'auto';
+  } else {
+    masonry.style.maxWidth = '';
+    masonry.style.marginLeft  = '';
+    masonry.style.marginRight = '';
+  }
 
-  masonry.innerHTML = cols.map(col =>
-    `<div class="p-masonry-col">${col.map(({ a, i }) =>
-      `<div class="p-img-card" data-idx="${i}">
-        <img src="${a.src}" decoding="async" loading="lazy">
-        <button class="p-dl-btn asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
-          <span class="msi">download</span>
-        </button>
-      </div>`
-    ).join('')}</div>`
+  masonry.innerHTML = assets.map((a, i) =>
+    `<div class="p-img-card" data-idx="${i}">
+      <img src="${a.src}" decoding="async" loading="lazy">
+      <button class="p-dl-btn asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
+        <span class="msi">download</span>
+      </button>
+    </div>`
   ).join('');
 
   masonry.querySelectorAll('.p-img-card').forEach(card => {
