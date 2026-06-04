@@ -116,15 +116,14 @@
 .portal-screen[data-theme="dark"] .p-gradient-blob{filter:blur(60px)}
 
 .p-masonry-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
-.p-img-card{position:relative;border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .15s}
-.p-img-card:hover{transform:scale(1.015)}
+.p-img-card{position:relative;border-radius:8px;overflow:hidden;cursor:pointer}
 .p-img-card img{width:100%;display:block}
 
-/* Download button: always visible, accent bg + guaranteed contrast icon */
+/* Download button: hidden by default, revealed on card hover */
 .portal-screen .p-dl-btn,
-.portal-screen .asset-dl{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:50%;background:var(--color-accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:1;transform:none;backdrop-filter:none;transition:transform .15s,opacity .15s;z-index:2;padding:0}
-.portal-screen .p-dl-btn:hover,
-.portal-screen .asset-dl:hover{transform:scale(1.1);opacity:.85}
+.portal-screen .asset-dl{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:50%;background:var(--color-accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transform:translateY(-8px);backdrop-filter:none;transition:opacity .2s ease,transform .2s ease;z-index:2;padding:0}
+.p-img-card:hover .p-dl-btn,
+.p-img-card:hover .asset-dl{opacity:1;transform:translateY(0)}
 .portal-screen .p-dl-btn .msi,
 .portal-screen .asset-dl .msi{color:var(--color-accent-text);font-size:18px}
 
