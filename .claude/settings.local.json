@@ -15,7 +15,8 @@
       "PowerShell(\\(Get-Command node\\).Source)",
       "Skill(update-config)",
       "Skill(update-config:*)",
-      "Bash(git commit --amend -m ' *)"
+      "Bash(git commit --amend -m ' *)",
+      "Bash(grep -vE \"^\\\\s*$|^commit|^Author|^Date\")"
     ]
   },
   "hooks": {
