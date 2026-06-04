@@ -27,6 +27,13 @@
             "shell": "powershell",
             "statusMessage": "Auto-commit...",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "s=$(git status --porcelain 2>/dev/null); if [ -n \"$s\" ]; then git add -A && git commit -m \"auto: $(date '+%Y-%m-%d %H:%M')\"; fi",
+            "shell": "bash",
+            "statusMessage": "Auto-commit...",
+            "timeout": 30
           }
         ]
       }
