@@ -38,6 +38,9 @@
 .p-selfie-remove .msi{font-size:11px;color:var(--g100)}
 .p-dorsal-input-wrap{flex:none;display:flex;align-items:center;background:var(--g50);border:2px solid var(--g200);border-radius:80px;padding:11px 20px;width:10rem}
 .p-dorsal-input-wrap .p-search-input{width:100%;min-width:0}
+.p-dorsal-clear{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:6px;border:none;background:var(--g300);border-radius:50%;cursor:pointer;padding:0;transition:background .15s}
+.p-dorsal-clear:hover{background:var(--g400)}
+.p-dorsal-clear .msi{font-size:12px;color:var(--g700)}
 .p-search-input{border:none;background:none;outline:none;font-size:14px;color:var(--g800);font-family:var(--font-ui);flex:1;min-width:0;width:100%}
 .p-search-input::placeholder{color:var(--g500)}
 .p-buscar-btn{display:flex;align-items:center;background:var(--color-accent);color:var(--color-accent-text);border:none;border-radius:80px;padding:12px 24px;font-size:14px;font-weight:600;font-family:var(--font-ui);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s}

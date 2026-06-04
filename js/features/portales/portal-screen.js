@@ -421,24 +421,20 @@ function _resetSelfie() {
   _selfieUploaded = false;
 }
 
+function _restorePortalDefault() {
+  const results = document.getElementById('p-face-results');
+  if (results) { results.style.display = 'none'; results.innerHTML = ''; }
+  document.getElementById('p-content-section').style.display = '';
+  _renderNavigation();
+}
+
+function _removeSelfieSearch() {
+  _resetSelfie();
+  _restorePortalDefault();
+}
+
 function _searchBySelfie() {
   _clearDorsalState();
-  const chip = document.getElementById('p-chip-faceid');
-  if (chip) {
-    const selfieUrl = document.getElementById('p-selfie-img')?.src || '';
-    const active = document.createElement('div');
-    active.className = 'face-chip-active';
-    active.innerHTML =
-      `<div class="face-chip-avatar"><img src="${selfieUrl}" alt=""></div>` +
-      `<span class="face-chip-name">Tu selfie</span>` +
-      `<button class="face-chip-remove"><span class="msi xs">close</span></button>`;
-    active.querySelector('.face-chip-remove').addEventListener('click', () => {
-      _removeFacePortal();
-      _resetSelfie();
-    });
-    chip.replaceWith(active);
-  }
-  document.getElementById('p-active-chip-area').style.display = 'flex';
   document.getElementById('p-tabs-section').style.display     = 'none';
   document.getElementById('p-content-section').style.display  = 'none';
 
@@ -485,8 +481,15 @@ function _initSelfieSearch() {
     selfieFile.value = '';
   });
 
-  selfieRemove?.addEventListener('click', _resetSelfie);
+  selfieRemove?.addEventListener('click', _removeSelfieSearch);
   buscarBtn?.addEventListener('click', handlePortalSearch);
+
+  const dorsalInput = document.getElementById('p-dorsal-input');
+  const dorsalClear = document.getElementById('p-dorsal-clear');
+  dorsalInput?.addEventListener('input', () => {
+    dorsalClear.style.display = dorsalInput.value.trim() ? 'flex' : 'none';
+  });
+  dorsalClear?.addEventListener('click', clearDorsalSearch);
 }
 
 function _clearFacePortalChip() {
@@ -579,19 +582,11 @@ export function handleDorsalSearch() {
   const input = document.getElementById('p-dorsal-input');
   const val   = input?.value.trim();
   if (!val) return;
-  input.value = '';
 
-  _clearFacePortalChip();
+  _resetSelfie();
+  const clearBtn = document.getElementById('p-dorsal-clear');
+  if (clearBtn) clearBtn.style.display = 'flex';
 
-  const chip = document.getElementById('p-dorsal-chip');
-  if (chip) {
-    chip.style.display = 'flex';
-    chip.innerHTML =
-      `<span class="msi xs" style="color:var(--g600)">tag</span>` +
-      `<span class="face-chip-name">Dorsal #${val}</span>` +
-      `<button class="face-chip-remove" onclick="clearDorsalSearch()"><span class="msi xs">close</span></button>`;
-  }
-  document.getElementById('p-active-chip-area').style.display = 'flex';
   document.getElementById('p-tabs-section').style.display    = 'none';
   document.getElementById('p-content-section').style.display = 'none';
 
@@ -617,17 +612,15 @@ export function handleDorsalSearch() {
 }
 
 function _clearDorsalState() {
-  const chip = document.getElementById('p-dorsal-chip');
-  if (chip) { chip.style.display = 'none'; chip.innerHTML = ''; }
+  const input = document.getElementById('p-dorsal-input');
+  if (input) input.value = '';
+  const clearBtn = document.getElementById('p-dorsal-clear');
+  if (clearBtn) clearBtn.style.display = 'none';
 }
 
 export function clearDorsalSearch() {
   _clearDorsalState();
-  document.getElementById('p-active-chip-area').style.display = 'none';
-  const results = document.getElementById('p-face-results');
-  if (results) { results.style.display = 'none'; results.innerHTML = ''; }
-  document.getElementById('p-content-section').style.display = '';
-  _renderNavigation();
+  _restorePortalDefault();
 }
 
 // ── Lightbox ──────────────────────────────────────────────────────────────────
