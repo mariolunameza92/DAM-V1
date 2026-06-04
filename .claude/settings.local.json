@@ -14,7 +14,8 @@
       "PowerShell(Get-Command python3 -ErrorAction SilentlyContinue)",
       "PowerShell(\\(Get-Command node\\).Source)",
       "Skill(update-config)",
-      "Skill(update-config:*)"
+      "Skill(update-config:*)",
+      "Bash(git commit --amend -m ' *)"
     ]
   },
   "hooks": {
@@ -25,15 +26,15 @@
             "type": "command",
             "command": "$s = git status --porcelain; if ($s) { git add -A; git commit -m \"auto: $(Get-Date -Format 'yyyy-MM-dd HH:mm')\" }",
             "shell": "powershell",
-            "statusMessage": "Auto-commit...",
-            "timeout": 30
+            "timeout": 30,
+            "statusMessage": "Auto-commit..."
           },
           {
             "type": "command",
             "command": "s=$(git status --porcelain 2>/dev/null); if [ -n \"$s\" ]; then git add -A && git commit -m \"auto: $(date '+%Y-%m-%d %H:%M')\"; fi",
             "shell": "bash",
-            "statusMessage": "Auto-commit...",
-            "timeout": 30
+            "timeout": 30,
+            "statusMessage": "Auto-commit..."
           }
         ]
       }
