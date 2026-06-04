@@ -72,6 +72,9 @@ export const FOLDER_IMAGES_EVENTS = {
     `${L42K_HL}/PDR_2302.JPG`,
     `${L42K_HL}/PDR_2313.JPG`,
     `${L42K_HL}/PDR_2556.JPG`,
+    `${L42K_HL}/LEN_L42K26_adidas-1033.jpg`,
+    `${L42K_HL}/LEN_L42K26_adidas-1055.jpg`,
+    `${L42K_HL}/LEN_L42K26_adidas-1092.jpg`,
   ],
   'lima42k-protocolares': [
     `${L42K_PRO}/LEN_L42K26_adidas-1268.jpg`,

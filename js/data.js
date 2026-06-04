@@ -3,7 +3,7 @@ import { FOLDER_IMAGES_EVENTS } from './events-registry.js';
 
 export const FOLDERS_DATA = [
   { id: 'colorrun',    name: 'Color Run 2026',           count: '4 archivos',   imageId: 'colorrun' },
-  { id: 'lima42k',     name: 'Lima 42K 2026',            count: '32 archivos',  imageId: 'lima42k' },
+  { id: 'lima42k',     name: 'Lima 42K 2026',            count: '35 archivos',  imageId: 'lima42k' },
   { id: 'masmujeres',  name: 'Más mujeres en meta 2026', count: '4 archivos',   imageId: 'masmujeres' },
   { id: 'onsquad',     name: 'On Squad Race Lima 2026',  count: '4 archivos',   imageId: 'onsquad' },
   { id: 'rimac',       name: 'Rimac Bienestar Fest',     count: '5 archivos',   imageId: 'rimac' },
