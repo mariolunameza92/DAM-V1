@@ -17,7 +17,11 @@
       "Skill(update-config:*)",
       "Bash(git commit --amend -m ' *)",
       "Bash(grep -vE \"^\\\\s*$|^commit|^Author|^Date\")",
-      "Bash(grep -vE \":[ ]?0$\")"
+      "Bash(grep -vE \":[ ]?0$\")",
+      "Read(//Users/lenadmin/.nvm/versions/**)",
+      "Read(//opt/homebrew/bin/**)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(python3 -m http.server 3000 --bind 127.0.0.1)"
     ]
   },
   "hooks": {
