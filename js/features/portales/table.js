@@ -1,15 +1,16 @@
-// Exports: addToTable(title, fCount, photoCount, accent, folderIds, dateStr?, silent?) — inserta fila en tabla de portales y persiste en session
+// Exports: addToTable(title, fCount, photoCount, accent, folderIds, dateStr?, silent?, searchMethod?) — inserta fila en tabla de portales y persiste en session
 import { pushPortal } from '../../session.js';
 import { showToast } from '../../components/ui/toast.js';
 import { openModalEdit } from './modal.js';
 
-export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr, silent) {
+export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr, silent, searchMethod) {
   const today = new Date();
   const d = dateStr || `${today.getDate()}/${today.toLocaleString('es', { month: 'short' })}/${today.getFullYear()}`;
   const ids = Array.isArray(folderIds) ? folderIds : [];
   const photos = photoCount || 0;
+  const search = searchMethod || 'both';
 
-  if (!silent) pushPortal({ title, fCount, photoCount: photos, accent, folderIds: ids, dateStr: d });
+  if (!silent) pushPortal({ title, fCount, photoCount: photos, accent, folderIds: ids, dateStr: d, searchMethod: search });
 
   const row = document.createElement('div');
   row.className = 'table-row';
@@ -17,6 +18,7 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
   row.dataset.portalTitle = title;
   row.dataset.portalAccent = accent;
   row.dataset.portalFolders = ids.join(',');
+  row.dataset.portalSearch = search;
   row.innerHTML = `
     <div class="col"><div class="portal-name-cell" style="cursor:pointer">
       <div class="portal-icon-box">
@@ -69,7 +71,7 @@ function _initPortalMenu() {
     } else if (btn.dataset.action === 'duplicate') {
       if (row) {
         const folderIds = (row.dataset.portalFolders || '').split(',').filter(Boolean);
-        addToTable(`${row.dataset.portalTitle || 'Portal'} (copia)`, folderIds.length, 0, row.dataset.portalAccent || '#22252f', folderIds);
+        addToTable(`${row.dataset.portalTitle || 'Portal'} (copia)`, folderIds.length, 0, row.dataset.portalAccent || '#22252f', folderIds, undefined, false, row.dataset.portalSearch || 'both');
         showToast('Portal duplicado');
       }
     } else if (btn.dataset.action === 'delete') {

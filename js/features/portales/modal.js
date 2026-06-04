@@ -1,11 +1,11 @@
-// Exports: st (estado del modal), openModal(), closeModal(), showStep(n), goStep(n), tryGoStep(n), selectAccess(), handleAccent(), handleLogo(), toggleInline(), renderFolderList(), toggleFolder(), filterFolders(), copyLink(), onNameInput(), setDoneBtn(), prepareStep4(), resetCopyBtn()
+// Exports: st (estado del modal), openModal(), closeModal(), showStep(n), goStep(n), tryGoStep(n), selectAccess(), handleAccent(), handleLogo(), toggleInline(), renderFolderList(), toggleFolder(), filterFolders(), copyLink(), onNameInput(), setDoneBtn(), prepareStep4(), resetCopyBtn(), selectSearchMethod()
 import { FOLDERS_DATA } from '../../data.js';
 import { generateShadeScale } from '../../utils.js';
 
 export const st = {
   accent: '#22252f', font: 'Google Sans', access: 'public',
   theme: 'light', title: '', desc: '', selectedFolders: new Set(),
-  logoSvgText: '',
+  logoSvgText: '', searchMethod: 'both',
 };
 
 let _editingRow = null;
@@ -30,7 +30,8 @@ export function openModal() {
   _setStep4EditMode(false);
   st.selectedFolders = new Set();
   st.accent = '#22252f'; st.font = 'Google Sans'; st.access = 'public';
-  st.theme = 'light'; st.title = ''; st.desc = '';
+  st.theme = 'light'; st.title = ''; st.desc = ''; st.searchMethod = 'both';
+  selectSearchMethod('both');
 
   document.getElementById('inp-name').value   = '';
   document.getElementById('inp-search').value = '';
@@ -151,6 +152,13 @@ export function handleTheme(val) {
   _updateAccentPreview();
 }
 
+export function selectSearchMethod(method) {
+  st.searchMethod = method;
+  ['both', 'faceid', 'dorsal'].forEach(m =>
+    document.getElementById('search-' + m)?.classList.toggle('active', m === method)
+  );
+}
+
 function _relativeLuminance(hex) {
   hex = hex.replace(/^#/, '');
   if (!/^[0-9a-f]{6}$/i.test(hex)) return 1;
@@ -254,6 +262,8 @@ export function openModalEdit(rowEl) {
   st.selectedFolders = new Set(folderIds);
   st.accent = accent; st.font = 'Google Sans'; st.access = 'public';
   st.theme = theme; st.title = title; st.desc = ''; st.logoSvgText = '';
+  st.searchMethod = rowEl.dataset.portalSearch || 'both';
+  selectSearchMethod(st.searchMethod);
 
   document.getElementById('inp-name').value   = title;
   document.getElementById('inp-search').value = '';

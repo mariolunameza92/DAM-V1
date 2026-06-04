@@ -119,6 +119,7 @@ export function openPortal() {
   const logoSrc = document.getElementById('logo-img')?.src || '';
   const selected = FOLDERS_DATA.filter(f => st.selectedFolders.has(f.id));
   const folderIds = selected.map(f => f.id);
+  const searchMethod = st.searchMethod || 'both';
 
   const editRow = getEditingRow();
   if (editRow) {
@@ -129,30 +130,31 @@ export function openPortal() {
     editRow.dataset.portalTitle   = title;
     editRow.dataset.portalFolders = folderIds.join(',');
     editRow.dataset.portalTheme   = theme;
+    editRow.dataset.portalSearch  = searchMethod;
     const nameEl = editRow.querySelector('.portal-name-cell');
     if (nameEl) nameEl.childNodes[nameEl.childNodes.length - 1].textContent = title;
     clearEditingRow();
     closeModal();
-    const params = new URLSearchParams({ portal: '1', title, accent, folders: folderIds.join(','), theme });
+    const params = new URLSearchParams({ portal: '1', title, accent, folders: folderIds.join(','), theme, search: searchMethod });
     window.open(`${location.pathname}?${params}`, '_blank');
     return;
   }
 
   // Create flow: render in-app (preserves logo/font/desc that the URL can't carry).
-  _renderPortal(title, desc, accent, theme, font, logoSrc, selected);
+  _renderPortal(title, desc, accent, theme, font, logoSrc, selected, searchMethod);
   closeModal();
   document.getElementById('portalScreen').classList.add('open');
   document.getElementById('appShell').style.display = 'none';
-  addToTable(title, selected.length, selected.length * 4, accent, folderIds);
+  addToTable(title, selected.length, selected.length * 4, accent, folderIds, undefined, false, searchMethod);
   _animatePortalIn();
   _attachPortalResize();
 }
 
-export function openPortalFromRow(title, accent, folderIds = [], theme = 'light') {
+export function openPortalFromRow(title, accent, folderIds = [], theme = 'light', searchMethod = 'both') {
   const folders = folderIds.length > 0
     ? FOLDERS_DATA.filter(f => folderIds.includes(f.id))
     : FOLDERS_DATA;
-  _renderPortal(title, 'Selección de recursos para compartir', accent, theme, 'Google Sans', '', folders);
+  _renderPortal(title, 'Selección de recursos para compartir', accent, theme, 'Google Sans', '', folders, searchMethod);
   document.getElementById('portalScreen').classList.add('open');
   document.getElementById('appShell').style.display = 'none';
   _animatePortalIn();
@@ -174,7 +176,15 @@ export function closePortal() {
 }
 
 // ── Core render ───────────────────────────────────────────────────────────────
-function _renderPortal(title, desc, accent, theme, font, logoSrc, folders) {
+function _applySearchMethod(method) {
+  const ctas = document.getElementById('p-hero-ctas');
+  if (!ctas) return;
+  ctas.classList.remove('p-hero-ctas--faceid', 'p-hero-ctas--dorsal');
+  if (method === 'faceid') ctas.classList.add('p-hero-ctas--faceid');
+  else if (method === 'dorsal') ctas.classList.add('p-hero-ctas--dorsal');
+}
+
+function _renderPortal(title, desc, accent, theme, font, logoSrc, folders, searchMethod) {
   _portalFolders = folders;
   _activeTabIdx  = 0;
 
@@ -183,6 +193,7 @@ function _renderPortal(title, desc, accent, theme, font, logoSrc, folders) {
   document.getElementById('p-hero-sub').textContent   = desc;
   portalEl.style.fontFamily = `'${font}', sans-serif`;
   _applyPortalTheme(portalEl, accent, theme);
+  _applySearchMethod(searchMethod || 'both');
 
   const logoArea     = portalEl.querySelector('#p-header-logo');
   const logoImg      = portalEl.querySelector('#p-logo-img');
@@ -643,7 +654,7 @@ export function handleDorsalSearch() {
   } else {
     el.innerHTML =
       `<div class="face-results-header-row">
-        <div class="face-results-header"><span class="msi xs">tag</span>&nbsp;${assets.length} resultados para dorsal <strong>#${val}</strong></div>
+        <div class="face-results-header"><span class="msi xs">scoreboard</span>&nbsp;${assets.length} resultados para dorsal <strong>#${val}</strong></div>
       </div>
       <div class="face-results-grid">${assets.map((a, i) => assetCardHTML(a, 'portal-dorsal', i)).join('')}</div>`;
   }

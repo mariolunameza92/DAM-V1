@@ -5,7 +5,7 @@ import { addUserFolder } from './data.js';
 import { navigateToFolder, switchTab, showRecentFolders, openCrearCarpetaDialog, confirmCrearCarpeta, cancelCrearCarpeta } from './features/carpetas/browser.js';
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio, initFaceFilters, initSearch, typingWelcome, initSectionReveal } from './features/inicio/inicio.js';
-import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
+import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList, selectSearchMethod } from './features/portales/modal.js';
 import { openPortal, closePortal, openPortalFromRow, handleDorsalSearch, clearDorsalSearch, handlePortalSearch, refreshPortalImages } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
 import { initImageDetail } from './features/carpetas/image-detail.js';
@@ -49,7 +49,7 @@ export function goToCarpeta(nodeId) {
 function restoreSession() {
   loadUploadsFromSession();
   loadUserFoldersFromSession().forEach(f => addUserFolder(f.parentId, f.label, f.id));
-  loadPortalsFromSession().forEach(p => addToTable(p.title, p.fCount, p.photoCount || 0, p.accent, p.folderIds || [], p.dateStr, true));
+  loadPortalsFromSession().forEach(p => addToTable(p.title, p.fCount, p.photoCount || 0, p.accent, p.folderIds || [], p.dateStr, true, p.searchMethod || 'both'));
 }
 
 // ── Event listeners ───────────────────────────────────────────────
@@ -79,8 +79,9 @@ document.getElementById('portalsTable').addEventListener('click', e => {
   const title     = row.dataset.portalTitle   || '';
   const accent    = row.dataset.portalAccent  || '';
   const theme     = row.dataset.portalTheme   || 'light';
+  const search    = row.dataset.portalSearch  || 'both';
   const folderIds = row.dataset.portalFolders ? row.dataset.portalFolders.split(',').filter(Boolean) : [];
-  const params = new URLSearchParams({ portal: '1', title, accent, folders: folderIds.join(','), theme });
+  const params = new URLSearchParams({ portal: '1', title, accent, folders: folderIds.join(','), theme, search });
   window.open(`${location.pathname}?${params}`, '_blank');
 });
 
@@ -139,6 +140,7 @@ Object.assign(window, {
   selectAccess,
   handleAccent,
   handleTheme,
+  selectSearchMethod,
   handleLogo,
   toggleInline,
   filterFolders,
@@ -164,8 +166,9 @@ if (_portalTab) {
   const _title     = _p.get('title') || 'Mi Portal';
   const _accent    = _p.get('accent') || '#333';
   const _theme     = _p.get('theme') || 'light';
+  const _search    = _p.get('search') || 'both';
   const _folderIds = _p.get('folders') ? _p.get('folders').split(',').filter(Boolean) : [];
-  openPortalFromRow(_title, _accent, _folderIds, _theme);
+  openPortalFromRow(_title, _accent, _folderIds, _theme, _search);
   initDemoImages().then(() => refreshPortalImages());
 } else {
   initContextMenu();

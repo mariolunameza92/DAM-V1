@@ -405,6 +405,14 @@
           </div>
           <button class="contrast-warn-cta" onclick="handleTheme('light')">Usar Light</button>
         </div>
+        <div class="t-row" style="flex-direction:column;align-items:stretch;gap:var(--space-2)">
+          <div class="t-info"><span class="t-label">Método de búsqueda</span><span class="t-hint">Cómo los visitantes encuentran sus fotos</span></div>
+          <div class="theme-toggle-btns" style="gap:var(--space-2)">
+            <button class="theme-opt active" id="search-both" onclick="selectSearchMethod('both')" style="flex:1;justify-content:center"><span class="msi xs">join_inner</span>Ambos</button>
+            <button class="theme-opt" id="search-faceid" onclick="selectSearchMethod('faceid')" style="flex:1;justify-content:center"><span class="msi xs">ar_on_you</span>Selfie</button>
+            <button class="theme-opt" id="search-dorsal" onclick="selectSearchMethod('dorsal')" style="flex:1;justify-content:center"><span class="msi xs">scoreboard</span>Dorsal</button>
+          </div>
+        </div>
         <div class="t-row">
           <div class="t-info"><span class="t-label">Tipografía</span><span class="t-hint">Fuente del portal</span></div>
           <select id="font-sel" style="font-size:11px;border:none;background:transparent;color:var(--g600);cursor:pointer;outline:none;font-family:var(--font-ui);flex-shrink:0">
