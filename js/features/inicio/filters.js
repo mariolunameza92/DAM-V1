@@ -16,12 +16,12 @@ const MARCAS = [
   { id: 'asics',       label: 'ASICS',         cat: 'sport', img: 'assets/marcas/asics.svg' },
   { id: 'new_balance', label: 'New Balance',   cat: 'sport', img: 'assets/marcas/new_balance.svg' },
   // Automotriz
-  { id: 'audi',        label: 'Audi',          cat: 'auto' },
-  { id: 'volkswagen',  label: 'Volkswagen',    cat: 'auto' },
-  { id: 'porsche',     label: 'Porsche',       cat: 'auto' },
-  { id: 'bmw',         label: 'BMW',           cat: 'auto' },
-  { id: 'mercedes',    label: 'Mercedes-Benz', cat: 'auto' },
-  { id: 'kia',         label: 'Kia',           cat: 'auto' },
+  { id: 'audi',        label: 'Audi',          cat: 'auto', img: 'assets/marcas/audi.svg' },
+  { id: 'volkswagen',  label: 'Volkswagen',    cat: 'auto', img: 'assets/marcas/volkswagen.svg' },
+  { id: 'porsche',     label: 'Porsche',       cat: 'auto', img: 'assets/marcas/porsche.svg' },
+  { id: 'bmw',         label: 'BMW',           cat: 'auto', img: 'assets/marcas/bmw.svg' },
+  { id: 'mercedes',    label: 'Mercedes-Benz', cat: 'auto', img: 'assets/marcas/mercedes.svg' },
+  { id: 'kia',         label: 'Kia',           cat: 'auto', img: 'assets/marcas/kia.svg' },
 ];
 
 const OBJETOS = ['Trofeo', 'Vehículo', 'Electrónico', 'Ropa', 'Bandera', 'Comida', 'Podio', 'Micrófono'];
