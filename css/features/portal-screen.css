@@ -101,8 +101,8 @@
 .pfph{width:65px;height:49px;border-radius:6px;background:rgba(255,255,255,.35)}
 .p-folder-name{font-size:14px;color:var(--g800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:168px;font-family:var(--font-ui)}
 
-/* Masonry — CSS columns: browser fills top-to-bottom, no gaps */
-.p-masonry{width:100%;min-width:0;column-gap:24px}
+/* Masonry */
+.p-masonry{display:flex;gap:24px;width:100%;min-width:0}
 .p-asset{border-radius:8px;cursor:pointer;transition:transform .15s}
 .p-asset:hover{transform:scale(1.015)}
 
@@ -121,7 +121,8 @@
 .portal-screen[data-theme="dark"]{background:var(--portal-bg-deep,var(--g100))}
 .portal-screen[data-theme="dark"] .p-gradient-blob{filter:blur(60px)}
 
-.p-img-card{position:relative;border-radius:8px;overflow:hidden;cursor:pointer;break-inside:avoid;margin-bottom:24px;display:block}
+.p-masonry-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
+.p-img-card{position:relative;border-radius:8px;overflow:hidden;cursor:pointer}
 .p-img-card img{width:100%;display:block}
 
 /* Download button: always visible, accent bg + guaranteed contrast icon */
@@ -203,8 +204,8 @@
   .p-face-results .face-results-grid{grid-template-columns:repeat(2,1fr)}
 
   /* Masonry: smaller gaps give images more width in 2 cols */
-  .p-masonry{column-gap:12px}
-  .p-img-card{margin-bottom:12px}
+  .p-masonry{gap:12px}
+  .p-masonry-col{gap:12px}
 
   /* Lightbox nav closer to edges so it doesn't crowd the image */
   .p-lb-prev{left:10px}

@@ -391,15 +391,18 @@ function _renderMasonry(rawAssets) {
   registerSection('portal', assets);
 
   const numCols = Math.min(getPortalNumCols(), assets.length);
-  masonry.style.columnCount = String(numCols);
+  const cols    = Array.from({ length: numCols }, () => []);
+  assets.forEach((a, i) => cols[i % numCols].push({ a, i }));
 
-  masonry.innerHTML = assets.map((a, i) =>
-    `<div class="p-img-card" data-idx="${i}">
-      <img src="${a.src}" decoding="async" loading="lazy">
-      <button class="p-dl-btn asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
-        <span class="msi">download</span>
-      </button>
-    </div>`
+  masonry.innerHTML = cols.map(col =>
+    `<div class="p-masonry-col">${col.map(({ a, i }) =>
+      `<div class="p-img-card" data-idx="${i}">
+        <img src="${a.src}" decoding="async" loading="lazy">
+        <button class="p-dl-btn asset-dl" data-url="${a.originalUrl}" data-filename="${a.name}.${a.ext.toLowerCase()}">
+          <span class="msi">download</span>
+        </button>
+      </div>`
+    ).join('')}</div>`
   ).join('');
 
   masonry.querySelectorAll('.p-img-card').forEach(card => {
