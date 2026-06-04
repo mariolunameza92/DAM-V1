@@ -3,6 +3,7 @@ import { TREE_DATA, FOLDER_IMAGES, findNode, getAncestorIds, addUserFolder } fro
 import { folderSVG, imgLabel } from '../../utils.js';
 import { uploadedAssets, userUploadedAssets, pushUserFolder } from '../../session.js';
 import { showToast } from '../../components/ui/toast.js';
+import { bindStaticToggle } from '../../components/ui/view-toggle.js';
 import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
@@ -41,10 +42,6 @@ function _updateActionButtons() {
   btnSubir.style.display = isOwned ? '' : 'none';
 }
 
-function _setCarpetasToggleActive(view) {
-  document.getElementById('c-toggle-grid')?.classList.toggle('active', view === 'grid');
-  document.getElementById('c-toggle-list')?.classList.toggle('active', view === 'list');
-}
 
 const _dispatchRendered = () => document.dispatchEvent(new CustomEvent('dam:cardsrendered'));
 
@@ -279,22 +276,8 @@ export function cancelCrearCarpeta() {
 }
 
 // ── View toggle ───────────────────────────────────────────────────────────────
-document.getElementById('c-toggle-grid')?.addEventListener('click', () => {
-  if (_carpetasView === 'grid') return;
-  _carpetasView = 'grid';
-  _setCarpetasToggleActive('grid');
-  if (treeState.selected) {
-    const node = findNode(treeState.selected);
-    if (node) renderFolderContent(node);
-  } else {
-    _renderRecentFoldersView();
-  }
-});
-
-document.getElementById('c-toggle-list')?.addEventListener('click', () => {
-  if (_carpetasView === 'list') return;
-  _carpetasView = 'list';
-  _setCarpetasToggleActive('list');
+bindStaticToggle('c-toggle-grid', 'c-toggle-list', () => _carpetasView, v => {
+  _carpetasView = v;
   if (treeState.selected) {
     const node = findNode(treeState.selected);
     if (node) renderFolderContent(node);

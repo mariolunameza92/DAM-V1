@@ -83,12 +83,6 @@
 .p-folders-back:hover{background:var(--g200)}
 .p-folders-back .msi{color:var(--g700);font-size:18px}
 
-/* View toggle */
-.p-view-toggle{display:flex;gap:8px}
-.p-view-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--g100);transition:background .15s;padding:0}
-.p-view-btn .msi{color:var(--g700);font-size:16px}
-.p-view-btn.active{background:var(--color-accent);border-color:var(--color-accent)}
-.p-view-btn.active .msi{color:var(--color-accent-text)}
 
 /* Folders */
 .p-folders{display:flex;gap:24px;flex-wrap:nowrap;overflow-x:auto;padding-top:var(--space-1);padding-bottom:var(--space-2)}

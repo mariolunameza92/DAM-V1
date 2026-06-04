@@ -34,7 +34,9 @@
       "Bash(curl -s -o /dev/null -w \"main.js:%{http_code} \\(%{content_type}\\)\\\\n\" http://localhost:3000/js/main.js)",
       "Bash(which node *)",
       "Bash(lsof -ti:3000)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/)",
+      "Bash(chmod +x /Users/lenadmin/Documents/GitHub/DAM-V1/.claude/serve.sh)",
+      "Bash(python3 -m http.server 3001)"
     ]
   },
   "hooks": {

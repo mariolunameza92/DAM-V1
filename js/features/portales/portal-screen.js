@@ -3,6 +3,7 @@ import { st, closeModal, getEditingRow, clearEditingRow } from './modal.js';
 import { addToTable } from './table.js';
 import { FOLDERS_DATA, FOLDER_IMAGES, findNode } from '../../data.js';
 import { positionDropdown, generateShadeScale, hexToOklch } from '../../utils.js';
+import { viewToggleHTML, bindDynamicToggle } from '../../components/ui/view-toggle.js';
 
 function getPortalNumCols() {
   const w = window.innerWidth;
@@ -622,18 +623,10 @@ function _drawPortalFaceResults(el) {
   el.innerHTML =
     `<div class="face-results-header-row">
       <div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${assets.length} resultados para <strong>${name}</strong></div>
-      <div class="p-view-toggle">
-        <button class="p-view-btn ${_portalFaceView === 'grid' ? 'active' : ''}" data-pfv="grid"><span class="msi xs">grid_view</span></button>
-        <button class="p-view-btn ${_portalFaceView === 'list' ? 'active' : ''}" data-pfv="list"><span class="msi xs">lists</span></button>
-      </div>
+      ${viewToggleHTML(_portalFaceView)}
     </div>` + contentHTML;
-  el.querySelectorAll('.p-view-btn[data-pfv]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (_portalFaceView === btn.dataset.pfv) return;
-      _portalFaceView = btn.dataset.pfv;
-      _drawPortalFaceResults(el);
-    });
-  });
+
+  bindDynamicToggle(el, v => { _portalFaceView = v; _drawPortalFaceResults(el); });
 }
 
 // ── Dorsal search ─────────────────────────────────────────────────────────────

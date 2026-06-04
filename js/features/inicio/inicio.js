@@ -5,6 +5,7 @@ import { folderSVG, getNumCols, positionDropdown } from '../../utils.js';
 import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
+import { bindStaticToggle, viewToggleHTML, bindDynamicToggle } from '../../components/ui/view-toggle.js';
 
 let _inicioFoldersView = 'grid';
 let _inicioAssetsView  = 'grid';
@@ -107,35 +108,8 @@ export function renderInicio() {
 }
 
 // ── View toggle wiring ────────────────────────────────────────────────────────
-document.getElementById('inicio-folders-grid')?.addEventListener('click', () => {
-  if (_inicioFoldersView === 'grid') return;
-  _inicioFoldersView = 'grid';
-  document.getElementById('inicio-folders-grid').classList.add('active');
-  document.getElementById('inicio-folders-list').classList.remove('active');
-  _renderInicioFolders();
-});
-document.getElementById('inicio-folders-list')?.addEventListener('click', () => {
-  if (_inicioFoldersView === 'list') return;
-  _inicioFoldersView = 'list';
-  document.getElementById('inicio-folders-grid').classList.remove('active');
-  document.getElementById('inicio-folders-list').classList.add('active');
-  _renderInicioFolders();
-});
-
-document.getElementById('inicio-assets-grid')?.addEventListener('click', () => {
-  if (_inicioAssetsView === 'grid') return;
-  _inicioAssetsView = 'grid';
-  document.getElementById('inicio-assets-grid').classList.add('active');
-  document.getElementById('inicio-assets-list').classList.remove('active');
-  _renderInicioAssets();
-});
-document.getElementById('inicio-assets-list')?.addEventListener('click', () => {
-  if (_inicioAssetsView === 'list') return;
-  _inicioAssetsView = 'list';
-  document.getElementById('inicio-assets-grid').classList.remove('active');
-  document.getElementById('inicio-assets-list').classList.add('active');
-  _renderInicioAssets();
-});
+bindStaticToggle('inicio-folders-grid', 'inicio-folders-list', () => _inicioFoldersView, v => { _inicioFoldersView = v; _renderInicioFolders(); });
+bindStaticToggle('inicio-assets-grid',  'inicio-assets-list',  () => _inicioAssetsView,  v => { _inicioAssetsView  = v; _renderInicioAssets();  });
 
 // ── Search autocomplete ───────────────────────────────────────────────────────
 export function initSearch() {
@@ -405,17 +379,8 @@ function _drawFaceResults(el) {
   el.innerHTML =
     `<div class="face-results-header-row">
       <div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;${assets.length} resultados para <strong>${name}</strong></div>
-      <div class="p-view-toggle">
-        <button class="p-view-btn ${_faceResultsView === 'grid' ? 'active' : ''}" data-fv="grid"><span class="msi xs">grid_view</span></button>
-        <button class="p-view-btn ${_faceResultsView === 'list' ? 'active' : ''}" data-fv="list"><span class="msi xs">lists</span></button>
-      </div>
+      ${viewToggleHTML(_faceResultsView)}
     </div>` + contentHTML;
 
-  el.querySelectorAll('.p-view-btn[data-fv]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (_faceResultsView === btn.dataset.fv) return;
-      _faceResultsView = btn.dataset.fv;
-      _drawFaceResults(el);
-    });
-  });
+  bindDynamicToggle(el, v => { _faceResultsView = v; _drawFaceResults(el); });
 }
