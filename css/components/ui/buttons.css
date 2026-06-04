@@ -16,6 +16,7 @@
 .more-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);background:var(--g100);display:flex;align-items:center;justify-content:center;cursor:pointer}
 
 .view-toggle{display:flex;gap:8px}
-.view-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--g100)}
+.view-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent}
+.view-btn .msi{color:var(--g400)}
 .view-btn.active{background:var(--g950);border-color:var(--g950)}
 .view-btn.active .msi{color:white}
