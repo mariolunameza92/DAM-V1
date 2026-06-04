@@ -7,8 +7,8 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 .app{display:flex;height:100vh;overflow:hidden}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .content-scroll{flex:1;overflow-y:auto}
-.content{padding:var(--space-6);display:flex;flex-direction:column;gap:24px;position:relative}
-.content::before{content:'';position:absolute;top:0;right:0;width:70%;height:400px;pointer-events:none;background:radial-gradient(ellipse at 80% 0%,rgba(176,183,201,.45) 0%,transparent 60%),radial-gradient(ellipse at 100% 30%,rgba(81,92,120,.2) 0%,transparent 50%)}
+.content{padding:var(--space-6);display:flex;flex-direction:column;gap:24px;position:relative;isolation:isolate}
+.content::before{content:'';position:absolute;top:0;right:0;width:70%;height:400px;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 80% 0%,rgba(176,183,201,.45) 0%,transparent 60%),radial-gradient(ellipse at 100% 30%,rgba(81,92,120,.2) 0%,transparent 50%)}
 .section{display:none}
 .section.active{display:block}
 

@@ -47,6 +47,6 @@
 .asset-ph{width:100%;border-radius:8px}
 .asset-dl{position:absolute;top:8px;right:8px;backdrop-filter:blur(40px);background:rgba(34,37,47,.4);padding:var(--space-2);border-radius:40px;display:flex;align-items:center;justify-content:center;color:var(--g50);opacity:0;transform:translateY(-8px);transition:opacity .2s ease,transform .2s ease;cursor:pointer}
 .asset-hover{position:absolute;bottom:8px;left:8px;right:8px;backdrop-filter:blur(40px);background:rgba(34,37,47,.4);padding:var(--space-2);border-radius:8px;display:flex;flex-direction:column;gap:4px;opacity:0;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}
-.asset-card:hover .asset-dl{opacity:1;transform:translateY(0)}
+.asset-card:hover .asset-dl,.asset-card:hover .asset-hover{opacity:1;transform:translateY(0)}
 .asset-name{font-size:12px;font-family:var(--font-ui);color:var(--g50);opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .asset-meta{display:flex;justify-content:space-between;font-size:12px;font-family:var(--font-ui);color:var(--g50);opacity:.5}
