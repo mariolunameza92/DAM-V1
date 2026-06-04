@@ -1,11 +1,28 @@
 // Exports: thumbsHTML(folderId), folderListRowHTML(id, label, extraAttrs?)
 import { userUploadedAssets, uploadedAssets } from '../../session.js';
-import { FOLDER_IMAGES } from '../../data.js';
+import { FOLDER_IMAGES, findNode } from '../../data.js';
+
+// Para una carpeta-de-carpetas (sin assets propios) cae a la primera subcarpeta con contenido.
+function _resolveSource(id) {
+  if (userUploadedAssets[id]?.length) return userUploadedAssets[id];
+  if (uploadedAssets[id]?.length)     return uploadedAssets[id];
+  for (const child of findNode(id)?.children || []) {
+    if (userUploadedAssets[child.id]?.length) return userUploadedAssets[child.id];
+    if (uploadedAssets[child.id]?.length)     return uploadedAssets[child.id];
+  }
+  return [];
+}
+
+function _resolveDemoImgs(id) {
+  if (FOLDER_IMAGES[id]?.length) return FOLDER_IMAGES[id];
+  for (const child of findNode(id)?.children || []) {
+    if (FOLDER_IMAGES[child.id]?.length) return FOLDER_IMAGES[child.id];
+  }
+  return [];
+}
 
 export function thumbsHTML(id) {
-  const source = (userUploadedAssets[id] && userUploadedAssets[id].length > 0)
-    ? userUploadedAssets[id]
-    : (uploadedAssets[id] || []);
+  const source = _resolveSource(id);
 
   if (source.length > 0) {
     return [0, 1, 2, 3].map(i => {
@@ -16,7 +33,7 @@ export function thumbsHTML(id) {
     }).join('');
   }
 
-  const demoImgs = FOLDER_IMAGES[id] || [];
+  const demoImgs = _resolveDemoImgs(id);
   const first = demoImgs[0]
     ? `<div class="folder-thumb"><img src="${demoImgs[0]}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block"></div>`
     : '<div class="folder-thumb"></div>';
@@ -24,10 +41,8 @@ export function thumbsHTML(id) {
 }
 
 export function folderListRowHTML(id, label, extraAttrs = '') {
-  const source = (userUploadedAssets[id] && userUploadedAssets[id].length > 0)
-    ? userUploadedAssets[id]
-    : (uploadedAssets[id] || []);
-  const demoImgs = FOLDER_IMAGES[id] || [];
+  const source   = _resolveSource(id);
+  const demoImgs = _resolveDemoImgs(id);
   const firstSrc = source[0]?.thumb || demoImgs[0] || '';
   const thumbContent = firstSrc
     ? `<img src="${firstSrc}" loading="lazy" decoding="async">`

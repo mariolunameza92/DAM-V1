@@ -1,7 +1,7 @@
 // Exports: openPortal(), closePortal(), openPortalFromRow(), handleDorsalSearch(), clearDorsalSearch()
 import { st, closeModal, getEditingRow, clearEditingRow } from './modal.js';
 import { addToTable } from './table.js';
-import { FOLDERS_DATA, findNode } from '../../data.js';
+import { FOLDERS_DATA, FOLDER_IMAGES, findNode } from '../../data.js';
 import { getNumCols, positionDropdown, generateShadeScale, hexToOklch } from '../../utils.js';
 import { uploadedAssets } from '../../session.js';
 import { registerSection } from '../shared/image-registry.js';
@@ -226,8 +226,24 @@ function _getChildrenOf(folderId) {
   return node.children.map(child => ({
     id:      child.id,
     name:    child.label,
-    imageId: parent?.imageId || folderId,
+    // Subcarpeta con fotos propias → usa su id; si no, hereda el set del padre.
+    imageId: FOLDER_IMAGES[child.id] ? child.id : (parent?.imageId || folderId),
   }));
+}
+
+// Assets de una carpeta de portal: los propios + los de todas sus subcarpetas
+// (recursivo). La búsqueda Face ID/dorsal debe abarcar todo el árbol.
+function _collectAssets(folder) {
+  const out  = [...(uploadedAssets[folder.imageId || folder.id] || [])];
+  const node = findNode(folder.id);
+  const walk = children => {
+    for (const c of children || []) {
+      out.push(...(uploadedAssets[c.id] || []));
+      walk(c.children);
+    }
+  };
+  if (node) walk(node.children);
+  return out;
 }
 
 function _resolveNav(folders) {
@@ -426,7 +442,7 @@ function _searchBySelfie() {
   document.getElementById('p-tabs-section').style.display     = 'none';
   document.getElementById('p-content-section').style.display  = 'none';
 
-  const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  const allAssets = _portalFolders.flatMap(_collectAssets);
   const assets = allAssets.map(a => ({
     src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
     name: a.name, originalUrl: a.originalUrl || a.preview,
@@ -512,7 +528,7 @@ let _portalFaceName   = '';
 let _portalFaceView   = 'grid';
 
 function _renderPortalFaceResults(id, name) {
-  const source = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  const source = _portalFolders.flatMap(_collectAssets);
   const picks  = source.filter(a => a.faceIds && a.faceIds.includes(id));
   _portalFaceName   = name;
   _portalFaceView   = 'grid';
@@ -579,7 +595,7 @@ export function handleDorsalSearch() {
   document.getElementById('p-tabs-section').style.display    = 'none';
   document.getElementById('p-content-section').style.display = 'none';
 
-  const allAssets = _portalFolders.flatMap(f => uploadedAssets[f.imageId || f.id] || []);
+  const allAssets = _portalFolders.flatMap(_collectAssets);
   const assets = allAssets.map(a => ({
     src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
     name: a.name, originalUrl: a.originalUrl || a.preview,

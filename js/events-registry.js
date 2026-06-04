@@ -4,6 +4,16 @@
 
 const CR   = 'fotos%20demo/Color%20Run%202026';
 const L42K = 'fotos%20demo/Lima%2042K%202026';
+// Lima 42K reorganizada en subcarpetas en disco. Los selfies viven junto a sus
+// fotos para que _buildPhotoFaces (match por ruta de carpeta) preserve el Face ID.
+const L42K_HL   = `${L42K}/01.%20Highlights`;
+const L42K_PRO  = `${L42K}/02.%20Protocolares`;
+const L42K_TODO = `${L42K}/03.%20Todo%20L42K`;
+const L42K_ACT  = `${L42K}/04.%20Activaciones%20Adidas`;
+const L42K_CONF = `${L42K}/05.%20Conferencia%20de%20prensa`;
+const L42K_KITS = `${L42K}/06.%20Entrega%20de%20Kits`;
+const L42K_SHK  = `${L42K}/07.%20Shake%20Out%20Run%20Adidas%20L42K`;
+const L42K_SOC  = `${L42K}/08.%20Social%20Run`;
 const MMM  = 'fotos%20demo/Mas%20mujeres%20en%20meta%202026';
 const OSR  = 'fotos%20demo/On%20Squad%20Race%20Lima%202026';
 const RBF  = 'fotos%20demo/Rimac%20Bienestar%20Fest';
@@ -18,18 +28,18 @@ export const FACE_REGISTRY = {
   cr_f6:  { name: 'Valeria Castro', selfieUrl: `${CR}/f6-2299.png` },
   cr_f7:  { name: 'Roberto Ponce',  selfieUrl: `${CR}/f7-2257.png` },
 
-  l42k_f:   { name: 'Joseph Kiprono Kiptum', selfieUrl: `${L42K}/f-1268-1270-1273-1274.png` },
-  l42k_f2:  { name: 'Nider Pecho',          selfieUrl: `${L42K}/f2-1268-1270-1273-1274.png` },
-  l42k_f3:  { name: 'Jonathan Molina',      selfieUrl: `${L42K}/f3-1268-1270-1273-1274.png` },
-  l42k_f4:  { name: '',                 selfieUrl: `${L42K}/f4-1268-1270-.png` },        // Javier Torres (m)
-  l42k_f5:  { name: '',                 selfieUrl: `${L42K}/f5-1268-1270-1273.png` },     // Luis Ríos (m)
-  l42k_f6:  { name: 'Milagros Castro',  selfieUrl: `${L42K}/f6-1268-1270-1273.png` },
-  l42k_f7:  { name: 'Víctor Salas',     selfieUrl: `${L42K}/f7-1268-1270-.png` },
-  l42k_f8:  { name: 'Omar Quispe',      selfieUrl: `${L42K}/f8-2556.png` },
-  l42k_f9:  { name: '',                 selfieUrl: `${L42K}/f9-2302-2313.png` },          // Daniel Flores (m)
-  l42k_f10: { name: '',                 selfieUrl: `${L42K}/f10-2313-2302.png` },         // Pablo Rojas (m)
-  l42k_f11: { name: 'Fernando Vidal',   selfieUrl: `${L42K}/f11-1238-1243-1240-1237-1235.png` },
-  l42k_f12: { name: 'Romina Luna',      selfieUrl: `${L42K}/f12-1238-1243-1240-1237-1235.png` },
+  l42k_f:   { name: 'Joseph Kiprono Kiptum', selfieUrl: `${L42K_PRO}/f-1268-1270-1273-1274.png` },
+  l42k_f2:  { name: 'Nider Pecho',          selfieUrl: `${L42K_PRO}/f2-1268-1270-1273-1274.png` },
+  l42k_f3:  { name: 'Jonathan Molina',      selfieUrl: `${L42K_PRO}/f3-1268-1270-1273-1274.png` },
+  l42k_f4:  { name: '',                 selfieUrl: `${L42K_PRO}/f4-1268-1270-.png` },        // Javier Torres (m)
+  l42k_f5:  { name: '',                 selfieUrl: `${L42K_PRO}/f5-1268-1270-1273.png` },     // Luis Ríos (m)
+  l42k_f6:  { name: 'Milagros Castro',  selfieUrl: `${L42K_PRO}/f6-1268-1270-1273.png` },
+  l42k_f7:  { name: 'Víctor Salas',     selfieUrl: `${L42K_PRO}/f7-1268-1270-.png` },
+  l42k_f8:  { name: 'Omar Quispe',      selfieUrl: `${L42K_HL}/f8-2556.png` },
+  l42k_f9:  { name: '',                 selfieUrl: `${L42K_HL}/f9-2302-2313.png` },          // Daniel Flores (m)
+  l42k_f10: { name: '',                 selfieUrl: `${L42K_HL}/f10-2313-2302.png` },         // Pablo Rojas (m)
+  l42k_f11: { name: 'Fernando Vidal',   selfieUrl: `${L42K_TODO}/f11-1238-1243-1240-1237-1235.png` },
+  l42k_f12: { name: 'Romina Luna',      selfieUrl: `${L42K_TODO}/f12-1238-1243-1240-1237-1235.png` },
 
   mmm_f:    { name: 'Camilo Pérez',     selfieUrl: `${MMM}/f-2712-2721.png` },
   mmm_f2:   { name: '',                 selfieUrl: `${MMM}/f2-2856-2875.png` },           // Natalia Morales (f)
@@ -57,19 +67,54 @@ export const FOLDER_IMAGES_EVENTS = {
     `${CR}/LEN_ColorRunNigth26_JOAL_2348.jpg`,
     `${CR}/LEN_ColorRunNigth26_JOAL_2380.jpg`,
   ],
-  lima42k: [
-    `${L42K}/LEN_L42K26_adidas-1235.jpg`,
-    `${L42K}/LEN_L42K26_adidas-1237.jpg`,
-    `${L42K}/LEN_L42K26_adidas-1238.jpg`,
-    `${L42K}/LEN_L42K26_adidas-1240.jpg`,
-    `${L42K}/LEN_L42K26_adidas-1243.jpg`,
-    `${L42K}/LEN_L42K26_adidas-1268.jpg`,
-    `${L42K}/LEN_L42K26_adidas-1270.jpg`,
-    `${L42K}/LEN_L42K26_adidas-1273.jpg`,
-    `${L42K}/LEN_L42K26_adidas-1274.jpg`,
-    `${L42K}/PDR_2302.JPG`,
-    `${L42K}/PDR_2313.JPG`,
-    `${L42K}/PDR_2556.JPG`,
+  // Lima 42K — una clave por subcarpeta (mismo id que TREE_DATA en data.js).
+  'lima42k-highlights': [
+    `${L42K_HL}/PDR_2302.JPG`,
+    `${L42K_HL}/PDR_2313.JPG`,
+    `${L42K_HL}/PDR_2556.JPG`,
+  ],
+  'lima42k-protocolares': [
+    `${L42K_PRO}/LEN_L42K26_adidas-1268.jpg`,
+    `${L42K_PRO}/LEN_L42K26_adidas-1270.jpg`,
+    `${L42K_PRO}/LEN_L42K26_adidas-1273.jpg`,
+    `${L42K_PRO}/LEN_L42K26_adidas-1274.jpg`,
+  ],
+  'lima42k-todo': [
+    `${L42K_TODO}/LEN_L42K26_adidas-1235.jpg`,
+    `${L42K_TODO}/LEN_L42K26_adidas-1237.jpg`,
+    `${L42K_TODO}/LEN_L42K26_adidas-1238.jpg`,
+    `${L42K_TODO}/LEN_L42K26_adidas-1240.jpg`,
+    `${L42K_TODO}/LEN_L42K26_adidas-1243.jpg`,
+  ],
+  'lima42k-activaciones': [
+    `${L42K_ACT}/LEN_L42K2026_DATE-8093.jpg`,
+    `${L42K_ACT}/LEN_L42K_HL_SACA-1023.jpg`,
+    `${L42K_ACT}/LEN_L42K_HL_SACA-1025.jpg`,
+    `${L42K_ACT}/LEN_L42K_HL_SACA-1029.jpg`,
+  ],
+  'lima42k-conferencia': [
+    `${L42K_CONF}/LEN_Lima42k_Conferencia-1015.jpg`,
+    `${L42K_CONF}/LEN_Lima42k_Conferencia-1021.jpg`,
+    `${L42K_CONF}/LEN_Lima42k_Conferencia-1031.jpg`,
+    `${L42K_CONF}/LEN_Lima42k_Conferencia-1041.jpg`,
+  ],
+  'lima42k-kits': [
+    `${L42K_KITS}/hl-10.jpg`,
+    `${L42K_KITS}/hl-22.jpg`,
+    `${L42K_KITS}/hl-29.jpg`,
+    `${L42K_KITS}/hl-50.jpg`,
+  ],
+  'lima42k-shakeout': [
+    `${L42K_SHK}/HL-KRISTOPHER-17.jpg`,
+    `${L42K_SHK}/HL-KRISTOPHER-19.jpg`,
+    `${L42K_SHK}/HL-KRISTOPHER-27.jpg`,
+    `${L42K_SHK}/HL-KRISTOPHER-42.jpg`,
+  ],
+  'lima42k-socialrun': [
+    `${L42K_SOC}/LEN_adidassocialrun_MASC-1026.jpg`,
+    `${L42K_SOC}/LEN_adidassocialrun_MASC-1051.jpg`,
+    `${L42K_SOC}/LEN_adidassocialrun_MASC-1071.jpg`,
+    `${L42K_SOC}/LEN_adidassocialrun_MASC-1077.jpg`,
   ],
   masmujeres: [
     `${MMM}/LEN_MMM26_JOAL_2712.jpg`,
