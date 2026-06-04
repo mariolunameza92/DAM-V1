@@ -139,7 +139,7 @@
 .p-drill-folder-name{font-size:16px;font-weight:600;color:var(--g800);font-family:var(--font-ui)}
 
 /* Folder grid — 2×2 mosaic collage */
-.p-folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(384px,1fr));gap:24px;padding-top:4px}
+.p-folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:24px;padding-top:4px}
 .p-folder-card{cursor:pointer;border-radius:14px;overflow:hidden;background:var(--g50);border:1px solid var(--g200);transition:box-shadow .18s,border-color .18s}
 .p-folder-card:hover{box-shadow:0 10px 30px var(--g200);border-color:var(--color-accent)}
 .p-folder-card-mosaic{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;aspect-ratio:1/1;background:var(--g200);overflow:hidden}
@@ -189,8 +189,9 @@
   /* Hero CTAs stay inline at desktop size, centered — the three fit comfortably
      at tablet width, so no stretching needed. */
 
-  /* Folder grid: 384px min would overflow → single column */
-  .p-folder-grid{grid-template-columns:1fr;gap:16px}
+  /* Folder grid: auto-fill collapses on its own (2 cols on tablet, 1 on phone).
+     Only tighten the gap here. */
+  .p-folder-grid{gap:16px}
 
   /* Face results: 3 cols too tight on phones */
   .p-face-results .face-results-grid{grid-template-columns:repeat(2,1fr)}
