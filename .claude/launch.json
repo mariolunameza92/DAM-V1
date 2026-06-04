@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "len-dam",
-      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
-      "runtimeArgs": ["C:\\Users\\PC\\Documents\\GitHub\\DAM V1\\.claude\\server.js", "3000"],
+      "name": "dam-v1",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["/Users/lenadmin/Documents/GitHub/DAM-V1/.claude/serve.sh", "3000"],
       "port": 3000,
       "autoPort": false
     }

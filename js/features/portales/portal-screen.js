@@ -2,7 +2,17 @@
 import { st, closeModal, getEditingRow, clearEditingRow } from './modal.js';
 import { addToTable } from './table.js';
 import { FOLDERS_DATA, FOLDER_IMAGES, findNode } from '../../data.js';
-import { getNumCols, positionDropdown, generateShadeScale, hexToOklch } from '../../utils.js';
+import { positionDropdown, generateShadeScale, hexToOklch } from '../../utils.js';
+
+function getPortalNumCols() {
+  const w = window.innerWidth;
+  if (w <= 520)  return 2;
+  if (w <= 1024) return 3;
+  if (w <= 1280) return 4;
+  if (w <= 1600) return 5;
+  if (w <= 1920) return 6;
+  return 7;
+}
 import { uploadedAssets } from '../../session.js';
 import { registerSection, _registry } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
@@ -380,7 +390,7 @@ function _renderMasonry(rawAssets) {
   }));
   registerSection('portal', assets);
 
-  const numCols = getNumCols();
+  const numCols = getPortalNumCols();
   const cols    = Array.from({ length: numCols }, () => []);
   assets.forEach((a, i) => cols[i % numCols].push({ a, i }));
 
@@ -406,9 +416,9 @@ function _renderMasonry(rawAssets) {
 // ── Resize ────────────────────────────────────────────────────────────────────
 function _attachPortalResize() {
   if (_portalResizeHandler) window.removeEventListener('resize', _portalResizeHandler);
-  let _cols = getNumCols();
+  let _cols = getPortalNumCols();
   _portalResizeHandler = () => {
-    const next = getNumCols();
+    const next = getPortalNumCols();
     if (next !== _cols) {
       _cols = next;
       if (_drillFolder) {
