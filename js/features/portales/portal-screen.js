@@ -390,18 +390,8 @@ function _renderMasonry(rawAssets) {
   }));
   registerSection('portal', assets);
 
-  const maxCols = getPortalNumCols();
-  const numCols = Math.min(maxCols, assets.length);
+  const numCols = Math.min(getPortalNumCols(), assets.length);
   masonry.style.columnCount = String(numCols);
-  if (numCols < maxCols) {
-    masonry.style.maxWidth = Math.round(numCols / maxCols * 100) + '%';
-    masonry.style.marginLeft  = 'auto';
-    masonry.style.marginRight = 'auto';
-  } else {
-    masonry.style.maxWidth = '';
-    masonry.style.marginLeft  = '';
-    masonry.style.marginRight = '';
-  }
 
   masonry.innerHTML = assets.map((a, i) =>
     `<div class="p-img-card" data-idx="${i}">
