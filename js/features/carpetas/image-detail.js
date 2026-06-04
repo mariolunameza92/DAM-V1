@@ -135,6 +135,7 @@ export function initImageDetail() {
     const card = e.target.closest('.asset-card[data-section]');
     if (!card) return;
     const section = card.dataset.section;
+    if (section.startsWith('portal')) return; // portales usan su propio lightbox
     const idx = +card.dataset.idx;
     const items = _registry.get(section) || [];
     const item = items[idx];

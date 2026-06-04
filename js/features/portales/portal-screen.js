@@ -4,7 +4,7 @@ import { addToTable } from './table.js';
 import { FOLDERS_DATA, FOLDER_IMAGES, findNode } from '../../data.js';
 import { getNumCols, positionDropdown, generateShadeScale, hexToOklch } from '../../utils.js';
 import { uploadedAssets } from '../../session.js';
-import { registerSection } from '../shared/image-registry.js';
+import { registerSection, _registry } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 
 let _portalFolders       = [];
@@ -647,6 +647,14 @@ function _lbUpdate() {
 }
 
 function _initPortalLightbox() {
+  document.getElementById('p-face-results')?.addEventListener('click', e => {
+    if (e.target.closest('.asset-dl')) return;
+    const card = e.target.closest('.asset-card[data-section], .file-row[data-section]');
+    if (!card) return;
+    const assets = _registry.get(card.dataset.section) || [];
+    const idx = +card.dataset.idx;
+    if (assets[idx]) _openLightbox(assets, idx);
+  });
   document.getElementById('p-lb-backdrop').addEventListener('click', _closeLightbox);
   document.getElementById('p-lb-close').addEventListener('click', _closeLightbox);
   document.getElementById('p-lb-prev').addEventListener('click', () => {
