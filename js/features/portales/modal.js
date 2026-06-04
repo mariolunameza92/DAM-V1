@@ -248,11 +248,12 @@ export function openModalEdit(rowEl) {
   _editingRow = rowEl;
   const accent    = rowEl.dataset.portalAccent || '#22252f';
   const title     = rowEl.dataset.portalTitle  || '';
+  const theme     = rowEl.dataset.portalTheme  || 'light';
   const folderIds = (rowEl.dataset.portalFolders || '').split(',').filter(Boolean);
 
   st.selectedFolders = new Set(folderIds);
   st.accent = accent; st.font = 'Google Sans'; st.access = 'public';
-  st.theme = 'light'; st.title = title; st.desc = ''; st.logoSvgText = '';
+  st.theme = theme; st.title = title; st.desc = ''; st.logoSvgText = '';
 
   document.getElementById('inp-name').value   = title;
   document.getElementById('inp-search').value = '';
@@ -270,8 +271,8 @@ export function openModalEdit(rowEl) {
   document.getElementById('font-sel').value = 'Google Sans';
   document.getElementById('rc-pub').classList.add('sel');
   document.getElementById('rc-priv').classList.remove('sel');
-  document.getElementById('theme-light').classList.add('active');
-  document.getElementById('theme-dark').classList.remove('active');
+  document.getElementById('theme-light').classList.toggle('active', theme === 'light');
+  document.getElementById('theme-dark').classList.toggle('active', theme === 'dark');
   setDoneBtn('logo-add', false); setDoneBtn('accent-add', false);
   setDoneBtn('title-add', false); setDoneBtn('desc-add', false);
 
@@ -280,6 +281,7 @@ export function openModalEdit(rowEl) {
   _setStep4EditMode(true);
   showStep(1);
   checkStep1();
+  _checkContrastWarning();
   _updateAccentPreview();
   document.getElementById('overlay').classList.add('open');
 }

@@ -1,7 +1,8 @@
-// Exports: treeState, carpetasState, renderTree(), renderFolderContent(node), navigateToFolder(id), switchTab(el)
-import { TREE_DATA, FOLDER_IMAGES, findNode, getAncestorIds } from '../../data.js';
+// Exports: treeState, carpetasState, renderTree(), renderFolderContent(node), navigateToFolder(id), switchTab(el), openCrearCarpetaDialog(), confirmCrearCarpeta(), cancelCrearCarpeta()
+import { TREE_DATA, FOLDER_IMAGES, findNode, getAncestorIds, addUserFolder } from '../../data.js';
 import { folderSVG, imgLabel } from '../../utils.js';
-import { uploadedAssets, userUploadedAssets } from '../../session.js';
+import { uploadedAssets, userUploadedAssets, pushUserFolder } from '../../session.js';
+import { showToast } from '../../components/ui/toast.js';
 import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
@@ -32,15 +33,20 @@ function _updateActionButtons() {
   const btnCrear = document.getElementById('btnCrearCarpeta');
   const btnSubir = document.getElementById('btnSubirArchivos');
   if (!btnCrear || !btnSubir) return;
-  const canEdit = _isOwned(treeState.selected);
-  btnCrear.style.display = canEdit ? '' : 'none';
-  btnSubir.style.display = canEdit ? '' : 'none';
+  const isOwned   = _isOwned(treeState.selected);
+  const isCreadas = carpetasState.activeTab === 'creadas';
+  // Crear: siempre visible en tab "Creadas" (sin selección = raíz; con selección owned = subcarpeta)
+  btnCrear.style.display = (isOwned || (isCreadas && !treeState.selected)) ? '' : 'none';
+  // Subir: solo cuando hay una carpeta propia seleccionada
+  btnSubir.style.display = isOwned ? '' : 'none';
 }
 
 function _setCarpetasToggleActive(view) {
   document.getElementById('c-toggle-grid')?.classList.toggle('active', view === 'grid');
   document.getElementById('c-toggle-list')?.classList.toggle('active', view === 'list');
 }
+
+const _dispatchRendered = () => document.dispatchEvent(new CustomEvent('dam:cardsrendered'));
 
 export function renderFolderContent(node) {
   if (!node) return;
@@ -100,6 +106,7 @@ export function renderFolderContent(node) {
       cols.style.display = 'none';
     }
   }
+  _dispatchRendered();
 }
 
 function _getFilteredRoots() {
@@ -220,6 +227,55 @@ function _renderRecentFoldersView() {
   }
 
   if (cols) cols.style.display = 'none';
+  _dispatchRendered();
+}
+
+// ── Crear Carpeta dialog ──────────────────────────────────────────────────────
+export function openCrearCarpetaDialog() {
+  const dlg  = document.getElementById('crear-carpeta-dlg');
+  const inp  = document.getElementById('crear-carpeta-inp');
+  const hint = document.getElementById('crear-carpeta-hint');
+  if (!dlg) return;
+  inp.value = '';
+  const parentNode = treeState.selected ? findNode(treeState.selected) : null;
+  hint.textContent = parentNode
+    ? `Subcarpeta dentro de "${parentNode.label}"`
+    : 'Nueva carpeta raíz (visible en Portales)';
+  dlg.style.display = 'flex';
+  setTimeout(() => inp.focus(), 50);
+}
+
+export function confirmCrearCarpeta() {
+  const inp  = document.getElementById('crear-carpeta-inp');
+  const name = inp?.value?.trim();
+  if (!name) {
+    inp?.classList.add('inp-error');
+    setTimeout(() => inp?.classList.remove('inp-error'), 600);
+    return;
+  }
+
+  const parentId = treeState.selected || null;
+  const newId    = addUserFolder(parentId, name);
+  pushUserFolder(newId, parentId, name);
+
+  document.getElementById('crear-carpeta-dlg').style.display = 'none';
+
+  if (parentId) {
+    const parent = findNode(parentId);
+    treeState.expanded.add(parentId);
+    renderTree();
+    if (parent) renderFolderContent(parent);
+  } else {
+    renderTree();
+    _renderRecentFoldersView();
+    _updateActionButtons();
+  }
+
+  showToast(`Carpeta "${name}" creada`);
+}
+
+export function cancelCrearCarpeta() {
+  document.getElementById('crear-carpeta-dlg').style.display = 'none';
 }
 
 // ── View toggle ───────────────────────────────────────────────────────────────

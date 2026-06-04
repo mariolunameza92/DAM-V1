@@ -1,5 +1,6 @@
 // Exports: initContextMenu()
 import { showToast } from '../../components/ui/toast.js';
+import { toggleSelected, clearSelection, selectAll, isSelected, selectionStore } from './selection.js';
 
 const DEMO_PERSONAS = [
   { name: 'Javier Ruiz',    email: 'javier.ruiz@workk.com',  color: '#4a6cf7', role: 'Editar' },
@@ -22,18 +23,46 @@ const DEMO_GRUPOS = [
 // ── Menu singleton ────────────────────────────────────────────────
 let _menu = null;
 let _target = null;
+let _groupMode = false; // true when the action applies to the whole multi-selection
+
+function _keyForTarget() {
+  if (!_target) return null;
+  if (_target.type === 'folder') return `folder:${_target.el.dataset.nodeId || ''}`;
+  if (_target.type === 'asset')  return `asset:${_target.el.dataset.section || ''}:${_target.el.dataset.idx || ''}`;
+  return null;
+}
+
+// Elements an action operates on: the whole selection (group mode) or the single target.
+function _selectedEls() {
+  return [...document.querySelectorAll('.folder-card.is-selected, .asset-card.is-selected')];
+}
+function _actionEls() {
+  return _groupMode ? _selectedEls() : (_target?.el ? [_target.el] : []);
+}
+function _actionLabel() {
+  if (_groupMode) {
+    const n = _selectedEls().length;
+    return `${n} elemento${n !== 1 ? 's' : ''}`;
+  }
+  return `"${_target?.name || ''}"`;
+}
 
 function _initMenu() {
   _menu = document.createElement('div');
   _menu.className = 'ctx-menu';
   _menu.innerHTML = `
+    <div class="ctx-group-count" style="display:none"></div>
+    <button class="ctx-item ctx-item--sel" data-action="select">Seleccionar</button>
+    <button class="ctx-item ctx-item--selall" data-action="select-all">Seleccionar todo</button>
+    <button class="ctx-item ctx-item--desel" data-action="deselect-all">Limpiar selección</button>
+    <div class="ctx-divider"></div>
     <button class="ctx-item" data-action="share">Compartir</button>
     <button class="ctx-item" data-action="download">Descargar</button>
     <button class="ctx-item" data-action="duplicate">Duplicar</button>
     <div class="ctx-divider"></div>
     <button class="ctx-item" data-action="move">Mover a</button>
-    <button class="ctx-item" data-action="rename">Cambiar nombre</button>
-    <div class="ctx-divider"></div>
+    <button class="ctx-item ctx-item--rename" data-action="rename">Cambiar nombre</button>
+    <div class="ctx-divider ctx-divider--rename"></div>
     <button class="ctx-item ctx-item--danger" data-action="delete">Eliminar</button>
   `;
   document.body.appendChild(_menu);
@@ -43,6 +72,12 @@ function _initMenu() {
     if (!btn) return;
     _close();
     const action = btn.dataset.action;
+    if (action === 'select') {
+      const k = _keyForTarget();
+      if (k) toggleSelected(k);
+    }
+    if (action === 'select-all')  selectAll();
+    if (action === 'deselect-all') clearSelection();
     if (action === 'share')     _openShareModal();
     if (action === 'download')  _doDownload();
     if (action === 'duplicate') _doDuplicate();
@@ -57,13 +92,44 @@ function _open(e, targetEl, type) {
     ? (targetEl.querySelector('.folder-name')?.textContent || 'Carpeta')
     : (targetEl.querySelector('.asset-name')?.textContent || 'Archivo');
 
-  document.querySelectorAll('.ctx-active').forEach(el => el.classList.remove('ctx-active'));
-  targetEl.classList.add('ctx-active');
   _target = { type, el: targetEl, name };
+
+  // Group mode: right-clicked item is part of a multi-selection.
+  // Right-clicking outside the selection resets it to a single-item action.
+  const k = _keyForTarget();
+  const targetIsSelected = k && isSelected(k);
+  if (!targetIsSelected) clearSelection();
+  _groupMode = targetIsSelected && selectionStore.size > 1;
+
+  // Visual: in group mode keep the whole selection highlighted; otherwise
+  // mirror the single-item active style on the target.
+  document.querySelectorAll('.ctx-active').forEach(el => el.classList.remove('ctx-active'));
+  if (!_groupMode) targetEl.classList.add('ctx-active');
+
+  // ── Toggle menu items by mode ──────────────────────────────────
+  const countEl = _menu.querySelector('.ctx-group-count');
+  if (_groupMode) {
+    const n = selectionStore.size;
+    countEl.textContent   = `${n} seleccionados`;
+    countEl.style.display = '';
+  } else {
+    countEl.style.display = 'none';
+  }
+
+  // Single-item helpers only make sense outside group mode
+  const selBtn = _menu.querySelector('.ctx-item--sel');
+  selBtn.style.display = _groupMode ? 'none' : '';
+  selBtn.textContent   = targetIsSelected ? 'Deseleccionar' : 'Seleccionar';
+
+  _menu.querySelector('.ctx-item--desel').style.display = selectionStore.size > 0 ? '' : 'none';
+
+  // Rename has no meaning for a group
+  _menu.querySelector('.ctx-item--rename').style.display     = _groupMode ? 'none' : '';
+  _menu.querySelector('.ctx-divider--rename').style.display  = _groupMode ? 'none' : '';
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const mw = 180, mh = 230;
+  const mw = 190, mh = 300;
   let x = e.clientX, y = e.clientY;
   if (x + mw > vw) x = vw - mw - 8;
   if (y + mh > vh) y = vh - mh - 8;
@@ -78,31 +144,42 @@ function _close() {
   document.querySelectorAll('.ctx-active').forEach(el => el.classList.remove('ctx-active'));
 }
 
-// ── Direct actions ────────────────────────────────────────────────
-function _doDownload() { showToast(`Descargando "${_target.name}"…`); }
+// ── Direct actions (operate on the group in group mode) ───────────
+function _doDownload() {
+  showToast(`Descargando ${_actionLabel()}…`);
+}
 
 function _doDuplicate() {
-  if (!_target?.el) return;
-  const clone = _target.el.cloneNode(true);
-  clone.style.opacity = '0';
-  clone.style.transform = 'scale(0.94)';
-  clone.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
-  _target.el.parentNode.insertBefore(clone, _target.el.nextSibling);
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    clone.style.opacity = '1';
-    clone.style.transform = 'scale(1)';
-  }));
-  showToast(`"${_target.name}" duplicado`);
+  const els = _actionEls();
+  if (!els.length) return;
+  els.forEach(el => {
+    const clone = el.cloneNode(true);
+    clone.classList.remove('is-selected', 'ctx-active');
+    clone.style.opacity = '0';
+    clone.style.transform = 'scale(0.94)';
+    clone.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
+    el.parentNode.insertBefore(clone, el.nextSibling);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      clone.style.opacity = '1';
+      clone.style.transform = 'scale(1)';
+    }));
+  });
+  showToast(`${_actionLabel()} duplicado${_groupMode ? 's' : ''}`);
 }
 
 function _doDelete() {
-  if (!_target?.el) return;
-  const el = _target.el;
-  el.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-  el.style.opacity = '0';
-  el.style.transform = 'scale(0.92)';
-  setTimeout(() => el.remove(), 220);
-  showToast(`"${_target.name}" eliminado`);
+  const els = _actionEls();
+  if (!els.length) return;
+  const label = _actionLabel();
+  const wasGroup = _groupMode;
+  els.forEach(el => {
+    el.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+    el.style.opacity = '0';
+    el.style.transform = 'scale(0.92)';
+    setTimeout(() => el.remove(), 220);
+  });
+  if (wasGroup) clearSelection();
+  showToast(`${label} eliminado${wasGroup ? 's' : ''}`);
 }
 
 // ── Modal system ──────────────────────────────────────────────────
@@ -309,10 +386,13 @@ function _openMoveModal() {
     </div>
   `);
 
+  const label    = _actionLabel();
+  const wasGroup = _groupMode;
   overlay.querySelector('#ctxMoveBtn').addEventListener('click', () => {
     const dest = overlay.querySelector('#ctxMoveInput').value.trim();
     _closeOverlay(overlay);
-    showToast(dest ? `"${_target.name}" movido a "${dest}"` : `"${_target.name}" movido`);
+    if (wasGroup) clearSelection();
+    showToast(dest ? `${label} movido${wasGroup ? 's' : ''} a "${dest}"` : `${label} movido${wasGroup ? 's' : ''}`);
   });
 }
 

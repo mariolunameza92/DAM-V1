@@ -25,6 +25,7 @@
 <link rel="stylesheet" href="css/features/image-detail.css">
 <link rel="stylesheet" href="css/features/crop.css">
 <link rel="stylesheet" href="css/features/context-menu.css">
+<link rel="stylesheet" href="css/features/selection.css">
 <link rel="stylesheet" href="css/features/portales.css">
 <link rel="stylesheet" href="css/features/portal-screen.css">
 </head>
@@ -140,7 +141,7 @@
             <span class="sec-title">Carpetas recientes</span>
             <div class="sec-actions">
               <div style="display:flex;gap:16px">
-                <button id="btnCrearCarpeta" class="btn-dark" style="font-size:11px;display:none"><span class="msi xs">create_new_folder</span>Crear Carpeta</button>
+                <button id="btnCrearCarpeta" class="btn-dark" style="font-size:11px;display:none" onclick="window.openCrearCarpetaDialog()"><span class="msi xs">create_new_folder</span>Crear Carpeta</button>
                 <button id="btnSubirArchivos" class="btn-outline" style="display:none" onclick="document.getElementById('uploadInput').click()"><span class="msi xs">upload</span>Subir Archivos</button>
               </div>
               <div class="view-toggle">
@@ -282,6 +283,20 @@
 </div>
 
 <input type="file" id="uploadInput" multiple accept="image/*" style="display:none">
+
+<!-- CREAR CARPETA DIALOG -->
+<div id="crear-carpeta-dlg" class="crear-dlg-backdrop" style="display:none" onclick="if(event.target===this) window.cancelCrearCarpeta()">
+  <div class="crear-dlg">
+    <div class="crear-dlg-header"><span class="msi xs">create_new_folder</span>Nueva carpeta</div>
+    <input id="crear-carpeta-inp" class="crear-dlg-input" type="text" placeholder="Nombre de la carpeta" maxlength="80" autocomplete="off"
+      onkeydown="if(event.key==='Enter') window.confirmCrearCarpeta(); if(event.key==='Escape') window.cancelCrearCarpeta()">
+    <div class="crear-dlg-hint" id="crear-carpeta-hint"></div>
+    <div class="crear-dlg-actions">
+      <button class="btn-outline" style="font-size:11px" onclick="window.cancelCrearCarpeta()">Cancelar</button>
+      <button class="btn-dark" style="font-size:11px" onclick="window.confirmCrearCarpeta()"><span class="msi xs">add</span>Crear</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL -->
 <div class="overlay" id="overlay">

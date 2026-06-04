@@ -55,13 +55,15 @@
 .p-face-results .face-results-header{font-family:var(--font-ui)}
 .p-face-results .face-results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:start}
 
-/* Tabs */
-.p-tabs-section{padding:0 48px;border-bottom:1px solid var(--g200);position:relative;z-index:1}
-.p-tabs-bar{display:flex;gap:0;overflow-x:auto}
+/* Tabs — modern segmented pills (no full-width baseline) */
+.p-tabs-section{padding:8px 48px;position:relative;z-index:1}
+.p-tabs-bar{display:flex;gap:6px;overflow-x:auto}
 .p-tabs-bar::-webkit-scrollbar{height:0}
-.p-tab{padding:14px 20px;font-size:14px;font-weight:500;color:var(--g500);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;font-family:var(--font-ui);transition:color .15s,border-color .15s;margin-bottom:-1px;flex-shrink:0}
-.p-tab:hover{color:var(--g800)}
-.p-tab.active{color:var(--color-accent);border-bottom-color:var(--color-accent);font-weight:600}
+.p-tab{padding:9px 18px;font-size:14px;font-weight:500;color:var(--g500);background:none;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;font-family:var(--font-ui);transition:color .18s,background .18s;flex-shrink:0}
+/* Tabs use the accent-tinted neutral scale (--g*, theme-inverted) — distinct from
+   the CTA primary fill. Active = strong ink chip, hover = soft tint. */
+.p-tab:hover{background:var(--g200);color:var(--g900)}
+.p-tab.active,.p-tab.active:hover{background:var(--g800);color:var(--g50);font-weight:600}
 
 /* Sections */
 .p-section{padding:0 48px 48px;position:relative;z-index:1}
@@ -167,9 +169,6 @@
 .p-lb-prev,.p-lb-next{position:absolute;top:50%;transform:translateY(-50%);z-index:2}
 .p-lb-prev{left:20px}
 .p-lb-next{right:20px}
-
-/* Dark theme: active tab uses near-white (not accent) — matches Figma */
-.portal-screen[data-theme="dark"] .p-tab.active{color:var(--g950);border-bottom-color:var(--g950)}
 
 /* Face chip scoped to portal uses accent instead of global --g800 */
 .portal-screen .face-chip-active{background:var(--color-accent);color:var(--color-accent-text);border-color:var(--color-accent)}

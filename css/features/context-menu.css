@@ -31,6 +31,17 @@
   outline: 3px solid var(--g200);
   outline-offset: 4px;
 }
+.ctx-group-count {
+  padding: 10px 24px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--g950, #22252f);
+  background: var(--g100);
+  border-bottom: 1px solid var(--g200);
+}
 .ctx-item {
   display: flex;
   align-items: center;

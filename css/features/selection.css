@@ -1,0 +1,29 @@
+/* ────────────────────────────────────────────────────────────────
+   Lasso rubber-band
+──────────────────────────────────────────────────────────────── */
+.lasso-rect {
+  position: fixed;
+  display: none;
+  border: 1.5px solid var(--g500);
+  background: rgba(102, 115, 145, .12);
+  pointer-events: none;
+  z-index: 500;
+  border-radius: 3px;
+}
+
+/* Guarantee the viewer has draggable empty space below the content */
+.masonry-area { min-height: 70vh; }
+
+/* ────────────────────────────────────────────────────────────────
+   Selected state — identical to the right-click (.ctx-active) style
+   for consistency.
+──────────────────────────────────────────────────────────────── */
+.folder-card.is-selected {
+  outline: 3px solid var(--g200);
+  outline-offset: 0;
+  border-radius: 12px 12px 4px 4px;
+}
+.asset-card.is-selected {
+  outline: 3px solid var(--g200);
+  outline-offset: 4px;
+}

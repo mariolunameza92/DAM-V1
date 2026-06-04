@@ -52,3 +52,22 @@ export function getAncestorIds(targetId, nodes = TREE_DATA, path = []) {
   }
   return null;
 }
+
+// Adds a user-created folder at runtime. Returns the generated/provided id.
+// parentId=null → root folder (also added to FOLDERS_DATA for portales).
+// parentId set  → subfolder under that node (portal drill-down picks it up automatically).
+export function addUserFolder(parentId, label, existingId = null) {
+  const slug = label.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/, '') || 'carpeta';
+  const id   = existingId || `ucf-${slug}-${Date.now()}`;
+  const node = { id, label, owned: true, lastEdited: Date.now(), children: [], userCreated: true };
+
+  if (parentId) {
+    const parent = findNode(parentId);
+    if (parent) parent.children.push(node);
+  } else {
+    TREE_DATA.push(node);
+    FOLDERS_DATA.push({ id, name: label, count: '0 archivos', imageId: null, userCreated: true });
+  }
+
+  return id;
+}

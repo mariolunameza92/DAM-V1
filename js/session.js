@@ -1,8 +1,9 @@
-// Exports: uploadedAssets{}, userUploadedAssets{}, saveUploadsSession(), savePortalsSession(), loadUploadsFromSession(), loadPortalsFromSession(), pushPortal()
+// Exports: uploadedAssets{}, userUploadedAssets{}, saveUploadsSession(), savePortalsSession(), loadUploadsFromSession(), loadPortalsFromSession(), pushPortal(), pushUserFolder(), loadUserFoldersFromSession()
 import { showToast } from './components/ui/toast.js';
 
 const SS_PORTALS = 'len_portals';
 const SS_UPLOADS = 'len_uploads';
+const SS_FOLDERS = 'len_user_folders';
 
 export const uploadedAssets     = {}; // demo assets — set by initDemoImages
 export const userUploadedAssets = {}; // user uploads — persisted to sessionStorage
@@ -49,4 +50,20 @@ export function loadPortalsFromSession() {
 export function pushPortal(portal) {
   _portals.push(portal);
   savePortalsSession();
+}
+
+// ── User-created folders ──────────────────────────────────────────────────────
+const _userFolders = []; // { id, parentId, label }
+
+export function pushUserFolder(id, parentId, label) {
+  _userFolders.push({ id, parentId: parentId || null, label });
+  try { sessionStorage.setItem(SS_FOLDERS, JSON.stringify(_userFolders)); } catch(e) {}
+}
+
+export function loadUserFoldersFromSession() {
+  try {
+    const raw = sessionStorage.getItem(SS_FOLDERS);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return [];
 }

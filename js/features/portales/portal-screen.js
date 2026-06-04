@@ -14,6 +14,7 @@ let _navMode             = 'masonry'; // 'masonry' | 'tabs' | 'folder-grid'
 let _navItems            = [];
 let _drillFolder         = null;
 let _selfieUploaded      = false;
+let _portalEntranceDone  = false; // entrance animation runs once per open (avoids re-render bounce)
 let _lbAssets = [];
 let _lbIdx    = 0;
 
@@ -117,24 +118,32 @@ export function openPortal() {
   const font    = document.getElementById('font-sel').value;
   const logoSrc = document.getElementById('logo-img')?.src || '';
   const selected = FOLDERS_DATA.filter(f => st.selectedFolders.has(f.id));
-
-  _renderPortal(title, desc, accent, theme, font, logoSrc, selected);
-  closeModal();
-  document.getElementById('portalScreen').classList.add('open');
-  document.getElementById('appShell').style.display = 'none';
+  const folderIds = selected.map(f => f.id);
 
   const editRow = getEditingRow();
   if (editRow) {
+    // Persist changes to the row, then open the portal in a NEW TAB (consistent
+    // with the table). Edit rows hold only title/accent/folders/theme — no
+    // logo/font/desc — so the URL-based open loses nothing.
     editRow.dataset.portalAccent  = accent;
     editRow.dataset.portalTitle   = title;
-    editRow.dataset.portalFolders = selected.map(f => f.id).join(',');
+    editRow.dataset.portalFolders = folderIds.join(',');
     editRow.dataset.portalTheme   = theme;
     const nameEl = editRow.querySelector('.portal-name-cell');
     if (nameEl) nameEl.childNodes[nameEl.childNodes.length - 1].textContent = title;
     clearEditingRow();
-  } else {
-    addToTable(title, selected.length, selected.length * 4, accent, selected.map(f => f.id));
+    closeModal();
+    const params = new URLSearchParams({ portal: '1', title, accent, folders: folderIds.join(','), theme });
+    window.open(`${location.pathname}?${params}`, '_blank');
+    return;
   }
+
+  // Create flow: render in-app (preserves logo/font/desc that the URL can't carry).
+  _renderPortal(title, desc, accent, theme, font, logoSrc, selected);
+  closeModal();
+  document.getElementById('portalScreen').classList.add('open');
+  document.getElementById('appShell').style.display = 'none';
+  addToTable(title, selected.length, selected.length * 4, accent, folderIds);
   _animatePortalIn();
   _attachPortalResize();
 }
@@ -157,6 +166,7 @@ export function closePortal() {
   }
   document.getElementById('portalScreen').classList.remove('open');
   document.getElementById('appShell').style.display = 'flex';
+  _portalEntranceDone = false; // next open animates fresh
   if (_portalResizeHandler) {
     window.removeEventListener('resize', _portalResizeHandler);
     _portalResizeHandler = null;
@@ -654,7 +664,12 @@ function _initPortalLightbox() {
 }
 
 // ── Animation ─────────────────────────────────────────────────────────────────
+// Runs once per open. The portal re-renders when demo images finish loading;
+// guarding here prevents that second render from re-triggering the entrance
+// (which reset blocks to y:16 → the visible "bounce").
 function _animatePortalIn() {
+  if (_portalEntranceDone) return;
+  _portalEntranceDone = true;
   const screen = document.getElementById('portalScreen');
   const blocks = [
     screen.querySelector('.p-header-section'),
@@ -663,7 +678,7 @@ function _animatePortalIn() {
   ].filter(Boolean);
   gsap.fromTo(blocks,
     { opacity: 0, y: 16 },
-    { opacity: 1, y: 0, duration: 0.5, ease: 'power1.out', stagger: 0.25 }
+    { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.08 }
   );
 }
 

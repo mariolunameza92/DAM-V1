@@ -1,7 +1,8 @@
 // Entry point: routing, session restore, event listeners globales, window.* bridge, init
 import { getNumCols } from './utils.js';
-import { loadUploadsFromSession, loadPortalsFromSession } from './session.js';
-import { navigateToFolder, switchTab, showRecentFolders } from './features/carpetas/browser.js';
+import { loadUploadsFromSession, loadPortalsFromSession, loadUserFoldersFromSession } from './session.js';
+import { addUserFolder } from './data.js';
+import { navigateToFolder, switchTab, showRecentFolders, openCrearCarpetaDialog, confirmCrearCarpeta, cancelCrearCarpeta } from './features/carpetas/browser.js';
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio, initFaceFilters, initSearch, typingWelcome, initSectionReveal } from './features/inicio/inicio.js';
 import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
@@ -9,6 +10,7 @@ import { openPortal, closePortal, openPortalFromRow, handleDorsalSearch, clearDo
 import { addToTable } from './features/portales/table.js';
 import { initImageDetail } from './features/carpetas/image-detail.js';
 import { initContextMenu } from './features/shared/context-menu.js';
+import { initSelection } from './features/shared/selection.js';
 
 const TITLES = {
   inicio: 'Inicio', carpetas: 'Carpetas', faceids: 'Face IDs',
@@ -46,6 +48,7 @@ export function goToCarpeta(nodeId) {
 // ── Session restore ───────────────────────────────────────────────
 function restoreSession() {
   loadUploadsFromSession();
+  loadUserFoldersFromSession().forEach(f => addUserFolder(f.parentId, f.label, f.id));
   loadPortalsFromSession().forEach(p => addToTable(p.title, p.fCount, p.photoCount || 0, p.accent, p.folderIds || [], p.dateStr, true));
 }
 
@@ -126,6 +129,9 @@ Object.assign(window, {
   switchSection,
   switchTab,
   goToCarpeta,
+  openCrearCarpetaDialog,
+  confirmCrearCarpeta,
+  cancelCrearCarpeta,
   openModal,
   closeModal,
   goStep,
@@ -163,6 +169,7 @@ if (_portalTab) {
   initDemoImages().then(() => openPortalFromRow(_title, _accent, _folderIds, _theme));
 } else {
   initContextMenu();
+  initSelection();
   showRecentFolders();
   renderInicio();
   let _iniColCount = null;
