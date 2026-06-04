@@ -54,7 +54,8 @@
       "Bash(curl -s --max-time 5 http://127.0.0.1:3000/index.html)",
       "Bash(php --version)",
       "Bash(curl -s http://127.0.0.1:3000/js/main.js)",
-      "Bash(curl -s http://127.0.0.1:3000/index.html)"
+      "Bash(curl -s http://127.0.0.1:3000/index.html)",
+      "Bash(curl -s http://127.0.0.1:3000/js/features/inicio/filters.js)"
     ]
   },
   "hooks": {

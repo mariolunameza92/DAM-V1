@@ -2,14 +2,26 @@
 // Handles: Face ID, Marca, Objeto, Color, Orientación, # Personas, Consentimiento
 
 import { activateFaceFilter } from './inicio.js';
+import { uploadedAssets, userUploadedAssets } from '../../session.js';
+import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
+import { registerSection } from '../shared/image-registry.js';
+import { bindDynamicToggle, viewToggleHTML } from '../../components/ui/view-toggle.js';
+import { getNumCols } from '../../utils.js';
 
 const MARCAS = [
-  { id: 'colorrun',  label: 'Color Run' },
-  { id: 'lima42k',   label: 'Lima 42K' },
-  { id: 'mmm',       label: 'Más Mujeres en Meta' },
-  { id: 'rimac',     label: 'Rimac' },
-  { id: 'osr',       label: 'On Squad Race' },
-  { id: 'wfl',       label: 'Wings for Life' },
+  // Deportivas
+  { id: 'nike',         label: 'Nike',           cat: 'sport' },
+  { id: 'adidas',       label: 'Adidas',          cat: 'sport' },
+  { id: 'puma',         label: 'Puma',            cat: 'sport' },
+  { id: 'under_armour', label: 'Under Armour',    cat: 'sport' },
+  { id: 'new_balance',  label: 'New Balance',     cat: 'sport' },
+  // Automotriz
+  { id: 'audi',         label: 'Audi',            cat: 'auto' },
+  { id: 'volkswagen',   label: 'Volkswagen',      cat: 'auto' },
+  { id: 'porsche',      label: 'Porsche',         cat: 'auto' },
+  { id: 'bmw',          label: 'BMW',             cat: 'auto' },
+  { id: 'mercedes',     label: 'Mercedes-Benz',   cat: 'auto' },
+  { id: 'kia',          label: 'Kia',             cat: 'auto' },
 ];
 
 const OBJETOS = ['Trofeo', 'Vehículo', 'Electrónico', 'Ropa', 'Bandera', 'Comida', 'Podio', 'Micrófono'];
@@ -170,6 +182,7 @@ function _updateActiveBar() {
   if (tags.length === 0) {
     bar.innerHTML = '';
     bar.style.display = 'none';
+    _syncFilterResultsPanel();
     return;
   }
 
@@ -191,6 +204,133 @@ function _updateActiveBar() {
       _removeFilter(btn.closest('.active-filter-tag').dataset.key);
     });
   });
+
+  _syncFilterResultsPanel();
+}
+
+// ── Fake filter results panel ─────────────────────────────────────────────────
+
+let _otherFilterView = 'grid';
+
+function _hasOtherFilters() {
+  return _state.marca.size > 0 || _state.objeto.size > 0 || _state.color.size > 0 ||
+         _state.orientacion !== null || _state.personas !== null ||
+         _state.consentimiento.size > 0 || _state.allCanales;
+}
+
+function _seededShuffle(arr, seed) {
+  const copy = [...arr];
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  for (let i = copy.length - 1; i > 0; i--) {
+    h = (h * 1664525 + 1013904223) >>> 0;
+    const j = h % (i + 1);
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function _buildFilterLabel() {
+  const parts = [];
+  if (_state.marca.size)
+    parts.push(MARCAS.filter(m => _state.marca.has(m.id)).map(m => m.label).join(', '));
+  if (_state.objeto.size)
+    parts.push([..._state.objeto].join(', '));
+  if (_state.color.size) {
+    const labels = [..._state.color].map(id => {
+      const c = COLORES.find(x => x.id === id);
+      return c ? c.label : `#${id.slice(4)}`;
+    });
+    parts.push(labels.join(', '));
+  }
+  if (_state.orientacion)
+    parts.push({ horizontal: 'Horizontal', vertical: 'Vertical', cuadrada: 'Cuadrada' }[_state.orientacion]);
+  if (_state.personas) {
+    const p = PERSONAS_OPTS.find(x => x.id === _state.personas);
+    parts.push(p ? p.label : _state.personas.replace('rango_', '').replace('-', '–') + ' personas');
+  }
+  if (_state.allCanales) parts.push('Todos los canales');
+  else _state.consentimiento.forEach(id => {
+    const c = CONSENT_OPTS.find(x => x.id === id);
+    if (c) parts.push(c.label);
+  });
+  return parts.join(' · ');
+}
+
+function _drawOtherFilterResults(el, assets) {
+  if (!assets.length) {
+    el.innerHTML = `<p class="face-results-header" style="margin-top:32px">No hay imágenes cargadas aún.</p>`;
+    return;
+  }
+  const label = _buildFilterLabel();
+  const numCols = getNumCols();
+  const colData = Array.from({ length: numCols }, () => []);
+  assets.forEach((a, i) => colData[i % numCols].push({ a, i }));
+
+  const contentHTML = _otherFilterView === 'grid'
+    ? `<div class="masonry-cols">${colData.map(col =>
+        `<div class="masonry-col">${col.map(({ a, i }) => assetCardHTML(a, 'filter-results', i)).join('')}</div>`
+      ).join('')}</div>`
+    : `<div class="file-list">${assets.map((a, i) => assetListRowHTML(a, 'filter-results', i)).join('')}</div>`;
+
+  el.innerHTML =
+    `<div class="face-results-header-row">
+      <div class="face-results-header">
+        <span class="msi xs">filter_list</span>&nbsp;${assets.length} resultados&nbsp;·&nbsp;<strong>${label}</strong>
+      </div>
+      ${viewToggleHTML(_otherFilterView)}
+    </div>` + contentHTML;
+
+  bindDynamicToggle(el, v => { _otherFilterView = v; _drawOtherFilterResults(el, assets); });
+}
+
+function _syncFilterResultsPanel() {
+  const el  = document.getElementById('other-filter-results');
+  const sec = document.getElementById('sec-inicio');
+  if (!el || !sec) return;
+
+  const faceActive  = !!document.querySelector('.face-chip-active');
+  const otherActive = _hasOtherFilters();
+
+  if (!otherActive || faceActive) {
+    el.style.display = 'none';
+    el.innerHTML = '';
+    if (!faceActive) {
+      sec.querySelector('.face-stats-row')?.style.setProperty('display', '');
+      sec.querySelectorAll('.inicio-section').forEach(s => s.style.setProperty('display', ''));
+    }
+    return;
+  }
+
+  // Hide regular sections while filter is active
+  sec.querySelector('.face-stats-row').style.display = 'none';
+  sec.querySelectorAll('.inicio-section').forEach(s => { s.style.display = 'none'; });
+
+  const allAssets = [
+    ...Object.values(uploadedAssets).flat(),
+    ...Object.values(userUploadedAssets).flat(),
+  ];
+
+  const seed     = [..._state.marca, ..._state.objeto, ..._state.color,
+                    _state.orientacion || '', _state.personas || ''].join('|');
+  const shuffled = _seededShuffle(allAssets, seed);
+  const picks    = shuffled.slice(0, Math.min(12, shuffled.length));
+
+  const normalized = picks.map(a => ({
+    src:         a.preview,
+    ext:         (a.ext || 'jpg').toUpperCase(),
+    size:        a.sizeStr || '',
+    name:        a.name || '',
+    originalUrl: a.originalUrl || a.preview,
+    faceIds:     a.faceIds || [],
+    modTime:     a.modTime || null,
+  }));
+
+  registerSection('filter-results', normalized);
+  _drawOtherFilterResults(el, normalized);
+  el.style.display = '';
+  // Animate in
+  el.style.animation = 'resultsIn .22s ease both';
 }
 
 function _removeFilter(key) {
@@ -233,6 +373,8 @@ function _removeFilter(key) {
 
 // ── Popover renderers ─────────────────────────────────────────────────────────
 
+const _CAT_LABELS = { sport: 'Deportivas', auto: 'Automotriz' };
+
 function _renderMarca(chipEl) {
   const pop = _getOrCreatePopover();
   let q = '';
@@ -242,29 +384,35 @@ function _renderMarca(chipEl) {
       ? MARCAS.filter(m => m.label.toLowerCase().includes(q.toLowerCase()))
       : MARCAS;
 
+    // Group by category when not searching
+    let listHTML;
+    if (!q && matches.length) {
+      const groups = {};
+      matches.forEach(m => { (groups[m.cat] = groups[m.cat] || []).push(m); });
+      listHTML = Object.entries(groups).map(([cat, items]) => `
+        <div class="cp-group-label">${_CAT_LABELS[cat] || cat}</div>
+        ${items.map(m => _marcaRowHTML(m)).join('')}
+      `).join('');
+    } else if (matches.length) {
+      listHTML = matches.map(m => _marcaRowHTML(m)).join('');
+    } else {
+      listHTML = `<div class="cp-empty">Sin resultados para "${_esc(q)}"</div>`;
+    }
+
     pop.innerHTML = `
       <div class="cp-header">LOGO / MARCA</div>
       <div class="cp-search-wrap">
         <span class="msi xs" style="color:var(--g400)">search</span>
         <input class="cp-search" type="text" placeholder="Filtrar por marca..." value="${_esc(q)}" autocomplete="off">
       </div>
-      <div class="cp-list">
-        ${matches.length ? matches.map(m => `
-          <div class="cp-row${_state.marca.has(m.id) ? ' cp-row--sel' : ''}" data-id="${m.id}">
-            <div class="cp-avatar cp-avatar--initial">${m.label.slice(0, 2).toUpperCase()}</div>
-            <span class="cp-row-label">${m.label}</span>
-            ${_state.marca.has(m.id) ? '<span class="msi xs" style="color:var(--g500)">check</span>' : ''}
-          </div>
-        `).join('') : `<div class="cp-empty">Sin resultados para "${_esc(q)}"</div>`}
-      </div>
-      <button class="cp-add-btn"><span class="msi xs">add</span>Agregar marca nueva al filtro</button>
+      <div class="cp-list">${listHTML}</div>
     `;
 
     const inp = pop.querySelector('.cp-search');
     inp?.addEventListener('input', e => { q = e.target.value; draw(); pop.querySelector('.cp-search')?.focus(); });
     inp?.focus();
 
-    pop.querySelectorAll('.cp-row').forEach(row => {
+    pop.querySelectorAll('.cp-row[data-id]').forEach(row => {
       row.addEventListener('click', () => {
         const id = row.dataset.id;
         _state.marca.has(id) ? _state.marca.delete(id) : _state.marca.add(id);
@@ -278,6 +426,16 @@ function _renderMarca(chipEl) {
 
   draw();
   _positionPopover(chipEl);
+}
+
+function _marcaRowHTML(m) {
+  const sel = _state.marca.has(m.id);
+  return `
+    <div class="cp-row${sel ? ' cp-row--sel' : ''}" data-id="${m.id}">
+      <div class="cp-avatar cp-avatar--initial">${m.label.slice(0, 2).toUpperCase()}</div>
+      <span class="cp-row-label">${m.label}</span>
+      ${sel ? '<span class="msi xs" style="color:var(--g500)">check</span>' : ''}
+    </div>`;
 }
 
 function _renderObjeto(chipEl) {
