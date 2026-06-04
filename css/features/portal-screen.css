@@ -39,6 +39,7 @@
 .p-dorsal-input-wrap{flex:none;display:flex;align-items:center;background:var(--g50);border:2px solid var(--g200);border-radius:80px;padding:var(--space-3) var(--space-5);width:10rem}
 .p-dorsal-input-wrap .p-search-input{width:100%;min-width:0}
 .p-dorsal-input-wrap.has-clear{padding-right:var(--space-3)}
+.p-dorsal-icon{display:none;flex-shrink:0;margin-right:var(--space-2);color:var(--g600);font-size:18px}
 .p-dorsal-clear{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:6px;border:none;background:var(--g300);border-radius:50%;cursor:pointer;padding:0;transition:background .15s}
 .p-dorsal-clear:hover{background:var(--g400)}
 .p-dorsal-clear .msi{font-size:12px;color:var(--g700)}
@@ -48,6 +49,10 @@
 .p-buscar-btn:hover{background:var(--color-accent-hover)}
 /* Face-ID-only mode: hide dorsal input */
 .p-hero-ctas--faceid .p-dorsal-input-wrap{display:none}
+/* Dorsal-only mode: hide selfie CTA, show scoreboard icon leading the input */
+.p-hero-ctas--dorsal .p-selfie-btn,
+.p-hero-ctas--dorsal .p-selfie-avatar{display:none}
+.p-hero-ctas--dorsal .p-dorsal-icon{display:flex}
 
 /* Active filter chip area */
 .p-active-chip-area{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
