@@ -430,6 +430,7 @@ function _restorePortalDefault() {
 
 function _removeSelfieSearch() {
   _resetSelfie();
+  _clearDorsalState();
   _restorePortalDefault();
 }
 
@@ -456,10 +457,52 @@ function _searchBySelfie() {
   el.style.display = '';
 }
 
+// Combined selfie + dorsal: keeps both the selfie avatar and the dorsal input
+// (with its clear X) visible, and labels results with both icons joined by "+".
+function _searchCombined(val) {
+  const clearBtn = document.getElementById('p-dorsal-clear');
+  if (clearBtn) clearBtn.style.display = 'flex';
+  document.getElementById('p-dorsal-wrap')?.classList.add('has-clear');
+
+  document.getElementById('p-tabs-section').style.display    = 'none';
+  document.getElementById('p-content-section').style.display = 'none';
+
+  const allAssets = _portalFolders.flatMap(_collectAssets);
+  const assets = allAssets.map(a => ({
+    src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
+    name: a.name, originalUrl: a.originalUrl || a.preview,
+  }));
+  if (assets.length > 0) registerSection('portal-faces', assets);
+
+  const el = document.getElementById('p-face-results');
+  if (!el) return;
+  el.innerHTML = assets.length === 0
+    ? `<div class="face-results-header">No hay imágenes cargadas aún.</div>`
+    : `<div class="face-results-header-row">
+        <div class="face-results-header"><span class="msi xs">ar_on_you</span>&nbsp;+&nbsp;<span class="msi xs">scoreboard</span>&nbsp;${assets.length} resultado${assets.length !== 1 ? 's' : ''} para dorsal <strong>#${val}</strong></div>
+       </div>
+       <div class="face-results-grid">${assets.map((a, i) => assetCardHTML(a, 'portal-faces', i)).join('')}</div>`;
+  el.style.display = '';
+}
+
 export function handlePortalSearch() {
   const dorsalVal = document.getElementById('p-dorsal-input')?.value.trim();
-  if (dorsalVal)        handleDorsalSearch();
-  else if (_selfieUploaded) _searchBySelfie();
+  if (dorsalVal && _selfieUploaded) _searchCombined(dorsalVal);
+  else if (dorsalVal)               handleDorsalSearch();
+  else if (_selfieUploaded)         _searchBySelfie();
+}
+
+// Re-render the portal after demo images finish loading WITHOUT discarding an
+// active selfie/dorsal search. main.js calls openPortalFromRow twice (once
+// before images load, once after); the second pass used to reset the selfie.
+export function refreshPortalImages() {
+  const results = document.getElementById('p-face-results');
+  const searchActive = results && results.style.display !== 'none' && results.innerHTML.length > 0;
+  if (!searchActive) { _renderNavigation(); return; }
+  const dorsalVal = document.getElementById('p-dorsal-input')?.value.trim();
+  if (dorsalVal && _selfieUploaded) _searchCombined(dorsalVal);
+  else if (dorsalVal)               handleDorsalSearch();
+  else if (_selfieUploaded)         _searchBySelfie();
 }
 
 function _initSelfieSearch() {
@@ -617,6 +660,7 @@ function _clearDorsalState() {
 
 export function clearDorsalSearch() {
   _clearDorsalState();
+  _resetSelfie();
   _restorePortalDefault();
 }
 

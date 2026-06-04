@@ -6,7 +6,7 @@ import { navigateToFolder, switchTab, showRecentFolders, openCrearCarpetaDialog,
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio, initFaceFilters, initSearch, typingWelcome, initSectionReveal } from './features/inicio/inicio.js';
 import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList } from './features/portales/modal.js';
-import { openPortal, closePortal, openPortalFromRow, handleDorsalSearch, clearDorsalSearch, handlePortalSearch } from './features/portales/portal-screen.js';
+import { openPortal, closePortal, openPortalFromRow, handleDorsalSearch, clearDorsalSearch, handlePortalSearch, refreshPortalImages } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
 import { initImageDetail } from './features/carpetas/image-detail.js';
 import { initContextMenu } from './features/shared/context-menu.js';
@@ -166,7 +166,7 @@ if (_portalTab) {
   const _theme     = _p.get('theme') || 'light';
   const _folderIds = _p.get('folders') ? _p.get('folders').split(',').filter(Boolean) : [];
   openPortalFromRow(_title, _accent, _folderIds, _theme);
-  initDemoImages().then(() => openPortalFromRow(_title, _accent, _folderIds, _theme));
+  initDemoImages().then(() => refreshPortalImages());
 } else {
   initContextMenu();
   initSelection();
