@@ -127,9 +127,12 @@
 .p-img-card img{width:100%;display:block}
 
 /* Download button: always visible, accent bg + guaranteed contrast icon */
-.portal-screen .p-dl-btn{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:50%;background:var(--color-accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:1;transform:none;backdrop-filter:none;transition:transform .15s,opacity .15s;z-index:2}
-.portal-screen .p-dl-btn:hover{transform:scale(1.1);opacity:.85}
-.portal-screen .p-dl-btn .msi{color:var(--color-accent-text);font-size:18px}
+.portal-screen .p-dl-btn,
+.portal-screen .asset-dl{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:50%;background:var(--color-accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:1;transform:none;backdrop-filter:none;transition:transform .15s,opacity .15s;z-index:2;padding:0}
+.portal-screen .p-dl-btn:hover,
+.portal-screen .asset-dl:hover{transform:scale(1.1);opacity:.85}
+.portal-screen .p-dl-btn .msi,
+.portal-screen .asset-dl .msi{color:var(--color-accent-text);font-size:18px}
 
 /* Secondary CTA button (hidden by default, shown when needed) */
 .p-secondary-cta{display:flex;align-items:center;gap:6px;padding:var(--space-3) var(--space-6);border-radius:80px;border:none;background:var(--color-accent-dark);color:var(--color-accent-dark-text);font-size:14px;font-family:var(--font-ui);font-weight:500;cursor:pointer;transition:opacity .15s}
