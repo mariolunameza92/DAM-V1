@@ -1,6 +1,7 @@
 // Filter chip popovers for the inicio section
-// Handles: Marca, Objeto, Color, Orientación, # Personas, Consentimiento
-// Face ID chip is managed separately by inicio.js
+// Handles: Face ID, Marca, Objeto, Color, Orientación, # Personas, Consentimiento
+
+import { activateFaceFilter } from './inicio.js';
 
 const MARCAS = [
   { id: 'colorrun',  label: 'Color Run' },
@@ -524,9 +525,68 @@ function _renderConsentimiento(chipEl) {
   _positionPopover(chipEl);
 }
 
+// ── Face ID popover ───────────────────────────────────────────────────────────
+
+function _renderFaceId(chipEl) {
+  const pop = _getOrCreatePopover();
+  let q = '';
+
+  // Collect all unique faces from both face strips
+  const seen = new Set();
+  const faces = Array.from(document.querySelectorAll('#sec-inicio .face-av[data-face-id]'))
+    .filter(el => {
+      const id = el.dataset.faceId;
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    })
+    .map(el => ({
+      id:     el.dataset.faceId,
+      name:   el.dataset.faceName,
+      imgSrc: el.querySelector('img')?.src || '',
+    }));
+
+  function draw() {
+    const matches = q
+      ? faces.filter(f => f.name.toLowerCase().includes(q.toLowerCase()))
+      : faces;
+
+    pop.innerHTML = `
+      <div class="cp-header">PERSONAS</div>
+      <div class="cp-search-wrap">
+        <span class="msi xs" style="color:var(--g400)">search</span>
+        <input class="cp-search" type="text" placeholder="Filtrar por nombre..." value="${_esc(q)}" autocomplete="off">
+      </div>
+      <div class="cp-list">
+        ${matches.length ? matches.map(f => `
+          <div class="cp-row" data-face-id="${f.id}" data-face-name="${_esc(f.name)}" data-face-img="${_esc(f.imgSrc)}">
+            <div class="cp-avatar"><img src="${f.imgSrc}" alt="${_esc(f.name)}" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+            <span class="cp-row-label">${f.name}</span>
+          </div>
+        `).join('') : `<div class="cp-empty">Sin resultados para "${_esc(q)}"</div>`}
+      </div>
+    `;
+
+    const inp = pop.querySelector('.cp-search');
+    inp?.addEventListener('input', e => { q = e.target.value; draw(); pop.querySelector('.cp-search')?.focus(); });
+    inp?.focus();
+
+    pop.querySelectorAll('.cp-row[data-face-id]').forEach(row => {
+      row.addEventListener('click', () => {
+        activateFaceFilter(row.dataset.faceId, row.dataset.faceName, row.dataset.faceImg);
+        _closePopover();
+      });
+    });
+  }
+
+  draw();
+  _positionPopover(chipEl);
+}
+
 // ── Renderer map (used by _removeFilter re-render) ────────────────────────────
 
 const _RENDERERS = {
+  'chip-faceid':         _renderFaceId,
   'chip-marca':          _renderMarca,
   'chip-objeto':         _renderObjeto,
   'chip-color':          _renderColor,
@@ -544,15 +604,19 @@ function _esc(str) {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 export function initFilters() {
-  Object.entries(_RENDERERS).forEach(([id, renderer]) => {
-    const chip = document.getElementById(id);
+  // Event delegation — handles chips that are recreated dynamically (e.g. chip-faceid)
+  document.addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip[id], .filter-chip--active[id]');
     if (!chip) return;
-    chip.addEventListener('click', e => {
-      e.stopPropagation();
-      if (_openChipId === id) { _closePopover(); return; }
-      _openChipId = id;
+    const renderer = _RENDERERS[chip.id];
+    if (!renderer) return;
+
+    if (_openChipId === chip.id) {
+      _closePopover();
+    } else {
+      _openChipId = chip.id;
       _getOrCreatePopover();
       renderer(chip);
-    });
-  });
+    }
+  }, true); // capture phase so we run before other listeners
 }

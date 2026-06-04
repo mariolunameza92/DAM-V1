@@ -301,6 +301,8 @@ function _pushToRecents(id) {
   _trimFaceStrips();
 }
 
+export function activateFaceFilter(id, name, imgSrc) { _activeFaceFilter(id, name, imgSrc); }
+
 function _activeFaceFilter(id, name, imgSrc) {
   _activeFaceId = id;
 
