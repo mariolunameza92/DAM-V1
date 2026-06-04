@@ -55,7 +55,13 @@
       "Bash(php --version)",
       "Bash(curl -s http://127.0.0.1:3000/js/main.js)",
       "Bash(curl -s http://127.0.0.1:3000/index.html)",
-      "Bash(curl -s http://127.0.0.1:3000/js/features/inicio/filters.js)"
+      "Bash(curl -s http://127.0.0.1:3000/js/features/inicio/filters.js)",
+      "Bash(ls -lt /tmp/*.png /tmp/*.jpg /tmp/*.svg /tmp/*.jpeg 2>/dev/null | head -20 *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/nike.svg)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/adidas.svg)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/puma.svg)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/asics.svg)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/new_balance.svg)"
     ]
   },
   "hooks": {

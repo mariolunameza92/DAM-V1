@@ -10,18 +10,18 @@ import { getNumCols } from '../../utils.js';
 
 const MARCAS = [
   // Deportivas
-  { id: 'nike',         label: 'Nike',           cat: 'sport' },
-  { id: 'adidas',       label: 'Adidas',          cat: 'sport' },
-  { id: 'puma',         label: 'Puma',            cat: 'sport' },
-  { id: 'under_armour', label: 'Under Armour',    cat: 'sport' },
-  { id: 'new_balance',  label: 'New Balance',     cat: 'sport' },
+  { id: 'nike',        label: 'Nike',          cat: 'sport', img: 'assets/marcas/nike.svg' },
+  { id: 'adidas',      label: 'Adidas',        cat: 'sport', img: 'assets/marcas/adidas.svg' },
+  { id: 'puma',        label: 'Puma',          cat: 'sport', img: 'assets/marcas/puma.svg' },
+  { id: 'asics',       label: 'ASICS',         cat: 'sport', img: 'assets/marcas/asics.svg' },
+  { id: 'new_balance', label: 'New Balance',   cat: 'sport', img: 'assets/marcas/new_balance.svg' },
   // Automotriz
-  { id: 'audi',         label: 'Audi',            cat: 'auto' },
-  { id: 'volkswagen',   label: 'Volkswagen',      cat: 'auto' },
-  { id: 'porsche',      label: 'Porsche',         cat: 'auto' },
-  { id: 'bmw',          label: 'BMW',             cat: 'auto' },
-  { id: 'mercedes',     label: 'Mercedes-Benz',   cat: 'auto' },
-  { id: 'kia',          label: 'Kia',             cat: 'auto' },
+  { id: 'audi',        label: 'Audi',          cat: 'auto' },
+  { id: 'volkswagen',  label: 'Volkswagen',    cat: 'auto' },
+  { id: 'porsche',     label: 'Porsche',       cat: 'auto' },
+  { id: 'bmw',         label: 'BMW',           cat: 'auto' },
+  { id: 'mercedes',    label: 'Mercedes-Benz', cat: 'auto' },
+  { id: 'kia',         label: 'Kia',           cat: 'auto' },
 ];
 
 const OBJETOS = ['Trofeo', 'Vehículo', 'Electrónico', 'Ropa', 'Bandera', 'Comida', 'Podio', 'Micrófono'];
@@ -430,9 +430,12 @@ function _renderMarca(chipEl) {
 
 function _marcaRowHTML(m) {
   const sel = _state.marca.has(m.id);
+  const avatarHTML = m.img
+    ? `<div class="cp-avatar cp-avatar--logo"><img src="${m.img}" alt="${_esc(m.label)}"></div>`
+    : `<div class="cp-avatar cp-avatar--initial">${m.label.slice(0, 2).toUpperCase()}</div>`;
   return `
     <div class="cp-row${sel ? ' cp-row--sel' : ''}" data-id="${m.id}">
-      <div class="cp-avatar cp-avatar--initial">${m.label.slice(0, 2).toUpperCase()}</div>
+      ${avatarHTML}
       <span class="cp-row-label">${m.label}</span>
       ${sel ? '<span class="msi xs" style="color:var(--g500)">check</span>' : ''}
     </div>`;
