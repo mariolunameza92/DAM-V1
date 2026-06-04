@@ -12,7 +12,24 @@
       "PowerShell(Get-Command npx -ErrorAction SilentlyContinue)",
       "PowerShell(Get-Command python -ErrorAction SilentlyContinue)",
       "PowerShell(Get-Command python3 -ErrorAction SilentlyContinue)",
-      "PowerShell(\\(Get-Command node\\).Source)"
+      "PowerShell(\\(Get-Command node\\).Source)",
+      "Skill(update-config)",
+      "Skill(update-config:*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$s = git status --porcelain; if ($s) { git add -A; git commit -m \"auto: $(Get-Date -Format 'yyyy-MM-dd HH:mm')\" }",
+            "shell": "powershell",
+            "statusMessage": "Auto-commit...",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   }
 }
