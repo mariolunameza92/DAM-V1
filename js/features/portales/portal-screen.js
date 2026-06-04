@@ -484,12 +484,7 @@ function _initSelfieSearch() {
   selfieRemove?.addEventListener('click', _removeSelfieSearch);
   buscarBtn?.addEventListener('click', handlePortalSearch);
 
-  const dorsalInput = document.getElementById('p-dorsal-input');
-  const dorsalClear = document.getElementById('p-dorsal-clear');
-  dorsalInput?.addEventListener('input', () => {
-    dorsalClear.style.display = dorsalInput.value.trim() ? 'flex' : 'none';
-  });
-  dorsalClear?.addEventListener('click', clearDorsalSearch);
+  document.getElementById('p-dorsal-clear')?.addEventListener('click', clearDorsalSearch);
 }
 
 function _clearFacePortalChip() {
@@ -586,6 +581,7 @@ export function handleDorsalSearch() {
   _resetSelfie();
   const clearBtn = document.getElementById('p-dorsal-clear');
   if (clearBtn) clearBtn.style.display = 'flex';
+  document.getElementById('p-dorsal-wrap')?.classList.add('has-clear');
 
   document.getElementById('p-tabs-section').style.display    = 'none';
   document.getElementById('p-content-section').style.display = 'none';
@@ -616,6 +612,7 @@ function _clearDorsalState() {
   if (input) input.value = '';
   const clearBtn = document.getElementById('p-dorsal-clear');
   if (clearBtn) clearBtn.style.display = 'none';
+  document.getElementById('p-dorsal-wrap')?.classList.remove('has-clear');
 }
 
 export function clearDorsalSearch() {
