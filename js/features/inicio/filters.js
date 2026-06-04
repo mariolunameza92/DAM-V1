@@ -10,18 +10,17 @@ import { getNumCols } from '../../utils.js';
 
 const MARCAS = [
   // Deportivas
-  { id: 'nike',        label: 'Nike',          cat: 'sport', img: 'assets/marcas/nike.svg' },
-  { id: 'adidas',      label: 'Adidas',        cat: 'sport', img: 'assets/marcas/adidas.svg' },
-  { id: 'puma',        label: 'Puma',          cat: 'sport', img: 'assets/marcas/puma.svg' },
-  { id: 'asics',       label: 'ASICS',         cat: 'sport', img: 'assets/marcas/asics.svg' },
-  { id: 'new_balance', label: 'New Balance',   cat: 'sport', img: 'assets/marcas/new_balance.svg' },
+  { id: 'nike',        label: 'Nike',          cat: 'sport', img: 'assets/marcas/nike.png' },
+  { id: 'adidas',      label: 'Adidas',        cat: 'sport', img: 'assets/marcas/adidas.png' },
+  { id: 'puma',        label: 'Puma',          cat: 'sport', img: 'assets/marcas/puma.png' },
+  { id: 'asics',       label: 'ASICS',         cat: 'sport', img: 'assets/marcas/asics.png' },
+  { id: 'new_balance', label: 'New Balance',   cat: 'sport', img: 'assets/marcas/new_balance.png' },
   // Automotriz
-  { id: 'audi',        label: 'Audi',          cat: 'auto', img: 'assets/marcas/audi.svg' },
-  { id: 'volkswagen',  label: 'Volkswagen',    cat: 'auto', img: 'assets/marcas/volkswagen.svg' },
-  { id: 'porsche',     label: 'Porsche',       cat: 'auto', img: 'assets/marcas/porsche.svg' },
-  { id: 'bmw',         label: 'BMW',           cat: 'auto', img: 'assets/marcas/bmw.svg' },
-  { id: 'mercedes',    label: 'Mercedes-Benz', cat: 'auto', img: 'assets/marcas/mercedes.svg' },
-  { id: 'kia',         label: 'Kia',           cat: 'auto', img: 'assets/marcas/kia.svg' },
+  { id: 'audi',        label: 'Audi',          cat: 'auto', img: 'assets/marcas/audi.png' },
+  { id: 'volkswagen',  label: 'Volkswagen',    cat: 'auto', img: 'assets/marcas/volkswagen.png' },
+  { id: 'porsche',     label: 'Porsche',       cat: 'auto', img: 'assets/marcas/porsche.png' },
+  { id: 'bmw',         label: 'BMW',           cat: 'auto', img: 'assets/marcas/bmw.png' },
+  { id: 'mercedes',    label: 'Mercedes-Benz', cat: 'auto', img: 'assets/marcas/mercedes.png' },
 ];
 
 const OBJETOS = ['Trofeo', 'Vehículo', 'Electrónico', 'Ropa', 'Bandera', 'Comida', 'Podio', 'Micrófono'];

@@ -68,7 +68,21 @@
       "Bash(python3 /tmp/dam_server2.py)",
       "Bash(xargs kill)",
       "Bash(find . -type f \\\\\\( -iname \"*.png\" -o -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.webp\" \\\\\\) -newermt \"2026-06-04 00:00\" 2>/dev/null | grep -vi node_modules | head -40; echo \"---DOWNLOADS---\"; ls -lt ~/Downloads 2>/dev/null | head -20)",
-      "Bash(echo \"=== folder test ===\"; ls -la ~/Downloads/\"folder test\" 2>/dev/null; echo \"=== DAM - HF ===\"; ls -la ~/Downloads/\"DAM - HF\" 2>/dev/null; echo \"=== any 'logo' named files anywhere recent ===\"; find ~/Downloads ~/Desktop ~/Documents -iname \"*logo*\" \\\\\\( -iname \"*.png\" -o -iname \"*.jpg\" -o -iname \"*.svg\" -o -iname \"*.webp\" \\\\\\) 2>/dev/null | head -30)"
+      "Bash(echo \"=== folder test ===\"; ls -la ~/Downloads/\"folder test\" 2>/dev/null; echo \"=== DAM - HF ===\"; ls -la ~/Downloads/\"DAM - HF\" 2>/dev/null; echo \"=== any 'logo' named files anywhere recent ===\"; find ~/Downloads ~/Desktop ~/Documents -iname \"*logo*\" \\\\\\( -iname \"*.png\" -o -iname \"*.jpg\" -o -iname \"*.svg\" -o -iname \"*.webp\" \\\\\\) 2>/dev/null | head -30)",
+      "Bash(python3 -c \"import PIL; print\\('Pillow', PIL.__version__\\)\")",
+      "Bash(python3 -c \"import numpy; print\\('numpy ok'\\)\")",
+      "Read(//private/tmp/**)",
+      "Bash(python3 -m venv logoenv)",
+      "Bash(/tmp/logoenv/bin/pip install *)",
+      "Bash(/tmp/logoenv/bin/python -c \"import PIL; print\\('Pillow', PIL.__version__\\)\")",
+      "Bash(cat)",
+      "Bash(/tmp/logoenv/bin/python /tmp/process_logos.py)",
+      "Bash(/tmp/logoenv/bin/python /tmp/inspect.py)",
+      "Bash(/tmp/logoenv/bin/python /tmp/preview.py)",
+      "Bash(rm -f assets/marcas/*.svg && ls -la assets/marcas/)",
+      "Bash(lsof -nP -iTCP:3000 -sTCP:LISTEN)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000__TRACKED_VAR__)",
+      "Bash(/tmp/logoenv/bin/python -)"
     ]
   },
   "hooks": {
