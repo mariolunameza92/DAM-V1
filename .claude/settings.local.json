@@ -61,7 +61,12 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/adidas.svg)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/puma.svg)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/asics.svg)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/new_balance.svg)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/assets/marcas/new_balance.svg)",
+      "Bash(curl -s http://127.0.0.1:3000/)",
+      "Bash(curl -v http://127.0.0.1:3000/)",
+      "Bash(kill 9500)",
+      "Bash(python3 /tmp/dam_server2.py)",
+      "Bash(xargs kill)"
     ]
   },
   "hooks": {
