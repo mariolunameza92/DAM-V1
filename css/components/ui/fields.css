@@ -1,6 +1,6 @@
-.field{background:var(--g50);border:1.5px solid var(--g200);border-radius:80px;padding:8px 16px;font-size:12px;color:var(--g700);width:100%;outline:none;font-family:var(--font-ui);transition:border-color .15s}
+.field{background:var(--g50);border:1.5px solid var(--g200);border-radius:80px;padding:var(--space-2) var(--space-4);font-size:12px;color:var(--g700);width:100%;outline:none;font-family:var(--font-ui);transition:border-color .15s}
 .field:focus{border-color:var(--g500)}
 .field::placeholder{color:var(--g500)}
 .field-wrap{position:relative;width:100%;margin-top:10px;display:flex;align-items:center}
 .field-wrap .msi{position:absolute;left:14px;pointer-events:none;color:var(--g700)}
-.field-wrap .field{padding-left:36px}
+.field-wrap .field{padding-left:var(--space-9)}

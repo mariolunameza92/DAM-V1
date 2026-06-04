@@ -16,7 +16,8 @@
       "Skill(update-config)",
       "Skill(update-config:*)",
       "Bash(git commit --amend -m ' *)",
-      "Bash(grep -vE \"^\\\\s*$|^commit|^Author|^Date\")"
+      "Bash(grep -vE \"^\\\\s*$|^commit|^Author|^Date\")",
+      "Bash(grep -vE \":[ ]?0$\")"
     ]
   },
   "hooks": {

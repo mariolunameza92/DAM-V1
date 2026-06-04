@@ -12,4 +12,21 @@
   --g950: #22252f;
   --font-ui: 'Google Sans', sans-serif;
   --font-mono: 'Space Mono', monospace;
+
+  /* Spacing scale — base 4px. Token name = step count, value = step * 4px.
+     Single source of truth for padding/gap/inset across DAM and portales. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-13: 52px;
+  --space-14: 56px;
+  --space-17: 68px;
 }
