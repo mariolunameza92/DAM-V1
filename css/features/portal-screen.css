@@ -122,7 +122,8 @@
 .portal-screen[data-theme="dark"] .p-gradient-blob{filter:blur(60px)}
 
 .p-masonry-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
-.p-img-card{position:relative;border-radius:8px;overflow:hidden;cursor:pointer}
+.p-img-card{position:relative;border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .15s}
+.p-img-card:hover{transform:scale(1.015)}
 .p-img-card img{width:100%;display:block}
 
 /* Download button: always visible, accent bg + guaranteed contrast icon */
