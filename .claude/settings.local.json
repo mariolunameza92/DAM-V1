@@ -36,7 +36,25 @@
       "Bash(lsof -ti:3000)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3000/)",
       "Bash(chmod +x /Users/lenadmin/Documents/GitHub/DAM-V1/.claude/serve.sh)",
-      "Bash(python3 -m http.server 3001)"
+      "Bash(python3 -m http.server 3001)",
+      "Bash(curl -s -o /tmp/figma_filters_hd.png \"https://www.figma.com/api/mcp/asset/09da2008-59cc-482e-8738-2974eeeda97c\")",
+      "mcp__862e49d2-99a7-4a51-b0da-40cd03d6e7f9__get_metadata",
+      "Bash(curl -s -o /tmp/fig_persona.png \"https://www.figma.com/api/mcp/asset/a61d8d05-c437-47d4-8588-862ad0f9e6e6\")",
+      "Bash(curl -s -o /tmp/fig_marca.png \"https://www.figma.com/api/mcp/asset/946c4634-f759-4059-98a0-372c6a72e477\")",
+      "Bash(curl -s -o /tmp/fig_objeto.png \"https://www.figma.com/api/mcp/asset/f53e0987-d907-4df1-9b5f-e6eeeec677df\")",
+      "Bash(curl -s -o /tmp/fig_color.png \"https://www.figma.com/api/mcp/asset/a2031ee7-5c0c-4e5a-aa19-b48a4949206c\")",
+      "Bash(curl -s -o /tmp/fig_orient.png \"https://www.figma.com/api/mcp/asset/3181c0e7-2075-455d-a19d-19a358d0f9bd\")",
+      "Bash(curl -s -o /tmp/fig_personas.png \"https://www.figma.com/api/mcp/asset/c1b4036e-2118-465b-adc9-e86ac1cea78b\")",
+      "Bash(curl -s -o /tmp/fig_consent.png \"https://www.figma.com/api/mcp/asset/49823b4d-4a08-48e8-b7ed-b025651b16df\")",
+      "Bash(kill 5652 7939)",
+      "Bash(python3 -m http.server 3000)",
+      "Bash(cat > *)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(curl -sv http://localhost:3000/)",
+      "Bash(curl -s --max-time 5 http://127.0.0.1:3000/index.html)",
+      "Bash(php --version)",
+      "Bash(curl -s http://127.0.0.1:3000/js/main.js)",
+      "Bash(curl -s http://127.0.0.1:3000/index.html)"
     ]
   },
   "hooks": {

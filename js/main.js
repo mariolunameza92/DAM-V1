@@ -5,6 +5,7 @@ import { addUserFolder } from './data.js';
 import { navigateToFolder, switchTab, showRecentFolders, openCrearCarpetaDialog, confirmCrearCarpeta, cancelCrearCarpeta } from './features/carpetas/browser.js';
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio, initFaceFilters, initSearch, typingWelcome, initSectionReveal } from './features/inicio/inicio.js';
+import { initFilters } from './features/inicio/filters.js';
 import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList, selectSearchMethod } from './features/portales/modal.js';
 import { openPortal, closePortal, openPortalFromRow, handleDorsalSearch, clearDorsalSearch, handlePortalSearch, refreshPortalImages } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
@@ -183,6 +184,7 @@ if (_portalTab) {
   switchSection(location.hash.replace('#', '') || 'inicio');
   initDemoImages();
   initFaceFilters();
+  initFilters();
   initSearch();
   initSectionReveal();
 
