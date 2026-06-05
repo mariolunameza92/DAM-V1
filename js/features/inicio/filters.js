@@ -2,6 +2,7 @@
 // Handles: Face ID, Marca, Objeto, Color, Orientación, # Personas, Consentimiento
 
 import { activateFaceFilter } from './inicio.js';
+import { getFaces } from '../../faces.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 import { registerSection } from '../shared/image-registry.js';
@@ -691,20 +692,9 @@ function _renderFaceId(chipEl) {
   const pop = _getOrCreatePopover();
   let q = '';
 
-  // Collect all unique faces from both face strips
-  const seen = new Set();
-  const faces = Array.from(document.querySelectorAll('#sec-inicio .face-av[data-face-id]'))
-    .filter(el => {
-      const id = el.dataset.faceId;
-      if (seen.has(id)) return false;
-      seen.add(id);
-      return true;
-    })
-    .map(el => ({
-      id:     el.dataset.faceId,
-      name:   el.dataset.faceName,
-      imgSrc: el.querySelector('img')?.src || '',
-    }));
+  // Lista completa y en vivo desde el store compartido (js/faces.js) — incluye todos
+  // los rostros de la sección Face IDs, no solo los visibles en las tiras del home.
+  const faces = getFaces().map(f => ({ id: f.id, name: f.displayName, imgSrc: f.selfieUrl }));
 
   function draw() {
     const matches = q

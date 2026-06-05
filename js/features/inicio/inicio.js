@@ -6,7 +6,7 @@ import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 import { bindStaticToggle, viewToggleHTML, bindDynamicToggle } from '../../components/ui/view-toggle.js';
-import { getFavoriteFaces, subscribe as subscribeFaces } from '../../faces.js';
+import { getFaces, getFavoriteFaces, subscribe as subscribeFaces } from '../../faces.js';
 
 let _inicioFoldersView = 'grid';
 let _inicioAssetsView  = 'grid';
@@ -121,11 +121,9 @@ export function initSearch() {
   // Mueve el dropdown al <body> para escapar cualquier transform/overflow ancestor
   document.body.appendChild(suggestionsEl);
 
-  const faces = Array.from(document.querySelectorAll('.face-av[data-face-id]')).map(el => ({
-    id: el.dataset.faceId,
-    name: el.dataset.faceName,
-    imgSrc: el.querySelector('img')?.src,
-  }));
+  // Lista en vivo desde el store compartido → busca cualquier rostro de la sección
+  // Face IDs (favoritos, recientes, recién creados, renombrados), no solo el DOM.
+  const allFaces = () => getFaces().map(f => ({ id: f.id, name: f.displayName, imgSrc: f.selfieUrl }));
 
   let activeIdx = -1;
 
@@ -152,7 +150,7 @@ export function initSearch() {
   input.addEventListener('input', () => {
     const q = input.value.trim().toLowerCase();
     if (!q) { hide(); return; }
-    const matches = faces.filter(f => f.name.toLowerCase().includes(q));
+    const matches = allFaces().filter(f => f.name.toLowerCase().includes(q));
     if (!matches.length) { hide(); return; }
 
     activeIdx = -1;
@@ -184,7 +182,7 @@ export function initSearch() {
       e.preventDefault();
       const idx = activeIdx >= 0 ? activeIdx : 0;
       const faceId = list[idx]?.dataset.faceId;
-      const face = faces.find(f => f.id === faceId);
+      const face = allFaces().find(f => f.id === faceId);
       if (face) select(face);
     } else if (e.key === 'Escape') {
       input.value = '';
@@ -251,13 +249,31 @@ let _trimDebounce = null;
 function _escAttr(s) {
   return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 }
+function _faceAvHTML(f) {
+  return `<div class="face-av" data-face-id="${f.id}" data-face-name="${_escAttr(f.displayName)}"><img src="${f.selfieUrl}" alt=""></div>`;
+}
 function renderHomeFavorites() {
   const sec = document.getElementById('sec-inicio');
   const strip = sec?.querySelector('.face-strip'); // primer .face-strip = Favoritos
   if (!strip) return;
-  strip.innerHTML = getFavoriteFaces().map(f =>
-    `<div class="face-av" data-face-id="${f.id}" data-face-name="${_escAttr(f.displayName)}"><img src="${f.selfieUrl}" alt=""></div>`
-  ).join('');
+  strip.innerHTML = getFavoriteFaces().map(_faceAvHTML).join('');
+}
+
+// Sincroniza ambas tiras del home con el store: favoritos completo, y en Recientes
+// actualiza nombres (renombrados) y purga rostros eliminados en la sección Face IDs.
+function _syncHomeStrips() {
+  renderHomeFavorites();
+  const recientes = document.querySelectorAll('#sec-inicio .face-strip')[1];
+  if (recientes) {
+    const byId = {};
+    getFaces().forEach(f => { byId[f.id] = f; });
+    recientes.querySelectorAll('.face-av[data-face-id]').forEach(av => {
+      const f = byId[av.dataset.faceId];
+      if (!f) { av.remove(); return; }           // eliminado en la sección
+      av.dataset.faceName = f.displayName;        // refleja renombrados
+    });
+  }
+  _trimFaceStrips();
 }
 
 export function initFaceFilters() {
@@ -286,8 +302,8 @@ export function initFaceFilters() {
 
   _trimFaceStrips();
 
-  // Re-render cuando cambian los favoritos en la sección Face IDs (sync cross-feature).
-  subscribeFaces(() => { renderHomeFavorites(); _trimFaceStrips(); });
+  // Re-render cuando cambian los rostros en la sección Face IDs (sync cross-feature).
+  subscribeFaces(_syncHomeStrips);
 
   window.addEventListener('resize', () => {
     clearTimeout(_trimDebounce);
@@ -296,23 +312,23 @@ export function initFaceFilters() {
 }
 
 function _pushToRecents(id) {
-  const strips = document.querySelectorAll('.face-strip');
-  const recientes = strips[1];
+  const recientes = document.querySelectorAll('#sec-inicio .face-strip')[1];
   if (!recientes) return;
 
-  // Source: look in favoritos strip (strips[0]) to avoid cloning a hidden duplicate
-  const source = strips[0].querySelector(`.face-av[data-face-id="${id}"]`)
-               || document.querySelector(`.face-av[data-face-id="${id}"]`);
-  if (!source) return;
-  const clone = source.cloneNode(true);
-  clone.style.display = ''; // ensure visible regardless of trim state
+  // Construye desde el store compartido → funciona para cualquier rostro de la
+  // sección Face IDs (incluidos los recién creados/renombrados), no solo los del DOM.
+  const face = getFaces().find(f => f.id === id);
+  if (!face) return;
 
   recientes.querySelector(`.face-av[data-face-id="${id}"]`)?.remove();
   recientes.querySelector('.face-av-more')?.remove(); // remove bubble before prepend
 
-  clone.classList.add('face-av-recent');
-  clone.addEventListener('animationend', () => clone.classList.remove('face-av-recent'), { once: true });
-  recientes.prepend(clone);
+  const tmp = document.createElement('div');
+  tmp.innerHTML = _faceAvHTML(face);
+  const el = tmp.firstElementChild;
+  el.classList.add('face-av-recent');
+  el.addEventListener('animationend', () => el.classList.remove('face-av-recent'), { once: true });
+  recientes.prepend(el);
 
   // Keep DOM lean — max 20 real avatars in recientes
   const all = Array.from(recientes.querySelectorAll('.face-av:not(.face-av-more)'));
