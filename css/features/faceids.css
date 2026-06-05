@@ -1,0 +1,69 @@
+/* ── Face IDs ─────────────────────────────────────────────────────────────────── */
+@keyframes ffPop{from{opacity:0;transform:translateY(-5px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+#sec-faceids{display:flex;flex-direction:column;gap:48px;padding-top:8px}
+
+/* Buscador */
+.faceids-search{background:var(--g50);border:1.5px solid var(--g200);border-radius:80px;display:flex;align-items:center;gap:8px;padding:var(--space-2) var(--space-4);max-width:480px;width:100%;box-sizing:border-box}
+.faceids-search .msi{color:var(--g700)}
+.faceids-search input{border:none;background:none;outline:none;font-size:13px;font-family:var(--font-ui);color:var(--g800);flex:1;min-width:0}
+.faceids-search input::placeholder{color:var(--g500)}
+
+/* Bloques */
+.faceids-block{display:flex;flex-direction:column;gap:24px}
+
+/* Tira de favoritos */
+.faceids-fav-strip{background:var(--g50);border-radius:72px;min-height:78px;padding:var(--space-3);display:flex;align-items:center;gap:4px;flex-wrap:wrap;user-select:none}
+.faceids-fav-av{width:54px;height:54px;border-radius:50%;border:1.5px solid var(--g200);background:var(--g200);overflow:hidden;position:relative;flex-shrink:0;cursor:pointer}
+.faceids-fav-av img{width:100%;height:100%;object-fit:cover;display:block}
+.faceids-fav-remove{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(246,247,249,.75);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;transition:opacity .15s;color:var(--g800)}
+.faceids-fav-av:hover .faceids-fav-remove{opacity:1}
+.faceids-fav-add{width:54px;height:54px;border-radius:50%;border:1.5px solid var(--g200);background:var(--g50);display:flex;align-items:center;justify-content:center;color:var(--g700);cursor:pointer;flex-shrink:0;transition:background .15s}
+.faceids-fav-add:hover{background:var(--g100)}
+.faceids-fav-empty{font-size:13px;color:var(--g400);font-family:var(--font-ui);padding:0 8px}
+
+/* Grilla */
+.faceids-grid{display:flex;flex-wrap:wrap;gap:24px}
+.faceid-card{background:var(--g50);border-radius:12px;padding:var(--space-4);width:168px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:8px}
+.faceid-card-av{width:80px;height:80px;border-radius:50%;border:1.5px solid var(--g200);background:var(--g200);overflow:hidden;flex-shrink:0}
+.faceid-card-av img{width:100%;height:100%;object-fit:cover;display:block}
+.faceid-card-name{font-size:14px;color:var(--g950);text-align:center;font-family:var(--font-ui);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.faceid-card-name--unnamed{color:var(--g400);font-style:italic}
+.faceid-card-more{background:none;border:none;color:var(--g500);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:2px;border-radius:6px;transition:background .12s}
+.faceid-card-more:hover{background:var(--g200)}
+.faceid-card--add{cursor:pointer;justify-content:center;min-height:158px;transition:background .15s}
+.faceid-card--add:hover{background:var(--g100)}
+.faceid-card--add .faceid-card-av{display:flex;align-items:center;justify-content:center;background:#fff;color:var(--g700)}
+.faceid-card--add .faceid-card-name{color:var(--g500);font-weight:700}
+
+/* Lista (reutiliza .table-wrap/.table-head/.table-row/.col/.content-cell/.content-chip/.more-btn de portales) */
+.faceid-person-cell{display:flex;align-items:center;gap:8px}
+.faceid-av{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--g200);background:var(--g200);overflow:hidden;flex-shrink:0}
+.faceid-av img{width:100%;height:100%;object-fit:cover;display:block}
+.faceid-person-name{font-size:14px;color:var(--g800);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.faceid-person-name--unnamed{color:var(--g400);font-style:italic;font-weight:400}
+.faceids-empty{font-size:13px;color:var(--g400);font-family:var(--font-ui);padding:24px;text-align:center}
+
+/* Menú "⋯" */
+.faceid-menu{position:fixed;z-index:9999;background:#fff;border:1.5px solid var(--g200);border-radius:10px;padding:4px;min-width:184px;box-shadow:0 8px 24px rgba(0,0,0,.12);animation:ffPop .14s cubic-bezier(.34,1.56,.64,1) both}
+.faceid-menu-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--g700);font-family:var(--font-ui);background:none;border:none;width:100%;text-align:left;transition:background .1s}
+.faceid-menu-item:hover{background:var(--g50)}
+.faceid-menu-item .msi{color:var(--g500)}
+.faceid-menu-item--danger{color:#dc2626}
+.faceid-menu-item--danger:hover{background:rgba(220,38,38,.07)}
+.faceid-menu-item--danger .msi{color:#dc2626}
+.faceid-menu-divider{height:1px;background:var(--g100);margin:4px 0}
+
+/* Picker "agregar a favoritos" */
+.faceid-picker{position:fixed;z-index:9999;background:#fff;border:1.5px solid var(--g200);border-radius:12px;padding:10px;width:260px;box-shadow:0 8px 28px rgba(0,0,0,.14);animation:ffPop .14s cubic-bezier(.34,1.56,.64,1) both}
+.faceid-picker-list{display:flex;flex-direction:column;gap:2px;max-height:260px;overflow-y:auto}
+.faceid-picker-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--g700);font-family:var(--font-ui);transition:background .1s}
+.faceid-picker-row:hover{background:var(--g50)}
+.faceid-picker-av{width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--g200)}
+.faceid-picker-av img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Foto en el diálogo de crear (reutiliza .crear-dlg-* de carpetas.css) */
+.faceid-dropzone{border:1.5px dashed var(--g300);border-radius:12px;padding:var(--space-5);display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;color:var(--g500);font-size:12px;font-family:var(--font-ui);transition:border-color .15s,background .15s}
+.faceid-dropzone:hover{border-color:var(--g500);background:var(--g50)}
+.faceid-dropzone-preview{width:88px;height:88px;border-radius:50%;overflow:hidden;border:1.5px solid var(--g200);background:var(--g200)}
+.faceid-dropzone-preview img{width:100%;height:100%;object-fit:cover;display:block}

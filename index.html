@@ -28,6 +28,7 @@
 <link rel="stylesheet" href="css/features/selection.css">
 <link rel="stylesheet" href="css/features/portales.css">
 <link rel="stylesheet" href="css/features/portal-screen.css">
+<link rel="stylesheet" href="css/features/faceids.css">
 </head>
 <body>
 
@@ -188,23 +189,8 @@
           <div class="face-stats-row">
             <div class="face-group">
               <div class="face-group-title">Face ID Favoritos<span class="msi" style="color:var(--g500);font-size:24px">star</span></div>
-              <div class="face-strip">
-                <div class="face-av" data-face-id="cr_f2"    data-face-name="Carmen López"><img src="fotos%20demo/Color%20Run%202026/f2-2299.png" alt="CL"></div>
-                <div class="face-av" data-face-id="cr_f3"    data-face-name="Rosa Huanca"><img src="fotos%20demo/Color%20Run%202026/f3-2257.png" alt="RH"></div>
-
-                <div class="face-av" data-face-id="l42k_f"   data-face-name="Joseph Kiprono Kiptum"><img src="fotos%20demo/Lima%2042K%202026/02.%20Protocolares/f-1268-1270-1273-1274.png" alt="AG"></div>
-                <div class="face-av" data-face-id="l42k_f2"  data-face-name="Nider Pecho"><img src="fotos%20demo/Lima%2042K%202026/02.%20Protocolares/f2-1268-1270-1273-1274.png" alt="CM"></div>
-                <div class="face-av" data-face-id="l42k_f3"  data-face-name="Jonathan Molina"><img src="fotos%20demo/Lima%2042K%202026/02.%20Protocolares/f3-1268-1270-1273-1274.png" alt="JP"></div>
-
-                <div class="face-av" data-face-id="l42k_f8"  data-face-name="Omar Quispe"><img src="fotos%20demo/Lima%2042K%202026/01.%20Highlights/f8-2556.png" alt="OQ"></div>
-
-                <div class="face-av" data-face-id="l42k_f11" data-face-name="Fernando Vidal"><img src="fotos%20demo/Lima%2042K%202026/03.%20Todo%20L42K/f11-1238-1243-1240-1237-1235.png" alt="FV"></div>
-                <div class="face-av" data-face-id="mmm_f"    data-face-name="Camilo Pérez"><img src="fotos%20demo/Mas%20mujeres%20en%20meta%202026/f-2712-2721.png" alt="CP"></div>
-                <div class="face-av" data-face-id="osr_f"    data-face-name="Sebastián Ortiz"><img src="fotos%20demo/On%20Squad%20Race%20Lima%202026/f-3262-3263-3273.png" alt="SO"></div>
-                <div class="face-av" data-face-id="rbf_f"    data-face-name="Andrea Soto"><img src="fotos%20demo/Rimac%20Bienestar%20Fest/f-0035-0036.png" alt="AS"></div>
-
-                <div class="face-av" data-face-id="wfl_f"    data-face-name="Alejandra Lima"><img src="fotos%20demo/Wings%20for%20life%202026/f-2292-2293.png" alt="AL"></div>
-              </div>
+              <!-- Renderizado dinámico desde js/faces.js (renderHomeFavorites en inicio.js) -->
+              <div class="face-strip"></div>
             </div>
             <div class="face-group">
               <div class="face-group-title">Face ID Recientes</div>
@@ -274,7 +260,33 @@
           </div>
         </div>
 
-        <div class="section" id="sec-faceids" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Face IDs — en construcción</div>
+        <!-- FACE IDS -->
+        <div class="section" id="sec-faceids">
+          <div class="faceids-search">
+            <span class="msi xs">frame_inspect</span>
+            <input id="faceids-search-input" type="text" placeholder="Buscar por persona, objeto, color, escena, logo, etc" autocomplete="off" spellcheck="false">
+          </div>
+
+          <div class="faceids-block">
+            <div class="sec-header" style="margin-bottom:0">
+              <span class="sec-title">Favoritos</span>
+            </div>
+            <!-- Renderizado dinámico desde js/features/faceids/faceids.js -->
+            <div class="faceids-fav-strip" id="faceids-fav-strip"></div>
+          </div>
+
+          <div class="faceids-block">
+            <div class="sec-header" style="margin-bottom:0">
+              <span class="sec-title">Lista completa</span>
+              <div class="view-toggle">
+                <button id="faceids-grid-btn" class="view-btn"><span class="msi xs">grid_view</span></button>
+                <button id="faceids-list-btn" class="view-btn active"><span class="msi xs">lists</span></button>
+              </div>
+            </div>
+            <!-- Renderizado dinámico (lista o grilla) -->
+            <div id="faceids-body"></div>
+          </div>
+        </div>
         <div class="section" id="sec-blacklist" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Black List — en construcción</div>
         <div class="section" id="sec-analytics" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Analytics — en construcción</div>
         <div class="section" id="sec-perfil" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Perfil — en construcción</div>
@@ -296,6 +308,38 @@
     <div class="crear-dlg-actions">
       <button class="btn-outline" style="font-size:11px" onclick="window.cancelCrearCarpeta()">Cancelar</button>
       <button class="btn-dark" style="font-size:11px" onclick="window.confirmCrearCarpeta()"><span class="msi xs">add</span>Crear</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREAR FACE ID -->
+<div id="faceid-create-dlg" class="crear-dlg-backdrop" style="display:none">
+  <div class="crear-dlg">
+    <div class="crear-dlg-header"><span class="msi xs">ar_on_you</span>Nuevo Face ID</div>
+    <div class="faceid-dropzone" id="faceid-create-drop">
+      <div class="faceid-dropzone-preview" id="faceid-create-preview" style="display:none"><img id="faceid-create-img" src="" alt=""></div>
+      <span class="msi" id="faceid-create-icon" style="font-size:32px;color:var(--g400)">add_a_photo</span>
+      <span id="faceid-create-droptext">Subir foto del rostro</span>
+    </div>
+    <input type="file" id="faceid-create-file" accept="image/*" style="display:none">
+    <input id="faceid-create-name" class="crear-dlg-input" type="text" placeholder="Nombre de la persona" maxlength="60" autocomplete="off">
+    <div class="crear-dlg-hint" id="faceid-create-hint"></div>
+    <div class="crear-dlg-actions">
+      <button class="btn-outline" style="font-size:11px" id="faceid-create-cancel">Cancelar</button>
+      <button class="btn-dark" style="font-size:11px" id="faceid-create-confirm"><span class="msi xs">add</span>Crear</button>
+    </div>
+  </div>
+</div>
+
+<!-- RENOMBRAR FACE ID -->
+<div id="faceid-rename-dlg" class="crear-dlg-backdrop" style="display:none">
+  <div class="crear-dlg">
+    <div class="crear-dlg-header"><span class="msi xs">edit</span>Renombrar Face ID</div>
+    <input id="faceid-rename-name" class="crear-dlg-input" type="text" placeholder="Nombre de la persona" maxlength="60" autocomplete="off">
+    <div class="crear-dlg-hint" id="faceid-rename-hint"></div>
+    <div class="crear-dlg-actions">
+      <button class="btn-outline" style="font-size:11px" id="faceid-rename-cancel">Cancelar</button>
+      <button class="btn-dark" style="font-size:11px" id="faceid-rename-confirm"><span class="msi xs">check</span>Guardar</button>
     </div>
   </div>
 </div>

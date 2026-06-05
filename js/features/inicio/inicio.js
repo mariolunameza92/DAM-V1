@@ -6,6 +6,7 @@ import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 import { bindStaticToggle, viewToggleHTML, bindDynamicToggle } from '../../components/ui/view-toggle.js';
+import { getFavoriteFaces, subscribe as subscribeFaces } from '../../faces.js';
 
 let _inicioFoldersView = 'grid';
 let _inicioAssetsView  = 'grid';
@@ -245,7 +246,23 @@ function _trimFaceStrips() {
 
 let _trimDebounce = null;
 
+// Strip "Face ID Favoritos" del home — renderizado dinámico desde el store compartido
+// (js/faces.js) para que marcar/desmarcar en la sección Face IDs se refleje aquí.
+function _escAttr(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+function renderHomeFavorites() {
+  const sec = document.getElementById('sec-inicio');
+  const strip = sec?.querySelector('.face-strip'); // primer .face-strip = Favoritos
+  if (!strip) return;
+  strip.innerHTML = getFavoriteFaces().map(f =>
+    `<div class="face-av" data-face-id="${f.id}" data-face-name="${_escAttr(f.displayName)}"><img src="${f.selfieUrl}" alt=""></div>`
+  ).join('');
+}
+
 export function initFaceFilters() {
+  renderHomeFavorites();
+
   const sec = document.getElementById('sec-inicio');
   const strips = sec.querySelectorAll('.face-strip');
   const favoritosStrip = strips[0];
@@ -268,6 +285,9 @@ export function initFaceFilters() {
   });
 
   _trimFaceStrips();
+
+  // Re-render cuando cambian los favoritos en la sección Face IDs (sync cross-feature).
+  subscribeFaces(() => { renderHomeFavorites(); _trimFaceStrips(); });
 
   window.addEventListener('resize', () => {
     clearTimeout(_trimDebounce);

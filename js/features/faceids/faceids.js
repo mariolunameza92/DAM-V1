@@ -1,0 +1,291 @@
+// Feature Face IDs — lista/grilla de rostros mapeados, favoritos, y CRUD básico.
+// Exports: initFaceIds(), renderFaceIds()
+import { getFaces, getFavoriteFaces, toggleFavorite, renameFace, deleteFace, createFace, subscribe } from '../../faces.js';
+import { showToast } from '../../components/ui/toast.js';
+import { bindStaticToggle } from '../../components/ui/view-toggle.js';
+import { resizeToDataURL } from '../carpetas/upload.js';
+
+let _view = 'list';   // 'list' | 'grid'
+let _query = '';
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+// ── Render: favoritos ───────────────────────────────────────────────────────────
+function renderFavStrip() {
+  const strip = document.getElementById('faceids-fav-strip');
+  if (!strip) return;
+  const favs = getFavoriteFaces();
+  const avs = favs.map(f =>
+    `<div class="faceids-fav-av" data-fav-id="${f.id}" title="${esc(f.displayName)}">
+      <img src="${f.selfieUrl}" alt="">
+      <div class="faceids-fav-remove" data-fav-remove="${f.id}" title="Quitar de favoritos"><span class="msi xs">delete</span></div>
+    </div>`).join('');
+  const empty = `<span class="faceids-fav-empty">Aún no hay favoritos — usá el menú "⋯" o el botón +.</span>`;
+  const addBtn = `<div class="faceids-fav-add" data-fav-add title="Agregar a favoritos"><span class="msi sm">add</span></div>`;
+  strip.innerHTML = (favs.length ? avs : empty) + addBtn;
+}
+
+// ── Render: lista / grilla ──────────────────────────────────────────────────────
+function _filtered() {
+  const q = _query.trim().toLowerCase();
+  const faces = getFaces();
+  return q ? faces.filter(f => f.displayName.toLowerCase().includes(q)) : faces;
+}
+
+function _listHTML(faces) {
+  const cta = `<div class="portals-cta"><button class="btn-dark" data-faceid-add><span class="msi xs">add</span>Agregar Face ID</button></div>`;
+  if (!faces.length) {
+    return cta + `<div class="faceids-empty">No se encontraron rostros${_query ? ` para “${esc(_query)}”` : ''}.</div>`;
+  }
+  const rows = faces.map(f =>
+    `<div class="table-row" data-face-id="${f.id}">
+      <div class="col"><div class="faceid-person-cell">
+        <div class="faceid-av"><img src="${f.selfieUrl}" alt=""></div>
+        <span class="faceid-person-name${f.unnamed ? ' faceid-person-name--unnamed' : ''}">${esc(f.displayName)}</span>
+      </div></div>
+      <div class="col"><div class="content-cell">
+        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${f.appearances.folders}</span>
+        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${f.appearances.photos.toLocaleString('es')}</span>
+      </div></div>
+      <div class="col">${f.registro}</div>
+      <div class="col" style="display:flex;align-items:center;gap:12px">
+        <span style="flex:1">${esc(f.addedBy)}</span>
+        <button class="more-btn" data-face-menu="${f.id}"><span class="msi xs">more_horiz</span></button>
+      </div>
+    </div>`).join('');
+  return cta +
+    `<div class="table-wrap">
+      <div class="table-head"><div class="col">Persona</div><div class="col">Apariciones</div><div class="col">Registro</div><div class="col">Agregado por</div></div>
+      ${rows}
+    </div>`;
+}
+
+function _gridHTML(faces) {
+  const addCard =
+    `<div class="faceid-card faceid-card--add" data-faceid-add>
+      <div class="faceid-card-av"><span class="msi" style="font-size:40px">add</span></div>
+      <div class="faceid-card-name">Agregar</div>
+    </div>`;
+  const cards = faces.map(f =>
+    `<div class="faceid-card" data-face-id="${f.id}">
+      <div class="faceid-card-av"><img src="${f.selfieUrl}" alt=""></div>
+      <div class="faceid-card-name${f.unnamed ? ' faceid-card-name--unnamed' : ''}">${esc(f.displayName)}</div>
+      <button class="faceid-card-more" data-face-menu="${f.id}"><span class="msi xs">more_horiz</span></button>
+    </div>`).join('');
+  const empty = (!faces.length && _query) ? `<div class="faceids-empty">No se encontraron rostros para “${esc(_query)}”.</div>` : '';
+  return `<div class="faceids-grid">${addCard}${cards}</div>` + empty;
+}
+
+function renderBody() {
+  const body = document.getElementById('faceids-body');
+  if (!body) return;
+  const faces = _filtered();
+  body.innerHTML = _view === 'grid' ? _gridHTML(faces) : _listHTML(faces);
+}
+
+export function renderFaceIds() {
+  renderFavStrip();
+  renderBody();
+}
+
+// ── Popovers flotantes (menú "⋯" y picker de favoritos) ─────────────────────────
+let _outsideArmed = false;
+function closeFloating() {
+  document.querySelectorAll('.faceid-menu, .faceid-picker').forEach(e => e.remove());
+}
+function _position(el, anchor) {
+  const r = anchor.getBoundingClientRect();
+  const w = el.offsetWidth, h = el.offsetHeight;
+  let left = r.right - w;
+  let top = r.bottom + 6;
+  if (left < 8) left = 8;
+  if (top + h > window.innerHeight - 8) top = r.top - h - 6;
+  el.style.left = Math.max(8, left) + 'px';
+  el.style.top = Math.max(8, top) + 'px';
+}
+function _armOutside() {
+  if (_outsideArmed) return;
+  _outsideArmed = true;
+  const scroller = document.querySelector('.content-scroll');
+  const close = e => {
+    if (e && e.type === 'mousedown' && e.target.closest('.faceid-menu, .faceid-picker')) return;
+    closeFloating();
+    document.removeEventListener('mousedown', close, true);
+    scroller?.removeEventListener('scroll', close, true);
+    window.removeEventListener('resize', close, true);
+    _outsideArmed = false;
+  };
+  setTimeout(() => document.addEventListener('mousedown', close, true), 0);
+  scroller?.addEventListener('scroll', close, true);
+  window.addEventListener('resize', close, true);
+}
+
+function openMenu(anchor, id) {
+  closeFloating();
+  const f = getFaces().find(x => x.id === id);
+  if (!f) return;
+  const menu = document.createElement('div');
+  menu.className = 'faceid-menu';
+  menu.innerHTML =
+    `<button class="faceid-menu-item" data-act="fav"><span class="msi xs">star</span>${f.fav ? 'Quitar de favoritos' : 'Marcar como favorito'}</button>
+     <button class="faceid-menu-item" data-act="rename"><span class="msi xs">edit</span>Renombrar</button>
+     <div class="faceid-menu-divider"></div>
+     <button class="faceid-menu-item faceid-menu-item--danger" data-act="delete"><span class="msi xs">delete</span>Eliminar Face ID</button>`;
+  document.body.appendChild(menu);
+  _position(menu, anchor);
+  menu.addEventListener('click', ev => {
+    const it = ev.target.closest('[data-act]');
+    if (!it) return;
+    closeFloating();
+    if (it.dataset.act === 'fav') {
+      const now = toggleFavorite(id);
+      showToast(now ? 'Agregado a favoritos' : 'Quitado de favoritos');
+    } else if (it.dataset.act === 'rename') {
+      openRenameDialog(f);
+    } else if (it.dataset.act === 'delete') {
+      deleteFace(id);
+      showToast('Face ID eliminado');
+    }
+  });
+  _armOutside();
+}
+
+function openFavPicker(anchor) {
+  closeFloating();
+  const faces = getFaces().filter(f => !f.fav);
+  const pick = document.createElement('div');
+  pick.className = 'faceid-picker';
+  const rows = faces.map(f =>
+    `<div class="faceid-picker-row" data-pick="${f.id}">
+      <div class="faceid-picker-av"><img src="${f.selfieUrl}" alt=""></div>
+      <span style="flex:1">${esc(f.displayName)}</span>
+    </div>`).join('') || `<div class="cp-empty">Todos los rostros ya son favoritos.</div>`;
+  pick.innerHTML = `<div class="cp-header">Agregar a favoritos</div><div class="faceid-picker-list">${rows}</div>`;
+  document.body.appendChild(pick);
+  _position(pick, anchor);
+  pick.addEventListener('click', ev => {
+    const r = ev.target.closest('[data-pick]');
+    if (!r) return;
+    toggleFavorite(r.dataset.pick);
+    showToast('Agregado a favoritos');
+    closeFloating();
+  });
+  _armOutside();
+}
+
+// ── Diálogo: crear Face ID ──────────────────────────────────────────────────────
+let _createPhoto = null;
+
+function openCreateDialog() {
+  _createPhoto = null;
+  document.getElementById('faceid-create-name').value = '';
+  document.getElementById('faceid-create-hint').textContent = '';
+  document.getElementById('faceid-create-preview').style.display = 'none';
+  document.getElementById('faceid-create-icon').style.display = '';
+  document.getElementById('faceid-create-droptext').textContent = 'Subir foto del rostro';
+  document.getElementById('faceid-create-dlg').style.display = '';
+  setTimeout(() => document.getElementById('faceid-create-name').focus(), 50);
+}
+function closeCreateDialog() { document.getElementById('faceid-create-dlg').style.display = 'none'; }
+
+function _initCreateDialog() {
+  const dlg = document.getElementById('faceid-create-dlg');
+  if (!dlg) return;
+  const drop = document.getElementById('faceid-create-drop');
+  const file = document.getElementById('faceid-create-file');
+  const name = document.getElementById('faceid-create-name');
+  const hint = document.getElementById('faceid-create-hint');
+
+  drop.addEventListener('click', () => file.click());
+  file.addEventListener('change', async e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    try {
+      _createPhoto = await resizeToDataURL(f, 200, 0.8);
+      document.getElementById('faceid-create-img').src = _createPhoto;
+      document.getElementById('faceid-create-preview').style.display = '';
+      document.getElementById('faceid-create-icon').style.display = 'none';
+      document.getElementById('faceid-create-droptext').textContent = 'Cambiar foto';
+      hint.textContent = '';
+    } catch (err) { hint.textContent = 'No se pudo procesar la imagen'; }
+    e.target.value = '';
+  });
+
+  const confirm = () => {
+    const nm = name.value.trim();
+    if (!nm) { hint.textContent = 'Ingresá un nombre'; name.classList.add('inp-error'); setTimeout(() => name.classList.remove('inp-error'), 350); return; }
+    if (!_createPhoto) { hint.textContent = 'Subí una foto del rostro'; return; }
+    createFace({ name: nm, selfieUrl: _createPhoto });
+    closeCreateDialog();
+    showToast('Face ID creado: ' + nm);
+  };
+
+  document.getElementById('faceid-create-cancel').addEventListener('click', closeCreateDialog);
+  document.getElementById('faceid-create-confirm').addEventListener('click', confirm);
+  dlg.addEventListener('mousedown', e => { if (e.target === dlg) closeCreateDialog(); });
+  name.addEventListener('keydown', e => { if (e.key === 'Enter') confirm(); if (e.key === 'Escape') closeCreateDialog(); });
+}
+
+// ── Diálogo: renombrar ──────────────────────────────────────────────────────────
+let _renameId = null;
+
+function openRenameDialog(face) {
+  _renameId = face.id;
+  const name = document.getElementById('faceid-rename-name');
+  name.value = face.name || '';
+  document.getElementById('faceid-rename-hint').textContent = '';
+  document.getElementById('faceid-rename-dlg').style.display = '';
+  setTimeout(() => { name.focus(); name.select(); }, 50);
+}
+function closeRenameDialog() { document.getElementById('faceid-rename-dlg').style.display = 'none'; _renameId = null; }
+
+function _initRenameDialog() {
+  const dlg = document.getElementById('faceid-rename-dlg');
+  if (!dlg) return;
+  const name = document.getElementById('faceid-rename-name');
+  const hint = document.getElementById('faceid-rename-hint');
+
+  const confirm = () => {
+    if (!_renameId) return;
+    const nm = name.value.trim();
+    if (!nm) { hint.textContent = 'Ingresá un nombre'; name.classList.add('inp-error'); setTimeout(() => name.classList.remove('inp-error'), 350); return; }
+    renameFace(_renameId, nm);
+    showToast('Nombre actualizado');
+    closeRenameDialog();
+  };
+
+  document.getElementById('faceid-rename-cancel').addEventListener('click', closeRenameDialog);
+  document.getElementById('faceid-rename-confirm').addEventListener('click', confirm);
+  dlg.addEventListener('mousedown', e => { if (e.target === dlg) closeRenameDialog(); });
+  name.addEventListener('keydown', e => { if (e.key === 'Enter') confirm(); if (e.key === 'Escape') closeRenameDialog(); });
+}
+
+// ── Delegación de clicks de la sección ──────────────────────────────────────────
+function _onSecClick(e) {
+  if (e.target.closest('[data-faceid-add]')) { openCreateDialog(); return; }
+  const favRemove = e.target.closest('[data-fav-remove]');
+  if (favRemove) { toggleFavorite(favRemove.dataset.favRemove); showToast('Quitado de favoritos'); return; }
+  if (e.target.closest('[data-fav-add]')) { openFavPicker(e.target.closest('[data-fav-add]')); return; }
+  const menuBtn = e.target.closest('[data-face-menu]');
+  if (menuBtn) { openMenu(menuBtn, menuBtn.dataset.faceMenu); return; }
+}
+
+// ── Init ────────────────────────────────────────────────────────────────────────
+export function initFaceIds() {
+  const sec = document.getElementById('sec-faceids');
+  if (!sec) return;
+
+  const input = document.getElementById('faceids-search-input');
+  input?.addEventListener('input', () => { _query = input.value; renderBody(); });
+
+  bindStaticToggle('faceids-grid-btn', 'faceids-list-btn', () => _view, v => { _view = v; renderBody(); });
+
+  sec.addEventListener('click', _onSecClick);
+  _initCreateDialog();
+  _initRenameDialog();
+
+  subscribe(() => { renderFavStrip(); renderBody(); });
+  renderFaceIds();
+}
