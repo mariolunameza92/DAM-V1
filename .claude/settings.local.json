@@ -84,7 +84,10 @@
       "Bash(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000__TRACKED_VAR__)",
       "Bash(/tmp/logoenv/bin/python -)",
       "Bash(lsof -nP -iTCP:3000)",
-      "Bash(nohup python3 -m http.server 3000 --bind 0.0.0.0)"
+      "Bash(nohup python3 -m http.server 3000 --bind 0.0.0.0)",
+      "Bash(py --version)",
+      "Bash(where py *)",
+      "Bash(npx --version)"
     ]
   },
   "hooks": {
