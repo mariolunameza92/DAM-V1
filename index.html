@@ -305,7 +305,7 @@
 <div id="crear-carpeta-dlg" class="crear-dlg-backdrop" style="display:none" onclick="if(event.target===this) window.cancelCrearCarpeta()">
   <div class="crear-dlg">
     <div class="crear-dlg-header"><span class="msi xs">create_new_folder</span>Nueva carpeta</div>
-    <input id="crear-carpeta-inp" class="crear-dlg-input" type="text" placeholder="Nombre de la carpeta" maxlength="80" autocomplete="off"
+    <input id="crear-carpeta-inp" class="field field--rect" type="text" placeholder="Nombre de la carpeta" maxlength="80" autocomplete="off"
       onkeydown="if(event.key==='Enter') window.confirmCrearCarpeta(); if(event.key==='Escape') window.cancelCrearCarpeta()">
     <div class="crear-dlg-hint" id="crear-carpeta-hint"></div>
     <div class="crear-dlg-actions">
@@ -325,7 +325,7 @@
       <span id="faceid-create-droptext">Subir foto del rostro</span>
     </div>
     <input type="file" id="faceid-create-file" accept="image/*" style="display:none">
-    <input id="faceid-create-name" class="crear-dlg-input" type="text" placeholder="Nombre de la persona" maxlength="60" autocomplete="off">
+    <input id="faceid-create-name" class="field field--rect" type="text" placeholder="Nombre de la persona" maxlength="60" autocomplete="off">
     <div class="crear-dlg-hint" id="faceid-create-hint"></div>
     <div class="crear-dlg-actions">
       <button class="btn-outline" style="font-size:11px" id="faceid-create-cancel">Cancelar</button>
@@ -338,7 +338,7 @@
 <div id="faceid-rename-dlg" class="crear-dlg-backdrop" style="display:none">
   <div class="crear-dlg">
     <div class="crear-dlg-header"><span class="msi xs">edit</span>Renombrar Face ID</div>
-    <input id="faceid-rename-name" class="crear-dlg-input" type="text" placeholder="Nombre de la persona" maxlength="60" autocomplete="off">
+    <input id="faceid-rename-name" class="field field--rect" type="text" placeholder="Nombre de la persona" maxlength="60" autocomplete="off">
     <div class="crear-dlg-hint" id="faceid-rename-hint"></div>
     <div class="crear-dlg-actions">
       <button class="btn-outline" style="font-size:11px" id="faceid-rename-cancel">Cancelar</button>

@@ -90,7 +90,7 @@ export function initImageDetail() {
   overlay.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
     const input = e.target;
-    if (!input.classList.contains('img-detail-person-input')) return;
+    if (!input.classList.contains('field--inline')) return;
     const name = input.value.trim();
     if (!name) return;
     e.preventDefault();
@@ -313,7 +313,7 @@ function _buildRight(item, h, faces) {
               <img class="img-detail-person-avatar" src="${f.src}" alt="${f.name || '?'}">
               ${f.name
                 ? `<span class="img-detail-person-name">${f.name}</span>`
-                : `<input class="img-detail-person-input" type="text" placeholder="Asignar nombre…" autocomplete="off">`
+                : `<input class="field field--inline" type="text" placeholder="Asignar nombre…" autocomplete="off">`
               }
             </div>
           `).join('')

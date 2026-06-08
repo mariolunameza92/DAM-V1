@@ -319,27 +319,8 @@
   color: var(--g500);
 }
 
-.img-detail-person-input {
-  flex: 1;
-  min-width: 0;
-  background: var(--g50);
-  border: 1.5px solid var(--g200);
-  border-radius: 80px;
-  padding:var(--space-2) var(--space-4);
-  font-size: 12px;
-  color: var(--g700);
-  font-family: var(--font-ui);
-  outline: none;
-  transition: border-color 0.15s;
-}
-.img-detail-person-input:focus {
-  border-color: var(--g500);
-}
-.img-detail-person-input::placeholder {
-  color: var(--g700);
-  opacity: 0.6;
-}
-.img-detail-person-input.is-leaving {
+/* uses .field.field--inline — base styles from fields.css */
+.img-detail-person .field--inline.is-leaving {
   animation: _personInputLeave 0.18s ease forwards;
 }
 @keyframes _personInputLeave {

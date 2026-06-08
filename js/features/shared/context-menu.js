@@ -222,9 +222,9 @@ function _personRowHTML(p, showRole = true) {
 // ── Personas tab ──────────────────────────────────────────────────
 function _personasTab() {
   return `
-    <div class="ctx-search-wrap">
+    <div class="field-wrap">
       <span class="msi xs">frame_inspect</span>
-      <input class="ctx-search" placeholder="Ingresa un nombre o correo">
+      <input class="field" placeholder="Ingresa un nombre o correo">
     </div>
     <div class="ctx-people-list">
       ${DEMO_PERSONAS.map(p => _personRowHTML(p)).join('')}
@@ -235,9 +235,9 @@ function _personasTab() {
 // ── Grupos tab ────────────────────────────────────────────────────
 function _gruposTab() {
   return `
-    <div class="ctx-search-wrap">
+    <div class="field-wrap">
       <span class="msi xs">frame_inspect</span>
-      <input class="ctx-search" placeholder="Ingresa un grupo">
+      <input class="field" placeholder="Ingresa un grupo">
     </div>
     <button class="ctx-btn-primary" data-action="abrir-crear-grupo">CREAR GRUPO</button>
     <div class="ctx-groups-list">
@@ -320,9 +320,9 @@ function _openCrearGrupoModal() {
         <span class="ctx-modal-title">Crear grupo</span>
       </div>
       <div class="ctx-form-body">
-        <input class="ctx-form-input" id="ctxGrupoName" placeholder="Ingresa un nombre del grupo" autocomplete="off">
+        <input class="field" id="ctxGrupoName" placeholder="Ingresa un nombre del grupo" autocomplete="off">
         <div class="ctx-email-row">
-          <input class="ctx-form-input" id="ctxGrupoEmail" placeholder="Ingresa un nombre o correo" autocomplete="off" style="flex:1">
+          <input class="field field--inline" id="ctxGrupoEmail" placeholder="Ingresa un nombre o correo" autocomplete="off">
           <button class="ctx-btn-primary" id="ctxGrupoAddBtn">AGREGAR</button>
         </div>
         <div class="ctx-divider-or">
@@ -380,7 +380,7 @@ function _openMoveModal() {
         <span class="ctx-modal-title">Mover a</span>
       </div>
       <div class="ctx-simple-form">
-        <input class="ctx-form-input" id="ctxMoveInput" placeholder="Nombre de la carpeta destino" autocomplete="off">
+        <input class="field" id="ctxMoveInput" placeholder="Nombre de la carpeta destino" autocomplete="off">
         <button class="ctx-btn-primary" id="ctxMoveBtn" style="align-self:flex-end">MOVER</button>
       </div>
     </div>
@@ -407,7 +407,7 @@ function _openRenameModal() {
         <span class="ctx-modal-title">Cambiar nombre</span>
       </div>
       <div class="ctx-simple-form">
-        <input class="ctx-form-input" id="ctxRenameInput" value="${_target.name}" autocomplete="off">
+        <input class="field" id="ctxRenameInput" value="${_target.name}" autocomplete="off">
         <button class="ctx-btn-primary" id="ctxRenameBtn" style="align-self:flex-end">CAMBIAR NOMBRE</button>
       </div>
     </div>

@@ -91,10 +91,7 @@
 .faceid-card-star:hover .faceid-star-icon{display:none}
 .faceid-card-star:hover .faceid-trash-icon{display:flex;color:var(--g800)}
 
-/* Input inline para identificar rostros sin nombre */
-.faceid-inline-name{border:none;background:none;outline:none;font-size:14px;font-family:var(--font-ui);color:var(--g800);font-style:italic;padding:0;min-width:0;flex:1;cursor:text}
-.faceid-inline-name::placeholder{color:var(--g400);font-style:italic}
-.faceid-inline-name:focus{background:var(--g100);border-radius:4px;padding:2px 6px;border:1.5px solid var(--g300);font-style:normal;cursor:text}
+/* Input inline "Sin identificar": usa .field.field--inline de fields.css */
 
 /* Foto en el diálogo de crear (reutiliza .crear-dlg-* de carpetas.css) */
 .faceid-dropzone{border:1.5px dashed var(--g300);border-radius:12px;padding:var(--space-5);display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;color:var(--g500);font-size:12px;font-family:var(--font-ui);transition:border-color .15s,background .15s}

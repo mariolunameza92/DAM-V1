@@ -34,12 +34,8 @@
 .crear-dlg-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:800;display:flex;align-items:center;justify-content:center;animation:fadeIn .15s}
 .crear-dlg{background:#fff;border-radius:20px;padding:var(--space-7) var(--space-7) var(--space-6);display:flex;flex-direction:column;gap:14px;width:340px;box-shadow:0 12px 48px rgba(0,0,0,.18)}
 .crear-dlg-header{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--g950)}
-.crear-dlg-input{border:1.5px solid var(--g300);border-radius:10px;padding:var(--space-3) var(--space-4);font-size:14px;font-family:var(--font-ui);color:var(--g950);outline:none;transition:border-color .15s,box-shadow .15s;width:100%}
-.crear-dlg-input:focus{border-color:var(--g700);box-shadow:0 0 0 3px rgba(66,74,98,.1)}
-.crear-dlg-input.inp-error{border-color:#e53e3e;animation:shake .3s}
 .crear-dlg-hint{font-size:11px;color:var(--g500);font-family:var(--font-mono);min-height:14px}
 .crear-dlg-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:4px}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 
 .masonry-cols{display:flex;gap:24px;width:100%;min-width:0}
 .masonry-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:24px}

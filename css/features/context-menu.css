@@ -178,39 +178,8 @@
 .ctx-tab-panel { display: none; }
 .ctx-tab-panel.active { display: flex; flex-direction: column; gap: 20px; }
 
-/* ── Search / pill input ───────────────────────────────────────── */
-.ctx-search {
-  width: 100%;
-  padding:var(--space-2) var(--space-4);
-  border: 1.5px solid var(--g200, #d5d9e2);
-  border-radius: 80px;
-  font-size: 12px;
-  color: var(--g700, #424a62);
-  font-family: var(--font-ui);
-  outline: none;
-  background: var(--g50, #f6f7f9);
-  box-sizing: border-box;
-  transition: border-color 0.15s;
-}
-.ctx-search:focus { border-color: var(--g500); }
-.ctx-search::placeholder { color: var(--g700, #424a62); }
-
-.ctx-search-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-.ctx-search-wrap .msi {
-  position: absolute;
-  left: 14px;
-  font-size: 16px;
-  color: var(--g700);
-  pointer-events: none;
-}
-.ctx-search-wrap .ctx-search {
-  padding-left:var(--space-9);
-}
+/* ── Search: usa .field-wrap + .field de fields.css ───────────── */
+.ctx-modal .field-wrap { margin-top: 0; }
 
 /* ── Person row ────────────────────────────────────────────────── */
 .ctx-person-row {
@@ -399,30 +368,13 @@
   flex-direction: column;
   gap: 16px;
 }
-.ctx-form-input {
-  width: 100%;
-  padding:var(--space-2) var(--space-4);
-  border: 1.5px solid var(--g200, #d5d9e2);
-  border-radius: 80px;
-  font-size: 12px;
-  color: var(--g700, #424a62);
-  font-family: var(--font-ui);
-  outline: none;
-  background: var(--g50, #f6f7f9);
-  box-sizing: border-box;
-  transition: border-color 0.15s;
-}
-.ctx-form-input:focus { border-color: var(--g500); }
-.ctx-form-input::placeholder { color: var(--g700, #424a62); }
-
 .ctx-email-row {
   display: flex;
   gap: 8px;
   align-items: center;
   width: 100%;
 }
-.ctx-email-row .ctx-search,
-.ctx-email-row .ctx-form-input {
+.ctx-email-row .field {
   flex: 1;
   margin-bottom: 0;
 }
