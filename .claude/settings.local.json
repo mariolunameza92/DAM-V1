@@ -88,7 +88,8 @@
       "Bash(py --version)",
       "Bash(where py *)",
       "Bash(npx --version)",
-      "Bash(grep -E \"\\\\.js$\")"
+      "Bash(grep -E \"\\\\.js$\")",
+      "Bash(node -e ' *)"
     ]
   },
   "hooks": {

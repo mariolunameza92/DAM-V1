@@ -76,35 +76,35 @@ function _switchToTab(t) {
 function _listHTML(faces) {
   if (!faces.length) {
     const msg = _tab === 'identified' ? 'No se encontraron personas identificadas.' : 'No hay personas sin identificar.';
-    return `<div class=”faceids-empty”>${msg}</div>`;
+    return `<div class="faceids-empty">${msg}</div>`;
   }
   const head = _tab === 'identified'
-    ? `<div class=”table-head”>${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`
-    : `<div class=”table-head”><div class=”col”>Persona</div><div class=”col”>Apariciones</div><div class=”col”>Registro</div><div class=”col”>Agregado por</div></div>`;
+    ? `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`
+    : `<div class="table-head"><div class="col">Persona</div><div class="col">Apariciones</div><div class="col">Registro</div><div class="col">Agregado por</div></div>`;
   const rows = faces.map(f => {
     const nameEl = f.unnamed
-      ? `<input class=”faceid-inline-name” data-inline-rename=”${f.id}” placeholder=”Sin identificar” autocomplete=”off” spellcheck=”false”>`
-      : `<span class=”faceid-person-name”>${esc(f.displayName)}</span>`;
+      ? `<input class="faceid-inline-name" data-inline-rename="${f.id}" placeholder="Sin identificar" autocomplete="off" spellcheck="false">`
+      : `<span class="faceid-person-name">${esc(f.displayName)}</span>`;
     const starBtn = f.fav
-      ? `<button class=”faceid-fav-star” data-fav-toggle=”${f.id}” title=”Quitar de favoritos”><span class=”msi xs faceid-star-icon”>star</span><span class=”msi xs faceid-trash-icon”>delete</span></button>`
+      ? `<button class="faceid-fav-star" data-fav-toggle="${f.id}" title="Quitar de favoritos"><span class="msi xs faceid-star-icon">star</span><span class="msi xs faceid-trash-icon">delete</span></button>`
       : '';
-    return `<div class=”table-row” data-face-id=”${f.id}”>
-      <div class=”col”><div class=”faceid-person-cell”>
-        <div class=”faceid-av”><img src=”${f.selfieUrl}” alt=””></div>
+    return `<div class="table-row" data-face-id="${f.id}">
+      <div class="col"><div class="faceid-person-cell">
+        <div class="faceid-av"><img src="${f.selfieUrl}" alt=""></div>
         ${nameEl}${starBtn}
       </div></div>
-      <div class=”col”><div class=”content-cell”>
-        <span class=”content-chip”><span class=”msi xs” style=”color:var(--g500)”>folder</span>&nbsp;${f.appearances.folders}</span>
-        <span class=”content-chip”><span class=”msi xs” style=”color:var(--g500)”>image</span>&nbsp;${f.appearances.photos.toLocaleString('es')}</span>
+      <div class="col"><div class="content-cell">
+        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${f.appearances.folders}</span>
+        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${f.appearances.photos.toLocaleString('es')}</span>
       </div></div>
-      <div class=”col”>${f.registro}</div>
-      <div class=”col” style=”display:flex;align-items:center;gap:12px”>
-        <span style=”flex:1”>${f.unnamed ? 'IA' : esc(f.addedBy)}</span>
-        <button class=”more-btn” data-face-menu=”${f.id}”><span class=”msi xs”>more_horiz</span></button>
+      <div class="col">${f.registro}</div>
+      <div class="col" style="display:flex;align-items:center;gap:12px">
+        <span style="flex:1">${f.unnamed ? 'IA' : esc(f.addedBy)}</span>
+        <button class="more-btn" data-face-menu="${f.id}"><span class="msi xs">more_horiz</span></button>
       </div>
     </div>`;
   }).join('');
-  return `<div class=”table-wrap”>${head}${rows}</div>`;
+  return `<div class="table-wrap">${head}${rows}</div>`;
 }
 
 function _gridHTML(faces) {
@@ -121,7 +121,7 @@ function _gridHTML(faces) {
       <button class="faceid-card-more" data-face-menu="${f.id}"><span class="msi xs">more_horiz</span></button>
     </div>`).join('');
   const empty = !faces.length
-    ? `<div class=”faceids-empty”>${_tab === 'identified' ? 'No se encontraron personas identificadas.' : 'No hay personas sin identificar.'}</div>`
+    ? `<div class="faceids-empty">${_tab === 'identified' ? 'No se encontraron personas identificadas.' : 'No hay personas sin identificar.'}</div>`
     : '';
   return `<div class="faceids-grid">${addCard}${cards}</div>` + empty;
 }
