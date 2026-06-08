@@ -19,44 +19,50 @@ const OSR  = 'fotos%20demo/On%20Squad%20Race%20Lima%202026';
 const RBF  = 'fotos%20demo/Rimac%20Bienestar%20Fest';
 const WFL  = 'fotos%20demo/Wings%20for%20life%202026';
 
-// faceId → { name, selfieUrl }
+// faceId → { name, selfieUrl, registro }
 export const FACE_REGISTRY = {
-  cr_f2:  { name: 'Carmen López',   selfieUrl: `${CR}/f2-2299.png` },
-  cr_f3:  { name: 'Rosa Huanca',    selfieUrl: `${CR}/f3-2257.png` },
-  cr_f4:  { name: '',               selfieUrl: `${CR}/f4-2380.png` },    // Carlos Ríos (m)
-  cr_f5:  { name: 'Lucía Flores',   selfieUrl: `${CR}/f5-2348.png` },
-  cr_f6:  { name: 'Valeria Castro', selfieUrl: `${CR}/f6-2299.png` },
-  cr_f7:  { name: 'Roberto Ponce',  selfieUrl: `${CR}/f7-2257.png` },
+  // Color Run 2026 — ingresados en enero
+  cr_f2:  { name: 'Carmen López',   selfieUrl: `${CR}/f2-2299.png`,  registro: '8/Ene/2026' },
+  cr_f3:  { name: 'Rosa Huanca',    selfieUrl: `${CR}/f3-2257.png`,  registro: '8/Ene/2026' },
+  cr_f4:  { name: '',               selfieUrl: `${CR}/f4-2380.png`,  registro: '9/Ene/2026' },    // Carlos Ríos (m)
+  cr_f5:  { name: 'Lucía Flores',   selfieUrl: `${CR}/f5-2348.png`,  registro: '9/Ene/2026' },
+  cr_f6:  { name: 'Valeria Castro', selfieUrl: `${CR}/f6-2299.png`,  registro: '10/Ene/2026' },
+  cr_f7:  { name: 'Roberto Ponce',  selfieUrl: `${CR}/f7-2257.png`,  registro: '10/Ene/2026' },
 
-  l42k_f:   { name: 'Joseph Kiprono Kiptum', selfieUrl: `${L42K_PRO}/f-1268-1270-1273-1274.png` },
-  l42k_f2:  { name: 'Nider Pecho',          selfieUrl: `${L42K_PRO}/f2-1268-1270-1273-1274.png` },
-  l42k_f3:  { name: 'Jonathan Molina',      selfieUrl: `${L42K_PRO}/f3-1268-1270-1273-1274.png` },
-  l42k_f4:  { name: '',                 selfieUrl: `${L42K_PRO}/f4-1268-1270-.png` },        // Javier Torres (m)
-  l42k_f5:  { name: '',                 selfieUrl: `${L42K_PRO}/f5-1268-1270-1273.png` },     // Luis Ríos (m)
-  l42k_f6:  { name: 'Milagros Castro',  selfieUrl: `${L42K_PRO}/f6-1268-1270-1273.png` },
-  l42k_f7:  { name: 'Víctor Salas',     selfieUrl: `${L42K_PRO}/f7-1268-1270-.png` },
-  l42k_f8:  { name: 'Omar Quispe',      selfieUrl: `${L42K_HL}/f8-2556.png` },
-  l42k_f9:  { name: '',                 selfieUrl: `${L42K_HL}/f9-2302-2313.png` },          // Daniel Flores (m)
-  l42k_f10: { name: '',                 selfieUrl: `${L42K_HL}/f10-2313-2302.png` },         // Pablo Rojas (m)
-  l42k_f11: { name: 'Fernando Vidal',   selfieUrl: `${L42K_TODO}/f11-1238-1243-1240-1237-1235.png` },
-  l42k_f12: { name: 'Romina Luna',      selfieUrl: `${L42K_TODO}/f12-1238-1243-1240-1237-1235.png` },
+  // Lima 42K 2026 — ingresados en febrero
+  l42k_f:   { name: 'Joseph Kiprono Kiptum', selfieUrl: `${L42K_PRO}/f-1268-1270-1273-1274.png`,  registro: '3/Feb/2026' },
+  l42k_f2:  { name: 'Nider Pecho',           selfieUrl: `${L42K_PRO}/f2-1268-1270-1273-1274.png`, registro: '3/Feb/2026' },
+  l42k_f3:  { name: 'Jonathan Molina',       selfieUrl: `${L42K_PRO}/f3-1268-1270-1273-1274.png`, registro: '3/Feb/2026' },
+  l42k_f4:  { name: '',                  selfieUrl: `${L42K_PRO}/f4-1268-1270-.png`,               registro: '4/Feb/2026' }, // Javier Torres (m)
+  l42k_f5:  { name: '',                  selfieUrl: `${L42K_PRO}/f5-1268-1270-1273.png`,           registro: '4/Feb/2026' }, // Luis Ríos (m)
+  l42k_f6:  { name: 'Milagros Castro',   selfieUrl: `${L42K_PRO}/f6-1268-1270-1273.png`,          registro: '5/Feb/2026' },
+  l42k_f7:  { name: 'Víctor Salas',      selfieUrl: `${L42K_PRO}/f7-1268-1270-.png`,              registro: '5/Feb/2026' },
+  l42k_f8:  { name: 'Omar Quispe',       selfieUrl: `${L42K_HL}/f8-2556.png`,                     registro: '6/Feb/2026' },
+  l42k_f9:  { name: '',                  selfieUrl: `${L42K_HL}/f9-2302-2313.png`,                registro: '6/Feb/2026' }, // Daniel Flores (m)
+  l42k_f10: { name: '',                  selfieUrl: `${L42K_HL}/f10-2313-2302.png`,               registro: '7/Feb/2026' }, // Pablo Rojas (m)
+  l42k_f11: { name: 'Fernando Vidal',    selfieUrl: `${L42K_TODO}/f11-1238-1243-1240-1237-1235.png`, registro: '7/Feb/2026' },
+  l42k_f12: { name: 'Romina Luna',       selfieUrl: `${L42K_TODO}/f12-1238-1243-1240-1237-1235.png`, registro: '8/Feb/2026' },
 
-  mmm_f:    { name: 'Camilo Pérez',     selfieUrl: `${MMM}/f-2712-2721.png` },
-  mmm_f2:   { name: '',                 selfieUrl: `${MMM}/f2-2856-2875.png` },           // Natalia Morales (f)
+  // Más mujeres en meta 2026 — ingresados en marzo
+  mmm_f:    { name: 'Camilo Pérez',   selfieUrl: `${MMM}/f-2712-2721.png`,  registro: '15/Mar/2026' },
+  mmm_f2:   { name: '',               selfieUrl: `${MMM}/f2-2856-2875.png`, registro: '15/Mar/2026' }, // Natalia Morales (f)
 
-  osr_f:    { name: 'Sebastián Ortiz',  selfieUrl: `${OSR}/f-3262-3263-3273.png` },
-  osr_f2:   { name: 'Diego Ruiz',       selfieUrl: `${OSR}/f2-3383.png` },
+  // On Squad Race Lima 2026 — ingresados en marzo
+  osr_f:    { name: 'Sebastián Ortiz', selfieUrl: `${OSR}/f-3262-3263-3273.png`, registro: '22/Mar/2026' },
+  osr_f2:   { name: 'Diego Ruiz',      selfieUrl: `${OSR}/f2-3383.png`,          registro: '23/Mar/2026' },
 
-  rbf_f:    { name: 'Andrea Soto',      selfieUrl: `${RBF}/f-0035-0036.png` },
-  rbf_f2:   { name: 'Valentina Cruz',   selfieUrl: `${RBF}/f2-0035-0036.png` },
-  rbf_f4:   { name: 'Helena Ramírez',   selfieUrl: `${RBF}/f4-0034.png` },
-  rbf_f5:   { name: '',                 selfieUrl: `${RBF}/f5-0033.png` },               // Claudia Herrera (f)
-  rbf_f7:   { name: '',                 selfieUrl: `${RBF}/f7-0031.png` },               // Fernando Díaz (m)
-  rbf_f8:   { name: 'Patricia Campos',  selfieUrl: `${RBF}/f8-0031.png` },
+  // Rimac Bienestar Fest — ingresados en abril
+  rbf_f:    { name: 'Andrea Soto',      selfieUrl: `${RBF}/f-0035-0036.png`,  registro: '11/Abr/2026' },
+  rbf_f2:   { name: 'Valentina Cruz',   selfieUrl: `${RBF}/f2-0035-0036.png`, registro: '11/Abr/2026' },
+  rbf_f4:   { name: 'Helena Ramírez',   selfieUrl: `${RBF}/f4-0034.png`,      registro: '12/Abr/2026' },
+  rbf_f5:   { name: '',                 selfieUrl: `${RBF}/f5-0033.png`,      registro: '12/Abr/2026' }, // Claudia Herrera (f)
+  rbf_f7:   { name: '',                 selfieUrl: `${RBF}/f7-0031.png`,      registro: '13/Abr/2026' }, // Fernando Díaz (m)
+  rbf_f8:   { name: 'Patricia Campos',  selfieUrl: `${RBF}/f8-0031.png`,      registro: '13/Abr/2026' },
 
-  wfl_f:    { name: 'Alejandra Lima',   selfieUrl: `${WFL}/f-2292-2293.png` },
-  wfl_f2:   { name: '',                 selfieUrl: `${WFL}/f2-2287.png` },               // Mariana Santos (f)
-  wfl_f3:   { name: 'Gonzalo Vera',     selfieUrl: `${WFL}/f3-2285.png` },
+  // Wings for Life 2026 — ingresados en mayo
+  wfl_f:    { name: 'Alejandra Lima', selfieUrl: `${WFL}/f-2292-2293.png`, registro: '4/May/2026' },
+  wfl_f2:   { name: '',               selfieUrl: `${WFL}/f2-2287.png`,     registro: '4/May/2026' }, // Mariana Santos (f)
+  wfl_f3:   { name: 'Gonzalo Vera',   selfieUrl: `${WFL}/f3-2285.png`,     registro: '5/May/2026' },
 };
 
 // URLs de fotos por carpeta-evento (mismas claves que FOLDER_IMAGES en data.js)
