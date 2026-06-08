@@ -5,8 +5,9 @@ import { showToast } from '../../components/ui/toast.js';
 import { bindStaticToggle } from '../../components/ui/view-toggle.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
 
-let _view = 'list';   // 'list' | 'grid'
+let _view = 'list';        // 'list' | 'grid'
 let _query = '';
+let _tab  = 'identified'; // 'identified' | 'unnamed'
 
 function esc(s) {
   return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -30,7 +31,7 @@ function renderFavStrip() {
 // ── Render: lista / grilla ──────────────────────────────────────────────────────
 function _filtered() {
   const q = _query.trim().toLowerCase();
-  const faces = getFaces();
+  const faces = getFaces().filter(f => _tab === 'identified' ? !f.unnamed : !!f.unnamed);
   return q ? faces.filter(f => f.displayName.toLowerCase().includes(q)) : faces;
 }
 
@@ -44,6 +45,7 @@ function _listHTML(faces) {
       <div class="col"><div class="faceid-person-cell">
         <div class="faceid-av"><img src="${f.selfieUrl}" alt=""></div>
         <span class="faceid-person-name${f.unnamed ? ' faceid-person-name--unnamed' : ''}">${esc(f.displayName)}</span>
+        ${f.fav ? `<button class="faceid-fav-star" data-fav-toggle="${f.id}" title="Quitar de favoritos"><span class="msi xs faceid-star-icon">star</span><span class="msi xs faceid-trash-icon">delete</span></button>` : ''}
       </div></div>
       <div class="col"><div class="content-cell">
         <span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${f.appearances.folders}</span>
@@ -70,6 +72,7 @@ function _gridHTML(faces) {
     </div>`;
   const cards = faces.map(f =>
     `<div class="faceid-card" data-face-id="${f.id}">
+      ${f.fav ? `<button class="faceid-card-star" data-fav-toggle="${f.id}" title="Quitar de favoritos"><span class="msi xs faceid-star-icon">star</span><span class="msi xs faceid-trash-icon">delete</span></button>` : ''}
       <div class="faceid-card-av"><img src="${f.selfieUrl}" alt=""></div>
       <div class="faceid-card-name${f.unnamed ? ' faceid-card-name--unnamed' : ''}">${esc(f.displayName)}</div>
       <button class="faceid-card-more" data-face-menu="${f.id}"><span class="msi xs">more_horiz</span></button>
@@ -267,6 +270,8 @@ function _onSecClick(e) {
   if (e.target.closest('[data-faceid-add]')) { openCreateDialog(); return; }
   const favRemove = e.target.closest('[data-fav-remove]');
   if (favRemove) { toggleFavorite(favRemove.dataset.favRemove); showToast('Quitado de favoritos'); return; }
+  const favToggle = e.target.closest('[data-fav-toggle]');
+  if (favToggle) { toggleFavorite(favToggle.dataset.favToggle); showToast('Quitado de favoritos'); return; }
   if (e.target.closest('[data-fav-add]')) { openFavPicker(e.target.closest('[data-fav-add]')); return; }
   const menuBtn = e.target.closest('[data-face-menu]');
   if (menuBtn) { openMenu(menuBtn, menuBtn.dataset.faceMenu); return; }
@@ -283,6 +288,15 @@ export function initFaceIds() {
   bindStaticToggle('faceids-grid-btn', 'faceids-list-btn', () => _view, v => { _view = v; renderBody(); });
 
   sec.addEventListener('click', _onSecClick);
+
+  sec.querySelectorAll('.faceids-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      _tab = btn.dataset.tab;
+      sec.querySelectorAll('.faceids-tab').forEach(b => b.classList.toggle('active', b === btn));
+      renderBody();
+    });
+  });
+
   _initCreateDialog();
   _initRenameDialog();
 

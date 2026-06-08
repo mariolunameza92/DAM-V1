@@ -24,7 +24,7 @@
 
 /* Grilla */
 .faceids-grid{display:flex;flex-wrap:wrap;gap:24px}
-.faceid-card{background:var(--g50);border-radius:12px;padding:var(--space-4);width:168px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:8px}
+.faceid-card{background:var(--g50);border-radius:12px;padding:var(--space-4);width:168px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative}
 .faceid-card-av{width:80px;height:80px;border-radius:50%;border:1.5px solid var(--g200);background:var(--g200);overflow:hidden;flex-shrink:0}
 .faceid-card-av img{width:100%;height:100%;object-fit:cover;display:block}
 .faceid-card-name{font-size:14px;color:var(--g950);text-align:center;font-family:var(--font-ui);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -61,6 +61,26 @@
 .faceid-picker-row:hover{background:var(--g50)}
 .faceid-picker-av{width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--g200)}
 .faceid-picker-av img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Tabs personas identificadas / sin identificar */
+.faceids-tabs{display:flex;border-bottom:1.5px solid var(--g200)}
+.faceids-tab{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1.5px;padding:8px 18px 10px;font-size:13px;font-family:var(--font-ui);color:var(--g500);cursor:pointer;font-weight:500;transition:color .15s,border-color .15s;white-space:nowrap}
+.faceids-tab:hover{color:var(--g800)}
+.faceids-tab.active{color:var(--g950);border-bottom-color:var(--g950)}
+
+/* Estrella favorito — lista (al costado del nombre) */
+.faceid-fav-star{background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;color:#f59e0b;flex-shrink:0;padding:0;transition:background .12s}
+.faceid-fav-star:hover{background:rgba(220,38,38,.08)}
+.faceid-fav-star .faceid-trash-icon{display:none}
+.faceid-fav-star:hover .faceid-star-icon{display:none}
+.faceid-fav-star:hover .faceid-trash-icon{display:inline-flex;color:#dc2626}
+
+/* Estrella favorito — grilla (esquina superior derecha) */
+.faceid-card-star{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:#f59e0b;padding:0;transition:background .12s}
+.faceid-card-star:hover{background:rgba(220,38,38,.08)}
+.faceid-card-star .faceid-trash-icon{display:none}
+.faceid-card-star:hover .faceid-star-icon{display:none}
+.faceid-card-star:hover .faceid-trash-icon{display:flex;color:#dc2626}
 
 /* Foto en el diálogo de crear (reutiliza .crear-dlg-* de carpetas.css) */
 .faceid-dropzone{border:1.5px dashed var(--g300);border-radius:12px;padding:var(--space-5);display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;color:var(--g500);font-size:12px;font-family:var(--font-ui);transition:border-color .15s,background .15s}
