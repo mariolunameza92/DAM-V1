@@ -13,6 +13,7 @@ import { addToTable } from './features/portales/table.js';
 import { initImageDetail } from './features/carpetas/image-detail.js';
 import { initContextMenu } from './features/shared/context-menu.js';
 import { initSelection } from './features/shared/selection.js';
+import { renderAnalytics } from './features/analytics/analytics.js';
 
 const TITLES = {
   inicio: 'Inicio', carpetas: 'Carpetas', faceids: 'Face IDs',
@@ -32,6 +33,7 @@ export function switchSection(id) {
   if (sb) sb.style.display = id === 'inicio' ? 'none' : '';
   if (id === 'inicio') animateWelcome();
   if (id === 'carpetas') showRecentFolders();
+  if (id === 'analytics') renderAnalytics();
   location.hash = id;
 }
 

@@ -52,6 +52,8 @@ export function pushPortal(portal) {
   savePortalsSession();
 }
 
+export function getPortals() { return _portals.slice(); }
+
 // ── User-created folders ──────────────────────────────────────────────────────
 const _userFolders = []; // { id, parentId, label }
 
