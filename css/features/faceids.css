@@ -92,6 +92,7 @@
 .faceid-card-star:hover .faceid-trash-icon{display:flex;color:var(--g800)}
 
 /* Input inline "Sin identificar": usa .field.field--inline de fields.css */
+.faceid-person-cell .field--inline{max-width:250px}
 
 /* Foto en el diálogo de crear (reutiliza .crear-dlg-* de carpetas.css) */
 .faceid-dropzone{border:1.5px dashed var(--g300);border-radius:12px;padding:var(--space-5);display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;color:var(--g500);font-size:12px;font-family:var(--font-ui);transition:border-color .15s,background .15s}
