@@ -83,7 +83,7 @@ function _listHTML(faces) {
     : `<div class="table-head"><div class="col">Persona</div><div class="col">Apariciones</div><div class="col">Registro</div><div class="col">Agregado por</div></div>`;
   const rows = faces.map(f => {
     const nameEl = f.unnamed
-      ? `<input class="field field--inline" data-inline-rename="${f.id}" placeholder="Sin identificar" autocomplete="off" spellcheck="false">`
+      ? `<input class="field field--inline" data-inline-rename="${f.id}" placeholder="Agregar nombre" autocomplete="off" spellcheck="false">`
       : `<span class="faceid-person-name">${esc(f.displayName)}</span>`;
     const starBtn = f.fav
       ? `<button class="faceid-fav-star" data-fav-toggle="${f.id}" title="Quitar de favoritos"><span class="msi xs faceid-star-icon">star</span><span class="msi xs faceid-trash-icon">delete</span></button>`
