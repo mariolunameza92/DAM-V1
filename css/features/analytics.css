@@ -67,19 +67,17 @@
 }
 
 .an-kpi {
-  background: #fff;
-  border: 1px solid var(--g100);
+  background: var(--g50);
   border-radius: 14px;
   padding: 18px 18px 14px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 1px 4px rgba(0,0,0,.04);
   transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s;
   cursor: default;
 }
 .an-kpi:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,.07);
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
 }
 
 .an-kpi-top {
@@ -93,7 +91,7 @@
   width: 30px; height: 30px;
   border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
-  background: var(--g100);
+  background: var(--g200);
   color: var(--g600);
 }
 .an-kpi-icon .msi { font-size: 15px; }
@@ -103,7 +101,7 @@
   font-family: var(--font-mono);
   padding: 3px 7px;
   border-radius: 5px;
-  background: var(--g100);
+  background: var(--g200);
   color: var(--g700);
   line-height: 1.4;
 }
@@ -162,16 +160,14 @@
 
 /* ── Card ───────────────────────────────────────────────────────────────── */
 .an-card {
-  background: #fff;
-  border: 1px solid var(--g100);
+  background: var(--g50);
   border-radius: 14px;
   padding: 18px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.04);
   transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s;
 }
 .an-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,.07);
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
 }
 
 .an-card-head {
@@ -192,9 +188,8 @@
 .an-card-badge {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--g500);
-  background: var(--g50);
-  border: 1px solid var(--g100);
+  color: var(--g600);
+  background: var(--g200);
   padding: 2px 8px;
   border-radius: 5px;
 }
@@ -244,7 +239,7 @@
 
 .an-rank-bar-wrap {
   height: 3px;
-  background: var(--g100);
+  background: var(--g200);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -293,18 +288,18 @@
   width: 26px; height: 26px;
   border-radius: 50%;
   object-fit: cover;
-  background: var(--g100);
+  background: var(--g200);
   display: block;
   flex-shrink: 0;
 }
 .an-face-avatar-ph {
   width: 26px; height: 26px;
   border-radius: 50%;
-  background: var(--g100);
+  background: var(--g200);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.an-face-avatar-ph .msi { font-size: 13px; color: var(--g400); }
+.an-face-avatar-ph .msi { font-size: 13px; color: var(--g500); }
 
 /* ── Face IDs summary strip ─────────────────────────────────────────────── */
 .an-face-summary {
@@ -312,7 +307,7 @@
   gap: var(--space-5);
   margin-bottom: var(--space-5);
   padding-bottom: var(--space-5);
-  border-bottom: 1px solid var(--g100);
+  border-bottom: 1px solid var(--g200);
 }
 .an-face-stat {
   display: flex;
@@ -334,7 +329,7 @@
 }
 .an-face-div {
   width: 1px;
-  background: var(--g100);
+  background: var(--g200);
   align-self: stretch;
 }
 
@@ -346,8 +341,8 @@
 }
 
 .an-fdi {
-  background: var(--g50);
-  border: 1px solid var(--g100);
+  background: #fff;
+  border: 1px solid var(--g200);
   border-radius: 10px;
   padding: 10px 12px;
   display: flex;
@@ -358,7 +353,7 @@
 }
 .an-fdi:hover {
   background: var(--g100);
-  border-color: var(--g200);
+  border-color: var(--g300);
 }
 
 .an-fdi-avatar {
@@ -372,11 +367,11 @@
 .an-fdi-ph {
   width: 32px; height: 32px;
   border-radius: 50%;
-  background: var(--g100);
+  background: var(--g200);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.an-fdi-ph .msi { font-size: 14px; color: var(--g400); }
+.an-fdi-ph .msi { font-size: 14px; color: var(--g500); }
 
 .an-fdi-info { min-width: 0; flex: 1; }
 .an-fdi-name {
