@@ -1,13 +1,13 @@
 // Feature Face IDs — lista/grilla de rostros mapeados, favoritos, y CRUD básico.
 // Exports: initFaceIds(), renderFaceIds()
-import { getFaces, getFavoriteFaces, toggleFavorite, renameFace, deleteFace, createFace, subscribe } from '../../faces.js';
+import { getFaces, getFavoriteFaces, toggleFavorite, renameFace, identifyFace, deleteFace, createFace, subscribe } from '../../faces.js';
 import { showToast } from '../../components/ui/toast.js';
 import { bindStaticToggle } from '../../components/ui/view-toggle.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
 
 let _view = 'list';        // 'list' | 'grid'
 let _tab  = 'identified'; // 'identified' | 'unnamed'
-let _sort = { col: null, dir: 'asc' }; // solo para tab 'identified'
+let _sort = { col: null, dir: 'asc' }; // columna activa y dirección de orden
 
 function esc(s) {
   return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -34,7 +34,8 @@ function _filtered() {
 }
 
 function _sorted(faces) {
-  if (_tab !== 'identified' || !_sort.col) return faces;
+  if (!_sort.col) return faces;
+  if (_tab === 'unnamed' && _sort.col === 'name') return faces;
   return [...faces].sort((a, b) => {
     let va, vb;
     switch (_sort.col) {
@@ -80,7 +81,7 @@ function _listHTML(faces) {
   }
   const head = _tab === 'identified'
     ? `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`
-    : `<div class="table-head"><div class="col">Persona</div><div class="col">Apariciones</div><div class="col">Registro</div><div class="col">Agregado por</div></div>`;
+    : `<div class="table-head"><div class="col">Persona</div>${_sortHead('photos','Apariciones')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`;
   const rows = faces.map(f => {
     const nameEl = f.unnamed
       ? `<input class="field field--inline" data-inline-rename="${f.id}" placeholder="Agregar nombre" autocomplete="off" spellcheck="false">`
@@ -313,16 +314,14 @@ function _initRenameDialog() {
 
 // ── Delegación de clicks de la sección ──────────────────────────────────────────
 function _onSecClick(e) {
-  // Ordenar columnas (solo personas identificadas)
-  if (_tab === 'identified') {
-    const sc = e.target.closest('[data-sort]');
-    if (sc) {
-      const col = sc.dataset.sort;
-      _sort.dir = _sort.col === col ? (_sort.dir === 'asc' ? 'desc' : 'asc') : 'asc';
-      _sort.col = col;
-      renderBody();
-      return;
-    }
+  // Ordenar columnas
+  const sc = e.target.closest('[data-sort]');
+  if (sc) {
+    const col = sc.dataset.sort;
+    _sort.dir = _sort.col === col ? (_sort.dir === 'asc' ? 'desc' : 'asc') : 'asc';
+    _sort.col = col;
+    renderBody();
+    return;
   }
   if (e.target.closest('[data-faceid-add]')) { openCreateDialog(); return; }
   const favRemove = e.target.closest('[data-fav-remove]');
@@ -351,7 +350,7 @@ export function initFaceIds() {
       const nm = inp.value.trim();
       if (nm) {
         _switchToTab('identified');
-        renameFace(inp.dataset.inlineRename, nm);
+        identifyFace(inp.dataset.inlineRename, nm);
         showToast(`${nm} identificado/a`);
       }
       e.preventDefault();

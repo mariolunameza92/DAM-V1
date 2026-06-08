@@ -14,7 +14,7 @@ const ADDED_BY_POOL = ['Mario Luna', 'Tomás De Col', 'Brisa B.', 'Renato Reyes'
 const MONTHS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
 // ── Estado persistido ───────────────────────────────────────────────────────────
-let _state = { favs: DEFAULT_FAVS.slice(), renames: {}, deleted: [], created: [] };
+let _state = { favs: DEFAULT_FAVS.slice(), renames: {}, deleted: [], created: [], identifiedAt: {} };
 
 function _load() {
   try {
@@ -22,10 +22,11 @@ function _load() {
     if (!raw) return;
     const s = JSON.parse(raw);
     _state = {
-      favs:    Array.isArray(s.favs)    ? s.favs    : DEFAULT_FAVS.slice(),
-      renames: s.renames && typeof s.renames === 'object' ? s.renames : {},
-      deleted: Array.isArray(s.deleted) ? s.deleted : [],
-      created: Array.isArray(s.created) ? s.created : [],
+      favs:         Array.isArray(s.favs)    ? s.favs    : DEFAULT_FAVS.slice(),
+      renames:      s.renames      && typeof s.renames      === 'object' ? s.renames      : {},
+      deleted:      Array.isArray(s.deleted) ? s.deleted : [],
+      created:      Array.isArray(s.created) ? s.created : [],
+      identifiedAt: s.identifiedAt && typeof s.identifiedAt === 'object' ? s.identifiedAt : {},
     };
   } catch (e) {}
 }
@@ -94,7 +95,7 @@ function _buildFace(id, base) {
     unnamed: !name,
     selfieUrl: base.selfieUrl,
     fav: _state.favs.includes(id),
-    registro: base.registro || REGISTRO_DEFAULT,
+    registro: _state.identifiedAt[id] || base.registro || REGISTRO_DEFAULT,
     addedBy: base.addedBy || _addedBy(id),
     appearances: base.appearances || getAppearances(id),
   };
@@ -138,6 +139,16 @@ export function renameFace(id, name) {
   const created = _state.created.find(c => c.id === id);
   if (created) created.name = name;
   else _state.renames[id] = name;
+  _notify();
+}
+
+// identifyFace: igual que renameFace pero además graba la fecha de hoy como
+// fecha de identificación (registro), usado cuando se nombra un rostro sin identificar.
+export function identifyFace(id, name) {
+  name = (name || '').trim();
+  const created = _state.created.find(c => c.id === id);
+  if (created) { created.name = name; created.registro = _todayStr(); }
+  else { _state.renames[id] = name; _state.identifiedAt[id] = _todayStr(); }
   _notify();
 }
 
