@@ -91,7 +91,9 @@
       "Bash(grep -E \"\\\\.js$\")",
       "Bash(node -e ' *)",
       "Bash(node __fix_ctx.js)",
-      "Bash(node __fix_faceids.js)"
+      "Bash(node __fix_faceids.js)",
+      "Bash(GIT_SEQUENCE_EDITOR=\"node __seq_editor.js\" GIT_EDITOR=\"node __msg_editor.js\" git rebase -i HEAD~12)",
+      "Bash(git stash *)"
     ]
   },
   "hooks": {
