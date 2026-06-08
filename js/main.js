@@ -14,6 +14,7 @@ import { initImageDetail } from './features/carpetas/image-detail.js';
 import { initContextMenu } from './features/shared/context-menu.js';
 import { initSelection } from './features/shared/selection.js';
 import { renderAnalytics } from './features/analytics/analytics.js';
+import { renderPerfil } from './features/perfil/perfil.js';
 
 const TITLES = {
   inicio: 'Inicio', carpetas: 'Carpetas', faceids: 'Face IDs',
@@ -34,6 +35,7 @@ export function switchSection(id) {
   if (id === 'inicio') animateWelcome();
   if (id === 'carpetas') showRecentFolders();
   if (id === 'analytics') renderAnalytics();
+  if (id === 'perfil') renderPerfil();
   location.hash = id;
 }
 
