@@ -303,9 +303,12 @@ function _buildHTML() {
   return `
     <div class="an-wrap">
       ${filterHTML}
+      <div class="an-section-lbl"><span class="msi xs">timeline</span>Actividad del periodo</div>
       ${kpiGrid}
+      <div class="an-section-lbl"><span class="msi xs">leaderboard</span>Rankings</div>
       <div class="an-rankings">${foldersCard}${typesCard}</div>
       <div class="an-rankings">${portalsCard}${faceCard}</div>
+      <div class="an-section-lbl"><span class="msi xs">ar_on_you</span>Detalle Face IDs</div>
       ${facesDetailCard}
     </div>`;
 }
