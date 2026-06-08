@@ -262,10 +262,6 @@
 
         <!-- FACE IDS -->
         <div class="section" id="sec-faceids">
-          <div class="faceids-search">
-            <span class="msi xs">frame_inspect</span>
-            <input id="faceids-search-input" type="text" placeholder="Buscar por persona, objeto, color, escena, logo, etc" autocomplete="off" spellcheck="false">
-          </div>
 
           <div class="faceids-block">
             <div class="sec-header" style="margin-bottom:0">
@@ -283,9 +279,12 @@
                 <button id="faceids-list-btn" class="view-btn active"><span class="msi xs">lists</span></button>
               </div>
             </div>
+            <div class="portals-cta">
+              <button class="btn-dark" data-faceid-add><span class="msi xs">add_circle</span>Agregar Face ID</button>
+            </div>
             <div class="faceids-tabs">
-              <button class="faceids-tab active" data-tab="identified">Personas identificadas</button>
-              <button class="faceids-tab" data-tab="unnamed">Sin identificar</button>
+              <button class="faceids-tab active" data-tab="identified">Personas identificadas <span class="faceids-tab-count">0</span></button>
+              <button class="faceids-tab" data-tab="unnamed">Sin identificar <span class="faceids-tab-count">0</span></button>
             </div>
             <!-- Renderizado dinámico (lista o grilla) -->
             <div id="faceids-body"></div>

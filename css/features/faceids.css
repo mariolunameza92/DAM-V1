@@ -64,23 +64,37 @@
 
 /* Tabs personas identificadas / sin identificar */
 .faceids-tabs{display:flex;border-bottom:1.5px solid var(--g200)}
-.faceids-tab{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1.5px;padding:8px 18px 10px;font-size:13px;font-family:var(--font-ui);color:var(--g500);cursor:pointer;font-weight:500;transition:color .15s,border-color .15s;white-space:nowrap}
+.faceids-tab{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1.5px;padding:8px 18px 10px;font-size:13px;font-family:var(--font-ui);color:var(--g500);cursor:pointer;font-weight:500;transition:color .15s,border-color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
 .faceids-tab:hover{color:var(--g800)}
 .faceids-tab.active{color:var(--g950);border-bottom-color:var(--g950)}
+.faceids-tab-count{display:inline-flex;align-items:center;justify-content:center;background:var(--g200);color:var(--g600);border-radius:20px;padding:0 6px;font-size:11px;font-weight:600;min-width:18px;height:18px;line-height:1}
+.faceids-tab.active .faceids-tab-count{background:var(--g950);color:var(--g50)}
+
+/* Sort headers */
+.faceid-sort-col{cursor:pointer;user-select:none;display:flex;align-items:center;gap:4px}
+.faceid-sort-arrows{display:inline-flex;align-items:center;gap:1px;margin-left:2px}
+.faceid-sort-icon{font-family:"Material Symbols Outlined";font-size:11px;width:11px;height:11px;color:var(--g300);transition:color .12s;font-weight:300;font-style:normal;display:inline-flex;align-items:center;justify-content:center;line-height:1;user-select:none}
+.faceid-sort-col:hover .faceid-sort-icon{color:var(--g500)}
+.faceid-sort-icon.sort-active{color:var(--g800)}
 
 /* Estrella favorito — lista (al costado del nombre) */
-.faceid-fav-star{background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;color:#f59e0b;flex-shrink:0;padding:0;transition:background .12s}
-.faceid-fav-star:hover{background:rgba(220,38,38,.08)}
+.faceid-fav-star{background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;color:var(--g600);flex-shrink:0;padding:0;transition:background .12s}
+.faceid-fav-star:hover{background:var(--g100)}
 .faceid-fav-star .faceid-trash-icon{display:none}
 .faceid-fav-star:hover .faceid-star-icon{display:none}
-.faceid-fav-star:hover .faceid-trash-icon{display:inline-flex;color:#dc2626}
+.faceid-fav-star:hover .faceid-trash-icon{display:inline-flex;color:var(--g800)}
 
 /* Estrella favorito — grilla (esquina superior derecha) */
-.faceid-card-star{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:#f59e0b;padding:0;transition:background .12s}
-.faceid-card-star:hover{background:rgba(220,38,38,.08)}
+.faceid-card-star{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:var(--g600);padding:0;transition:background .12s}
+.faceid-card-star:hover{background:var(--g100)}
 .faceid-card-star .faceid-trash-icon{display:none}
 .faceid-card-star:hover .faceid-star-icon{display:none}
-.faceid-card-star:hover .faceid-trash-icon{display:flex;color:#dc2626}
+.faceid-card-star:hover .faceid-trash-icon{display:flex;color:var(--g800)}
+
+/* Input inline para identificar rostros sin nombre */
+.faceid-inline-name{border:none;background:none;outline:none;font-size:14px;font-family:var(--font-ui);color:var(--g800);font-style:italic;padding:0;min-width:0;flex:1;cursor:text}
+.faceid-inline-name::placeholder{color:var(--g400);font-style:italic}
+.faceid-inline-name:focus{background:var(--g100);border-radius:4px;padding:2px 6px;border:1.5px solid var(--g300);font-style:normal;cursor:text}
 
 /* Foto en el diálogo de crear (reutiliza .crear-dlg-* de carpetas.css) */
 .faceid-dropzone{border:1.5px dashed var(--g300);border-radius:12px;padding:var(--space-5);display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;color:var(--g500);font-size:12px;font-family:var(--font-ui);transition:border-color .15s,background .15s}

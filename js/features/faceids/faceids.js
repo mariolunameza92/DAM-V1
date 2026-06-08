@@ -6,8 +6,8 @@ import { bindStaticToggle } from '../../components/ui/view-toggle.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
 
 let _view = 'list';        // 'list' | 'grid'
-let _query = '';
 let _tab  = 'identified'; // 'identified' | 'unnamed'
+let _sort = { col: null, dir: 'asc' }; // solo para tab 'identified'
 
 function esc(s) {
   return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -30,38 +30,81 @@ function renderFavStrip() {
 
 // ── Render: lista / grilla ──────────────────────────────────────────────────────
 function _filtered() {
-  const q = _query.trim().toLowerCase();
-  const faces = getFaces().filter(f => _tab === 'identified' ? !f.unnamed : !!f.unnamed);
-  return q ? faces.filter(f => f.displayName.toLowerCase().includes(q)) : faces;
+  return getFaces().filter(f => _tab === 'identified' ? !f.unnamed : !!f.unnamed);
+}
+
+function _sorted(faces) {
+  if (_tab !== 'identified' || !_sort.col) return faces;
+  return [...faces].sort((a, b) => {
+    let va, vb;
+    switch (_sort.col) {
+      case 'name':     va = a.displayName;       vb = b.displayName;       break;
+      case 'photos':   va = a.appearances.photos; vb = b.appearances.photos; break;
+      case 'registro': va = a.registro;           vb = b.registro;          break;
+      case 'addedBy':  va = a.addedBy;            vb = b.addedBy;           break;
+      default: return 0;
+    }
+    const m = _sort.dir === 'asc' ? 1 : -1;
+    return typeof va === 'number' ? (va - vb) * m : String(va).localeCompare(String(vb), 'es') * m;
+  });
+}
+
+function _sortHead(col, label) {
+  const asc  = _sort.col === col && _sort.dir === 'asc';
+  const desc = _sort.col === col && _sort.dir === 'desc';
+  return `<div class="col faceid-sort-col" data-sort="${col}">${label}<span class="faceid-sort-arrows"><span class="msi faceid-sort-icon${asc ? ' sort-active' : ''}">arrow_upward</span><span class="msi faceid-sort-icon${desc ? ' sort-active' : ''}">arrow_downward</span></span></div>`;
+}
+
+function renderTabCounts() {
+  const faces = getFaces();
+  const sec = document.getElementById('sec-faceids');
+  if (!sec) return;
+  sec.querySelectorAll('.faceids-tab').forEach(btn => {
+    const badge = btn.querySelector('.faceids-tab-count');
+    if (badge) badge.textContent = btn.dataset.tab === 'identified'
+      ? faces.filter(f => !f.unnamed).length
+      : faces.filter(f => !!f.unnamed).length;
+  });
+}
+
+function _switchToTab(t) {
+  _tab = t;
+  const sec = document.getElementById('sec-faceids');
+  if (sec) sec.querySelectorAll('.faceids-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
 }
 
 function _listHTML(faces) {
-  const cta = `<div class="portals-cta"><button class="btn-dark" data-faceid-add><span class="msi xs">add</span>Agregar Face ID</button></div>`;
   if (!faces.length) {
-    return cta + `<div class="faceids-empty">No se encontraron rostros${_query ? ` para “${esc(_query)}”` : ''}.</div>`;
+    const msg = _tab === 'identified' ? 'No se encontraron personas identificadas.' : 'No hay personas sin identificar.';
+    return `<div class=”faceids-empty”>${msg}</div>`;
   }
-  const rows = faces.map(f =>
-    `<div class="table-row" data-face-id="${f.id}">
-      <div class="col"><div class="faceid-person-cell">
-        <div class="faceid-av"><img src="${f.selfieUrl}" alt=""></div>
-        <span class="faceid-person-name${f.unnamed ? ' faceid-person-name--unnamed' : ''}">${esc(f.displayName)}</span>
-        ${f.fav ? `<button class="faceid-fav-star" data-fav-toggle="${f.id}" title="Quitar de favoritos"><span class="msi xs faceid-star-icon">star</span><span class="msi xs faceid-trash-icon">delete</span></button>` : ''}
+  const head = _tab === 'identified'
+    ? `<div class=”table-head”>${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`
+    : `<div class=”table-head”><div class=”col”>Persona</div><div class=”col”>Apariciones</div><div class=”col”>Registro</div><div class=”col”>Agregado por</div></div>`;
+  const rows = faces.map(f => {
+    const nameEl = f.unnamed
+      ? `<input class=”faceid-inline-name” data-inline-rename=”${f.id}” placeholder=”Sin identificar” autocomplete=”off” spellcheck=”false”>`
+      : `<span class=”faceid-person-name”>${esc(f.displayName)}</span>`;
+    const starBtn = f.fav
+      ? `<button class=”faceid-fav-star” data-fav-toggle=”${f.id}” title=”Quitar de favoritos”><span class=”msi xs faceid-star-icon”>star</span><span class=”msi xs faceid-trash-icon”>delete</span></button>`
+      : '';
+    return `<div class=”table-row” data-face-id=”${f.id}”>
+      <div class=”col”><div class=”faceid-person-cell”>
+        <div class=”faceid-av”><img src=”${f.selfieUrl}” alt=””></div>
+        ${nameEl}${starBtn}
       </div></div>
-      <div class="col"><div class="content-cell">
-        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${f.appearances.folders}</span>
-        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${f.appearances.photos.toLocaleString('es')}</span>
+      <div class=”col”><div class=”content-cell”>
+        <span class=”content-chip”><span class=”msi xs” style=”color:var(--g500)”>folder</span>&nbsp;${f.appearances.folders}</span>
+        <span class=”content-chip”><span class=”msi xs” style=”color:var(--g500)”>image</span>&nbsp;${f.appearances.photos.toLocaleString('es')}</span>
       </div></div>
-      <div class="col">${f.registro}</div>
-      <div class="col" style="display:flex;align-items:center;gap:12px">
-        <span style="flex:1">${esc(f.addedBy)}</span>
-        <button class="more-btn" data-face-menu="${f.id}"><span class="msi xs">more_horiz</span></button>
+      <div class=”col”>${f.registro}</div>
+      <div class=”col” style=”display:flex;align-items:center;gap:12px”>
+        <span style=”flex:1”>${f.unnamed ? 'IA' : esc(f.addedBy)}</span>
+        <button class=”more-btn” data-face-menu=”${f.id}”><span class=”msi xs”>more_horiz</span></button>
       </div>
-    </div>`).join('');
-  return cta +
-    `<div class="table-wrap">
-      <div class="table-head"><div class="col">Persona</div><div class="col">Apariciones</div><div class="col">Registro</div><div class="col">Agregado por</div></div>
-      ${rows}
     </div>`;
+  }).join('');
+  return `<div class=”table-wrap”>${head}${rows}</div>`;
 }
 
 function _gridHTML(faces) {
@@ -77,15 +120,18 @@ function _gridHTML(faces) {
       <div class="faceid-card-name${f.unnamed ? ' faceid-card-name--unnamed' : ''}">${esc(f.displayName)}</div>
       <button class="faceid-card-more" data-face-menu="${f.id}"><span class="msi xs">more_horiz</span></button>
     </div>`).join('');
-  const empty = (!faces.length && _query) ? `<div class="faceids-empty">No se encontraron rostros para “${esc(_query)}”.</div>` : '';
+  const empty = !faces.length
+    ? `<div class=”faceids-empty”>${_tab === 'identified' ? 'No se encontraron personas identificadas.' : 'No hay personas sin identificar.'}</div>`
+    : '';
   return `<div class="faceids-grid">${addCard}${cards}</div>` + empty;
 }
 
 function renderBody() {
   const body = document.getElementById('faceids-body');
   if (!body) return;
-  const faces = _filtered();
+  const faces = _sorted(_filtered());
   body.innerHTML = _view === 'grid' ? _gridHTML(faces) : _listHTML(faces);
+  renderTabCounts();
 }
 
 export function renderFaceIds() {
@@ -267,6 +313,17 @@ function _initRenameDialog() {
 
 // ── Delegación de clicks de la sección ──────────────────────────────────────────
 function _onSecClick(e) {
+  // Ordenar columnas (solo personas identificadas)
+  if (_tab === 'identified') {
+    const sc = e.target.closest('[data-sort]');
+    if (sc) {
+      const col = sc.dataset.sort;
+      _sort.dir = _sort.col === col ? (_sort.dir === 'asc' ? 'desc' : 'asc') : 'asc';
+      _sort.col = col;
+      renderBody();
+      return;
+    }
+  }
   if (e.target.closest('[data-faceid-add]')) { openCreateDialog(); return; }
   const favRemove = e.target.closest('[data-fav-remove]');
   if (favRemove) { toggleFavorite(favRemove.dataset.favRemove); showToast('Quitado de favoritos'); return; }
@@ -282,19 +339,30 @@ export function initFaceIds() {
   const sec = document.getElementById('sec-faceids');
   if (!sec) return;
 
-  const input = document.getElementById('faceids-search-input');
-  input?.addEventListener('input', () => { _query = input.value; renderBody(); });
-
   bindStaticToggle('faceids-grid-btn', 'faceids-list-btn', () => _view, v => { _view = v; renderBody(); });
 
   sec.addEventListener('click', _onSecClick);
 
+  // Rename inline: escribir nombre + Enter → mueve a "Personas identificadas"
+  sec.addEventListener('keydown', e => {
+    const inp = e.target.closest('[data-inline-rename]');
+    if (!inp) return;
+    if (e.key === 'Enter') {
+      const nm = inp.value.trim();
+      if (nm) {
+        _switchToTab('identified');
+        renameFace(inp.dataset.inlineRename, nm);
+        showToast(`${nm} identificado/a`);
+      }
+      e.preventDefault();
+    } else if (e.key === 'Escape') {
+      inp.value = '';
+      inp.blur();
+    }
+  });
+
   sec.querySelectorAll('.faceids-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      _tab = btn.dataset.tab;
-      sec.querySelectorAll('.faceids-tab').forEach(b => b.classList.toggle('active', b === btn));
-      renderBody();
-    });
+    btn.addEventListener('click', () => { _switchToTab(btn.dataset.tab); renderBody(); });
   });
 
   _initCreateDialog();
