@@ -302,6 +302,130 @@
   min-width: 32px;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   VARIANTES A · B · C · D  — comparativo de estilos de barra
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.an-v-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: var(--space-10);
+}
+
+/* Chip de versión */
+.an-v-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  background: var(--g950);
+  color: #fff;
+  border-radius: 5px;
+  padding: 3px 9px;
+  flex-shrink: 0;
+}
+
+/* ── A — Cápsulas ────────────────────────────────────────────────────────── */
+.an-bar-a {
+  height: 18px;
+  background: var(--g200);
+  border-radius: 9px;
+  overflow: hidden;
+  flex: 1;
+}
+.an-bar-a-fill {
+  height: 100%;
+  background: var(--g800);
+  border-radius: 9px;
+  transform-origin: left;
+  animation: an-slide .8s cubic-bezier(.16,1,.3,1) backwards;
+}
+
+/* ── B — Bloques ─────────────────────────────────────────────────────────── */
+.an-bar-b {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  flex: 1;
+}
+.an-bb {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  background: var(--g200);
+  flex-shrink: 0;
+  transition: background .1s;
+}
+.an-bb.on { background: var(--g800); }
+
+/* ── C — Puntos ──────────────────────────────────────────────────────────── */
+.an-bar-c {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex: 1;
+}
+.an-bc {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--g200);
+  flex-shrink: 0;
+  transition: background .1s;
+}
+.an-bc.on { background: var(--g800); }
+
+/* ── D — Fila rellena ────────────────────────────────────────────────────── */
+.an-v-d-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.an-vd-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.an-vd-bg {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--g200);
+  border-radius: 10px;
+  transform-origin: left;
+  animation: an-slide .8s cubic-bezier(.16,1,.3,1) backwards;
+}
+.an-vd-pos {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--g400);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.an-vd-name {
+  flex: 1;
+  font-size: 12px;
+  color: var(--g700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  z-index: 1;
+}
+.an-vd-count {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--g800);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
 /* ── Face avatars ───────────────────────────────────────────────────────── */
 .an-face-avatar {
   width: 30px; height: 30px;

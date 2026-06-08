@@ -308,8 +308,92 @@ function _buildHTML() {
       <div class="an-section-lbl"><span class="msi xs">leaderboard</span>Rankings</div>
       <div class="an-rankings">${foldersCard}${typesCard}</div>
       <div class="an-rankings">${portalsCard}${faceCard}</div>
+      <div class="an-section-lbl"><span class="msi xs">bar_chart</span>Variantes de visualización</div>
+      ${_buildVariants(folders)}
       <div class="an-section-lbl"><span class="msi xs">ar_on_you</span>Detalle Face IDs</div>
       ${facesDetailCard}
+    </div>`;
+}
+
+// ── Variants A·B·C·D ─────────────────────────────────────────────────────────
+
+function _buildVariants(folders) {
+  const max  = Math.max(...folders.map(f => f.count), 1);
+  const UNITS = 8; // segments/dots
+  const rows  = folders.slice(0, 5);
+
+  /* A — Cápsulas */
+  const vA = rows.map((f, i) => `
+    <div class="an-rank-row">
+      <span class="an-rank-pos">${String(i+1).padStart(2,'0')}</span>
+      <div class="an-rank-body">
+        <span class="an-rank-name">${f.name}</span>
+        <div class="an-bar-a">
+          <div class="an-bar-a-fill" style="width:${Math.max(4,Math.round((f.count/max)*100))}%;animation-delay:${.05+i*.05}s"></div>
+        </div>
+      </div>
+      <span class="an-rank-count">${f.count}</span>
+    </div>`).join('');
+
+  /* B — Bloques */
+  const vB = rows.map((f, i) => {
+    const filled = Math.max(1, Math.round((f.count / max) * UNITS));
+    const blocks = Array.from({length: UNITS}, (_, j) =>
+      `<span class="an-bb${j < filled ? ' on' : ''}"></span>`).join('');
+    return `
+    <div class="an-rank-row">
+      <span class="an-rank-pos">${String(i+1).padStart(2,'0')}</span>
+      <div class="an-rank-body">
+        <span class="an-rank-name">${f.name}</span>
+        <div class="an-bar-b">${blocks}</div>
+      </div>
+      <span class="an-rank-count">${f.count}</span>
+    </div>`;
+  }).join('');
+
+  /* C — Puntos */
+  const vC = rows.map((f, i) => {
+    const filled = Math.max(1, Math.round((f.count / max) * UNITS));
+    const dots = Array.from({length: UNITS}, (_, j) =>
+      `<span class="an-bc${j < filled ? ' on' : ''}"></span>`).join('');
+    return `
+    <div class="an-rank-row">
+      <span class="an-rank-pos">${String(i+1).padStart(2,'0')}</span>
+      <div class="an-rank-body">
+        <span class="an-rank-name">${f.name}</span>
+        <div class="an-bar-c">${dots}</div>
+      </div>
+      <span class="an-rank-count">${f.count}</span>
+    </div>`;
+  }).join('');
+
+  /* D — Fila rellena (número prominente) */
+  const vD = rows.map((f, i) => {
+    const pct = Math.max(4, Math.round((f.count / max) * 100));
+    return `
+    <div class="an-vd-row">
+      <div class="an-vd-bg" style="width:${pct}%;animation-delay:${.05+i*.05}s"></div>
+      <span class="an-vd-pos">${String(i+1).padStart(2,'0')}</span>
+      <span class="an-vd-name">${f.name}</span>
+      <span class="an-vd-count">${f.count}</span>
+    </div>`;
+  }).join('');
+
+  const card = (tag, label, body) => `
+    <div class="an-card">
+      <div class="an-card-head">
+        <span class="an-card-title"><span class="msi xs">folder</span>Top carpetas</span>
+        <span class="an-v-tag">${tag} — ${label}</span>
+      </div>
+      ${body}
+    </div>`;
+
+  return `
+    <div class="an-v-grid">
+      ${card('A', 'Cápsulas',     `<div class="an-rank-list">${vA}</div>`)}
+      ${card('B', 'Bloques',      `<div class="an-rank-list">${vB}</div>`)}
+      ${card('C', 'Puntos',       `<div class="an-rank-list">${vC}</div>`)}
+      ${card('D', 'Fila rellena', `<div class="an-v-d-list">${vD}</div>`)}
     </div>`;
 }
 
