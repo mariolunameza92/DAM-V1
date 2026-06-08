@@ -1,7 +1,7 @@
 /* ── Face IDs ─────────────────────────────────────────────────────────────────── */
 @keyframes ffPop{from{opacity:0;transform:translateY(-5px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-#sec-faceids{display:flex;flex-direction:column;gap:48px;padding-top:8px}
+#sec-faceids.active{display:flex;flex-direction:column;gap:48px;padding-top:8px}
 
 /* Buscador */
 .faceids-search{background:var(--g50);border:1.5px solid var(--g200);border-radius:80px;display:flex;align-items:center;gap:8px;padding:var(--space-2) var(--space-4);max-width:480px;width:100%;box-sizing:border-box}
