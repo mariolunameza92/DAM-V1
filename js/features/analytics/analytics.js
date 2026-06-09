@@ -305,96 +305,99 @@ function _buildHTML() {
       ${filterHTML}
       <div class="an-section-lbl"><span class="msi xs">timeline</span>Actividad del periodo</div>
       ${kpiGrid}
+      <div class="an-section-lbl"><span class="msi xs">bar_chart</span>Propuestas de visualización</div>
+      ${_buildChartProposals(folders, portals)}
       <div class="an-section-lbl"><span class="msi xs">leaderboard</span>Rankings</div>
-      <div class="an-rankings">${foldersCard}${typesCard}</div>
-      <div class="an-rankings">${portalsCard}${faceCard}</div>
-      <div class="an-section-lbl"><span class="msi xs">bar_chart</span>Variantes de visualización</div>
-      ${_buildVariants(folders)}
+      <div class="an-rankings">${typesCard}${faceCard}</div>
       <div class="an-section-lbl"><span class="msi xs">ar_on_you</span>Detalle Face IDs</div>
       ${facesDetailCard}
     </div>`;
 }
 
-// ── Variants A·B·C·D ─────────────────────────────────────────────────────────
+// ── Vertical chart builder ────────────────────────────────────────────────────
 
-function _buildVariants(folders) {
-  const max  = Math.max(...folders.map(f => f.count), 1);
-  const UNITS = 8; // segments/dots
-  const rows  = folders.slice(0, 5);
+function _vchartHTML(items, valueKey, nameKey, style) {
+  const max   = Math.max(...items.map(it => it[valueKey]), 1);
+  const UNITS = 8;
 
-  /* A — Cápsulas */
-  const vA = rows.map((f, i) => `
-    <div class="an-rank-row">
-      <span class="an-rank-pos">${String(i+1).padStart(2,'0')}</span>
-      <div class="an-rank-body">
-        <span class="an-rank-name">${f.name}</span>
-        <div class="an-bar-a">
-          <div class="an-bar-a-fill" style="width:${Math.max(4,Math.round((f.count/max)*100))}%;animation-delay:${.05+i*.05}s"></div>
-        </div>
-      </div>
-      <span class="an-rank-count">${f.count}</span>
-    </div>`).join('');
+  const cols = items.map((it, i) => {
+    const val     = it[valueKey];
+    const isBlocks = style === 'blocks';
+    const pct     = isBlocks ? 100 : Math.max(14, Math.round((val / max) * 100));
+    const delay   = 0.04 + i * 0.06;
+    const animAttr = isBlocks ? '' : `animation-delay:${delay}s`;
 
-  /* B — Bloques */
-  const vB = rows.map((f, i) => {
-    const filled = Math.max(1, Math.round((f.count / max) * UNITS));
-    const blocks = Array.from({length: UNITS}, (_, j) =>
-      `<span class="an-bb${j < filled ? ' on' : ''}"></span>`).join('');
+    let inner = '';
+    if (style === 'classic' || style === 'gradient') {
+      inner = `<div class="an-vc-bar"></div>`;
+    } else if (style === 'lollipop') {
+      inner = `<div class="an-vc-ldot"></div><div class="an-vc-lstem"></div>`;
+    } else if (style === 'blocks') {
+      const filled = Math.max(1, Math.round((val / max) * UNITS));
+      inner = Array.from({length: UNITS}, (_, j) =>
+        `<div class="an-vc-blk${j < filled ? ' on' : ''}"></div>`
+      ).join('') + `<div class="an-vc-blknum">${val}</div>`;
+    } else if (style === 'spike') {
+      inner = '';
+    } else if (style === 'bubble') {
+      const sz = Math.max(12, Math.round(8 + (val / max) * 20));
+      inner = `<div class="an-vc-bubble" style="width:${sz}px;height:${sz}px"></div><div class="an-vc-lstem"></div>`;
+    }
+
+    const numHtml = isBlocks ? '' : `<span class="an-vc-num">${val}</span>`;
+
     return `
-    <div class="an-rank-row">
-      <span class="an-rank-pos">${String(i+1).padStart(2,'0')}</span>
-      <div class="an-rank-body">
-        <span class="an-rank-name">${f.name}</span>
-        <div class="an-bar-b">${blocks}</div>
-      </div>
-      <span class="an-rank-count">${f.count}</span>
-    </div>`;
+      <div class="an-vc-col">
+        ${numHtml}
+        <div class="an-vc-ba ${style}" style="height:${pct}%;${animAttr}">${inner}</div>
+      </div>`;
   }).join('');
 
-  /* C — Puntos */
-  const vC = rows.map((f, i) => {
-    const filled = Math.max(1, Math.round((f.count / max) * UNITS));
-    const dots = Array.from({length: UNITS}, (_, j) =>
-      `<span class="an-bc${j < filled ? ' on' : ''}"></span>`).join('');
-    return `
-    <div class="an-rank-row">
-      <span class="an-rank-pos">${String(i+1).padStart(2,'0')}</span>
-      <div class="an-rank-body">
-        <span class="an-rank-name">${f.name}</span>
-        <div class="an-bar-c">${dots}</div>
-      </div>
-      <span class="an-rank-count">${f.count}</span>
-    </div>`;
-  }).join('');
+  const xlabels = items.map(it => `<span>${it[nameKey]}</span>`).join('');
 
-  /* D — Fila rellena (número prominente) */
-  const vD = rows.map((f, i) => {
-    const pct = Math.max(4, Math.round((f.count / max) * 100));
-    return `
-    <div class="an-vd-row">
-      <div class="an-vd-bg" style="width:${pct}%;animation-delay:${.05+i*.05}s"></div>
-      <span class="an-vd-pos">${String(i+1).padStart(2,'0')}</span>
-      <span class="an-vd-name">${f.name}</span>
-      <span class="an-vd-count">${f.count}</span>
-    </div>`;
-  }).join('');
-
-  const card = (tag, label, body) => `
-    <div class="an-card">
-      <div class="an-card-head">
-        <span class="an-card-title"><span class="msi xs">folder</span>Top carpetas</span>
-        <span class="an-v-tag">${tag} — ${label}</span>
-      </div>
-      ${body}
-    </div>`;
+  const grid = style === 'classic' ? `
+    <div class="an-chart-grid">
+      <div class="an-grid-h" style="bottom:75%"></div>
+      <div class="an-grid-h" style="bottom:50%"></div>
+      <div class="an-grid-h" style="bottom:25%"></div>
+    </div>` : '';
 
   return `
-    <div class="an-v-grid">
-      ${card('A', 'Cápsulas',     `<div class="an-rank-list">${vA}</div>`)}
-      ${card('B', 'Bloques',      `<div class="an-rank-list">${vB}</div>`)}
-      ${card('C', 'Puntos',       `<div class="an-rank-list">${vC}</div>`)}
-      ${card('D', 'Fila rellena', `<div class="an-v-d-list">${vD}</div>`)}
+    <div class="an-vchart-outer">
+      <div class="an-vchart-bars">${grid}${cols}</div>
+      <div class="an-vchart-xlabels">${xlabels}</div>
     </div>`;
+}
+
+// ── 3 chart proposals (carpetas + portales full-width) ────────────────────────
+
+function _buildChartProposals(folders, portals) {
+  const PROPS = [
+    { id: 1, clbl: 'Columnas + cuadrícula', plbl: 'Bloques apilados', cstyle: 'classic',  pstyle: 'blocks'   },
+    { id: 2, clbl: 'Lollipop',              plbl: 'Barra numerada',   cstyle: 'lollipop', pstyle: 'spike'    },
+    { id: 3, clbl: 'Degradado suave',       plbl: 'Burbuja escalada', cstyle: 'gradient', pstyle: 'bubble'   },
+  ];
+
+  return PROPS.map(p => `
+    <div class="an-prop-hdr">
+      <span class="an-prop-num">${p.id}</span>
+      <span class="an-prop-txt">Propuesta ${p.id}</span>
+    </div>
+    <div class="an-card" style="margin-bottom:12px">
+      <div class="an-card-head">
+        <span class="an-card-title"><span class="msi xs">folder</span>Top carpetas</span>
+        <span class="an-v-tag">${p.clbl}</span>
+      </div>
+      ${_vchartHTML(folders.slice(0, 7), 'count', 'name', p.cstyle)}
+    </div>
+    <div class="an-card" style="margin-bottom:${p.id < 3 ? 40 : 16}px">
+      <div class="an-card-head">
+        <span class="an-card-title"><span class="msi xs">captive_portal</span>Top portales</span>
+        <span class="an-v-tag">${p.plbl}</span>
+      </div>
+      ${_vchartHTML(portals, 'views', 'title', p.pstyle)}
+    </div>
+  `).join('');
 }
 
 // ── Events ────────────────────────────────────────────────────────────────────

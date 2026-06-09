@@ -303,17 +303,10 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   VARIANTES A · B · C · D  — comparativo de estilos de barra
+   PROPUESTAS DE VISUALIZACIÓN — gráficas verticales full-width
    ═══════════════════════════════════════════════════════════════════════════ */
 
-.an-v-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: var(--space-10);
-}
-
-/* Chip de versión */
+/* Chip de versión / estilo */
 .an-v-tag {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -326,105 +319,191 @@
   flex-shrink: 0;
 }
 
-/* ── A — Cápsulas ────────────────────────────────────────────────────────── */
-.an-bar-a {
-  height: 18px;
-  background: var(--g200);
-  border-radius: 9px;
-  overflow: hidden;
-  flex: 1;
-}
-.an-bar-a-fill {
-  height: 100%;
-  background: var(--g800);
-  border-radius: 9px;
-  transform-origin: left;
-  animation: an-slide .8s cubic-bezier(.16,1,.3,1) backwards;
-}
-
-/* ── B — Bloques ─────────────────────────────────────────────────────────── */
-.an-bar-b {
-  display: flex;
-  gap: 3px;
-  align-items: center;
-  flex: 1;
-}
-.an-bb {
-  width: 10px; height: 10px;
-  border-radius: 2px;
-  background: var(--g200);
-  flex-shrink: 0;
-  transition: background .1s;
-}
-.an-bb.on { background: var(--g800); }
-
-/* ── C — Puntos ──────────────────────────────────────────────────────────── */
-.an-bar-c {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  flex: 1;
-}
-.an-bc {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--g200);
-  flex-shrink: 0;
-  transition: background .1s;
-}
-.an-bc.on { background: var(--g800); }
-
-/* ── D — Fila rellena ────────────────────────────────────────────────────── */
-.an-v-d-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.an-vd-row {
+/* Proposal header row */
+.an-prop-hdr {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  position: relative;
-  overflow: hidden;
+  gap: 10px;
+  margin-bottom: var(--space-4);
+  margin-top: var(--space-6);
 }
-.an-vd-bg {
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  background: var(--g200);
-  border-radius: 10px;
-  transform-origin: left;
-  animation: an-slide .8s cubic-bezier(.16,1,.3,1) backwards;
-}
-.an-vd-pos {
+.an-prop-num {
   font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--g400);
-  position: relative;
-  z-index: 1;
-  flex-shrink: 0;
-}
-.an-vd-name {
-  flex: 1;
-  font-size: 12px;
-  color: var(--g700);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  position: relative;
-  z-index: 1;
-}
-.an-vd-count {
-  font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--g800);
-  position: relative;
-  z-index: 1;
+  background: var(--g950);
+  color: #fff;
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   line-height: 1;
 }
+.an-prop-txt {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--g400);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+/* ── Chart container ─────────────────────────────────────────────────────── */
+.an-vchart-outer {
+  display: flex;
+  flex-direction: column;
+}
+.an-vchart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 160px;
+  border-bottom: 1px solid var(--g200);
+  position: relative;
+  padding: 0 2px;
+}
+.an-vchart-xlabels {
+  display: flex;
+  gap: 10px;
+  padding: 8px 2px 0;
+}
+.an-vchart-xlabels > span {
+  flex: 1;
+  font-size: 9px;
+  color: var(--g400);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  line-height: 1.3;
+}
+
+/* ── Column ──────────────────────────────────────────────────────────────── */
+.an-vc-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+.an-vc-num {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--g400);
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: auto;   /* stick to top of bar area */
+  margin-bottom: 4px;
+}
+
+/* ── Bar area (height set inline as %) ───────────────────────────────────── */
+.an-vc-ba {
+  flex-shrink: 0;
+  width: 100%;
+  transform-origin: bottom;
+  animation: an-grow .8s cubic-bezier(.16,1,.3,1) backwards;
+}
+
+/* Classic */
+.an-vc-ba.classic { display: flex; align-items: flex-end; }
+.an-vc-bar {
+  width: 65%; height: 100%;
+  background: var(--g800);
+  border-radius: 4px 4px 0 0;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Gradient */
+.an-vc-ba.gradient { display: flex; align-items: flex-end; }
+.an-vc-ba.gradient .an-vc-bar {
+  width: 75%;
+  background: linear-gradient(to top, var(--g300), var(--g950));
+}
+
+/* Lollipop */
+.an-vc-ba.lollipop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.an-vc-ldot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--g800);
+  flex-shrink: 0;
+}
+.an-vc-lstem {
+  width: 2px;
+  flex: 1;
+  background: var(--g400);
+  min-height: 4px;
+}
+
+/* Blocks (full-height, filled from bottom) */
+.an-vc-ba.blocks {
+  animation: none;
+  display: flex;
+  flex-direction: column-reverse; /* block[0] → visual bottom */
+  gap: 3px;
+  align-items: center;
+}
+.an-vc-blk {
+  flex: 1;
+  width: 65%;
+  border-radius: 2px;
+  background: var(--g200);
+  min-height: 0;
+}
+.an-vc-blk.on { background: var(--g800); }
+.an-vc-blknum {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--g500);
+  flex-shrink: 0;
+  text-align: center;
+  line-height: 1;
+  padding-bottom: 2px;
+  /* column-reverse: last DOM child → visual top → number appears at top */
+}
+
+/* Spike (very thin bar) */
+.an-vc-ba.spike {
+  width: 3px;
+  background: var(--g800);
+  border-radius: 2px 2px 0 0;
+  margin: 0 auto;
+}
+
+/* Bubble (circle + stem) */
+.an-vc-ba.bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.an-vc-bubble {
+  border-radius: 50%;
+  background: var(--g800);
+  flex-shrink: 0;
+}
+
+/* Grid lines (classic style) */
+.an-chart-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.an-grid-h {
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: var(--g100);
+}
+/* keep bars above grid */
+.an-vc-col { position: relative; z-index: 1; }
 
 /* ── Face avatars ───────────────────────────────────────────────────────── */
 .an-face-avatar {
