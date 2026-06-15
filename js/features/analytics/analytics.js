@@ -15,12 +15,12 @@ const M = {
     usedTB: 2.4, totalTB: 5.0, projectionDate: 'ago 2027',
     avgFileMB: 8.4,
     types: [
-      { ext: 'JPG',   pct: 62, gb: 1.49, color: '#3b6fd4' },
-      { ext: 'RAW',   pct: 18, gb: 0.43, color: '#7c3aed' },
-      { ext: 'PNG',   pct: 10, gb: 0.24, color: '#0db87a' },
-      { ext: 'VIDEO', pct:  6, gb: 0.14, color: '#f97316' },
-      { ext: 'TIFF',  pct:  3, gb: 0.07, color: '#d97706' },
-      { ext: 'PDF',   pct:  1, gb: 0.02, color: '#0891b2' },
+      { ext: 'JPG',   pct: 62, gb: 1.49, color: 'var(--g950)' },
+      { ext: 'RAW',   pct: 18, gb: 0.43, color: 'var(--g700)' },
+      { ext: 'PNG',   pct: 10, gb: 0.24, color: 'var(--g500)' },
+      { ext: 'VIDEO', pct:  6, gb: 0.14, color: 'var(--g400)' },
+      { ext: 'TIFF',  pct:  3, gb: 0.07, color: 'var(--g300)' },
+      { ext: 'PDF',   pct:  1, gb: 0.02, color: 'var(--g200)' },
     ],
     growthData:   [0.30, 0.50, 0.78, 1.05, 1.28, 1.55, 1.80, 2.10, 2.40],
     growthLabels: ['Oct','Nov','Dic','Ene','Feb','Mar','Abr','May','Jun'],
@@ -35,9 +35,9 @@ const M = {
     ],
     duplicates: 247, orphans: 183, noTags: 629, noMeta: 412,
     nesting: [
-      { label: 'Superficial (1-2)',  pct: 45, color: '#3b6fd4' },
-      { label: 'Medio (3-4)',        pct: 38, color: '#0db87a' },
-      { label: 'Profundo (5+)',      pct: 17, color: '#e1366a' },
+      { label: 'Superficial (1-2)',  pct: 45, color: 'var(--g300)' },
+      { label: 'Medio (3-4)',        pct: 38, color: 'var(--g600)' },
+      { label: 'Profundo (5+)',      pct: 17, color: 'var(--g950)' },
     ],
   },
   activity: {
@@ -50,11 +50,11 @@ const M = {
       { name: 'Sofía M.',  uploads:  540 },
     ],
     actions: [
-      { label: 'Subidas',      n: 5820, color: '#3b6fd4' },
-      { label: 'Descargas',    n: 3940, color: '#0db87a' },
-      { label: 'Movimientos',  n: 1280, color: '#d97706' },
-      { label: 'Ediciones',    n:  720, color: '#7c3aed' },
-      { label: 'Eliminaciones',n:  184, color: '#e1366a' },
+      { label: 'Subidas',       n: 5820, color: 'var(--g950)' },
+      { label: 'Descargas',     n: 3940, color: 'var(--g700)' },
+      { label: 'Movimientos',   n: 1280, color: 'var(--g500)' },
+      { label: 'Ediciones',     n:  720, color: 'var(--g400)' },
+      { label: 'Eliminaciones', n:  184, color: 'var(--g300)' },
     ],
     heatDays:  ['Lu','Ma','Mi','Ju','Vi','Sá','Do'],
     heatHours: ['8am','10am','12pm','2pm','4pm','6pm'],
@@ -100,9 +100,9 @@ const M = {
       assetsPerSession: 8.4,
       mobile: 62, desktop: 38,
       sources: [
-        { label: 'Link directo', pct: 54, color: '#3b6fd4' },
-        { label: 'QR',           pct: 31, color: '#0db87a' },
-        { label: 'Otros',        pct: 15, color: '#d97706' },
+        { label: 'Link directo', pct: 54, color: 'var(--g800)' },
+        { label: 'QR',           pct: 31, color: 'var(--g500)' },
+        { label: 'Otros',        pct: 15, color: 'var(--g300)' },
       ],
       radarAxes:   ['Vistas','Conversión','Tiempo','Assets/ses.','Retorno'],
       radarValues: [0.85, 0.72, 0.65, 0.80, 0.45],
@@ -173,19 +173,19 @@ function _svgDonut(segments, opts = {}) {
     const start = -90 + (acc / total) * 360;
     acc += seg.value;
     return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
-      stroke="${seg.color}" stroke-width="${sw}"
+      style="stroke:${seg.color}" stroke-width="${sw}"
       stroke-dasharray="${dash.toFixed(2)} ${(C - dash + 1.5).toFixed(2)}"
       transform="rotate(${start.toFixed(2)} ${cx} ${cy})"
       stroke-linecap="butt"/>`;
   });
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--g100)" stroke-width="${sw}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" style="stroke:var(--g100)" stroke-width="${sw}"/>
     ${circles.join('\n    ')}
   </svg>`;
 }
 
 function _svgLine(data, labels, opts = {}) {
-  const { w = 320, h = 80, color = '#3b6fd4', showDots = true } = opts;
+  const { w = 320, h = 80, color = 'var(--g800)', showDots = true } = opts;
   const pl = 4, pr = 4, pt = 10, pb = labels ? 20 : 8;
   const W = w - pl - pr, H = h - pt - pb;
   const min = Math.min(...data), max = Math.max(...data);
@@ -226,7 +226,7 @@ function _svgLine(data, labels, opts = {}) {
 }
 
 function _svgRadar(axes, values, opts = {}) {
-  const { size = 160, levels = 4, color = '#3b6fd4' } = opts;
+  const { size = 160, levels = 4, color = 'var(--g700)' } = opts;
   const cx = size / 2, cy = size / 2;
   const r  = size / 2 - 22;
   const n  = axes.length;
@@ -274,15 +274,16 @@ function _svgRadar(axes, values, opts = {}) {
 // ── Shared builders ───────────────────────────────────────────────────────
 
 function _hbarListHTML(items, maxVal, colorFn) {
-  return `<div class="an-hbar-list">${items.map(it => {
-    const pct = Math.max(4, (it.val / maxVal) * 100);
+  return `<div class="an-hbar-list">${items.map((it, i) => {
+    const pct  = Math.max(4, (it.val / maxVal) * 100);
+    const fill = colorFn ? colorFn(it, i) : 'var(--g800)';
     return `<div class="an-hbar-item">
       <div class="an-hbar-top">
         <span class="an-hbar-name">${it.name}</span>
         <span class="an-hbar-val">${it.label}</span>
       </div>
       <div class="an-hbar-track">
-        <div class="an-hbar-fill" style="width:${pct.toFixed(1)}%;background:${colorFn ? colorFn(it) : 'var(--an-c1)'}"></div>
+        <div class="an-hbar-fill" style="width:${pct.toFixed(1)}%;background:${fill}"></div>
       </div>
     </div>`;
   }).join('')}</div>`;
@@ -369,7 +370,7 @@ function _buildStorageSection() {
   const freePct = (100 - +usedPct).toFixed(0);
 
   const donutSegs = [
-    { value: s.usedTB, color: '#3b6fd4' },
+    { value: s.usedTB,             color: 'var(--g900)' },
     { value: s.totalTB - s.usedTB, color: 'var(--g100)' },
   ];
 
@@ -461,7 +462,7 @@ function _buildStructureSection() {
   const maxGB = Math.max(...s.heavyFolders.map(f => f.gb));
 
   const heavyItems = s.heavyFolders.map(f => ({ name: f.name, val: f.gb, label: `${f.gb} GB` }));
-  const heavyList  = _hbarListHTML(heavyItems, maxGB, () => '#3b6fd4');
+  const heavyList  = _hbarListHTML(heavyItems, maxGB, (it, i) => `var(--g${[950,800,700,600,500][i] || 600})`);
 
   const nestDonut = _svgDonut(s.nesting.map(n => ({ value: n.pct, color: n.color })), { size: 90, sw: 13 });
   const nestLegend = s.nesting.map(n =>
@@ -523,15 +524,15 @@ function _buildActivitySection() {
   const a = M.activity;
   const totalUsers = a.active + a.inactive + a.guests;
   const userSegs = [
-    { value: a.active,   color: '#0db87a' },
-    { value: a.inactive, color: 'var(--g300)' },
-    { value: a.guests,   color: '#d97706' },
+    { value: a.active,   color: 'var(--g950)' },
+    { value: a.inactive, color: 'var(--g400)' },
+    { value: a.guests,   color: 'var(--g200)' },
   ];
   const maxUpl = Math.max(...a.topUploaders.map(u => u.uploads));
   const maxAct = Math.max(...a.actions.map(ac => ac.n));
 
   const uplItems = a.topUploaders.map(u => ({ name: u.name, val: u.uploads, label: _fmt(u.uploads) }));
-  const uplList  = _hbarListHTML(uplItems, maxUpl, () => '#3b6fd4');
+  const uplList  = _hbarListHTML(uplItems, maxUpl, (it, i) => `var(--g${[950,800,700,600,500][i] || 500})`);
 
   const actItems = a.actions.map(ac => ({ name: ac.label, val: ac.n, label: _fmt(ac.n), color: ac.color }));
   const actList  = _hbarListHTML(actItems, maxAct, it => it.color);
@@ -541,8 +542,8 @@ function _buildActivitySection() {
   const heatHdrs = a.heatHours.map(h => `<span class="an-heatmap-hdr">${h}</span>`).join('');
   const heatRows = a.heatDays.map((day, di) => {
     const cells = a.heatData[di].map(v => {
-      const op  = v === 0 ? 0 : 0.12 + (v / heatMax) * 0.75;
-      return `<div class="an-heatmap-cell" style="background:rgba(59,111,212,${op.toFixed(2)});${v >= heatMax * 0.8 ? 'outline:1px solid rgba(59,111,212,.4)' : ''}"></div>`;
+      const op  = v === 0 ? 0 : 0.08 + (v / heatMax) * 0.82;
+      return `<div class="an-heatmap-cell" style="background:rgba(34,37,47,${op.toFixed(2)});${v >= heatMax * 0.8 ? 'outline:1px solid rgba(34,37,47,.35)' : ''}"></div>`;
     }).join('');
     return `<div class="an-heatmap-row"><span class="an-heatmap-row-lbl">${day}</span>${cells}</div>`;
   }).join('');
@@ -562,9 +563,9 @@ function _buildActivitySection() {
             </div>
           </div>
           <div class="an-donut-legend">
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:#0db87a"></div><span class="an-leg-name">Activos</span><span class="an-leg-val">${a.active}</span></div>
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g300)"></div><span class="an-leg-name">Inactivos</span><span class="an-leg-val">${a.inactive}</span></div>
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:#d97706"></div><span class="an-leg-name">Invitados</span><span class="an-leg-val">${a.guests}</span></div>
+            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g950)"></div><span class="an-leg-name">Activos</span><span class="an-leg-val">${a.active}</span></div>
+            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g400)"></div><span class="an-leg-name">Inactivos</span><span class="an-leg-val">${a.inactive}</span></div>
+            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g200)"></div><span class="an-leg-name">Invitados</span><span class="an-leg-val">${a.guests}</span></div>
           </div>
         </div>
         <div style="margin-top:var(--space-4)">
@@ -602,8 +603,8 @@ function _buildActivitySection() {
         <div class="an-heatmap-body">${heatRows}</div>
         <div style="margin-top:var(--space-3);display:flex;align-items:center;gap:8px">
           <span style="font-size:9px;color:var(--g400)">Menos</span>
-          ${[0.12,0.30,0.50,0.70,0.87].map(op =>
-            `<div style="width:14px;height:14px;border-radius:3px;background:rgba(59,111,212,${op})"></div>`
+          ${[0.08,0.25,0.45,0.65,0.85].map(op =>
+            `<div style="width:14px;height:14px;border-radius:3px;background:rgba(34,37,47,${op})"></div>`
           ).join('')}
           <span style="font-size:9px;color:var(--g400)">Más</span>
         </div>
@@ -615,10 +616,10 @@ function _buildQualitySection() {
   const q = M.quality;
   const total = q.processed + q.pending;
   const procSegs = [
-    { value: q.processed, color: '#0db87a' },
+    { value: q.processed, color: 'var(--g900)' },
     { value: q.pending,   color: 'var(--g100)' },
   ];
-  const matchLine = _svgLine([72, 75, 78, 80, 83, 85, 87.4], null, { w: 200, h: 60, color: '#0db87a', showDots: false });
+  const matchLine = _svgLine([72, 75, 78, 80, 83, 85, 87.4], null, { w: 200, h: 60, color: 'var(--g700)', showDots: false });
   const delRows = q.deletions.map(d =>
     `<div class="an-alert-item">
       <div class="an-alert-icon danger"><span class="msi sm">delete_forever</span></div>
@@ -698,15 +699,15 @@ function _buildPortalInventory() {
   const p = M.portales;
   const total = p.active + p.expired + p.draft;
   const statusSegs = [
-    { value: p.active,  color: '#0db87a' },
-    { value: p.expired, color: 'var(--g300)' },
-    { value: p.draft,   color: '#d97706' },
+    { value: p.active,  color: 'var(--g950)' },
+    { value: p.expired, color: 'var(--g400)' },
+    { value: p.draft,   color: 'var(--g200)' },
   ];
   const masterRatio = ((p.masters / (p.masters + p.regulars)) * 100).toFixed(0);
 
   const byFolderItems = p.byFolder.map(f => ({ name: f.name, val: f.count, label: `${f.count}` }));
   const maxF = Math.max(...p.byFolder.map(f => f.count));
-  const byFolderList = _hbarListHTML(byFolderItems, maxF, () => '#7c3aed');
+  const byFolderList = _hbarListHTML(byFolderItems, maxF, (it, i) => `var(--g${[950,800,700,600,500,400][i] || 500})`);
 
   return `
     <div class="an-grid-1-2">
@@ -723,9 +724,9 @@ function _buildPortalInventory() {
             </div>
           </div>
           <div class="an-donut-legend">
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:#0db87a"></div><span class="an-leg-name">Activos</span><span class="an-leg-val">${p.active}</span></div>
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g300)"></div><span class="an-leg-name">Expirados</span><span class="an-leg-val">${p.expired}</span></div>
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:#d97706"></div><span class="an-leg-name">Borrador</span><span class="an-leg-val">${p.draft}</span></div>
+            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g950)"></div><span class="an-leg-name">Activos</span><span class="an-leg-val">${p.active}</span></div>
+            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g400)"></div><span class="an-leg-name">Expirados</span><span class="an-leg-val">${p.expired}</span></div>
+            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g200)"></div><span class="an-leg-name">Borrador</span><span class="an-leg-val">${p.draft}</span></div>
           </div>
         </div>
         <div class="an-mini-grid" style="grid-template-columns:1fr 1fr;margin-top:var(--space-5)">
@@ -767,7 +768,7 @@ function _buildEngagementSection() {
   const radarSVG = _svgRadar(e.radarAxes, e.radarValues, { size: 170, color: '#3b6fd4' });
   const radarLegend = e.radarAxes.map((ax, i) =>
     `<div class="an-radar-leg-item">
-      <div class="an-radar-dot" style="background:#3b6fd4"></div>
+      <div class="an-radar-dot" style="background:var(--g700)"></div>
       <span class="an-radar-leg-name">${ax}</span>
       <span class="an-radar-leg-val">${(e.radarValues[i] * 100).toFixed(0)}%</span>
     </div>`
@@ -786,7 +787,7 @@ function _buildEngagementSection() {
     </div>`;
   }).join('');
 
-  const viewsSVG = _svgLine(M.portales.viewsOverTime, M.portales.viewsLabels, { w: 320, h: 80, color: '#7c3aed' });
+  const viewsSVG = _svgLine(M.portales.viewsOverTime, M.portales.viewsLabels, { w: 320, h: 80, color: 'var(--g700)' });
 
   return `
     <div class="an-grid-2">
@@ -820,12 +821,12 @@ function _buildEngagementSection() {
           <span class="an-card-title"><span class="msi xs">devices</span>Acceso por dispositivo</span>
         </div>
         <div class="an-split-bar" style="margin-bottom:var(--space-2)">
-          <div class="an-split-seg" style="width:${e.mobile}%;background:#3b6fd4"></div>
-          <div class="an-split-seg" style="width:${e.desktop}%;background:#0db87a"></div>
+          <div class="an-split-seg" style="width:${e.mobile}%;background:var(--g800)"></div>
+          <div class="an-split-seg" style="width:${e.desktop}%;background:var(--g400)"></div>
         </div>
         <div class="an-split-legend" style="margin-bottom:var(--space-5)">
-          <div class="an-split-leg-item"><div class="an-split-dot" style="background:#3b6fd4"></div><span class="an-split-leg-lbl">Móvil</span> <span class="an-split-leg-val">&nbsp;${e.mobile}%</span></div>
-          <div class="an-split-leg-item"><div class="an-split-dot" style="background:#0db87a"></div><span class="an-split-leg-lbl">Desktop</span><span class="an-split-leg-val">&nbsp;${e.desktop}%</span></div>
+          <div class="an-split-leg-item"><div class="an-split-dot" style="background:var(--g800)"></div><span class="an-split-leg-lbl">Móvil</span> <span class="an-split-leg-val">&nbsp;${e.mobile}%</span></div>
+          <div class="an-split-leg-item"><div class="an-split-dot" style="background:var(--g400)"></div><span class="an-split-leg-lbl">Desktop</span><span class="an-split-leg-val">&nbsp;${e.desktop}%</span></div>
         </div>
         <div class="an-card-head" style="margin-bottom:12px;margin-top:var(--space-2)">
           <span class="an-card-title" style="font-size:12px;color:var(--g600)"><span class="msi xs">link</span>Origen de tráfico</span>
@@ -865,7 +866,7 @@ function _buildSecuritySection() {
   const sec = M.portales.security;
   const totalP = sec.withPwd + sec.public;
   const pwdSegs = [
-    { value: sec.withPwd, color: '#3b6fd4' },
+    { value: sec.withPwd, color: 'var(--g900)' },
     { value: sec.public,  color: 'var(--g200)' },
   ];
   const expiryRows = sec.expiring.map(p =>
@@ -891,8 +892,8 @@ function _buildSecuritySection() {
             </div>
           </div>
           <div class="an-donut-legend">
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:#3b6fd4"></div><span class="an-leg-name">Con contraseña</span><span class="an-leg-val">${sec.withPwd}</span><span class="an-leg-pct">${((sec.withPwd/totalP)*100).toFixed(0)}%</span></div>
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g300)"></div><span class="an-leg-name">Públicos</span><span class="an-leg-val">${sec.public}</span><span class="an-leg-pct">${((sec.public/totalP)*100).toFixed(0)}%</span></div>
+            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g900)"></div><span class="an-leg-name">Con contraseña</span><span class="an-leg-val">${sec.withPwd}</span><span class="an-leg-pct">${((sec.withPwd/totalP)*100).toFixed(0)}%</span></div>
+            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--g200)"></div><span class="an-leg-name">Públicos</span><span class="an-leg-val">${sec.public}</span><span class="an-leg-pct">${((sec.public/totalP)*100).toFixed(0)}%</span></div>
           </div>
         </div>
         <div class="an-mini-grid" style="grid-template-columns:1fr 1fr;margin-top:var(--space-5)">

@@ -1,12 +1,13 @@
 /* ── Analytics v2 ────────────────────────────────────────────────────────── */
 
+/* Gradient tokens derived from the DAM design-system grayscale palette */
 :root {
-  --an-c1: #3b6fd4;
-  --an-c2: #0db87a;
-  --an-c3: #d97706;
-  --an-c4: #e1366a;
-  --an-c5: #7c3aed;
-  --an-c6: #0891b2;
+  --an-grad-dark:  linear-gradient(135deg, var(--g800) 0%, var(--g950) 100%);
+  --an-grad-mid:   linear-gradient(135deg, var(--g500) 0%, var(--g700) 100%);
+  --an-grad-soft:  linear-gradient(135deg, var(--g200) 0%, var(--g400) 100%);
+  --an-grad-light: linear-gradient(135deg, var(--g50)  0%, var(--g100) 100%);
+  --an-grad-bar:   linear-gradient(to right, var(--g600) 0%, var(--g950) 100%);
+  --an-grad-ramp:  linear-gradient(to right, var(--g300) 0%, var(--g800) 100%);
 }
 
 .an-wrap {
@@ -100,8 +101,8 @@
 .an-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--an-c2);
-  box-shadow: 0 0 0 3px rgba(13,184,122,.18);
+  background: var(--g700);
+  box-shadow: 0 0 0 3px var(--g200);
 }
 .an-filter-select {
   background: transparent;
@@ -216,11 +217,11 @@
   color: var(--g600);
 }
 .an-kpi-icon .msi { font-size: 16px; }
-.an-kpi.kc-blue  .an-kpi-icon { background: rgba(59,111,212,.12); color: var(--an-c1); }
-.an-kpi.kc-green .an-kpi-icon { background: rgba(13,184,122,.12);  color: var(--an-c2); }
-.an-kpi.kc-amber .an-kpi-icon { background: rgba(217,119,6,.12);   color: var(--an-c3); }
-.an-kpi.kc-rose  .an-kpi-icon { background: rgba(225,54,106,.12);  color: var(--an-c4); }
-.an-kpi.kc-violet .an-kpi-icon { background: rgba(124,58,237,.12); color: var(--an-c5); }
+.an-kpi.kc-blue   .an-kpi-icon { background: var(--an-grad-dark); color: var(--g100); }
+.an-kpi.kc-green  .an-kpi-icon { background: var(--an-grad-dark); color: var(--g100); }
+.an-kpi.kc-amber  .an-kpi-icon { background: var(--an-grad-dark); color: var(--g100); }
+.an-kpi.kc-rose   .an-kpi-icon { background: var(--an-grad-dark); color: var(--g100); }
+.an-kpi.kc-violet .an-kpi-icon { background: var(--an-grad-dark); color: var(--g100); }
 .an-kpi-delta {
   font-size: 10px;
   font-family: var(--font-mono);
@@ -230,8 +231,8 @@
   background: var(--g200);
   color: var(--g700);
 }
-.an-kpi-delta.up   { background: rgba(13,184,122,.12); color: #0a9461; }
-.an-kpi-delta.down { background: rgba(220,38,38,.10);  color: #b91c1c; }
+.an-kpi-delta.up   { background: var(--g100); color: var(--g700); border: 1px solid var(--g200); }
+.an-kpi-delta.down { background: var(--g200); color: var(--g600); }
 .an-kpi-value {
   font-family: var(--font-mono);
   font-size: 38px;
@@ -362,7 +363,7 @@
 .an-fh-match-val {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--an-c2);
+  color: rgba(255,255,255,.85);
   font-weight: 600;
 }
 .an-fh-bar {
@@ -373,7 +374,7 @@
 }
 .an-fh-bar-fill {
   height: 100%;
-  background: var(--an-c2);
+  background: linear-gradient(to right, rgba(255,255,255,.45), rgba(255,255,255,.85));
   border-radius: 2px;
 }
 
@@ -625,10 +626,10 @@
   flex-shrink: 0;
 }
 .an-alert-icon .msi { font-size: 14px; }
-.an-alert-icon.warn   { background: rgba(217,119,6,.1);   color: #b45309; }
-.an-alert-icon.info   { background: rgba(59,111,212,.1);  color: var(--an-c1); }
-.an-alert-icon.danger { background: rgba(220,38,38,.1);   color: #dc2626; }
-.an-alert-icon.ok     { background: rgba(13,184,122,.1);  color: var(--an-c2); }
+.an-alert-icon.warn   { background: var(--g200); color: var(--g800); }
+.an-alert-icon.info   { background: var(--g100); color: var(--g600); }
+.an-alert-icon.danger { background: linear-gradient(135deg, var(--g200), var(--g300)); color: var(--g900); }
+.an-alert-icon.ok     { background: var(--g100); color: var(--g500); }
 .an-alert-body { flex: 1; min-width: 0; }
 .an-alert-title {
   font-size: 12px;
@@ -668,10 +669,10 @@
   margin-top: 4px;
   width: fit-content;
 }
-.an-badge.warn   { background: rgba(217,119,6,.12);   color: #b45309; }
-.an-badge.ok     { background: rgba(13,184,122,.12);  color: #0a9461; }
-.an-badge.info   { background: rgba(59,111,212,.10);  color: var(--an-c1); }
-.an-badge.danger { background: rgba(220,38,38,.10);   color: #dc2626; }
+.an-badge.warn   { background: var(--g200); color: var(--g800); }
+.an-badge.ok     { background: var(--an-grad-dark); color: var(--g50); }
+.an-badge.info   { background: var(--g100); color: var(--g700); border: 1px solid var(--g200); }
+.an-badge.danger { background: var(--an-grad-dark); color: var(--g50); }
 
 /* ── Gauge bar ───────────────────────────────────────────────────────────── */
 .an-gauge-wrap { margin: var(--space-2) 0; }
@@ -690,11 +691,11 @@
 .an-gauge-fill {
   height: 100%;
   border-radius: 4px;
-  background: linear-gradient(to right, var(--an-c1), var(--an-c2));
+  background: var(--an-grad-bar);
   transition: width .8s cubic-bezier(.16,1,.3,1);
 }
 .an-gauge-fill.warm {
-  background: linear-gradient(to right, var(--an-c3), var(--an-c4));
+  background: linear-gradient(to right, var(--g400), var(--g900));
 }
 
 /* ── Tinted mini KPIs ────────────────────────────────────────────────────── */
@@ -711,11 +712,15 @@
   flex-direction: column;
   gap: 3px;
 }
-.an-mini.blue   { background: rgba(59,111,212,.08); }
-.an-mini.green  { background: rgba(13,184,122,.08); }
-.an-mini.amber  { background: rgba(217,119,6,.08); }
-.an-mini.rose   { background: rgba(225,54,106,.08); }
-.an-mini.violet { background: rgba(124,58,237,.08); }
+.an-mini.blue   { background: var(--g100); }
+.an-mini.green  { background: var(--g50); border: 1px solid var(--g100); }
+.an-mini.amber  { background: var(--g200); }
+.an-mini.rose   { background: var(--an-grad-dark); }
+.an-mini.rose .an-mini-val { color: #fff; }
+.an-mini.rose .an-mini-lbl { color: var(--g300); }
+.an-mini.violet { background: var(--an-grad-dark); }
+.an-mini.violet .an-mini-val { color: #fff; }
+.an-mini.violet .an-mini-lbl { color: var(--g300); }
 .an-mini.gray   { background: var(--g100); }
 .an-mini-val {
   font-family: var(--font-mono);
@@ -839,8 +844,8 @@
   text-align: center;
   justify-self: end;
 }
-.an-conv-badge.hi  { background: rgba(13,184,122,.12); color: #0a9461; }
-.an-conv-badge.mid { background: rgba(59,111,212,.10); color: var(--an-c1); }
+.an-conv-badge.hi  { background: var(--an-grad-dark); color: var(--g50); }
+.an-conv-badge.mid { background: var(--g200); color: var(--g800); }
 .an-conv-badge.lo  { background: var(--g100); color: var(--g500); }
 
 /* ── Device split ────────────────────────────────────────────────────────── */
@@ -874,8 +879,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 9px 12px;
-  background: rgba(217,119,6,.05);
-  border: 1px solid rgba(217,119,6,.18);
+  background: var(--g100);
+  border: 1px solid var(--g300);
   border-radius: 9px;
   gap: 10px;
 }
@@ -891,7 +896,8 @@
 .an-expiry-date {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: #b45309;
+  color: var(--g800);
+  font-weight: 600;
   flex-shrink: 0;
 }
 
@@ -927,16 +933,16 @@
   transform-origin: left;
   animation: an-slide .8s cubic-bezier(.16,1,.3,1) backwards;
 }
-.an-rank-bar.rb-blue   { background: var(--an-c1); }
-.an-rank-bar.rb-green  { background: var(--an-c2); }
-.an-rank-bar.rb-amber  { background: var(--an-c3); }
-.an-rank-bar.rb-rose   { background: var(--an-c4); }
-.an-rank-bar.rb-violet { background: var(--an-c5); }
-.an-rank-bar.rb-cyan   { background: var(--an-c6); }
-.an-rank-bar.rb-yellow { background: var(--an-c3); }
-.an-rank-bar.rb-purple { background: var(--an-c5); }
-.an-rank-bar.rb-teal   { background: var(--an-c2); }
-.an-rank-bar.rb-orange { background: #f97316; }
+.an-rank-bar.rb-blue   { background: var(--g800); }
+.an-rank-bar.rb-green  { background: var(--g700); }
+.an-rank-bar.rb-amber  { background: var(--g600); }
+.an-rank-bar.rb-rose   { background: var(--g500); }
+.an-rank-bar.rb-violet { background: var(--g900); }
+.an-rank-bar.rb-cyan   { background: var(--g700); }
+.an-rank-bar.rb-yellow { background: var(--g600); }
+.an-rank-bar.rb-purple { background: var(--g800); }
+.an-rank-bar.rb-teal   { background: var(--g700); }
+.an-rank-bar.rb-orange { background: var(--g600); }
 .an-rank-count {
   font-family: var(--font-mono);
   font-size: 11px;
