@@ -7,6 +7,7 @@ import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio, initFaceFilters, initSearch, typingWelcome, initSectionReveal } from './features/inicio/inicio.js';
 import { initFilters } from './features/inicio/filters.js';
 import { initFaceIds } from './features/faceids/faceids.js';
+import { initBlacklist } from './features/blacklist/blacklist.js';
 import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, filterUnits, toggleUnit, selectPortalType, copyLink, onNameInput, renderFolderList, selectSearchMethod } from './features/portales/modal.js';
 import { openPortal, closePortal, openPortalFromRow, openMasterFromRow, handleDorsalSearch, clearDorsalSearch, handlePortalSearch, refreshPortalImages } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
@@ -36,6 +37,7 @@ export function switchSection(id) {
   if (id === 'carpetas') showRecentFolders();
   if (id === 'analytics') renderAnalytics();
   if (id === 'perfil') renderPerfil();
+  if (id === 'blacklist') initBlacklist();
   location.hash = id;
 }
 
@@ -252,6 +254,7 @@ if (_portalTab) {
   });
   initFaceFilters();
   initFaceIds();
+  initBlacklist();
   initFilters();
   initSearch();
   initSectionReveal();

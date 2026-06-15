@@ -100,7 +100,8 @@
       "Bash(Start-Sleep -Seconds 3)",
       "Bash(Get-Content \"C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-PC-Documents-GitHub-DAM-V1\\\\47c445a3-16c0-477e-886e-50b64f46282c\\\\tasks\\\\b0zi6fz9p.output\")",
       "Bash(kill -9 10116)",
-      "PowerShell(Stop-Process -Id 10116 -Force)"
+      "PowerShell(Stop-Process -Id 10116 -Force)",
+      "Bash(dir /s /b *faceid*)"
     ]
   },
   "hooks": {

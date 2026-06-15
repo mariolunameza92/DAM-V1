@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="css/features/portales.css">
 <link rel="stylesheet" href="css/features/portal-screen.css">
 <link rel="stylesheet" href="css/features/faceids.css">
+<link rel="stylesheet" href="css/features/blacklist.css">
 <link rel="stylesheet" href="css/features/analytics.css">
 <link rel="stylesheet" href="css/features/perfil.css">
 </head>
@@ -52,7 +53,7 @@
         <button class="nav-item" data-sec="faceids" onclick="switchSection('faceids')">
           <span class="msi sm">ar_on_you</span>Face IDs
         </button>
-        <button class="nav-item" data-sec="blacklist" onclick="switchSection('blacklist')" style="display:none">
+        <button class="nav-item" data-sec="blacklist" onclick="switchSection('blacklist')">
           <span class="msi sm">person_off</span>Black List
         </button>
         <button class="nav-item" data-sec="portales" onclick="switchSection('portales')">
@@ -274,7 +275,32 @@
             <div id="faceids-body"></div>
           </div>
         </div>
-        <div class="section" id="sec-blacklist" style="color:var(--g500);padding:60px 0;text-align:center;font-size:14px">Vista Black List — en construcción</div>
+        <!-- BLACK LIST -->
+        <div class="section" id="sec-blacklist">
+          <div class="bl-block">
+            <div class="sec-header" style="margin-bottom:0">
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="sec-title">Lista negra</span>
+                <span class="bl-total-badge" id="bl-total-badge">0 personas</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="view-toggle">
+                  <button id="bl-grid-btn" class="view-btn"><span class="msi xs">grid_view</span></button>
+                  <button id="bl-list-btn" class="view-btn active"><span class="msi xs">lists</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="bl-info-note">
+              <span class="msi xs">info</span>
+              El contenido de estas personas se oculta en carpetas y portales, pero sus apariciones siguen siendo contabilizadas.
+            </div>
+            <div class="portals-cta">
+              <button class="btn-dark" id="bl-add-btn"><span class="msi xs">person_off</span>Agregar a lista negra</button>
+            </div>
+            <!-- Renderizado dinámico desde js/features/blacklist/blacklist.js -->
+            <div id="bl-body"></div>
+          </div>
+        </div>
         <div class="section" id="sec-analytics"></div>
         <div class="section" id="sec-perfil"></div>
 
@@ -327,6 +353,58 @@
     <div class="crear-dlg-actions">
       <button class="btn-outline" style="font-size:11px" id="faceid-rename-cancel">Cancelar</button>
       <button class="btn-dark" style="font-size:11px" id="faceid-rename-confirm"><span class="msi xs">check</span>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- AGREGAR A LISTA NEGRA -->
+<div id="bl-add-dlg" class="crear-dlg-backdrop" style="display:none">
+  <div class="crear-dlg">
+    <div class="crear-dlg-header"><span class="msi xs">person_off</span>Agregar a lista negra</div>
+    <div class="faceid-dropzone" id="bl-add-drop">
+      <div class="faceid-dropzone-preview" id="bl-add-preview" style="display:none"><img id="bl-add-img" src="" alt=""></div>
+      <span class="msi" id="bl-add-icon" style="font-size:32px;color:var(--g400)">add_a_photo</span>
+      <span id="bl-add-droptext">Subir foto del rostro</span>
+    </div>
+    <input type="file" id="bl-add-file" accept="image/*" style="display:none">
+    <input id="bl-add-name" class="field field--rect" type="text" placeholder="Nombre identificador" maxlength="60" autocomplete="off">
+    <div class="crear-dlg-hint" id="bl-add-hint"></div>
+    <div class="crear-dlg-actions">
+      <button class="btn-outline" style="font-size:11px" id="bl-add-cancel">Cancelar</button>
+      <button class="btn-dark" style="font-size:11px" id="bl-add-confirm"><span class="msi xs">add</span>Agregar</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDITAR ENTRADA DE LISTA NEGRA -->
+<div id="bl-edit-dlg" class="crear-dlg-backdrop" style="display:none">
+  <div class="crear-dlg">
+    <div class="crear-dlg-header"><span class="msi xs">edit</span>Editar entrada</div>
+    <div class="faceid-dropzone" id="bl-edit-drop">
+      <div class="faceid-dropzone-preview" id="bl-edit-preview"><img id="bl-edit-img" src="" alt=""></div>
+      <span id="bl-edit-droptext" style="font-size:12px;color:var(--g500)">Cambiar foto</span>
+    </div>
+    <input type="file" id="bl-edit-file" accept="image/*" style="display:none">
+    <input id="bl-edit-name" class="field field--rect" type="text" placeholder="Nombre identificador" maxlength="60" autocomplete="off">
+    <div class="crear-dlg-hint" id="bl-edit-hint"></div>
+    <div class="crear-dlg-actions">
+      <button class="btn-outline" style="font-size:11px" id="bl-edit-cancel">Cancelar</button>
+      <button class="btn-dark" style="font-size:11px" id="bl-edit-confirm"><span class="msi xs">check</span>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUITAR DE LISTA NEGRA — ADVERTENCIA -->
+<div id="bl-remove-dlg" class="crear-dlg-backdrop" style="display:none">
+  <div class="crear-dlg">
+    <div class="crear-dlg-header" style="color:#dc2626"><span class="msi xs">warning</span>Quitar de lista negra</div>
+    <div class="bl-remove-warn">
+      Vas a quitar a <strong id="bl-remove-name">persona</strong> de la lista negra.<br>
+      Su contenido volverá a ser <strong>visible</strong> en carpetas y portales.
+    </div>
+    <div class="crear-dlg-actions">
+      <button class="btn-outline" style="font-size:11px" id="bl-remove-cancel">Cancelar</button>
+      <button class="bl-btn-danger" id="bl-remove-confirm"><span class="msi xs">person_off</span>Quitar de lista negra</button>
     </div>
   </div>
 </div>
