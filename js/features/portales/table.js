@@ -52,11 +52,11 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
     ? unitIds.map(uid => { const u = getPortalById(uid); return u ? `<span class="rel-pill rel-pill--unit">${u.title}</span>` : ''; }).filter(Boolean).join('')
     : masterIds.map(mid => { const m = getPortalById(mid); return m ? `<span class="rel-pill rel-pill--master">${m.title}</span>` : ''; }).filter(Boolean).join('');
 
-  const portalUrl = !isMaster
-    ? `${location.pathname}?${new URLSearchParams({ portal:'1', title, accent, folders: ids.join(','), theme: opts.theme||'light', search })}`
-    : '';
-  const nameOpen  = isMaster ? `<div class="portal-name-cell" style="cursor:pointer">` : `<a class="portal-name-cell" href="${portalUrl}" target="_blank" rel="noopener">`;
-  const nameClose = isMaster ? `</div>` : `</a>`;
+  const portalUrl = isMaster
+    ? `${location.pathname}?${new URLSearchParams({ portal:'1', type:'master', masterId: resolvedId, title, accent, theme: opts.theme||'light' })}`
+    : `${location.pathname}?${new URLSearchParams({ portal:'1', title, accent, folders: ids.join(','), theme: opts.theme||'light', search })}`;
+  const nameOpen  = `<a class="portal-name-cell" href="${portalUrl}" target="_blank" rel="noopener">`;
+  const nameClose = `</a>`;
 
   row.innerHTML = `
     <div class="col">${nameOpen}<div class="portal-icon-box"><span class="msi xs">${icon}</span></div>${title}${nameClose}</div>

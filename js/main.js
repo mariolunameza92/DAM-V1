@@ -131,6 +131,7 @@ document.getElementById('portalsTable').addEventListener('click', e => {
   const portalType = row.dataset.portalType || 'unit';
 
   if (portalType === 'master') {
+    e.preventDefault(); // block <a> navigation — open in-app instead; right-click still works via href
     openMasterFromRow(
       row.dataset.portalId    || '',
       row.dataset.portalTitle  || '',
@@ -222,14 +223,19 @@ initImageDetail();
 const _portalTab = new URLSearchParams(location.search).get('portal') === '1';
 
 if (_portalTab) {
-  const _p        = new URLSearchParams(location.search);
-  const _title     = _p.get('title') || 'Mi Portal';
-  const _accent    = _p.get('accent') || '#333';
-  const _theme     = _p.get('theme') || 'light';
-  const _search    = _p.get('search') || 'both';
-  const _folderIds = _p.get('folders') ? _p.get('folders').split(',').filter(Boolean) : [];
-  openPortalFromRow(_title, _accent, _folderIds, _theme, _search);
-  initDemoImages().then(() => refreshPortalImages());
+  const _p      = new URLSearchParams(location.search);
+  const _title  = _p.get('title')  || 'Mi Portal';
+  const _accent = _p.get('accent') || '#333';
+  const _theme  = _p.get('theme')  || 'light';
+  if (_p.get('type') === 'master') {
+    openMasterFromRow(_p.get('masterId') || '', _title, _accent, _theme);
+    initDemoImages().then(() => refreshPortalImages());
+  } else {
+    const _search    = _p.get('search') || 'both';
+    const _folderIds = _p.get('folders') ? _p.get('folders').split(',').filter(Boolean) : [];
+    openPortalFromRow(_title, _accent, _folderIds, _theme, _search);
+    initDemoImages().then(() => refreshPortalImages());
+  }
 } else {
   initContextMenu();
   initSelection();
