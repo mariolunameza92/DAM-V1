@@ -67,7 +67,14 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
       <span style="flex:1">Tú</span>
       <button class="more-btn portal-more-btn"><span class="msi xs">more_horiz</span></button>
     </div>`;
-  document.querySelector('#portalsTable .table-head').after(row);
+  // Masters insert right after the header; units insert after the last master row (or after header if no masters)
+  if (isMaster) {
+    document.querySelector('#portalsTable .table-head').after(row);
+  } else {
+    const lastMaster = [...document.querySelectorAll('#portalsTable .table-row--master')].at(-1);
+    const anchor = lastMaster || document.querySelector('#portalsTable .table-head');
+    anchor.after(row);
+  }
   return row;
 }
 
