@@ -124,7 +124,7 @@ function _applyPortalTheme(el, accentHex, theme) {
   // Hero overlay colors — alpha-composited from the portal bg base
   const heroL = isDark ? 0.058 : 0.986;
   const heroC = isDark ? C * 0.18 : C * 0.05;
-  el.style.setProperty('--portal-hero-tint',     `oklch(${heroL.toFixed(3)} ${heroC.toFixed(4)} ${H.toFixed(2)} / 0.50)`);
+  el.style.setProperty('--portal-hero-tint',     `oklch(${heroL.toFixed(3)} ${heroC.toFixed(4)} ${H.toFixed(2)} / 0.25)`);
   el.style.setProperty('--portal-hero-grad-top', `oklch(${heroL.toFixed(3)} ${heroC.toFixed(4)} ${H.toFixed(2)} / 0.62)`);
   el.style.setProperty('--portal-hero-grad-end', `oklch(${heroL.toFixed(3)} ${heroC.toFixed(4)} ${H.toFixed(2)} / 0.92)`);
 
