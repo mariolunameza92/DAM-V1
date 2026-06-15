@@ -948,28 +948,51 @@ function _initTabsDrag() {
   const bar = document.getElementById('p-tabs-bar');
   if (!bar) return;
   let down = false, startX = 0, startScroll = 0, dragged = false;
+  const MAX_PULL = 14, DAMPEN = 0.28;
+
+  function _translate(x) {
+    bar.style.transition = 'none';
+    bar.style.transform  = x ? `translateX(${x}px)` : '';
+  }
+  function _snapBack() {
+    bar.style.transition = 'transform 0.38s cubic-bezier(0.22,1,0.36,1)';
+    bar.style.transform  = '';
+  }
 
   bar.addEventListener('mousedown', e => {
     down = true; dragged = false;
     startX = e.pageX; startScroll = bar.scrollLeft;
     bar.style.userSelect = 'none';
+    bar.style.transition = 'none';
   });
   document.addEventListener('mouseup', () => {
     if (!down) return;
     down = false;
     bar.style.userSelect = '';
     bar.style.cursor = '';
+    _snapBack();
   });
   document.addEventListener('mousemove', e => {
     if (!down) return;
     const dx = e.pageX - startX;
-    if (Math.abs(dx) > 4) {
-      dragged = true;
-      bar.style.cursor = 'grabbing';
-      bar.scrollLeft = startScroll - dx;
+    if (Math.abs(dx) > 4) { dragged = true; bar.style.cursor = 'grabbing'; }
+    if (!dragged) return;
+
+    const maxScroll = bar.scrollWidth - bar.clientWidth;
+    const target    = startScroll - dx;
+
+    if (target < 0) {
+      bar.scrollLeft = 0;
+      _translate(Math.min(-target * DAMPEN, MAX_PULL));
+    } else if (target > maxScroll) {
+      bar.scrollLeft = maxScroll;
+      _translate(-Math.min((target - maxScroll) * DAMPEN, MAX_PULL));
+    } else {
+      bar.scrollLeft = target;
+      _translate(0);
     }
   });
-  // Suppress accidental tab-click after a drag (capture phase runs before the tab's listener)
+
   bar.addEventListener('click', e => {
     if (dragged) { e.stopPropagation(); dragged = false; }
   }, true);
