@@ -137,15 +137,8 @@ document.getElementById('portalsTable').addEventListener('click', e => {
       row.dataset.portalAccent || '',
       row.dataset.portalTheme  || 'light'
     );
-  } else {
-    const title     = row.dataset.portalTitle   || '';
-    const accent    = row.dataset.portalAccent  || '';
-    const theme     = row.dataset.portalTheme   || 'light';
-    const search    = row.dataset.portalSearch  || 'both';
-    const folderIds = row.dataset.portalFolders ? row.dataset.portalFolders.split(',').filter(Boolean) : [];
-    const params = new URLSearchParams({ portal: '1', title, accent, folders: folderIds.join(','), theme, search });
-    window.open(`${location.pathname}?${params}`, '_blank');
   }
+  // unit portals: the <a> tag handles navigation natively (left-click + right-click → open in new tab)
 });
 
 document.addEventListener('click', e => {

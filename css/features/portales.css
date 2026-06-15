@@ -6,6 +6,7 @@
 .table-row:last-child{border-bottom:none}
 .table-row:hover{background:rgba(0,0,0,.03)}
 .portal-name-cell{display:flex;align-items:center;gap:8px}
+a.portal-name-cell{text-decoration:none;color:inherit}
 .portal-icon-box{width:40px;height:40px;border-radius:8px;background:var(--g100);border:1.5px solid var(--g200);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .content-cell{display:flex;gap:20px;align-items:center}
 .content-chip{display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;color:var(--g800);font-family:var(--font-mono)}
