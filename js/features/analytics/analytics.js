@@ -203,23 +203,23 @@ function _svgLine(data, labels, opts = {}) {
   const gid = `alg${++_gid}`;
   const areaD = `${pathD} L ${xp(n-1).toFixed(1)} ${(pt+H).toFixed(1)} L ${xp(0).toFixed(1)} ${(pt+H).toFixed(1)} Z`;
   const dots = showDots ? data.map((v, i) =>
-    `<circle cx="${xp(i).toFixed(1)}" cy="${yp(v).toFixed(1)}" r="2.5" fill="${color}" opacity=".8"/>`
+    `<circle cx="${xp(i).toFixed(1)}" cy="${yp(v).toFixed(1)}" r="2.5" style="fill:${color}" opacity=".8"/>`
   ).join('') : '';
   const lblEl = labels ? labels.map((l, i) => {
     if (i % Math.ceil(n / 7) !== 0 && i !== n - 1) return '';
     const anchor = i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle';
-    return `<text x="${xp(i).toFixed(1)}" y="${h - 4}" text-anchor="${anchor}" font-size="8" fill="var(--g400)" font-family="sans-serif">${l}</text>`;
+    return `<text x="${xp(i).toFixed(1)}" y="${h - 4}" text-anchor="${anchor}" font-size="8" style="fill:var(--g400)" font-family="sans-serif">${l}</text>`;
   }).join('') : '';
 
   return `<svg width="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${color}" stop-opacity=".25"/>
-        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+        <stop offset="0%" style="stop-color:${color}" stop-opacity=".25"/>
+        <stop offset="100%" style="stop-color:${color}" stop-opacity="0"/>
       </linearGradient>
     </defs>
     <path d="${areaD}" fill="url(#${gid})"/>
-    <path d="${pathD}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${pathD}" fill="none" style="stroke:${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
     ${dots}
     ${lblEl}
   </svg>`;
@@ -259,13 +259,13 @@ function _svgRadar(axes, values, opts = {}) {
 
   const dotPts = values.map((v, i) => {
     const rf = r * v;
-    return `<circle cx="${(cx + rf * Math.cos(ang(i))).toFixed(1)}" cy="${(cy + rf * Math.sin(ang(i))).toFixed(1)}" r="3" fill="${color}"/>`;
+    return `<circle cx="${(cx + rf * Math.cos(ang(i))).toFixed(1)}" cy="${(cy + rf * Math.sin(ang(i))).toFixed(1)}" r="3" style="fill:${color}"/>`;
   });
 
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
     ${grids.join('\n    ')}
     ${axLines.join('\n    ')}
-    <polygon points="${dataPts}" fill="${color}" fill-opacity=".15" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>
+    <polygon points="${dataPts}" style="fill:${color};fill-opacity:.15;stroke:${color}" stroke-width="2" stroke-linejoin="round"/>
     ${dotPts.join('\n    ')}
     ${lbls.join('\n    ')}
   </svg>`;
@@ -383,7 +383,7 @@ function _buildStorageSection() {
     </div>`
   ).join('');
 
-  const growthSVG = _svgLine(s.growthData, s.growthLabels, { w: 320, h: 90, color: '#3b6fd4' });
+  const growthSVG = _svgLine(s.growthData, s.growthLabels, { w: 320, h: 90, color: 'var(--g700)' });
 
   const typeSegs = s.types.map(t => ({ value: t.pct, color: t.color }));
   const typeDonut = _svgDonut(typeSegs, { size: 100, sw: 14 });
@@ -765,7 +765,7 @@ function _buildPortalInventory() {
 
 function _buildEngagementSection() {
   const e = M.portales.engagement;
-  const radarSVG = _svgRadar(e.radarAxes, e.radarValues, { size: 170, color: '#3b6fd4' });
+  const radarSVG = _svgRadar(e.radarAxes, e.radarValues, { size: 170, color: 'var(--g700)' });
   const radarLegend = e.radarAxes.map((ax, i) =>
     `<div class="an-radar-leg-item">
       <div class="an-radar-dot" style="background:var(--g700)"></div>

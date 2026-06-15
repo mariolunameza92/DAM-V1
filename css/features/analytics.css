@@ -252,28 +252,8 @@
   overflow: hidden;
   margin-bottom: 12px;
 }
-.an-face-hero::before {
-  content: '';
-  position: absolute;
-  top: -70px; right: -70px;
-  width: 260px; height: 260px;
-  border-radius: 50%;
-  background: var(--g100);
-  pointer-events: none;
-  z-index: 0;
-}
-.an-face-hero::after {
-  content: '';
-  position: absolute;
-  bottom: -30px; left: 80px;
-  width: 140px; height: 140px;
-  border-radius: 50%;
-  background: var(--g100);
-  pointer-events: none;
-  z-index: 0;
-}
 .an-face-hero-left,
-.an-face-hero-right { position: relative; z-index: 1; }
+.an-face-hero-right { position: relative; }
 
 .an-face-hero-left { display: flex; flex-direction: column; gap: var(--space-4); }
 .an-fh-eyebrow {
