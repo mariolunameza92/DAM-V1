@@ -4,6 +4,9 @@ import { getFaces, getFavoriteFaces, toggleFavorite, renameFace, identifyFace, d
 import { showToast } from '../../components/ui/toast.js';
 import { bindStaticToggle } from '../../components/ui/view-toggle.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
+import { getPortals } from '../../session.js';
+import { PHOTO_FACES, FOLDER_IMAGES_EVENTS } from '../../events-registry.js';
+import { TREE_DATA } from '../../data.js';
 
 let _view = 'list';        // 'list' | 'grid'
 let _tab  = 'identified'; // 'identified' | 'unnamed'
@@ -11,6 +14,45 @@ let _sort = { col: null, dir: 'asc' }; // columna activa y dirección de orden
 
 function esc(s) {
   return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+// ── Portales que incluyen a un rostro (via folderIds ∩ carpetas del rostro) ────
+let _pfMap = null;
+function _photoFolderMap() {
+  if (_pfMap) return _pfMap;
+  _pfMap = {};
+  for (const [fid, photos] of Object.entries(FOLDER_IMAGES_EVENTS))
+    for (const p of photos) _pfMap[p] = fid;
+  return _pfMap;
+}
+// Mapa child→parent construido desde TREE_DATA para expandir ancestros
+let _parentMap = null;
+function _getParentMap() {
+  if (_parentMap) return _parentMap;
+  _parentMap = {};
+  function walk(nodes, parentId) {
+    for (const n of nodes) {
+      if (parentId) _parentMap[n.id] = parentId;
+      walk(n.children || [], n.id);
+    }
+  }
+  walk(TREE_DATA, null);
+  return _parentMap;
+}
+function _portalsForFace(faceId) {
+  const map = _photoFolderMap();
+  const folders = new Set();
+  for (const [url, ids] of Object.entries(PHOTO_FACES))
+    if (ids.includes(faceId) && map[url]) folders.add(map[url]);
+  if (!folders.size) return [];
+  // Expandir con ancestros: lima42k-protocolares → también lima42k
+  const pm = _getParentMap();
+  const allFolders = new Set(folders);
+  for (const fid of folders) {
+    let cur = fid;
+    while (pm[cur]) { allFolders.add(pm[cur]); cur = pm[cur]; }
+  }
+  return getPortals().filter(p => p.type !== 'master' && (p.folderIds || []).some(f => allFolders.has(f)));
 }
 
 // ── Render: favoritos ───────────────────────────────────────────────────────────
@@ -39,10 +81,11 @@ function _sorted(faces) {
   return [...faces].sort((a, b) => {
     let va, vb;
     switch (_sort.col) {
-      case 'name':     va = a.displayName;       vb = b.displayName;       break;
-      case 'photos':   va = a.appearances.photos; vb = b.appearances.photos; break;
-      case 'registro': va = a.registro;           vb = b.registro;          break;
-      case 'addedBy':  va = a.addedBy;            vb = b.addedBy;           break;
+      case 'name':     va = a.displayName;              vb = b.displayName;              break;
+      case 'photos':   va = a.appearances.photos;        vb = b.appearances.photos;        break;
+      case 'portales': va = _portalsForFace(a.id).length; vb = _portalsForFace(b.id).length; break;
+      case 'registro': va = a.registro;                 vb = b.registro;                 break;
+      case 'addedBy':  va = a.addedBy;                  vb = b.addedBy;                  break;
       default: return 0;
     }
     const m = _sort.dir === 'asc' ? 1 : -1;
@@ -80,8 +123,8 @@ function _listHTML(faces) {
     return `<div class="faceids-empty">${msg}</div>`;
   }
   const head = _tab === 'identified'
-    ? `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`
-    : `<div class="table-head"><div class="col">Persona</div>${_sortHead('photos','Apariciones')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`;
+    ? `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('portales','Portales')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`
+    : `<div class="table-head"><div class="col">Persona</div>${_sortHead('photos','Apariciones')}${_sortHead('portales','Portales')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`;
   const rows = faces.map(f => {
     const nameEl = f.unnamed
       ? `<input class="field field--inline" data-inline-rename="${f.id}" placeholder="Agregar nombre" autocomplete="off" spellcheck="false">`
@@ -89,6 +132,10 @@ function _listHTML(faces) {
     const starBtn = f.fav
       ? `<button class="faceid-fav-star" data-fav-toggle="${f.id}" title="Quitar de favoritos"><span class="msi xs faceid-star-icon">star</span><span class="msi xs faceid-trash-icon">delete</span></button>`
       : '';
+    const portals = _portalsForFace(f.id);
+    const portalsHtml = portals.length
+      ? portals.map(p => `<span class="rel-pill rel-pill--unit faceid-portal-pill" title="${esc(p.title)}">${esc(p.title)}</span>`).join('')
+      : `<span class="faceid-no-portals">—</span>`;
     return `<div class="table-row" data-face-id="${f.id}">
       <div class="col"><div class="faceid-person-cell">
         <div class="faceid-av"><img src="${f.selfieUrl}" alt=""></div>
@@ -98,6 +145,7 @@ function _listHTML(faces) {
         <span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${f.appearances.folders}</span>
         <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${f.appearances.photos.toLocaleString('es')}</span>
       </div></div>
+      <div class="col col--portales"><div class="rel-pills">${portalsHtml}</div></div>
       <div class="col">${f.registro}</div>
       <div class="col" style="display:flex;align-items:center;gap:12px">
         <span style="flex:1">${f.unnamed ? 'IA' : esc(f.addedBy)}</span>
@@ -114,13 +162,19 @@ function _gridHTML(faces) {
       <div class="faceid-card-av"><span class="msi" style="font-size:40px">add</span></div>
       <div class="faceid-card-name">Agregar</div>
     </div>`;
-  const cards = faces.map(f =>
-    `<div class="faceid-card" data-face-id="${f.id}">
+  const cards = faces.map(f => {
+    const portals = _portalsForFace(f.id);
+    const portalsStr = portals.length
+      ? `${portals.length} portal${portals.length === 1 ? '' : 'es'}`
+      : 'Sin portales';
+    return `<div class="faceid-card" data-face-id="${f.id}">
       ${f.fav ? `<button class="faceid-card-star" data-fav-toggle="${f.id}" title="Quitar de favoritos"><span class="msi xs faceid-star-icon">star</span><span class="msi xs faceid-trash-icon">delete</span></button>` : ''}
       <div class="faceid-card-av"><img src="${f.selfieUrl}" alt=""></div>
       <div class="faceid-card-name${f.unnamed ? ' faceid-card-name--unnamed' : ''}">${esc(f.displayName)}</div>
+      <div class="faceid-card-meta">${f.appearances.photos} fotos · ${portalsStr}</div>
       <button class="faceid-card-more" data-face-menu="${f.id}"><span class="msi xs">more_horiz</span></button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   const empty = !faces.length
     ? `<div class="faceids-empty">${_tab === 'identified' ? 'No se encontraron personas identificadas.' : 'No hay personas sin identificar.'}</div>`
     : '';
