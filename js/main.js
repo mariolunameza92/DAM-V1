@@ -187,7 +187,9 @@ if (_portalTab) {
     if (cols !== _iniColCount) { _iniColCount = cols; renderInicio(); }
   });
   switchSection(location.hash.replace('#', '') || 'inicio');
-  initDemoImages();
+  initDemoImages().then(() => {
+    if (document.getElementById('portalScreen')?.classList.contains('open')) refreshPortalImages();
+  });
   initFaceFilters();
   initFaceIds();
   initFilters();

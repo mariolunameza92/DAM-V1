@@ -117,6 +117,34 @@ function _applyPortalTheme(el, accentHex, theme) {
   const visorBtn = shades[9];
   el.style.setProperty('--visor-btn-bg',   `oklch(${visorBtn.l.toFixed(3)} ${visorBtn.c.toFixed(4)} ${H.toFixed(2)} / 0.72)`);
   el.style.setProperty('--visor-btn-icon', `oklch(${visorBtn.l >= 0.5 ? 0.15 : 0.95} 0 0)`);
+
+  // Hero overlay colors — alpha-composited from the portal bg base
+  const heroL = isDark ? 0.058 : 0.986;
+  const heroC = isDark ? C * 0.18 : C * 0.05;
+  el.style.setProperty('--portal-hero-tint',     `oklch(${heroL.toFixed(3)} ${heroC.toFixed(4)} ${H.toFixed(2)} / 0.50)`);
+  el.style.setProperty('--portal-hero-grad-top', `oklch(${heroL.toFixed(3)} ${heroC.toFixed(4)} ${H.toFixed(2)} / 0.62)`);
+  el.style.setProperty('--portal-hero-grad-end', `oklch(${heroL.toFixed(3)} ${heroC.toFixed(4)} ${H.toFixed(2)} / 0.92)`);
+
+  // Glass surface for the dorsal input inside the hero
+  const glassL = isDark ? 0.12 : 0.97;
+  el.style.setProperty('--portal-glass-bg',     `oklch(${glassL.toFixed(3)} ${(C * 0.02).toFixed(4)} ${H.toFixed(2)} / 0.65)`);
+  el.style.setProperty('--portal-glass-border', `oklch(${glassL.toFixed(3)} ${(C * 0.02).toFixed(4)} ${H.toFixed(2)} / 0.35)`);
+}
+
+// ── Hero background image picker ──────────────────────────────────────────────
+function _pickHeroImage(folders) {
+  for (const folder of folders) {
+    const assets = _collectAssets(folder);
+    if (assets.length > 0 && assets[0].preview) return assets[0].preview;
+  }
+  return null;
+}
+
+function _setHeroBg(folders) {
+  const el  = document.getElementById('p-hero-bg');
+  if (!el) return;
+  const src = _pickHeroImage(folders);
+  el.style.backgroundImage = src ? `url("${src}")` : '';
 }
 
 // ── Public entry points ───────────────────────────────────────────────────────
@@ -229,6 +257,7 @@ function _renderPortal(title, desc, accent, theme, font, logoSrc, folders, searc
     logoArea.style.display = 'none';
   }
 
+  _setHeroBg(folders);
   _clearFacePortalChip();
   _clearDorsalState();
   _resetSelfie();
@@ -518,6 +547,7 @@ export function handlePortalSearch() {
 // active selfie/dorsal search. main.js calls openPortalFromRow twice (once
 // before images load, once after); the second pass used to reset the selfie.
 export function refreshPortalImages() {
+  _setHeroBg(_portalFolders);
   const results = document.getElementById('p-face-results');
   const searchActive = results && results.style.display !== 'none' && results.innerHTML.length > 0;
   if (!searchActive) { _renderNavigation(); return; }
@@ -745,6 +775,7 @@ function _animatePortalIn() {
   const screen = document.getElementById('portalScreen');
   const blocks = [
     screen.querySelector('.p-header-section'),
+    screen.querySelector('.p-hero-chips-row'),
     screen.querySelector('.p-tabs-section'),
     ...Array.from(screen.querySelectorAll('.p-section')),
   ].filter(Boolean);

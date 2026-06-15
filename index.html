@@ -518,30 +518,39 @@
   <div class="p-body">
     <div class="p-gradient-blob"></div>
     <div class="p-header-section">
-      <div id="p-header-logo" style="display:none">
-        <img id="p-logo-img" class="p-portal-logo" src="" alt="Logo">
-        <div id="p-logo-svg" class="p-portal-logo-svg" style="display:none"></div>
-      </div>
-      <div class="p-header-texts">
-        <div class="p-header-title" id="p-hero-title">Nombre del Portal</div>
-        <div class="p-header-desc" id="p-hero-sub">Descripción del portal</div>
-      </div>
-      <div class="p-hero-ctas" id="p-hero-ctas">
-        <button class="p-selfie-btn" id="p-selfie-btn">
-          <span class="msi sm">ar_on_you</span>Sube tu selfie
-        </button>
-        <div class="p-selfie-avatar" id="p-selfie-avatar" style="display:none">
-          <img id="p-selfie-img" class="p-selfie-img" src="" alt="">
-          <button class="p-selfie-remove" id="p-selfie-remove"><span class="msi">close</span></button>
+      <div class="p-hero-bg" id="p-hero-bg"></div>
+      <div class="p-hero-overlay"></div>
+      <div class="p-hero-gradient"></div>
+      <div class="p-hero-top">
+        <div id="p-header-logo" style="display:none">
+          <img id="p-logo-img" class="p-portal-logo" src="" alt="Logo">
+          <div id="p-logo-svg" class="p-portal-logo-svg" style="display:none"></div>
         </div>
-        <div class="p-dorsal-input-wrap" id="p-dorsal-wrap">
-          <span class="msi sm p-dorsal-icon">scoreboard</span>
-          <input type="text" class="p-search-input" id="p-dorsal-input" placeholder="Ingresa Nº dorsal" onkeydown="if(event.key==='Enter')handlePortalSearch()">
-          <button class="p-dorsal-clear" id="p-dorsal-clear" style="display:none"><span class="msi">close</span></button>
-        </div>
-        <button class="p-buscar-btn" id="p-buscar-btn">Buscar</button>
-        <input type="file" id="p-selfie-file" accept="image/*" style="display:none">
       </div>
+      <div class="p-hero-content">
+        <div class="p-header-texts">
+          <div class="p-header-title" id="p-hero-title">Nombre del Portal</div>
+          <div class="p-header-desc" id="p-hero-sub">Descripción del portal</div>
+        </div>
+        <div class="p-hero-ctas" id="p-hero-ctas">
+          <button class="p-selfie-btn" id="p-selfie-btn">
+            <span class="msi sm">ar_on_you</span>Sube tu selfie
+          </button>
+          <div class="p-selfie-avatar" id="p-selfie-avatar" style="display:none">
+            <img id="p-selfie-img" class="p-selfie-img" src="" alt="">
+            <button class="p-selfie-remove" id="p-selfie-remove"><span class="msi">close</span></button>
+          </div>
+          <div class="p-dorsal-input-wrap" id="p-dorsal-wrap">
+            <span class="msi sm p-dorsal-icon">scoreboard</span>
+            <input type="text" class="p-search-input" id="p-dorsal-input" placeholder="Ingresa Nº dorsal" onkeydown="if(event.key==='Enter')handlePortalSearch()">
+            <button class="p-dorsal-clear" id="p-dorsal-clear" style="display:none"><span class="msi">close</span></button>
+          </div>
+          <button class="p-buscar-btn" id="p-buscar-btn">Buscar</button>
+          <input type="file" id="p-selfie-file" accept="image/*" style="display:none">
+        </div>
+      </div>
+    </div>
+    <div class="p-hero-chips-row">
       <button class="p-secondary-cta" id="p-secondary-cta" style="display:none">
         <span class="msi" style="font-size:16px">download</span>Descargar todo
       </button>

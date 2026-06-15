@@ -16,18 +16,40 @@
 /* Decorative gradient blob */
 .p-gradient-blob{position:absolute;top:-250px;right:-250px;width:889px;height:550px;background:radial-gradient(ellipse at 55% 45%, var(--portal-blob-inner,rgba(176,183,201,0.65)) 0%, var(--portal-blob-mid,rgba(131,143,175,0.3)) 45%, transparent 70%);pointer-events:none;z-index:0;filter:blur(50px);transform:rotate(-15deg)}
 
-/* Header: hero section */
-.p-header-section{display:flex;flex-direction:column;align-items:center;gap:24px;padding:var(--space-14) var(--space-6) var(--space-10);position:relative;z-index:1}
+/* Hero section — 50vh full-bleed with image + overlays */
+.p-header-section{position:relative;height:50vh;min-height:320px;overflow:hidden;display:flex;flex-direction:column;z-index:1}
+/* Background image layer — fallback gradient when no photo available */
+.p-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,var(--g200) 0%,var(--g400) 100%);background-size:cover;background-position:center;z-index:0}
+/* Color tint: portal bg color with alpha — ties the image to the brand palette */
+.p-hero-overlay{position:absolute;inset:0;background:var(--portal-hero-tint,oklch(0.05 0 0 / 0.48));z-index:1}
+/* Gradient overlay: opaque at top and bottom, transparent in the middle for readability */
+.p-hero-gradient{position:absolute;inset:0;background:linear-gradient(to bottom,var(--portal-hero-grad-top,oklch(0.05 0 0 / 0.60)) 0%,transparent 36%,transparent 54%,var(--portal-hero-grad-end,oklch(0.05 0 0 / 0.92)) 100%);z-index:2}
+/* Hero top bar: logo */
+.p-hero-top{position:relative;z-index:3;padding:var(--space-6) var(--space-8);display:flex;align-items:center;flex-shrink:0}
+/* Hero content: texts + CTAs anchored to the bottom of the hero */
+.p-hero-content{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 var(--space-6) var(--space-10);flex:1;justify-content:flex-end}
+/* Logo always rendered white-ish in hero — SVG inherits color, raster gets filter */
+.p-header-section #p-header-logo{color:#fff}
+.p-header-section .p-portal-logo{filter:brightness(0) invert(1)}
 .p-portal-logo{height:40px;object-fit:contain;display:block}
-/* SVG logo recolored with currentColor — color token adapts to theme automatically */
 .p-portal-logo-svg{height:40px;color:var(--g900);align-items:center}
 .p-portal-logo-svg svg{height:40px;width:auto;display:block}
 .p-header-texts{display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;max-width:640px;width:100%}
-.p-header-title{font-size:36px;font-weight:700;color:var(--g800);line-height:1.1;font-family:var(--font-ui)}
-.p-header-desc{font-size:16px;color:var(--g600);font-family:var(--font-ui);line-height:1.5}
+/* Hero text: g950 = near-black on light overlay / near-white on dark overlay (scale inverted by theme) */
+.p-header-title{font-size:36px;font-weight:700;color:var(--g950);line-height:1.1;font-family:var(--font-ui)}
+.p-header-desc{font-size:16px;color:var(--g700);font-family:var(--font-ui);line-height:1.5}
+/* Chips row below hero: only has height when a child is visible */
+.p-hero-chips-row{display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 var(--space-6)}
 
 /* Hero CTAs: selfie + dorsal + buscar */
 .p-hero-ctas{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:720px}
+/* Dorsal input glass style inside the hero */
+.p-header-section .p-dorsal-input-wrap{background:var(--portal-glass-bg,rgba(255,255,255,0.15));border-color:var(--portal-glass-border,rgba(255,255,255,0.3));backdrop-filter:blur(10px)}
+.p-header-section .p-search-input{color:var(--g950)}
+.p-header-section .p-search-input::placeholder{color:var(--g600)}
+.p-header-section .p-dorsal-clear{background:var(--portal-glass-border,rgba(255,255,255,0.3))}
+.p-header-section .p-dorsal-clear:hover{background:rgba(255,255,255,0.5)}
+.p-header-section .p-dorsal-clear .msi{color:var(--g950)}
 .p-selfie-btn{display:flex;align-items:center;gap:8px;background:var(--portal-btn-selfie,var(--color-accent));color:var(--portal-btn-selfie-text,var(--color-accent-text));border:none;border-radius:80px;padding:var(--space-3) var(--space-5);font-size:14px;font-weight:600;font-family:var(--font-ui);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s}
 .p-selfie-btn:hover{background:var(--portal-btn-selfie-hover,var(--color-accent-hover))}
 .p-selfie-btn .msi{font-size:18px}
@@ -183,7 +205,8 @@
 @media (max-width: 768px){
   /* Tighter chrome so content keeps its width */
   .p-topbar{padding:var(--space-4) var(--space-5)}
-  .p-header-section{padding:var(--space-9) var(--space-5) var(--space-7);gap:18px}
+  .p-hero-top{padding:var(--space-4) var(--space-5)}
+  .p-hero-content{padding:0 var(--space-4) var(--space-8);gap:16px}
   .p-header-title{font-size:26px}
   .p-header-desc{font-size:14px}
   .p-section{padding:0 var(--space-5) var(--space-8)}
@@ -212,6 +235,9 @@
 
 /* ── Phone: selfie + dorsal share line 1 (50/50), buscar full-width on line 2 ──── */
 @media (max-width: 520px){
+  .p-header-section{height:55vh;min-height:340px}
+  .p-hero-content{padding:0 var(--space-4) var(--space-7);gap:14px}
+  .p-hero-chips-row{padding:0 var(--space-4)}
   .p-hero-ctas{flex-wrap:wrap;gap:8px}
   /* explicit 50% basis (minus half the 8px gap) → exact 50/50 split on line 1 */
   .p-selfie-btn{flex:1 1 calc(50% - 4px);justify-content:center;padding:var(--space-3) var(--space-3);min-width:0}
