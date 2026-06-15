@@ -971,13 +971,9 @@ function _buildHTML() {
   const faces = _faceStats();
   const total = _totalFiles();
 
-  const tabs = `<div class="an-tabs">
-    <button class="an-tab-btn${_tab === 'dam' ? ' active' : ''}" data-tab="dam">
-      <span class="msi">database</span>DAM — Assets
-    </button>
-    <button class="an-tab-btn${_tab === 'portales' ? ' active' : ''}" data-tab="portales">
-      <span class="msi">captive_portal</span>Portales
-    </button>
+  const tabs = `<div class="tabs">
+    <div class="tab${_tab === 'dam' ? ' active' : ''}" data-tab="dam">DAM — Assets</div>
+    <div class="tab${_tab === 'portales' ? ' active' : ''}" data-tab="portales">Portales</div>
   </div>`;
 
   let content = '';
@@ -1016,7 +1012,7 @@ function _buildHTML() {
 // ── Events ────────────────────────────────────────────────────────────────
 
 function _bindEvents(sec) {
-  sec.querySelectorAll('.an-tab-btn').forEach(btn => {
+  sec.querySelectorAll('.tab[data-tab]').forEach(btn => {
     btn.addEventListener('click', () => {
       _tab = btn.dataset.tab;
       renderAnalytics();
