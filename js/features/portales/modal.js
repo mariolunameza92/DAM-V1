@@ -1,40 +1,93 @@
-// Exports: st (estado del modal), openModal(), closeModal(), showStep(n), goStep(n), tryGoStep(n), selectAccess(), handleAccent(), handleLogo(), toggleInline(), renderFolderList(), toggleFolder(), filterFolders(), copyLink(), onNameInput(), setDoneBtn(), prepareStep4(), resetCopyBtn(), selectSearchMethod()
+// Exports: st (estado del modal), openModal(), closeModal(), showStep(n), goStep(n), tryGoStep(n), selectAccess(), handleAccent(), handleTheme(), handleLogo(), toggleInline(), renderFolderList(), toggleFolder(), filterFolders(), filterUnits(), toggleUnit(), selectPortalType(), copyLink(), onNameInput(), setDoneBtn(), prepareStep4(), resetCopyBtn(), selectSearchMethod()
 import { FOLDERS_DATA } from '../../data.js';
 import { generateShadeScale } from '../../utils.js';
+import { getUnits } from '../../session.js';
 
 export const st = {
   accent: '#22252f', font: 'Google Sans', access: 'public',
   theme: 'light', title: '', desc: '', selectedFolders: new Set(),
   logoSvgText: '', searchMethod: 'both',
+  type: 'unit', selectedUnits: new Set(),
 };
 
 let _editingRow = null;
 export function getEditingRow()   { return _editingRow; }
 export function clearEditingRow() { _editingRow = null; }
 
-function _setStep4EditMode(isEdit) {
+function _setStep4ForType(isEdit) {
   const step4 = document.getElementById('step-4');
   if (!step4) return;
-  const titleEl = step4.querySelector('.modal-title');
-  const chipEl  = step4.querySelector('.success-chip');
-  const submitEl = step4.querySelector('.btn-submit');
-  if (titleEl)  titleEl.textContent  = isEdit ? 'Editar Portal' : 'Crear Portal';
-  if (chipEl)   chipEl.innerHTML     = isEdit
+  const isMaster  = st.type === 'master';
+  const typeName  = isMaster ? 'Master' : 'Portal';
+  const titleEl   = step4.querySelector('.modal-title');
+  const chipEl    = step4.querySelector('.success-chip');
+  const submitEl  = step4.querySelector('.btn-submit');
+  if (titleEl)  titleEl.textContent = isEdit ? `Editar ${typeName}` : `Crear ${typeName}`;
+  if (chipEl)   chipEl.innerHTML    = isEdit
     ? `<span class="msi sm" style="color:#16a34a">check_circle</span>¡Cambios guardados!`
-    : `<span class="msi sm" style="color:#16a34a">check_circle</span>¡Portal creado exitosamente!`;
-  if (submitEl) submitEl.textContent = isEdit ? 'Guardar y ver' : 'Ver Portal';
+    : `<span class="msi sm" style="color:#16a34a">check_circle</span>¡${typeName} creado exitosamente!`;
+  if (submitEl) submitEl.textContent = isEdit ? 'Guardar y ver' : `Ver ${typeName}`;
 }
+
+export function selectPortalType(type) {
+  st.type = type;
+  const folderSec = document.getElementById('folder-section');
+  const unitSec   = document.getElementById('unit-section');
+  const btnUnit   = document.getElementById('type-unit');
+  const btnMaster = document.getElementById('type-master');
+  if (folderSec) folderSec.style.display = type === 'unit' ? '' : 'none';
+  if (unitSec)   unitSec.style.display   = type === 'master' ? '' : 'none';
+  if (btnUnit)   btnUnit.classList.toggle('active', type === 'unit');
+  if (btnMaster) btnMaster.classList.toggle('active', type === 'master');
+  if (type === 'master') renderUnitList('');
+  checkStep1();
+}
+
+export function renderUnitList(filter) {
+  const q     = (filter || '').toLowerCase();
+  const units = getUnits().filter(u => !q || u.title.toLowerCase().includes(q));
+  const list  = document.getElementById('unitList');
+  if (!list) return;
+  if (units.length === 0) {
+    list.innerHTML = `<div style="color:var(--g500);font-size:13px;padding:16px 0">Crea portales primero, luego agrégalos al master.</div>`;
+    return;
+  }
+  list.innerHTML = units.map(u => {
+    const sel = st.selectedUnits.has(u.id);
+    return `<div class="f-row">
+      <div class="f-icon"><span class="msi xs" style="color:var(--g500)">captive_portal</span></div>
+      <div class="f-info"><span class="f-name">${u.title}</span></div>
+      <button class="f-btn${sel ? ' added' : ''}" onclick="window.toggleUnit('${u.id}')">
+        ${sel ? `<span class="msi xs" style="color:white;font-size:13px">check</span>` : `<span class="msi xs">add</span>`}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+export function toggleUnit(id) {
+  if (st.selectedUnits.has(id)) st.selectedUnits.delete(id);
+  else st.selectedUnits.add(id);
+  renderUnitList(document.getElementById('inp-unit-search')?.value || '');
+  checkStep1();
+}
+
+export function filterUnits(val) { renderUnitList(val); }
 
 export function openModal() {
   _editingRow = null;
-  _setStep4EditMode(false);
+  _setStep4ForType(false);
   st.selectedFolders = new Set();
+  st.selectedUnits   = new Set();
+  st.type = 'unit';
   st.accent = '#22252f'; st.font = 'Google Sans'; st.access = 'public';
   st.theme = 'light'; st.title = ''; st.desc = ''; st.searchMethod = 'both';
   selectSearchMethod('both');
+  selectPortalType('unit');
 
   document.getElementById('inp-name').value   = '';
   document.getElementById('inp-search').value = '';
+  const unitSearch = document.getElementById('inp-unit-search');
+  if (unitSearch) unitSearch.value = '';
   document.getElementById('inp-pwd').value    = '';
   document.getElementById('inp-title').value  = '';
   document.getElementById('inp-desc').value   = '';
@@ -90,13 +143,15 @@ export function tryGoStep(n) {
 }
 
 function _canContinueStep1() {
-  return document.getElementById('inp-name').value.trim().length > 0 && st.selectedFolders.size > 0;
+  const hasName = document.getElementById('inp-name').value.trim().length > 0;
+  if (st.type === 'master') return hasName; // units are optional for masters
+  return hasName && st.selectedFolders.size > 0;
 }
 
 export function checkStep1() {
   const ok  = _canContinueStep1();
   const btn = document.getElementById('btn1next');
-  btn.disabled    = !ok;
+  btn.disabled      = !ok;
   btn.style.opacity = ok ? '1' : '.4';
   btn.style.cursor  = ok ? 'pointer' : 'default';
 }
@@ -242,6 +297,7 @@ export function prepareStep4() {
   const raw = document.getElementById('inp-name').value.trim();
   document.getElementById('url-slug').textContent =
     raw.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || 'mi-portal';
+  _setStep4ForType(!!_editingRow);
   resetCopyBtn();
 }
 
@@ -254,12 +310,16 @@ export function resetCopyBtn() {
 
 export function openModalEdit(rowEl) {
   _editingRow = rowEl;
-  const accent    = rowEl.dataset.portalAccent || '#22252f';
-  const title     = rowEl.dataset.portalTitle  || '';
-  const theme     = rowEl.dataset.portalTheme  || 'light';
-  const folderIds = (rowEl.dataset.portalFolders || '').split(',').filter(Boolean);
+  const accent     = rowEl.dataset.portalAccent  || '#22252f';
+  const title      = rowEl.dataset.portalTitle   || '';
+  const theme      = rowEl.dataset.portalTheme   || 'light';
+  const portalType = rowEl.dataset.portalType    || 'unit';
+  const folderIds  = (rowEl.dataset.portalFolders  || '').split(',').filter(Boolean);
+  const unitIds    = (rowEl.dataset.unitPortalIds   || '').split(',').filter(Boolean);
 
   st.selectedFolders = new Set(folderIds);
+  st.selectedUnits   = new Set(unitIds);
+  st.type = portalType;
   st.accent = accent; st.font = 'Google Sans'; st.access = 'public';
   st.theme = theme; st.title = title; st.desc = ''; st.logoSvgText = '';
   st.searchMethod = rowEl.dataset.portalSearch || 'both';
@@ -267,6 +327,8 @@ export function openModalEdit(rowEl) {
 
   document.getElementById('inp-name').value   = title;
   document.getElementById('inp-search').value = '';
+  const unitSearch = document.getElementById('inp-unit-search');
+  if (unitSearch) unitSearch.value = '';
   document.getElementById('inp-pwd').value    = '';
   document.getElementById('inp-title').value  = '';
   document.getElementById('inp-desc').value   = '';
@@ -288,7 +350,8 @@ export function openModalEdit(rowEl) {
 
   resetCopyBtn();
   renderFolderList('');
-  _setStep4EditMode(true);
+  selectPortalType(portalType);
+  _setStep4ForType(true);
   showStep(1);
   checkStep1();
   _checkContrastWarning();

@@ -179,6 +179,10 @@
 .p-folder-card-name{font-size:15px;font-weight:600;color:var(--g800);font-family:var(--font-ui);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .p-folder-card-count{font-size:13px;color:var(--color-accent);font-weight:600;font-family:var(--font-ui);white-space:nowrap;display:flex;align-items:center;gap:4px}
 
+/* Master viewer: unit portal cards */
+.p-unit-card-mosaic{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1}
+.p-unit-card-logo .msi{font-size:40px;color:rgba(255,255,255,0.75)}
+
 /* Portal lightbox */
 .p-lightbox{position:absolute;inset:0;z-index:50;display:flex;align-items:center;justify-content:center}
 .p-lb-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.88);cursor:pointer}

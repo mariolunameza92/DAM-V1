@@ -1,40 +1,74 @@
-// Exports: addToTable(title, fCount, photoCount, accent, folderIds, dateStr?, silent?, searchMethod?) — inserta fila en tabla de portales y persiste en session
-import { pushPortal } from '../../session.js';
+// Exports: addToTable(title, fCount, photoCount, accent, folderIds, dateStr?, silent?, searchMethod?, opts?) — inserta fila en tabla de portales y persiste en session
+import { pushPortal, getPortalById } from '../../session.js';
 import { showToast } from '../../components/ui/toast.js';
 import { openModalEdit } from './modal.js';
 
-export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr, silent, searchMethod) {
+export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr, silent, searchMethod, opts = {}) {
   const today = new Date();
   const d = dateStr || `${today.getDate()}/${today.toLocaleString('es', { month: 'short' })}/${today.getFullYear()}`;
-  const ids = Array.isArray(folderIds) ? folderIds : [];
+  const ids    = Array.isArray(folderIds) ? folderIds : [];
   const photos = photoCount || 0;
   const search = searchMethod || 'both';
+  const portalType = opts.type || 'unit';
+  const masterIds  = Array.isArray(opts.masterIds) ? opts.masterIds : [];
+  const unitIds    = Array.isArray(opts.unitPortalIds) ? opts.unitPortalIds : [];
 
-  if (!silent) pushPortal({ title, fCount, photoCount: photos, accent, folderIds: ids, dateStr: d, searchMethod: search });
+  let resolvedId = opts.id || '';
+  if (!silent) {
+    resolvedId = pushPortal({
+      title, fCount, photoCount: photos, accent,
+      theme: opts.theme || 'light',
+      folderIds: ids, dateStr: d, searchMethod: search,
+      id: opts.id || undefined,
+      type: portalType, masterIds, unitPortalIds: unitIds,
+    });
+  }
+
+  const isMaster = portalType === 'master';
 
   const row = document.createElement('div');
-  row.className = 'table-row';
+  row.className = 'table-row' + (isMaster ? ' table-row--master' : '');
   row.style.animation = 'fadeIn .3s ease';
-  row.dataset.portalTitle = title;
-  row.dataset.portalAccent = accent;
+  row.dataset.portalTitle   = title;
+  row.dataset.portalAccent  = accent;
   row.dataset.portalFolders = ids.join(',');
-  row.dataset.portalSearch = search;
+  row.dataset.portalSearch  = search;
+  row.dataset.portalType    = portalType;
+  row.dataset.portalTheme   = opts.theme || 'light';
+  if (resolvedId)     row.dataset.portalId      = resolvedId;
+  if (unitIds.length) row.dataset.unitPortalIds = unitIds.join(',');
+
+  const typeBadge = isMaster
+    ? `<span class="portal-type-badge portal-type-badge--master">Master</span>`
+    : '';
+
+  const masterPillsHTML = !isMaster && masterIds.length > 0
+    ? masterIds.map(mid => {
+        const m = getPortalById(mid);
+        return m ? `<span class="master-pill">${m.title}</span>` : '';
+      }).filter(Boolean).join('')
+    : '';
+
+  const icon = isMaster ? 'hub' : 'captive_portal';
+  const countCells = isMaster
+    ? `<span class="content-chip"><span class="msi xs" style="color:var(--g500)">captive_portal</span>&nbsp;${fCount}</span>`
+    : `<span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${fCount}</span>
+       <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${photos}</span>`;
+
   row.innerHTML = `
     <div class="col"><div class="portal-name-cell" style="cursor:pointer">
       <div class="portal-icon-box">
-        <span class="msi xs" style="color:var(--g500)">captive_portal</span>
-      </div>${title}
+        <span class="msi xs">${icon}</span>
+      </div>${typeBadge}${title}${masterPillsHTML}
     </div></div>
-    <div class="col"><div class="content-cell">
-      <span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${fCount}</span>
-      <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${photos}</span>
-    </div></div>
+    <div class="col"><div class="content-cell">${countCells}</div></div>
     <div class="col">${d}</div>
     <div class="col" style="display:flex;align-items:center;gap:12px">
       <span style="flex:1">Tú</span>
       <button class="more-btn portal-more-btn"><span class="msi xs">more_horiz</span></button>
     </div>`;
   document.querySelector('#portalsTable .table-head').after(row);
+  return row;
 }
 
 // ── Portal row dropdown (event delegation — one listener for all rows) ────────
@@ -45,10 +79,10 @@ function _initPortalMenu() {
   _portalMenu = document.createElement('div');
   _portalMenu.className = 'ctx-menu';
   _portalMenu.innerHTML = `
-    <button class="ctx-item" data-action="view"><span class="msi xs" style="vertical-align:middle;margin-right:6px">open_in_new</span>Ver portal</button>
+    <button class="ctx-item" data-action="view"><span class="msi xs" style="vertical-align:middle;margin-right:6px">open_in_new</span><span class="menu-view-label">Ver portal</span></button>
     <button class="ctx-item" data-action="edit"><span class="msi xs" style="vertical-align:middle;margin-right:6px">edit</span>Editar</button>
     <button class="ctx-item" data-action="share"><span class="msi xs" style="vertical-align:middle;margin-right:6px">share</span>Compartir</button>
-    <button class="ctx-item" data-action="duplicate"><span class="msi xs" style="vertical-align:middle;margin-right:6px">content_copy</span>Duplicar</button>
+    <button class="ctx-item ctx-item--dup" data-action="duplicate"><span class="msi xs" style="vertical-align:middle;margin-right:6px">content_copy</span>Duplicar</button>
     <div class="ctx-divider"></div>
     <button class="ctx-item ctx-item--danger" data-action="delete"><span class="msi xs" style="color:#e53e3e;vertical-align:middle;margin-right:6px">delete</span>Eliminar</button>`;
   document.body.appendChild(_portalMenu);
@@ -69,9 +103,9 @@ function _initPortalMenu() {
       if (navigator.clipboard) navigator.clipboard.writeText(`https://len.pe/portal/${slug}`);
       showToast('Link copiado al portapapeles');
     } else if (btn.dataset.action === 'duplicate') {
-      if (row) {
+      if (row && row.dataset.portalType !== 'master') {
         const folderIds = (row.dataset.portalFolders || '').split(',').filter(Boolean);
-        addToTable(`${row.dataset.portalTitle || 'Portal'} (copia)`, folderIds.length, 0, row.dataset.portalAccent || '#22252f', folderIds, undefined, false, row.dataset.portalSearch || 'both');
+        addToTable(`${row.dataset.portalTitle || 'Portal'} (copia)`, folderIds.length, 0, row.dataset.portalAccent || '#22252f', folderIds, undefined, false, row.dataset.portalSearch || 'both', { theme: row.dataset.portalTheme || 'light' });
         showToast('Portal duplicado');
       }
     } else if (btn.dataset.action === 'delete') {
@@ -82,6 +116,14 @@ function _initPortalMenu() {
 
 function _openPortalMenu(anchorBtn) {
   _portalMenuAnchor = anchorBtn;
+  const row      = anchorBtn.closest('.table-row');
+  const isMaster = row?.dataset.portalType === 'master';
+
+  // Adapt labels and visibility for the portal type
+  const viewLabel = _portalMenu.querySelector('.menu-view-label');
+  if (viewLabel) viewLabel.textContent = isMaster ? 'Ver master' : 'Ver portal';
+  const dupBtn = _portalMenu.querySelector('.ctx-item--dup');
+  if (dupBtn) dupBtn.style.display = isMaster ? 'none' : '';
 
   const rect = anchorBtn.getBoundingClientRect();
   const mw = 180, mh = 200;

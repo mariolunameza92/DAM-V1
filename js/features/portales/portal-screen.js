@@ -14,7 +14,7 @@ function getPortalNumCols() {
   if (w <= 1920) return 6;
   return 7;
 }
-import { uploadedAssets } from '../../session.js';
+import { uploadedAssets, pushPortal, getPortalById, savePortalsSession, getUnits } from '../../session.js';
 import { registerSection, _registry } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 
@@ -169,6 +169,7 @@ function _updateHeroBg() {
 
 // ── Public entry points ───────────────────────────────────────────────────────
 export function openPortal() {
+  if (st.type === 'master') { _openMaster(); return; }
   const rawName = document.getElementById('inp-name').value.trim() || 'Mi Portal';
   const title   = rawName;
   const desc    = st.desc   || 'Selección de recursos para compartir';
@@ -238,6 +239,7 @@ export function closePortal() {
 function _applySearchMethod(method) {
   const ctas = document.getElementById('p-hero-ctas');
   if (!ctas) return;
+  ctas.style.display = ''; // restore if hidden by master viewer
   ctas.classList.remove('p-hero-ctas--faceid', 'p-hero-ctas--dorsal');
   if (method === 'faceid') ctas.classList.add('p-hero-ctas--faceid');
   else if (method === 'dorsal') ctas.classList.add('p-hero-ctas--dorsal');
@@ -321,9 +323,9 @@ function _resolveNav(folders) {
   if (folders.length === 1) {
     const children = _getChildrenOf(folders[0].id);
     if (!children.length) return { mode: 'masonry', items: folders };
-    return { mode: children.length > 6 ? 'folder-grid' : 'tabs', items: children };
+    return { mode: 'tabs', items: children };
   }
-  return { mode: folders.length > 6 ? 'folder-grid' : 'tabs', items: folders };
+  return { mode: 'tabs', items: folders };
 }
 
 function _renderNavigation() {
@@ -787,6 +789,121 @@ function _initPortalLightbox() {
     if (e.key === 'ArrowRight') { _lbIdx = (_lbIdx + 1) % _lbAssets.length; _lbUpdate(); }
     if (e.key === 'Escape') _closeLightbox();
   });
+}
+
+// ── Master portal viewer ──────────────────────────────────────────────────────
+let _masterUnits = [];
+
+function _renderMasterViewer(units) {
+  _masterUnits = units;
+  const tabsSec  = document.getElementById('p-tabs-section');
+  const grid     = document.getElementById('p-folder-grid');
+  const masonry  = document.getElementById('p-masonry');
+  const drillBar = document.getElementById('p-drill-back');
+
+  tabsSec.style.display  = 'none';
+  masonry.style.display  = 'none';
+  drillBar.style.display = 'none';
+  grid.style.display     = '';
+
+  // Hide search CTAs — not applicable to master viewers
+  const ctas = document.getElementById('p-hero-ctas');
+  if (ctas) ctas.style.display = 'none';
+
+  // Override hero bg immediately using the first unit's folder images
+  const allFolderIds = units.flatMap(u => u.folderIds || []);
+  const allFolders   = FOLDERS_DATA.filter(f => allFolderIds.includes(f.id));
+  if (allFolders.length > 0) {
+    const el  = document.getElementById('p-hero-bg');
+    const src = _pickHeroImage(allFolders);
+    if (el && src) { el.style.backgroundImage = `url("${src}")`; el.style.opacity = '1'; }
+  }
+
+  grid.innerHTML = units.length === 0
+    ? `<div style="color:var(--g500);font-size:14px;padding:24px 0;font-family:var(--font-ui)">Este master no tiene portales asignados aún.</div>`
+    : units.map((u, i) => {
+        const accent = u.accent || '#22252f';
+        return `<div class="p-folder-card p-unit-card" data-unit-idx="${i}" style="cursor:pointer">
+          <div class="p-folder-card-mosaic p-unit-card-mosaic" style="background:${accent}">
+            <div class="p-unit-card-logo"><span class="msi">captive_portal</span></div>
+          </div>
+          <div class="p-folder-card-info">
+            <span class="p-folder-card-name">${u.title}</span>
+            <span class="p-folder-card-count"><span class="msi xs">folder</span>&nbsp;${u.fCount || 0}</span>
+          </div>
+        </div>`;
+      }).join('');
+
+  grid.querySelectorAll('.p-unit-card').forEach(card => {
+    const idx  = parseInt(card.dataset.unitIdx);
+    const unit = _masterUnits[idx];
+    if (!unit) return;
+    card.addEventListener('click', () => {
+      const ids    = unit.folderIds || [];
+      const params = new URLSearchParams({ portal: '1', title: unit.title, accent: unit.accent || '#333', folders: ids.join(','), theme: unit.theme || 'light', search: unit.searchMethod || 'both' });
+      window.open(`${location.pathname}?${params}`, '_blank');
+    });
+  });
+}
+
+function _openMaster() {
+  const title   = document.getElementById('inp-name').value.trim() || 'Mi Master';
+  const accent  = st.accent;
+  const theme   = st.theme || 'light';
+  const font    = document.getElementById('font-sel').value;
+  const search  = st.searchMethod || 'both';
+  const unitIds = [...st.selectedUnits];
+  const today   = new Date();
+  const d = `${today.getDate()}/${today.toLocaleString('es', { month: 'short' })}/${today.getFullYear()}`;
+
+  // Persist master portal to session (silent in addToTable, we handle it here)
+  const masterId = pushPortal({
+    title, type: 'master', accent, theme, dateStr: d,
+    searchMethod: search, unitPortalIds: unitIds,
+    folderIds: [], fCount: unitIds.length, photoCount: 0,
+  });
+
+  // Sync masterIds on each selected unit
+  unitIds.forEach(uid => {
+    const unit = getPortalById(uid);
+    if (unit) {
+      if (!unit.masterIds) unit.masterIds = [];
+      if (!unit.masterIds.includes(masterId)) unit.masterIds.push(masterId);
+    }
+  });
+  savePortalsSession();
+
+  // Add to the table (silent — already in session)
+  addToTable(title, unitIds.length, 0, accent, [], d, true, search, {
+    id: masterId, type: 'master', theme, unitPortalIds: unitIds,
+  });
+
+  // Resolve unit portal data objects
+  const units = unitIds.map(id => getPortalById(id)).filter(Boolean);
+
+  _renderPortal(title, `${unitIds.length} portal${unitIds.length !== 1 ? 'es' : ''}`, accent, theme, font, '', [], search);
+  _renderMasterViewer(units);
+
+  closeModal();
+  document.getElementById('portalScreen').classList.add('open');
+  document.getElementById('appShell').style.display = 'none';
+  _animatePortalIn();
+  _attachPortalResize();
+}
+
+export function openMasterFromRow(masterId, title, accent, theme) {
+  const portal  = masterId ? getPortalById(masterId) : null;
+  const unitIds = portal?.unitPortalIds || [];
+  const units   = unitIds.map(id => getPortalById(id)).filter(Boolean);
+  const count   = units.length;
+
+  _renderPortal(title, `${count} portal${count !== 1 ? 'es' : ''}`, accent, theme, 'Google Sans', '', [], 'both');
+  _renderMasterViewer(units);
+
+  document.getElementById('portalScreen').classList.add('open');
+  document.getElementById('appShell').style.display = 'none';
+  _animatePortalIn();
+  _attachPortalResize();
 }
 
 // ── Animation ─────────────────────────────────────────────────────────────────

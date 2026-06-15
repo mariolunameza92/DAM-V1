@@ -1,4 +1,4 @@
-// Exports: uploadedAssets{}, userUploadedAssets{}, saveUploadsSession(), savePortalsSession(), loadUploadsFromSession(), loadPortalsFromSession(), pushPortal(), pushUserFolder(), loadUserFoldersFromSession()
+// Exports: uploadedAssets{}, userUploadedAssets{}, saveUploadsSession(), savePortalsSession(), loadUploadsFromSession(), loadPortalsFromSession(), pushPortal(), getPortalById(), getMasters(), getUnits(), getPortals(), addUnitToMaster(), removeUnitFromMaster(), pushUserFolder(), loadUserFoldersFromSession()
 import { showToast } from './components/ui/toast.js';
 
 const SS_PORTALS = 'len_portals';
@@ -9,6 +9,10 @@ export const uploadedAssets     = {}; // demo assets — set by initDemoImages
 export const userUploadedAssets = {}; // user uploads — persisted to sessionStorage
 
 const _portals = [];
+
+function _genId() {
+  return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+}
 
 export function saveUploadsSession() {
   const toSave = {};
@@ -40,6 +44,12 @@ export function loadPortalsFromSession() {
     const raw = sessionStorage.getItem(SS_PORTALS);
     if (raw) {
       const saved = JSON.parse(raw);
+      // Backward compat: add missing fields added in Propuesta B
+      saved.forEach(p => {
+        if (!p.id)        p.id        = _genId();
+        if (!p.type)      p.type      = 'unit';
+        if (!p.masterIds) p.masterIds = [];
+      });
       _portals.push(...saved);
       return saved;
     }
@@ -47,12 +57,38 @@ export function loadPortalsFromSession() {
   return [];
 }
 
+// Returns the generated/assigned ID
 export function pushPortal(portal) {
+  if (!portal.id)        portal.id        = _genId();
+  if (!portal.type)      portal.type      = 'unit';
+  if (!portal.masterIds) portal.masterIds = [];
   _portals.push(portal);
+  savePortalsSession();
+  return portal.id;
+}
+
+export function getPortalById(id) { return _portals.find(p => p.id === id) || null; }
+export function getMasters()      { return _portals.filter(p => p.type === 'master'); }
+export function getUnits()        { return _portals.filter(p => p.type !== 'master'); }
+export function getPortals()      { return _portals.slice(); }
+
+export function addUnitToMaster(masterId, unitId) {
+  const master = _portals.find(p => p.id === masterId);
+  const unit   = _portals.find(p => p.id === unitId);
+  if (!master || !unit) return;
+  if (!master.unitPortalIds) master.unitPortalIds = [];
+  if (!master.unitPortalIds.includes(unitId)) master.unitPortalIds.push(unitId);
+  if (!unit.masterIds.includes(masterId)) unit.masterIds.push(masterId);
   savePortalsSession();
 }
 
-export function getPortals() { return _portals.slice(); }
+export function removeUnitFromMaster(masterId, unitId) {
+  const master = _portals.find(p => p.id === masterId);
+  const unit   = _portals.find(p => p.id === unitId);
+  if (master) master.unitPortalIds = (master.unitPortalIds || []).filter(id => id !== unitId);
+  if (unit)   unit.masterIds       = unit.masterIds.filter(id => id !== masterId);
+  savePortalsSession();
+}
 
 // ── User-created folders ──────────────────────────────────────────────────────
 const _userFolders = []; // { id, parentId, label }

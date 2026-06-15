@@ -9,3 +9,20 @@
 .portal-icon-box{width:40px;height:40px;border-radius:8px;background:var(--g100);border:1.5px solid var(--g200);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .content-cell{display:flex;gap:20px;align-items:center}
 .content-chip{display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;color:var(--g800);font-family:var(--font-mono)}
+
+/* Type badges */
+.portal-type-badge{font-size:10px;font-weight:700;letter-spacing:0.06em;padding:2px 7px;border-radius:4px;text-transform:uppercase;flex-shrink:0;line-height:16px;align-self:center}
+.portal-type-badge--master{background:var(--g800);color:var(--g50)}
+
+/* Master membership pills shown on unit rows */
+.master-pill{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;background:var(--g100);color:var(--g600);border:1px solid var(--g200);white-space:nowrap;flex-shrink:0}
+
+/* Master row: icon box tinted dark */
+.table-row--master .portal-icon-box{background:var(--g800);border-color:var(--g700)}
+.table-row--master .portal-icon-box .msi{color:var(--g100)!important}
+
+/* Step-1 modal: type toggle */
+.portal-type-toggle{display:flex;gap:8px;margin-bottom:16px}
+.portal-type-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 0;border-radius:8px;border:1.5px solid var(--g200);background:var(--g50);color:var(--g600);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font-ui)}
+.portal-type-btn:hover{border-color:var(--g400);color:var(--g800)}
+.portal-type-btn.active{border-color:var(--g800);background:var(--g800);color:var(--g50)}

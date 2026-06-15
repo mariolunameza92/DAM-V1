@@ -7,8 +7,8 @@ import { initDemoImages, processUpload } from './features/carpetas/upload.js';
 import { renderInicio, initFaceFilters, initSearch, typingWelcome, initSectionReveal } from './features/inicio/inicio.js';
 import { initFilters } from './features/inicio/filters.js';
 import { initFaceIds } from './features/faceids/faceids.js';
-import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, copyLink, onNameInput, renderFolderList, selectSearchMethod } from './features/portales/modal.js';
-import { openPortal, closePortal, openPortalFromRow, handleDorsalSearch, clearDorsalSearch, handlePortalSearch, refreshPortalImages } from './features/portales/portal-screen.js';
+import { st, openModal, closeModal, goStep, tryGoStep, selectAccess, handleAccent, handleTheme, handleLogo, toggleInline, filterFolders, toggleFolder, filterUnits, toggleUnit, selectPortalType, copyLink, onNameInput, renderFolderList, selectSearchMethod } from './features/portales/modal.js';
+import { openPortal, closePortal, openPortalFromRow, openMasterFromRow, handleDorsalSearch, clearDorsalSearch, handlePortalSearch, refreshPortalImages } from './features/portales/portal-screen.js';
 import { addToTable } from './features/portales/table.js';
 import { initImageDetail } from './features/carpetas/image-detail.js';
 import { initContextMenu } from './features/shared/context-menu.js';
@@ -55,7 +55,18 @@ export function goToCarpeta(nodeId) {
 function restoreSession() {
   loadUploadsFromSession();
   loadUserFoldersFromSession().forEach(f => addUserFolder(f.parentId, f.label, f.id));
-  loadPortalsFromSession().forEach(p => addToTable(p.title, p.fCount, p.photoCount || 0, p.accent, p.folderIds || [], p.dateStr, true, p.searchMethod || 'both'));
+  const portals = loadPortalsFromSession();
+  // Render masters first so unit pills can resolve master titles
+  portals.filter(p => p.type === 'master').forEach(p =>
+    addToTable(p.title, (p.unitPortalIds || []).length, 0, p.accent, [], p.dateStr, true, p.searchMethod || 'both', {
+      id: p.id, type: 'master', theme: p.theme || 'light', unitPortalIds: p.unitPortalIds || [],
+    })
+  );
+  portals.filter(p => p.type !== 'master').forEach(p =>
+    addToTable(p.title, p.fCount, p.photoCount || 0, p.accent, p.folderIds || [], p.dateStr, true, p.searchMethod || 'both', {
+      id: p.id, type: 'unit', theme: p.theme || 'light', masterIds: p.masterIds || [],
+    })
+  );
 }
 
 // ── Event listeners ───────────────────────────────────────────────
@@ -82,13 +93,24 @@ document.getElementById('portalsTable').addEventListener('click', e => {
   if (!cell) return;
   const row = cell.closest('.table-row');
   if (!row) return;
-  const title     = row.dataset.portalTitle   || '';
-  const accent    = row.dataset.portalAccent  || '';
-  const theme     = row.dataset.portalTheme   || 'light';
-  const search    = row.dataset.portalSearch  || 'both';
-  const folderIds = row.dataset.portalFolders ? row.dataset.portalFolders.split(',').filter(Boolean) : [];
-  const params = new URLSearchParams({ portal: '1', title, accent, folders: folderIds.join(','), theme, search });
-  window.open(`${location.pathname}?${params}`, '_blank');
+  const portalType = row.dataset.portalType || 'unit';
+
+  if (portalType === 'master') {
+    openMasterFromRow(
+      row.dataset.portalId    || '',
+      row.dataset.portalTitle  || '',
+      row.dataset.portalAccent || '',
+      row.dataset.portalTheme  || 'light'
+    );
+  } else {
+    const title     = row.dataset.portalTitle   || '';
+    const accent    = row.dataset.portalAccent  || '';
+    const theme     = row.dataset.portalTheme   || 'light';
+    const search    = row.dataset.portalSearch  || 'both';
+    const folderIds = row.dataset.portalFolders ? row.dataset.portalFolders.split(',').filter(Boolean) : [];
+    const params = new URLSearchParams({ portal: '1', title, accent, folders: folderIds.join(','), theme, search });
+    window.open(`${location.pathname}?${params}`, '_blank');
+  }
 });
 
 document.addEventListener('click', e => {
@@ -153,9 +175,13 @@ Object.assign(window, {
   toggleFolder,
   copyLink,
   onNameInput,
+  selectPortalType,
+  toggleUnit,
+  filterUnits,
   openPortal,
   closePortal,
   openPortalFromRow,
+  openMasterFromRow,
   handleDorsalSearch,
   clearDorsalSearch,
   handlePortalSearch,

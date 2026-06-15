@@ -359,12 +359,25 @@
       <div class="step-bar">
         <div class="step-dot active" id="d1-1"></div><div class="step-dot" id="d1-2"></div><div class="step-dot" id="d1-3"></div><div class="step-dot" id="d1-4"></div>
       </div>
-      <input class="field" id="inp-name" type="text" placeholder="Ingresa un nombre para el portal" oninput="onNameInput()"/>
-      <div class="field-wrap">
-        <span class="msi xs" style="position:absolute;left:14px;color:var(--g700)">search</span>
-        <input class="field" id="inp-search" type="text" placeholder="Busca el contenido a incluir" oninput="filterFolders(this.value)" style="padding-left:36px;margin-top:10px"/>
+      <div class="portal-type-toggle">
+        <button class="portal-type-btn active" id="type-unit" onclick="selectPortalType('unit')"><span class="msi xs">captive_portal</span>Portal</button>
+        <button class="portal-type-btn" id="type-master" onclick="selectPortalType('master')"><span class="msi xs">hub</span>Master</button>
       </div>
-      <div class="folder-list" id="folderList"></div>
+      <input class="field" id="inp-name" type="text" placeholder="Ingresa un nombre" oninput="onNameInput()"/>
+      <div id="folder-section">
+        <div class="field-wrap">
+          <span class="msi xs" style="position:absolute;left:14px;color:var(--g700)">search</span>
+          <input class="field" id="inp-search" type="text" placeholder="Busca el contenido a incluir" oninput="filterFolders(this.value)" style="padding-left:36px;margin-top:10px"/>
+        </div>
+        <div class="folder-list" id="folderList"></div>
+      </div>
+      <div id="unit-section" style="display:none">
+        <div class="field-wrap">
+          <span class="msi xs" style="position:absolute;left:14px;color:var(--g700)">search</span>
+          <input class="field" id="inp-unit-search" type="text" placeholder="Busca portales unitarios" oninput="filterUnits(this.value)" style="padding-left:36px;margin-top:10px"/>
+        </div>
+        <div class="folder-list" id="unitList"></div>
+      </div>
       <div class="modal-footer">
         <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
         <button class="btn-submit" id="btn1next" onclick="tryGoStep(2)" disabled>Continuar</button>
