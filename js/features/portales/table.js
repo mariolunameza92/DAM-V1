@@ -38,10 +38,6 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
   if (resolvedId)     row.dataset.portalId      = resolvedId;
   if (unitIds.length) row.dataset.unitPortalIds = unitIds.join(',');
 
-  const typeBadge = isMaster
-    ? `<span class="portal-type-badge portal-type-badge--master">Master</span>`
-    : '';
-
   const masterPillsHTML = !isMaster && masterIds.length > 0
     ? masterIds.map(mid => {
         const m = getPortalById(mid);
@@ -55,12 +51,17 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
     : `<span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${fCount}</span>
        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${photos}</span>`;
 
+  const typeChip = isMaster
+    ? `<span class="portal-type-chip portal-type-chip--master">Master</span>`
+    : `<span class="portal-type-chip portal-type-chip--regular">Regular</span>`;
+
   row.innerHTML = `
     <div class="col"><div class="portal-name-cell" style="cursor:pointer">
       <div class="portal-icon-box">
         <span class="msi xs">${icon}</span>
-      </div>${typeBadge}${title}${masterPillsHTML}
+      </div>${title}${masterPillsHTML}
     </div></div>
+    <div class="col col--tipo">${typeChip}</div>
     <div class="col"><div class="content-cell">${countCells}</div></div>
     <div class="col">${d}</div>
     <div class="col" style="display:flex;align-items:center;gap:12px">

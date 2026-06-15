@@ -10,9 +10,11 @@
 .content-cell{display:flex;gap:20px;align-items:center}
 .content-chip{display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;color:var(--g800);font-family:var(--font-mono)}
 
-/* Type badges */
-.portal-type-badge{font-size:10px;font-weight:700;letter-spacing:0.06em;padding:2px 7px;border-radius:4px;text-transform:uppercase;flex-shrink:0;line-height:16px;align-self:center}
-.portal-type-badge--master{background:var(--g800);color:var(--g50)}
+/* Type chips (columna Tipo) */
+.col--tipo{display:flex;align-items:center;max-width:90px;min-width:90px}
+.portal-type-chip{font-size:10px;font-weight:700;letter-spacing:0.06em;padding:3px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap;line-height:16px}
+.portal-type-chip--master{background:var(--g800);color:var(--g50)}
+.portal-type-chip--regular{background:var(--g100);color:var(--g600);border:1px solid var(--g200)}
 
 /* Master membership pills shown on unit rows */
 .master-pill{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;background:var(--g100);color:var(--g600);border:1px solid var(--g200);white-space:nowrap;flex-shrink:0}
