@@ -40,6 +40,21 @@
 .masonry-cols{display:flex;gap:24px;width:100%;min-width:0}
 .masonry-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:24px}
 .asset-card{border-radius:8px;overflow:hidden;cursor:pointer;position:relative;content-visibility:auto;contain-intrinsic-size:0 200px}
+
+/* ── Blacklist: banner de fotos ocultas ──────────────────────────────────── */
+.bl-hidden-banner{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.18);border-radius:8px;font-size:13px;color:#b91c1c;font-family:var(--font-ui);margin-top:8px}
+.bl-hidden-banner .msi{color:#dc2626;flex-shrink:0}
+.bl-hidden-banner-text{flex:1}
+.bl-hidden-toggle{margin-left:auto;background:none;border:1px solid rgba(220,38,38,.3);border-radius:6px;color:#b91c1c;font-size:12px;font-family:var(--font-ui);padding:3px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:background .12s;white-space:nowrap}
+.bl-hidden-toggle:hover{background:rgba(220,38,38,.1)}
+.bl-hidden-toggle .msi{font-size:14px;line-height:1}
+.bl-hidden-section{margin-top:16px;padding-top:16px;border-top:1px dashed rgba(220,38,38,.25)}
+
+/* Card oculta: overlay rojo + ícono person_off */
+.asset-card--bl{cursor:default}
+.asset-card--bl .asset-dl,.asset-card--bl .asset-hover{display:none}
+.bl-card-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(180,20,20,.42);z-index:2;pointer-events:none;border-radius:8px}
+.bl-card-overlay .msi{font-size:36px;color:#fff;opacity:.9;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
 .asset-ph{width:100%;border-radius:8px}
 .asset-dl{position:absolute;top:8px;right:8px;backdrop-filter:blur(40px);background:rgba(34,37,47,.4);padding:var(--space-2);border-radius:40px;display:flex;align-items:center;justify-content:center;color:var(--g50);opacity:0;transform:translateY(-8px);transition:opacity .2s ease,transform .2s ease;cursor:pointer}
 .asset-hover{position:absolute;bottom:8px;left:8px;right:8px;backdrop-filter:blur(40px);background:rgba(34,37,47,.4);padding:var(--space-2);border-radius:8px;display:flex;flex-direction:column;gap:4px;opacity:0;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}

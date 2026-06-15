@@ -17,6 +17,11 @@ function getPortalNumCols() {
 import { uploadedAssets, pushPortal, getPortalById, savePortalsSession, getUnits } from '../../session.js';
 import { registerSection, _registry } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
+import { isPhotoBlacklisted } from '../../blacklist-store.js';
+
+function _blFilter(assets) {
+  return assets.filter(a => !isPhotoBlacklisted(a.originalUrl || a.preview || ''));
+}
 
 let _portalFolders       = [];
 let _activeTabIdx        = 0;
@@ -469,12 +474,14 @@ function _renderMasonry(rawAssets) {
   const masonry = document.getElementById('p-masonry');
   if (!masonry) return;
 
-  if (rawAssets.length === 0) {
+  const filtered = _blFilter(rawAssets);
+
+  if (filtered.length === 0) {
     masonry.innerHTML = `<div style="color:var(--g500);font-size:14px;padding:24px 0;font-family:var(--font-ui)">Las imágenes demo cargan en un momento…</div>`;
     return;
   }
 
-  const assets = rawAssets.map(a => ({
+  const assets = filtered.map(a => ({
     src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
     name: a.name, originalUrl: a.originalUrl || a.preview,
   }));
@@ -550,7 +557,7 @@ function _searchBySelfie() {
   document.getElementById('p-tabs-section').style.display     = 'none';
   document.getElementById('p-content-section').style.display  = 'none';
 
-  const allAssets = _portalFolders.flatMap(_collectAssets);
+  const allAssets = _blFilter(_portalFolders.flatMap(_collectAssets));
   const assets = allAssets.map(a => ({
     src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
     name: a.name, originalUrl: a.originalUrl || a.preview,
@@ -578,7 +585,7 @@ function _searchCombined(val) {
   document.getElementById('p-tabs-section').style.display    = 'none';
   document.getElementById('p-content-section').style.display = 'none';
 
-  const allAssets = _portalFolders.flatMap(_collectAssets);
+  const allAssets = _blFilter(_portalFolders.flatMap(_collectAssets));
   const assets = allAssets.map(a => ({
     src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
     name: a.name, originalUrl: a.originalUrl || a.preview,
@@ -681,7 +688,7 @@ let _portalFaceName   = '';
 let _portalFaceView   = 'grid';
 
 function _renderPortalFaceResults(id, name) {
-  const source = _portalFolders.flatMap(_collectAssets);
+  const source = _blFilter(_portalFolders.flatMap(_collectAssets));
   const picks  = source.filter(a => a.faceIds && a.faceIds.includes(id));
   _portalFaceName   = name;
   _portalFaceView   = 'grid';
@@ -733,7 +740,7 @@ export function handleDorsalSearch() {
   document.getElementById('p-tabs-section').style.display    = 'none';
   document.getElementById('p-content-section').style.display = 'none';
 
-  const allAssets = _portalFolders.flatMap(_collectAssets);
+  const allAssets = _blFilter(_portalFolders.flatMap(_collectAssets));
   const assets = allAssets.map(a => ({
     src: a.preview, ext: a.ext.toUpperCase(), size: a.sizeStr,
     name: a.name, originalUrl: a.originalUrl || a.preview,

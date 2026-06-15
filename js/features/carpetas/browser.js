@@ -7,6 +7,7 @@ import { bindStaticToggle } from '../../components/ui/view-toggle.js';
 import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
+import { isPhotoBlacklisted } from '../../blacklist-store.js';
 
 export const treeState = {
   expanded: new Set(),
@@ -87,17 +88,68 @@ export function renderFolderContent(node) {
       })),
     ];
 
-    if (allItems.length > 0) {
-      registerSection('carpetas', allItems);
+    const visibleItems = allItems.filter(item => !isPhotoBlacklisted(item.originalUrl || item.src));
+    const hiddenItems  = allItems.filter(item =>  isPhotoBlacklisted(item.originalUrl || item.src));
+
+    if (visibleItems.length > 0 || hiddenItems.length > 0) {
+      if (visibleItems.length > 0) registerSection('carpetas', visibleItems);
       cols.style.display = '';
-      if (_carpetasView === 'grid') {
-        const colData = [[], [], []];
-        allItems.forEach((item, i) => colData[i % 3].push({ item, i }));
-        cols.innerHTML = colData.map(col =>
-          `<div class="masonry-col">${col.map(({ item, i }) => assetCardHTML(item, 'carpetas', i)).join('')}</div>`
-        ).join('');
-      } else {
-        cols.innerHTML = `<div class="file-list">${allItems.map((item, i) => assetListRowHTML(item, 'carpetas', i)).join('')}</div>`;
+
+      let mainHTML = '';
+      if (visibleItems.length > 0) {
+        if (_carpetasView === 'grid') {
+          const colData = [[], [], []];
+          visibleItems.forEach((item, i) => colData[i % 3].push({ item, i }));
+          mainHTML = colData.map(col =>
+            `<div class="masonry-col">${col.map(({ item, i }) => assetCardHTML(item, 'carpetas', i)).join('')}</div>`
+          ).join('');
+        } else {
+          mainHTML = `<div class="file-list">${visibleItems.map((item, i) => assetListRowHTML(item, 'carpetas', i)).join('')}</div>`;
+        }
+      }
+
+      let bannerHTML = '';
+      if (hiddenItems.length > 0) {
+        const n = hiddenItems.length;
+        let hiddenGrid;
+        if (_carpetasView === 'grid') {
+          const colData = [[], [], []];
+          hiddenItems.forEach((item, i) => colData[i % 3].push({ item, i }));
+          hiddenGrid = colData.map(col =>
+            `<div class="masonry-col">${col.map(({ item, i }) =>
+              assetCardHTML(item, 'carpetas-bl', i)
+                .replace('class="asset-card"', 'class="asset-card asset-card--bl"')
+                .replace('<img ', '<div class="bl-card-overlay"><span class="msi sm">person_off</span></div><img ')
+            ).join('')}</div>`
+          ).join('');
+        } else {
+          hiddenGrid = `<div class="file-list">${hiddenItems.map((item, i) => assetListRowHTML(item, 'carpetas-bl', i)).join('')}</div>`;
+        }
+        bannerHTML = `
+          <div class="bl-hidden-banner">
+            <span class="msi xs">person_off</span>
+            <span class="bl-hidden-banner-text">${n} foto${n !== 1 ? 's' : ''} oculta${n !== 1 ? 's' : ''} · personas en blacklist</span>
+            <button class="bl-hidden-toggle" data-bl-toggle><span class="bl-toggle-text">ver</span> <span class="msi xs bl-toggle-icon">expand_more</span></button>
+          </div>
+          <div class="bl-hidden-section" data-bl-section style="display:none">
+            <div class="masonry-cols">${hiddenGrid}</div>
+          </div>`;
+      }
+
+      cols.innerHTML = mainHTML + bannerHTML;
+
+      if (hiddenItems.length > 0) {
+        const toggleBtn = cols.querySelector('[data-bl-toggle]');
+        const section   = cols.querySelector('[data-bl-section]');
+        if (toggleBtn && section) {
+          toggleBtn.addEventListener('click', () => {
+            const open = section.style.display !== 'none';
+            section.style.display = open ? 'none' : '';
+            toggleBtn.querySelector('.bl-toggle-text').textContent = open ? 'ver' : 'ocultar';
+            const icon = toggleBtn.querySelector('.bl-toggle-icon');
+            if (icon) icon.textContent = open ? 'expand_more' : 'expand_less';
+          });
+        }
       }
     } else {
       cols.style.display = 'none';
