@@ -141,10 +141,30 @@ function _pickHeroImage(folders) {
 }
 
 function _setHeroBg(folders) {
-  const el  = document.getElementById('p-hero-bg');
+  const el = document.getElementById('p-hero-bg');
   if (!el) return;
-  const src = _pickHeroImage(folders);
-  el.style.backgroundImage = src ? `url("${src}")` : '';
+  const src  = _pickHeroImage(folders);
+  const next = src ? `url("${src}")` : '';
+  if (el.style.backgroundImage === next) return;
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.style.backgroundImage = next;
+    el.style.opacity = '1';
+  }, 220);
+}
+
+// Determines which folder(s) to use for the hero based on current nav state.
+function _updateHeroBg() {
+  if (_drillFolder) {
+    _setHeroBg([_drillFolder]);
+  } else if (_navMode === 'tabs') {
+    const item = _navItems[_activeTabIdx];
+    if (item) _setHeroBg([item]);
+  } else {
+    // masonry (single folder) or folder-grid (show first available)
+    const source = _navItems.length > 0 ? _navItems : _portalFolders;
+    _setHeroBg(source);
+  }
 }
 
 // ── Public entry points ───────────────────────────────────────────────────────
@@ -257,7 +277,6 @@ function _renderPortal(title, desc, accent, theme, font, logoSrc, folders, searc
     logoArea.style.display = 'none';
   }
 
-  _setHeroBg(folders);
   _clearFacePortalChip();
   _clearDorsalState();
   _resetSelfie();
@@ -343,6 +362,7 @@ function _renderNavigation() {
         bar.querySelectorAll('.p-tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         _renderActiveItem();
+        _setHeroBg([_navItems[idx]]);
       });
     });
     _renderActiveItem();
@@ -353,6 +373,8 @@ function _renderNavigation() {
     masonry.style.display = 'none';
     _renderFolderGrid(items);
   }
+
+  _updateHeroBg();
 }
 
 function _renderActiveItem() {
@@ -395,6 +417,7 @@ function _drillInto(folder) {
   document.getElementById('p-drill-back').style.display      = 'flex';
   document.getElementById('p-drill-folder-name').textContent = folder.name;
   _renderMasonry(uploadedAssets[folder.imageId || folder.id] || []);
+  _setHeroBg([folder]);
 }
 
 function _drillBack() {
@@ -403,6 +426,7 @@ function _drillBack() {
   document.getElementById('p-folder-grid').style.display = '';
   document.getElementById('p-drill-back').style.display  = 'none';
   _renderFolderGrid(_navItems);
+  _updateHeroBg();
 }
 
 function _renderMasonry(rawAssets) {
@@ -547,7 +571,7 @@ export function handlePortalSearch() {
 // active selfie/dorsal search. main.js calls openPortalFromRow twice (once
 // before images load, once after); the second pass used to reset the selfie.
 export function refreshPortalImages() {
-  _setHeroBg(_portalFolders);
+  _updateHeroBg();
   const results = document.getElementById('p-face-results');
   const searchActive = results && results.style.display !== 'none' && results.innerHTML.length > 0;
   if (!searchActive) { _renderNavigation(); return; }

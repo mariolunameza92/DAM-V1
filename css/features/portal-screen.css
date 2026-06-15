@@ -19,7 +19,7 @@
 /* Hero section — 50vh full-bleed with image + overlays */
 .p-header-section{position:relative;height:50vh;min-height:320px;overflow:hidden;display:flex;flex-direction:column;z-index:1}
 /* Background image layer — fallback gradient when no photo available */
-.p-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,var(--g200) 0%,var(--g400) 100%);background-size:cover;background-position:center;z-index:0}
+.p-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,var(--g200) 0%,var(--g400) 100%);background-size:cover;background-position:center;z-index:0;transition:opacity 0.22s ease}
 /* Color tint: portal bg color with alpha — ties the image to the brand palette */
 .p-hero-overlay{position:absolute;inset:0;background:var(--portal-hero-tint,oklch(0.05 0 0 / 0.48));z-index:1}
 /* Gradient overlay: opaque at top and bottom, transparent in the middle for readability */
