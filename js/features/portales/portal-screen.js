@@ -96,8 +96,11 @@ function _applyPortalTheme(el, accentHex, theme) {
   el.style.setProperty('--color-accent-dark-text', secondaryTxt.css);
 
   // Near-white and near-black with the accent hue embedded — no alpha compositing
-  el.style.setProperty('--portal-bg-whisper', `oklch(0.986 ${(C * 0.05).toFixed(4)} ${H.toFixed(2)})`);
-  el.style.setProperty('--portal-bg-deep',    `oklch(0.058 ${(C * 0.18).toFixed(4)} ${H.toFixed(2)})`);
+  const bgWhisper = `oklch(0.986 ${(C * 0.05).toFixed(4)} ${H.toFixed(2)})`;
+  const bgDeep    = `oklch(0.058 ${(C * 0.18).toFixed(4)} ${H.toFixed(2)})`;
+  el.style.setProperty('--portal-bg-whisper', bgWhisper);
+  el.style.setProperty('--portal-bg-deep',    bgDeep);
+  el.style.setProperty('--portal-bg',         isDark ? bgDeep : bgWhisper);
 
   // Decorative blob — accent-tinted, different stops for light vs dark
   const blobInner = isDark ? shades[7] : shades[2];
@@ -938,4 +941,36 @@ function _animatePortalIn() {
 
 _initSelfieSearch();
 _initPortalLightbox();
+_initTabsDrag();
 document.getElementById('p-drill-back-btn')?.addEventListener('click', _drillBack);
+
+function _initTabsDrag() {
+  const bar = document.getElementById('p-tabs-bar');
+  if (!bar) return;
+  let down = false, startX = 0, startScroll = 0, dragged = false;
+
+  bar.addEventListener('mousedown', e => {
+    down = true; dragged = false;
+    startX = e.pageX; startScroll = bar.scrollLeft;
+    bar.style.userSelect = 'none';
+  });
+  document.addEventListener('mouseup', () => {
+    if (!down) return;
+    down = false;
+    bar.style.userSelect = '';
+    bar.style.cursor = '';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!down) return;
+    const dx = e.pageX - startX;
+    if (Math.abs(dx) > 4) {
+      dragged = true;
+      bar.style.cursor = 'grabbing';
+      bar.scrollLeft = startScroll - dx;
+    }
+  });
+  // Suppress accidental tab-click after a drag (capture phase runs before the tab's listener)
+  bar.addEventListener('click', e => {
+    if (dragged) { e.stopPropagation(); dragged = false; }
+  }, true);
+}
