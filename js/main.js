@@ -1,6 +1,6 @@
 // Entry point: routing, session restore, event listeners globales, window.* bridge, init
 import { getNumCols } from './utils.js';
-import { loadUploadsFromSession, loadPortalsFromSession, loadUserFoldersFromSession } from './session.js';
+import { loadUploadsFromSession, loadPortalsFromSession, loadUserFoldersFromSession, pushPortal } from './session.js';
 import { addUserFolder } from './data.js';
 import { navigateToFolder, switchTab, showRecentFolders, openCrearCarpetaDialog, confirmCrearCarpeta, cancelCrearCarpeta } from './features/carpetas/browser.js';
 import { initDemoImages, processUpload } from './features/carpetas/upload.js';
@@ -51,11 +51,46 @@ export function goToCarpeta(nodeId) {
   navigateToFolder(nodeId);
 }
 
+// ── Demo seed — runs once when session is empty ───────────────────
+const _DEMO = [
+  // Masters
+  { id:'pm_carreras', type:'master', title:'Carreras LEN 2026',     accent:'#1d4ed8', theme:'light', dateStr:'10/Jun/2026', searchMethod:'both',   fCount:3, photoCount:0,  folderIds:[],         unitPortalIds:['pu_lima42k','pu_cusco','pu_colorrun'], masterIds:[] },
+  { id:'pm_eventos',  type:'master', title:'Eventos Corporativos',  accent:'#7c3aed', theme:'dark',  dateStr:'12/Jun/2026', searchMethod:'both',   fCount:2, photoCount:0,  folderIds:[],         unitPortalIds:['pu_colorrun','pu_rimac'],               masterIds:[] },
+  // Units — en 1 master
+  { id:'pu_lima42k',  type:'unit',   title:'Lima 42K 2026',         accent:'#D5FF22', theme:'dark',  dateStr:'1/Jun/2026',  searchMethod:'both',   fCount:7, photoCount:42, folderIds:['lima42k'],   unitPortalIds:[], masterIds:['pm_carreras'] },
+  { id:'pu_cusco',    type:'unit',   title:'Cusco Trail 50K',       accent:'#d97706', theme:'light', dateStr:'3/Jun/2026',  searchMethod:'dorsal', fCount:4, photoCount:28, folderIds:['lima42k'],   unitPortalIds:[], masterIds:['pm_carreras'] },
+  { id:'pu_rimac',    type:'unit',   title:'Rimac Bienestar Fest',  accent:'#E8183C', theme:'light', dateStr:'5/Jun/2026',  searchMethod:'faceid', fCount:3, photoCount:18, folderIds:['rimac'],     unitPortalIds:[], masterIds:['pm_eventos']  },
+  // Unit en 2 masters
+  { id:'pu_colorrun', type:'unit',   title:'Color Run 2026',        accent:'#C026D3', theme:'dark',  dateStr:'8/Jun/2026',  searchMethod:'both',   fCount:5, photoCount:34, folderIds:['colorrun'],  unitPortalIds:[], masterIds:['pm_carreras','pm_eventos'] },
+  // Unit standalone
+  { id:'pu_andes',    type:'unit',   title:'Andes Ultra Run',       accent:'#22252f', theme:'dark',  dateStr:'14/Jun/2026', searchMethod:'dorsal', fCount:2, photoCount:11, folderIds:['lima42k'],   unitPortalIds:[], masterIds:[] },
+];
+
+function _seedDemoPortals() {
+  // Push all to _portals first so getPortalById works during rendering
+  _DEMO.forEach(p => pushPortal({ ...p }));
+  // Render: masters first (top of table), then units (after last master)
+  _DEMO.filter(p => p.type === 'master').forEach(p =>
+    addToTable(p.title, p.unitPortalIds.length, 0, p.accent, [], p.dateStr, true, p.searchMethod, {
+      id: p.id, type: 'master', theme: p.theme, unitPortalIds: p.unitPortalIds,
+    })
+  );
+  _DEMO.filter(p => p.type !== 'master').forEach(p =>
+    addToTable(p.title, p.fCount, p.photoCount, p.accent, p.folderIds, p.dateStr, true, p.searchMethod, {
+      id: p.id, type: 'unit', theme: p.theme, masterIds: p.masterIds,
+    })
+  );
+}
+
 // ── Session restore ───────────────────────────────────────────────
 function restoreSession() {
   loadUploadsFromSession();
   loadUserFoldersFromSession().forEach(f => addUserFolder(f.parentId, f.label, f.id));
   const portals = loadPortalsFromSession();
+  if (portals.length === 0) {
+    _seedDemoPortals();
+    return;
+  }
   // Render masters first so unit pills can resolve master titles
   portals.filter(p => p.type === 'master').forEach(p =>
     addToTable(p.title, (p.unitPortalIds || []).length, 0, p.accent, [], p.dateStr, true, p.searchMethod || 'both', {
