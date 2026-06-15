@@ -822,14 +822,24 @@ function _renderMasterViewer(units) {
   grid.innerHTML = units.length === 0
     ? `<div style="color:var(--g500);font-size:14px;padding:24px 0;font-family:var(--font-ui)">Este master no tiene portales asignados aún.</div>`
     : units.map((u, i) => {
-        const accent = u.accent || '#22252f';
+        const accent      = u.accent || '#22252f';
+        const unitFolders = (u.folderIds || []).map(id => FOLDERS_DATA.find(f => f.id === id)).filter(Boolean);
+        const unitAssets  = unitFolders.flatMap(f => _collectAssets(f));
+        const photoCount  = unitAssets.length;
+        const cells = Array.from({ length: 4 }, (_, ci) => {
+          const src = unitAssets[ci]?.preview;
+          return src
+            ? `<div class="p-fc-cell"><img src="${src}" alt="" decoding="async" loading="lazy"></div>`
+            : `<div class="p-fc-cell p-fc-cell--empty" style="background:${accent}33"></div>`;
+        }).join('');
+        const mosaicInner = photoCount > 0
+          ? cells
+          : `<div class="p-folder-card-empty" style="background:${accent}"><span class="msi" style="color:rgba(255,255,255,0.45)">captive_portal</span></div>`;
         return `<div class="p-folder-card p-unit-card" data-unit-idx="${i}" style="cursor:pointer">
-          <div class="p-folder-card-mosaic p-unit-card-mosaic" style="background:${accent}">
-            <div class="p-unit-card-logo"><span class="msi">captive_portal</span></div>
-          </div>
+          <div class="p-folder-card-mosaic">${mosaicInner}</div>
           <div class="p-folder-card-info">
             <span class="p-folder-card-name">${u.title}</span>
-            <span class="p-folder-card-count"><span class="msi xs">folder</span>&nbsp;${u.fCount || 0}</span>
+            <span class="p-folder-card-count">${photoCount > 0 ? `<span class="msi xs">image</span>&nbsp;${photoCount}` : `<span class="msi xs">folder</span>&nbsp;${u.fCount || 0}`}</span>
           </div>
         </div>`;
       }).join('');

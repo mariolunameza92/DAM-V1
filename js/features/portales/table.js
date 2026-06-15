@@ -38,13 +38,6 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
   if (resolvedId)     row.dataset.portalId      = resolvedId;
   if (unitIds.length) row.dataset.unitPortalIds = unitIds.join(',');
 
-  const masterPillsHTML = !isMaster && masterIds.length > 0
-    ? masterIds.map(mid => {
-        const m = getPortalById(mid);
-        return m ? `<span class="master-pill">${m.title}</span>` : '';
-      }).filter(Boolean).join('')
-    : '';
-
   const icon = isMaster ? 'hub' : 'captive_portal';
   const countCells = isMaster
     ? `<span class="content-chip"><span class="msi xs" style="color:var(--g500)">captive_portal</span>&nbsp;${fCount}</span>`
@@ -55,13 +48,18 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
     ? `<span class="portal-type-chip portal-type-chip--master">Master</span>`
     : `<span class="portal-type-chip portal-type-chip--regular">Regular</span>`;
 
+  const vinculosHTML = isMaster
+    ? unitIds.map(uid => { const u = getPortalById(uid); return u ? `<span class="rel-pill rel-pill--unit">${u.title}</span>` : ''; }).filter(Boolean).join('')
+    : masterIds.map(mid => { const m = getPortalById(mid); return m ? `<span class="rel-pill rel-pill--master">${m.title}</span>` : ''; }).filter(Boolean).join('');
+
   row.innerHTML = `
     <div class="col"><div class="portal-name-cell" style="cursor:pointer">
       <div class="portal-icon-box">
         <span class="msi xs">${icon}</span>
-      </div>${title}${masterPillsHTML}
+      </div>${title}
     </div></div>
     <div class="col col--tipo">${typeChip}</div>
+    <div class="col col--rel"><div class="rel-pills">${vinculosHTML}</div></div>
     <div class="col"><div class="content-cell">${countCells}</div></div>
     <div class="col">${d}</div>
     <div class="col" style="display:flex;align-items:center;gap:12px">
