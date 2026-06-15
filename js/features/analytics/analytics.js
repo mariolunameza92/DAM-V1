@@ -540,10 +540,12 @@ function _buildActivitySection() {
   // Heatmap
   const heatMax = Math.max(...a.heatData.flat());
   const heatHdrs = a.heatHours.map(h => `<span class="an-heatmap-hdr">${h}</span>`).join('');
+  const heatCols = a.heatHours.length;
   const heatRows = a.heatDays.map((day, di) => {
-    const cells = a.heatData[di].map(v => {
-      const op  = v === 0 ? 0 : 0.08 + (v / heatMax) * 0.82;
-      return `<div class="an-heatmap-cell" style="background:rgba(34,37,47,${op.toFixed(2)});${v >= heatMax * 0.8 ? 'outline:1px solid rgba(34,37,47,.35)' : ''}"></div>`;
+    const cells = a.heatData[di].map((v, ci) => {
+      const op    = v === 0 ? 0 : 0.08 + (v / heatMax) * 0.82;
+      const delay = ((di * heatCols + ci) * 0.018).toFixed(3);
+      return `<div class="an-heatmap-cell" style="background:rgba(34,37,47,${op.toFixed(2)});animation-delay:${delay}s${v >= heatMax * 0.8 ? ';outline:1px solid rgba(34,37,47,.35)' : ''}"></div>`;
     }).join('');
     return `<div class="an-heatmap-row"><span class="an-heatmap-row-lbl">${day}</span>${cells}</div>`;
   }).join('');
