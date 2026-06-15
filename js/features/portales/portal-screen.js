@@ -331,6 +331,36 @@ function _resolveNav(folders) {
   return { mode: 'tabs', items: folders };
 }
 
+function _scrollTabIntoView(tab, bar) {
+  const PAD = 16;
+  const barRect = bar.getBoundingClientRect();
+  const tabRect = tab.getBoundingClientRect();
+  let target = bar.scrollLeft;
+
+  if (tabRect.left < barRect.left + PAD) {
+    target = bar.scrollLeft - (barRect.left + PAD - tabRect.left);
+  } else if (tabRect.right > barRect.right - PAD) {
+    target = bar.scrollLeft + (tabRect.right - barRect.right + PAD);
+  } else {
+    return; // already fully visible
+  }
+
+  target = Math.max(0, Math.min(target, bar.scrollWidth - bar.clientWidth));
+  const start = bar.scrollLeft;
+  const diff  = target - start;
+  if (Math.abs(diff) < 1) return;
+
+  // Spring easing matching the drag bounce curve
+  const startTime = performance.now();
+  const DURATION  = 340;
+  function ease(t) { return 1 - Math.pow(2, -10 * t) * Math.cos(t * Math.PI * 1.6); }
+  (function tick(now) {
+    const t = Math.min((now - startTime) / DURATION, 1);
+    bar.scrollLeft = start + diff * ease(t);
+    if (t < 1) requestAnimationFrame(tick);
+  })(startTime);
+}
+
 function _renderNavigation() {
   const { mode, items } = _resolveNav(_portalFolders);
   _navMode     = mode;
@@ -366,6 +396,7 @@ function _renderNavigation() {
         _activeTabIdx = idx;
         bar.querySelectorAll('.p-tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        _scrollTabIntoView(btn, bar);
         _renderActiveItem();
         _setHeroBg([_navItems[idx]]);
       });
