@@ -50,8 +50,8 @@ function _listHTML(items) {
         <span class="faceid-person-name">${esc(item.name)}</span>
       </div></div>
       <div class="col"><div class="content-cell">
-        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${app.folders}</span>
-        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${app.photos.toLocaleString('es')}</span>
+        <span class="content-chip"><span class="msi xs" style="color:var(--text-muted)">folder</span>&nbsp;${app.folders}</span>
+        <span class="content-chip"><span class="msi xs" style="color:var(--text-muted)">image</span>&nbsp;${app.photos.toLocaleString('es')}</span>
       </div></div>
       <div class="col">${esc(item.registro)}</div>
       <div class="col" style="display:flex;align-items:center;gap:12px">

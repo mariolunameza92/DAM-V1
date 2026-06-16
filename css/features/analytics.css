@@ -871,20 +871,20 @@
 .an-rank-bar {
   height: 100%;
   border-radius: 2px;
-  background: var(--g800);
+  background: var(--text);
   transform-origin: left;
   animation: an-slide .8s cubic-bezier(.16,1,.3,1) backwards;
 }
-.an-rank-bar.rb-blue   { background: var(--g800); }
-.an-rank-bar.rb-green  { background: var(--g700); }
-.an-rank-bar.rb-amber  { background: var(--g600); }
-.an-rank-bar.rb-rose   { background: var(--g500); }
-.an-rank-bar.rb-violet { background: var(--g900); }
-.an-rank-bar.rb-cyan   { background: var(--g700); }
-.an-rank-bar.rb-yellow { background: var(--g600); }
-.an-rank-bar.rb-purple { background: var(--g800); }
-.an-rank-bar.rb-teal   { background: var(--g700); }
-.an-rank-bar.rb-orange { background: var(--g600); }
+.an-rank-bar.rb-blue   { background: var(--text); }
+.an-rank-bar.rb-green  { background: var(--text-body); }
+.an-rank-bar.rb-amber  { background: var(--text-secondary); }
+.an-rank-bar.rb-rose   { background: var(--text-muted); }
+.an-rank-bar.rb-violet { background: var(--text-title); }
+.an-rank-bar.rb-cyan   { background: var(--text-body); }
+.an-rank-bar.rb-yellow { background: var(--text-secondary); }
+.an-rank-bar.rb-purple { background: var(--text); }
+.an-rank-bar.rb-teal   { background: var(--text-body); }
+.an-rank-bar.rb-orange { background: var(--text-secondary); }
 .an-rank-count {
   font-family: var(--font-mono);
   font-size: 11px;

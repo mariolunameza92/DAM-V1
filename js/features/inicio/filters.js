@@ -190,7 +190,7 @@ function _updateActiveBar() {
   bar.innerHTML = tags.map(tag => `
     <div class="active-filter-tag" data-key="${tag.key}">
       ${tag.color
-        ? `<span class="aft-dot" style="background:${tag.color};${tag.color === '#f5f5f5' ? 'border:1px solid var(--g200);' : ''}"></span>`
+        ? `<span class="aft-dot" style="background:${tag.color};${tag.color === '#f5f5f5' ? 'border:1px solid var(--border);' : ''}"></span>`
         : `<span class="msi xs">${tag.icon}</span>`
       }
       <span class="aft-label">${tag.label}</span>
@@ -402,7 +402,7 @@ function _renderMarca(chipEl) {
     pop.innerHTML = `
       <div class="cp-header">LOGO / MARCA</div>
       <div class="cp-search-wrap">
-        <span class="msi xs" style="color:var(--g400)">search</span>
+        <span class="msi xs" style="color:var(--text-faint)">search</span>
         <input class="cp-search" type="text" placeholder="Filtrar por marca..." value="${_esc(q)}" autocomplete="off">
       </div>
       <div class="cp-list">${listHTML}</div>
@@ -437,7 +437,7 @@ function _marcaRowHTML(m) {
     <div class="cp-row${sel ? ' cp-row--sel' : ''}" data-id="${m.id}">
       ${avatarHTML}
       <span class="cp-row-label">${m.label}</span>
-      ${sel ? '<span class="msi xs" style="color:var(--g500)">check</span>' : ''}
+      ${sel ? '<span class="msi xs" style="color:var(--text-muted)">check</span>' : ''}
     </div>`;
 }
 
@@ -502,7 +502,7 @@ function _renderColor(chipEl) {
         ${COLORES.map(c => `
           <button class="cp-swatch${_state.color.has(c.id) ? ' cp-swatch--sel' : ''}"
                   data-id="${c.id}" title="${c.label}"
-                  style="background:${c.hex};${c.border ? 'border:1.5px solid var(--g200);' : ''}">
+                  style="background:${c.hex};${c.border ? 'border:1.5px solid var(--border);' : ''}">
           </button>
         `).join('')}
       </div>
@@ -704,7 +704,7 @@ function _renderFaceId(chipEl) {
     pop.innerHTML = `
       <div class="cp-header">PERSONAS</div>
       <div class="cp-search-wrap">
-        <span class="msi xs" style="color:var(--g400)">search</span>
+        <span class="msi xs" style="color:var(--text-faint)">search</span>
         <input class="cp-search" type="text" placeholder="Filtrar por nombre..." value="${_esc(q)}" autocomplete="off">
       </div>
       <div class="cp-list">

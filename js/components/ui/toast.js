@@ -4,7 +4,7 @@ export function showToast(msg, duration = 2500) {
   if (!t) {
     t = document.createElement('div');
     t.id = '_toast';
-    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--g950);color:var(--g50);padding:10px 20px;border-radius:80px;font-size:12px;font-family:var(--font-mono);z-index:9999;pointer-events:none;transition:opacity .3s;white-space:nowrap';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--on-accent);padding:10px 20px;border-radius:80px;font-size:12px;font-family:var(--font-mono);z-index:9999;pointer-events:none;transition:opacity .3s;white-space:nowrap';
     document.body.appendChild(t);
   }
   t.textContent = msg;

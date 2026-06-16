@@ -126,7 +126,10 @@
       "Bash(grep -nE 'var\\\\\\(--g[0-9]|#[0-9a-fA-F]{3,6}|rgba?\\\\\\(|white' css/components/ui/modal.css css/components/ui/badges.css css/components/ui/list-view.css css/features/portales.css css/features/selection.css css/features/blacklist.css)",
       "Bash(grep -nE 'var\\\\\\(--g[0-9]|#[0-9a-fA-F]{3,6}|rgba|: ?white|:white' /Users/lenadmin/Documents/GitHub/DAM-V1/css/features/faceids.css)",
       "Bash(grep -nE \"var\\\\\\(--g[0-9]|#[0-9a-fA-F]{3,6}|rgba?\\\\\\(\" css/features/analytics.css)",
-      "Bash(grep -rnE \"#[0-9a-fA-F]{3,6}\" . --include=\"*.css\")"
+      "Bash(grep -rnE \"#[0-9a-fA-F]{3,6}\" . --include=\"*.css\")",
+      "Bash(grep -rnE \"#[0-9a-fA-F]{3,6}\\\\b|rgba?\\\\\\(\" js/ --include=\"*.js\")",
+      "Bash(grep -nE 'var\\\\\\(--g[0-9]|#[0-9a-fA-F]{3,6}' css/features/portales.css)",
+      "Bash(grep -nE 'var\\\\\\(--g[0-9]|#[0-9a-fA-F]{3,6}' css/components/ui/context-menu.css)"
     ]
   },
   "hooks": {

@@ -117,4 +117,92 @@
   --an-grad-light:      linear-gradient(135deg, var(--g50)  0%, var(--g100) 100%);
   --an-grad-bar:        linear-gradient(to right, var(--g600) 0%, var(--g950) 100%);
   --an-grad-ramp:       linear-gradient(to right, var(--g300) 0%, var(--g800) 100%);
+
+  /* ── Folder icon (gradiente del SVG de carpeta — flips en dark) ── */
+  --folder-grad-from:   #b0b7c9;   /* g300 */
+  --folder-grad-to:     #515c78;   /* g600 */
+
+  /* ── Data-viz ── el "ink" de charts (heatmap/celdas con opacidad).
+     Light = g950; en dark se aclara para no perderse sobre fondo oscuro. ── */
+  --dataviz-ink:        #22252f;   /* g950 */
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   DARK THEME — reasigna SOLO tokens semánticos. El scale --g* NO se toca
+   (portales depende de él vía overrides inline). Los tokens on-media
+   tampoco se redefinen: van sobre fotos y deben quedar oscuros en ambos temas.
+   El acento se INVIERTE: en light el botón primario es oscuro; en dark es claro.
+   ════════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  /* ── Superficies (oscuras, ascendiendo en luminosidad) ── */
+  --bg:                 #15171c;
+  --surface:            #1c1f27;
+  --surface-raised:     #252934;
+  --surface-sunken:     #121419;
+  --surface-hover:      #2a2f3a;
+  --surface-placeholder:#2a2f3a;
+  --surface-neutral:    #2f3440;
+  --surface-strong:     #3a414f;
+
+  /* ── Texto (claro, descendiendo) ── */
+  --text-strong:        #f6f7f9;
+  --text-title:         #ecedf2;
+  --text:               #d5d9e2;
+  --text-body:          #b0b7c9;
+  --text-secondary:     #8b95ad;
+  --text-muted:         #717c97;
+  --text-faint:         #5b6480;
+  --text-disabled:      #454d63;
+
+  /* ── Bordes ── */
+  --border:             #2e333e;
+  --border-strong:      #3d4350;
+  --border-subtle:      #22252d;
+  --focus-ring:         0 0 0 3px rgba(176, 183, 201, .18);
+
+  /* ── Acción / acento — INVERTIDO: claro sobre oscuro ── */
+  --accent:             #f6f7f9;
+  --accent-soft:        #e4e7ee;
+  --accent-hover:       #ffffff;
+  --on-accent:          #1c1f27;   /* texto/icono oscuro sobre accent claro */
+  --on-accent-muted:    #515c78;
+  --on-accent-border:   rgba(0, 0, 0, .12);
+  --cta:                #f6f7f9;
+  --cta-text:           #15171c;
+
+  /* ── Estado (más luminoso para contraste sobre oscuro) ── */
+  --danger:             #f87171;
+  --danger-hover:       #ef4444;
+  --danger-bg:          rgba(248, 113, 113, .14);
+  --on-danger:          #1c1f27;
+  --success:            #34d399;
+  --success-bg:         rgba(52, 211, 153, .12);
+  --warning:            #fbbf24;
+  --warning-bg:         rgba(251, 191, 36, .12);
+  --warning-border:     rgba(251, 191, 36, .30);
+
+  /* ── Scrim / sombra / glass (--scrim-strong queda negro: visor fullscreen) ── */
+  --scrim:              rgba(0, 0, 0, .68);
+  --glass:              rgba(28, 31, 39, .82);
+  --scrim-light:        rgba(20, 22, 28, .80);
+  --shadow-sm:          0 4px 24px rgba(0, 0, 0, .35);
+  --shadow-md:          0 8px 24px rgba(0, 0, 0, .50);
+  --shadow-lg:          0 12px 48px rgba(0, 0, 0, .65);
+
+  /* ── Gradientes (variante dark) ── */
+  --gradient-accent:    linear-gradient(to left, #8591ab, #d5d9e2);
+  --gradient-ambient:   radial-gradient(ellipse at 80% 0%, rgba(133, 145, 171, .10) 0%, transparent 60%),
+                        radial-gradient(ellipse at 100% 30%, rgba(81, 92, 120, .12) 0%, transparent 50%);
+  --gradient-shimmer:   linear-gradient(90deg, #2a2f3a 0%, #2a2f3a 35%, #3a4150 43%, #4a5165 50%, #3a4150 57%, #2a2f3a 65%, #2a2f3a 100%);
+  --an-grad-dark:       linear-gradient(135deg, #d5d9e2 0%, #f6f7f9 100%);
+  --an-grad-mid:        linear-gradient(135deg, #8b95ad 0%, #b0b7c9 100%);
+  --an-grad-soft:       linear-gradient(135deg, #3a414f 0%, #2a2f3a 100%);
+  --an-grad-light:      linear-gradient(135deg, #1c1f27 0%, #15171c 100%);
+  --an-grad-bar:        linear-gradient(to right, #8b95ad 0%, #f6f7f9 100%);
+  --an-grad-ramp:       linear-gradient(to right, #454d63 0%, #d5d9e2 100%);
+
+  /* ── Folder icon + data-viz ink (flips) ── */
+  --folder-grad-from:   #3a414f;
+  --folder-grad-to:     #20242e;
+  --dataviz-ink:        #c7cdd9;
 }

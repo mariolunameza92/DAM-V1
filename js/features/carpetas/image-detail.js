@@ -317,7 +317,7 @@ function _buildRight(item, h, faces) {
               }
             </div>
           `).join('')
-            : `<p style="color:var(--g500);font-size:13px;font-family:var(--font-ui)">Sin personas identificadas</p>`
+            : `<p style="color:var(--text-muted);font-size:13px;font-family:var(--font-ui)">Sin personas identificadas</p>`
           }
         </div>
       </div>

@@ -49,13 +49,13 @@ export function renderUnitList(filter) {
   const list  = document.getElementById('unitList');
   if (!list) return;
   if (units.length === 0) {
-    list.innerHTML = `<div style="color:var(--g500);font-size:13px;padding:16px 0">Crea portales primero, luego agrégalos al master.</div>`;
+    list.innerHTML = `<div style="color:var(--text-muted);font-size:13px;padding:16px 0">Crea portales primero, luego agrégalos al master.</div>`;
     return;
   }
   list.innerHTML = units.map(u => {
     const sel = st.selectedUnits.has(u.id);
     return `<div class="f-row">
-      <div class="f-icon"><span class="msi xs" style="color:var(--g500)">captive_portal</span></div>
+      <div class="f-icon"><span class="msi xs" style="color:var(--text-muted)">captive_portal</span></div>
       <div class="f-info"><span class="f-name">${u.title}</span></div>
       <button class="f-btn${sel ? ' added' : ''}" onclick="window.toggleUnit('${u.id}')">
         ${sel ? `<span class="msi xs" style="color:white;font-size:13px">check</span>` : `<span class="msi xs">add</span>`}
@@ -164,7 +164,7 @@ export function renderFolderList(filter) {
   document.getElementById('folderList').innerHTML = items.map(f => {
     const sel = st.selectedFolders.has(f.id);
     return `<div class="f-row">
-      <div class="f-icon"><span class="msi xs" style="color:var(--g500)">folder</span></div>
+      <div class="f-icon"><span class="msi xs" style="color:var(--text-muted)">folder</span></div>
       <div class="f-info"><span class="f-name">${f.name}</span><span class="f-count">${f.count}</span></div>
       <button class="f-btn${sel ? ' added' : ''}" onclick="window.toggleFolder('${f.id}')">
         ${sel ? `<span class="msi xs" style="color:white;font-size:13px">check</span>` : `<span class="msi xs">add</span>`}

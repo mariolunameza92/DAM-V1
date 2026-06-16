@@ -11,10 +11,10 @@ export function folderSVG() {
     <rect y="23.2744" width="168.093" height="134.474" rx="10.3442" fill="white" fill-opacity="0.5"/>
     <defs>
       <linearGradient id="${a}" x1="84.0464" y1="-16.3698" x2="84.0464" y2="66.1435" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#b0b7c9"/><stop offset="1" stop-color="#515c78"/>
+        <stop stop-color="var(--folder-grad-from)"/><stop offset="1" stop-color="var(--folder-grad-to)"/>
       </linearGradient>
       <linearGradient id="${b}" x1="0" y1="23.2744" x2="131.194" y2="187.267" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#b0b7c9"/><stop offset="1" stop-color="#515c78"/>
+        <stop stop-color="var(--folder-grad-from)"/><stop offset="1" stop-color="var(--folder-grad-to)"/>
       </linearGradient>
     </defs>
   </svg>`;

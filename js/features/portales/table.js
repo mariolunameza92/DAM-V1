@@ -40,9 +40,9 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
 
   const icon = isMaster ? 'hub' : 'captive_portal';
   const countCells = isMaster
-    ? `<span class="content-chip"><span class="msi xs" style="color:var(--g500)">captive_portal</span>&nbsp;${fCount}</span>`
-    : `<span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${fCount}</span>
-       <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${photos}</span>`;
+    ? `<span class="content-chip"><span class="msi xs" style="color:var(--text-muted)">captive_portal</span>&nbsp;${fCount}</span>`
+    : `<span class="content-chip"><span class="msi xs" style="color:var(--text-muted)">folder</span>&nbsp;${fCount}</span>
+       <span class="content-chip"><span class="msi xs" style="color:var(--text-muted)">image</span>&nbsp;${photos}</span>`;
 
   const typeChip = isMaster
     ? `<span class="portal-type-chip portal-type-chip--master">Master</span>`
