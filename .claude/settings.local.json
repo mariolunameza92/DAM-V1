@@ -104,7 +104,22 @@
       "Bash(dir /s /b *faceid*)",
       "Bash(lsof -nP -iTCP -sTCP:LISTEN)",
       "Bash(python3 -m http.server 8000)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/index.html)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/index.html)",
+      "Bash(command -v python3 python)",
+      "Read(//usr/bin/**)",
+      "Bash(rm -f /Users/lenadmin/Documents/GitHub/DAM-V1/.claude/preview_server.py)",
+      "Bash(ls -d /opt/homebrew/bin/node /usr/local/bin/node ~/.nvm/versions/node/*/bin/node /opt/homebrew/bin/npx /usr/local/bin/npx 2>/dev/null; echo \"--- TCC check: can host read Documents? ---\"; ls -la ~/Documents/GitHub/DAM-V1/index.html 2>&1 | head -1)",
+      "Bash(command -v brew)",
+      "Bash(brew --version)",
+      "Bash(brew install *)",
+      "Bash(npm --version)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/index.html)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:3000/)",
+      "Bash(lsof -iTCP:3000 -sTCP:LISTEN)",
+      "Bash(grep -rhoE \"#[0-9a-fA-F]{3,8}\\\\b\" .)",
+      "Bash(git reset *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   },
   "hooks": {

@@ -59,12 +59,12 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
   const nameClose = `</a>`;
 
   row.innerHTML = `
-    <div class="col">${nameOpen}<div class="portal-icon-box"><span class="msi xs">${icon}</span></div>${title}${nameClose}</div>
+    <div class="col col--portal">${nameOpen}<div class="portal-icon-box"><span class="msi xs">${icon}</span></div><span class="portal-name-text">${title}</span>${nameClose}</div>
     <div class="col col--tipo">${typeChip}</div>
     <div class="col col--rel"><div class="rel-pills">${vinculosHTML}</div></div>
-    <div class="col"><div class="content-cell">${countCells}</div></div>
-    <div class="col">${d}</div>
-    <div class="col" style="display:flex;align-items:center;gap:12px">
+    <div class="col col--contenido"><div class="content-cell">${countCells}</div></div>
+    <div class="col col--registro">${d}</div>
+    <div class="col col--autor" style="display:flex;align-items:center;gap:12px">
       <span style="flex:1">Tú</span>
       <button class="more-btn portal-more-btn"><span class="msi xs">more_horiz</span></button>
     </div>`;
