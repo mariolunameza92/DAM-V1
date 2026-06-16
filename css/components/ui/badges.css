@@ -1,2 +1,2 @@
-.success-chip{display:flex;align-items:center;gap:8px;background:#f0fdf4;border-radius:8px;padding:var(--space-3) var(--space-4);font-size:12px;color:#16a34a;font-weight:600;margin-bottom:10px}
-.url-chip{background:var(--g100);border-radius:6px;padding:var(--space-3) var(--space-4);font-size:11px;color:var(--g500);font-family:var(--font-mono);word-break:break-all;margin-bottom:10px}
+.success-chip{display:flex;align-items:center;gap:8px;background:var(--success-bg);border-radius:8px;padding:var(--space-3) var(--space-4);font-size:12px;color:var(--success);font-weight:600;margin-bottom:10px}
+.url-chip{background:var(--surface-sunken);border-radius:6px;padding:var(--space-3) var(--space-4);font-size:11px;color:var(--text-muted);font-family:var(--font-mono);word-break:break-all;margin-bottom:10px}

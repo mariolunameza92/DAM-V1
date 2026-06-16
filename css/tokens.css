@@ -1,4 +1,5 @@
 :root {
+  /* ── Raw palette (base scale — NO usar directo en componentes, usar tokens semánticos) ── */
   --g50:  #f6f7f9;
   --g100: #ecedf2;
   --g200: #d5d9e2;
@@ -10,6 +11,7 @@
   --g800: #3b4255;
   --g900: #2a2f3c;
   --g950: #22252f;
+
   --font-ui: 'Google Sans', sans-serif;
   --font-mono: 'Space Mono', monospace;
 
@@ -29,4 +31,90 @@
   --space-13: 52px;
   --space-14: 56px;
   --space-17: 68px;
+
+  /* ════════════════════════════════════════════════════════════════════════
+     SEMANTIC TOKENS — capa por rol. Los componentes del DAM leen SOLO estos.
+     El dark mode (Fase 2) reasigna estos valores en [data-theme="dark"].
+     Los valores light son idénticos a los crudos que reemplazan.
+     ════════════════════════════════════════════════════════════════════════ */
+
+  /* ── Superficies ── */
+  --bg:                 var(--g100);   /* fondo de página, sidebar, topbar */
+  --surface:            var(--g50);    /* tarjetas y paneles base */
+  --surface-raised:     #fff;          /* popovers, menús, diálogos flotantes */
+  --surface-sunken:     var(--g100);   /* chips, tracks, grupos anidados, fill de inputs */
+  --surface-hover:      var(--g200);   /* hover de filas/ítems */
+  --surface-placeholder:var(--g200);   /* fondo de avatares/thumbs vacíos */
+  --surface-neutral:    var(--g200);   /* relleno neutro estático: badges, tracks, chips */
+  --surface-strong:     var(--g300);   /* relleno neutro más profundo (burbuja "+N") */
+
+  /* ── Texto ── */
+  --text-strong:        var(--g950);
+  --text-title:         var(--g900);
+  --text:               var(--g800);
+  --text-body:          var(--g700);
+  --text-secondary:     var(--g600);
+  --text-muted:         var(--g500);
+  --text-faint:         var(--g400);
+  --text-disabled:      var(--g300);
+
+  /* ── Bordes ── */
+  --border:             var(--g200);
+  --border-strong:      var(--g300);
+  --border-subtle:      var(--g100);
+  --focus-ring:         0 0 0 3px rgba(66, 74, 98, .1); /* halo de foco en inputs rect */
+
+  /* ── Acción / acento (el "oscuro" interactivo) ── */
+  --accent:             var(--g950);   /* botón oscuro primario, estados activos fuertes */
+  --accent-soft:        var(--g800);   /* chips activos, toggles, pills */
+  --accent-hover:       var(--g900);
+  --on-accent:          #fff;          /* texto/icono sobre accent */
+  --on-accent-muted:    var(--g300);   /* etiqueta atenuada sobre accent */
+  --on-accent-border:   rgba(255, 255, 255, .1); /* highlight interno en botones oscuros */
+  --cta:                #0f1117;       /* CTA negra (más oscura que accent) */
+  --cta-text:           #fff;
+
+  /* ── Estado ── */
+  --danger:             #dc2626;
+  --danger-hover:       #b91c1c;
+  --danger-bg:          rgba(220, 38, 38, .08);
+  --on-danger:          #fff;
+  --success:            #16a34a;
+  --success-bg:         #f0fdf4;
+  --warning:            #b45309;
+  --warning-bg:         rgba(251, 191, 36, .08);
+  --warning-border:     rgba(251, 191, 36, .35);
+
+  /* ── Scrim / sombra / glass ── */
+  --scrim:              rgba(34, 37, 47, .55);  /* backdrop de modales */
+  --scrim-strong:       rgba(0, 0, 0, .9);      /* visor de imagen fullscreen */
+  --glass:              rgba(236, 237, 242, .76);/* menú contextual (vidrio claro) */
+  --scrim-light:        rgba(246, 247, 249, .75);/* overlay claro sobre avatar */
+  --shadow-sm:          0 4px 24px rgba(0, 0, 0, .06);
+  --shadow-md:          0 8px 24px rgba(0, 0, 0, .12);
+  --shadow-lg:          0 12px 48px rgba(0, 0, 0, .18);
+
+  /* ── On-media — van sobre fotografías, oscuros en AMBOS temas (no invierten) ── */
+  --media-lightbox:     #000;                   /* visor fullscreen */
+  --media-canvas:       #111;                   /* fondo de edición / recorte */
+  --media-overlay:      rgba(34, 37, 47, .4);   /* barras sobre fotos (hover assets) */
+  --media-on:           #fff;                   /* texto/iconos sobre fotos */
+  --media-on-soft:      var(--g50);             /* texto secundario sobre fotos */
+  --media-handle:       rgba(255, 255, 255, .85);/* handles de recorte */
+  --media-grid:         rgba(255, 255, 255, .2); /* grilla regla de tercios */
+  --media-ctrl:         rgba(255, 255, 255, .12);/* botón translúcido sobre foto */
+  --media-ctrl-hover:   rgba(255, 255, 255, .22);
+  --media-face-border:  rgba(255, 255, 255, .4); /* borde de mini-avatar sobre foto */
+
+  /* ── Gradientes (en Fase 2 reciben variante dark) ── */
+  --gradient-accent:    linear-gradient(to left, #333847, #8591ab);
+  --gradient-ambient:   radial-gradient(ellipse at 80% 0%, rgba(176, 183, 201, .45) 0%, transparent 60%),
+                        radial-gradient(ellipse at 100% 30%, rgba(81, 92, 120, .2) 0%, transparent 50%);
+  --gradient-shimmer:   linear-gradient(90deg, #5a6580 0%, #5a6580 35%, #8e99b0 43%, #d4dae8 50%, #8e99b0 57%, #5a6580 65%, #5a6580 100%);
+  --an-grad-dark:       linear-gradient(135deg, var(--g800) 0%, var(--g950) 100%);
+  --an-grad-mid:        linear-gradient(135deg, var(--g500) 0%, var(--g700) 100%);
+  --an-grad-soft:       linear-gradient(135deg, var(--g200) 0%, var(--g400) 100%);
+  --an-grad-light:      linear-gradient(135deg, var(--g50)  0%, var(--g100) 100%);
+  --an-grad-bar:        linear-gradient(to right, var(--g600) 0%, var(--g950) 100%);
+  --an-grad-ramp:       linear-gradient(to right, var(--g300) 0%, var(--g800) 100%);
 }

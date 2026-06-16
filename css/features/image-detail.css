@@ -2,7 +2,7 @@
 .img-detail-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: var(--scrim-strong);
   backdrop-filter: blur(80px);
   -webkit-backdrop-filter: blur(80px);
   z-index: 9999;
@@ -37,7 +37,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  background: var(--g100);
+  background: var(--surface-sunken);
   overflow-y: auto;
 }
 
@@ -74,13 +74,13 @@
   cursor: pointer;
   background: transparent;
   border: none;
-  color: var(--g800);
+  color: var(--text);
   transition: background 0.15s;
   flex-shrink: 0;
   padding:0;
 }
 .img-detail-close:hover {
-  background: var(--g200);
+  background: var(--surface-hover);
 }
 .img-detail-actions {
   display: flex;
@@ -88,14 +88,14 @@
   gap: 16px;
 }
 .img-detail-icon {
-  color: var(--g700);
+  color: var(--text-body);
   cursor: pointer;
   transition: color 0.15s;
   flex-shrink: 0;
   line-height: 1;
 }
 .img-detail-icon:hover {
-  color: var(--g950);
+  color: var(--text-strong);
 }
 .img-detail-faces {
   display: flex;
@@ -106,11 +106,11 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,0.4);
+  border: 1.5px solid var(--media-face-border);
   overflow: hidden;
   flex-shrink: 0;
   cursor: default;
-  background: var(--g200);
+  background: var(--surface-placeholder);
 }
 .img-detail-face-dot img {
   width: 100%;
@@ -126,7 +126,7 @@
   align-items: center;
   justify-content: center;
   padding:0 var(--space-4) var(--space-6);
-  background: var(--g100);
+  background: var(--surface-sunken);
   position: relative;
 }
 .img-detail-main-img {
@@ -139,7 +139,7 @@
 
 /* ── Similar images section ──────────────────────────────────────── */
 .img-detail-similar {
-  border-top: 1px solid var(--g200);
+  border-top: 1px solid var(--border);
   padding:var(--space-6) var(--space-4);
   display: flex;
   flex-direction: column;
@@ -153,15 +153,7 @@
   font-family: var(--font-ui);
   line-height: 1.4;
   padding:var(--space-1) 0;
-  background: linear-gradient(90deg,
-    #5a6580 0%,
-    #5a6580 35%,
-    #8e99b0 43%,
-    #d4dae8 50%,
-    #8e99b0 57%,
-    #5a6580 65%,
-    #5a6580 100%
-  );
+  background: var(--gradient-shimmer);
   background-size: 400% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -195,7 +187,7 @@
 .img-detail-right {
   width: 100%;
   height: 100%;
-  background: var(--g50);
+  background: var(--surface);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -223,7 +215,7 @@
 .img-detail-filename {
   font-size: 16px;
   font-weight: 700;
-  color: var(--g800);
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -234,7 +226,7 @@
   display: flex;
   gap: 20px;
   font-size: 14px;
-  color: var(--g800);
+  color: var(--text);
   font-family: var(--font-ui);
 }
 
@@ -247,7 +239,7 @@
 
 /* ── Accordion section ───────────────────────────────────────────── */
 .img-detail-section {
-  background: var(--g100);
+  background: var(--surface-sunken);
   border-radius: 8px;
   flex-shrink: 0;
   overflow: hidden;
@@ -264,14 +256,14 @@
   flex: 1;
   font-size: 14px;
   font-weight: 600;
-  color: var(--g800);
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-family: var(--font-ui);
 }
 .img-detail-section-chevron {
-  color: var(--g700);
+  color: var(--text-body);
   flex-shrink: 0;
   transition: transform 0.2s ease;
 }
@@ -298,8 +290,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1.5px solid var(--g200);
-  background: white;
+  border: 1.5px solid var(--border);
+  background: var(--surface-raised);
   overflow: hidden;
   flex-shrink: 0;
   object-fit: cover;
@@ -307,7 +299,7 @@
 .img-detail-person-name {
   font-size: 14px;
   font-weight: 500;
-  color: var(--g800);
+  color: var(--text);
   font-family: var(--font-ui);
   white-space: nowrap;
 }
@@ -315,8 +307,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--g200);
-  color: var(--g500);
+  background: var(--surface-placeholder);
+  color: var(--text-muted);
 }
 
 /* uses .field.field--inline — base styles from fields.css */
@@ -343,7 +335,7 @@
 .img-detail-meta-label {
   font-size: 12px;
   font-weight: 600;
-  color: var(--g600);
+  color: var(--text-secondary);
   text-transform: uppercase;
   line-height: 1.5;
   font-family: var(--font-ui);
@@ -351,7 +343,7 @@
 }
 .img-detail-meta-text {
   font-size: 12px;
-  color: var(--g600);
+  color: var(--text-secondary);
   line-height: 1.5;
   font-family: var(--font-ui);
   margin: 0;
@@ -364,7 +356,7 @@
 }
 .img-detail-meta-link {
   font-size: 12px;
-  color: var(--g800);
+  color: var(--text);
   text-decoration: underline;
   cursor: pointer;
   font-family: var(--font-ui);
@@ -380,16 +372,16 @@
   align-items: center;
   gap: 4px;
   padding:var(--space-1) var(--space-3);
-  border: 1px solid var(--g300);
+  border: 1px solid var(--border-strong);
   border-radius: 40px;
   font-size: 12px;
-  color: var(--g600);
+  color: var(--text-secondary);
   font-family: var(--font-ui);
   line-height: 1.5;
 }
 .img-detail-tag-remove {
   cursor: pointer;
-  color: var(--g500);
+  color: var(--text-muted);
   flex-shrink: 0;
   opacity: 0.7;
   transition: opacity 0.15s;
@@ -411,7 +403,7 @@
 .img-fullscreen-overlay {
   position: fixed;
   inset: 0;
-  background: #000;
+  background: var(--media-lightbox);
   z-index: 10000;
   display: flex;
   align-items: center;
@@ -443,8 +435,8 @@
   height: 40px;
   border-radius: 50%;
   border: none;
-  background: rgba(255,255,255,0.12);
-  color: #fff;
+  background: var(--media-ctrl);
+  color: var(--media-on);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -454,7 +446,7 @@
   padding:0;
 }
 .img-fullscreen-close:hover {
-  background: rgba(255,255,255,0.22);
+  background: var(--media-ctrl-hover);
 }
 
 /* ── Info rows ───────────────────────────────────────────────────── */
@@ -473,12 +465,12 @@
 }
 .img-detail-info-label {
   flex: 1;
-  color: var(--g500);
+  color: var(--text-muted);
   min-width: 0;
 }
 .img-detail-info-value {
   flex: 1;
-  color: var(--g600);
+  color: var(--text-secondary);
   text-align: right;
   min-width: 0;
 }
