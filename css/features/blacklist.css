@@ -11,10 +11,9 @@
 .bl-info-note{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);font-family:var(--font-ui);background:var(--surface);border:1px solid color-mix(in srgb, var(--border) 65%, transparent);border-radius:8px;padding:8px 12px;max-width:560px}
 .bl-info-note .msi{color:var(--text-faint);flex-shrink:0}
 
-/* Tabla en vista lista — reutiliza .table-head/.table-row de portales, que dependen
-   de --portal-cols (sólo definido en .portals-grid). Definimos los tracks de las
-   5 columnas propias localmente para que la grilla no colapse a una sola columna. */
-#bl-body .table-head,#bl-body .table-row{--portal-cols:2.4fr 160px 1.6fr 132px 156px;min-width:820px}
+/* Tabla en vista lista — el mecanismo vive en components/ui/data-table.css;
+   acá sólo los tracks de las 5 columnas propias (idénticas a Face IDs). */
+#bl-body{--dt-cols:2.4fr 160px 1.6fr 132px 156px}
 
 /* Avatar en vista lista (igual que .faceid-av) */
 .bl-av{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface-placeholder);overflow:hidden;flex-shrink:0}

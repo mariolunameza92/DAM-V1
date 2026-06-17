@@ -1,20 +1,8 @@
 .portals-cta{margin-bottom:20px}
 
-/* Scroll container: the table keeps its own horizontal scroll below the legible
-   floor (.portals-grid min-width), so the page layout never breaks. */
-.table-wrap{padding:var(--space-3);border-radius:8px;overflow-x:auto;min-width:0}
-.portals-grid{min-width:820px}
-
-/* Single source of column tracks — header and rows share it via the custom
-   property, so they can never desync. Change widths here only. */
-.portals-grid{--portal-cols:2.4fr 90px 1.5fr 116px 104px 92px}
-.table-head,.table-row{display:grid;grid-template-columns:var(--portal-cols);gap:12px;align-items:center}
-
-.table-head{padding:0 var(--space-1);margin-bottom:12px;font-size:14px;font-weight:500;color:var(--text-muted);text-transform:uppercase}
-.col{min-width:0;font-size:14px;font-weight:500;color:var(--text)}
-.table-row{padding:var(--space-3) var(--space-1);border-bottom:1px solid var(--border);border-radius:4px;transition:background .12s}
-.table-row:last-child{border-bottom:none}
-.table-row:hover{background:rgba(0,0,0,.03)}
+/* Tabla: el mecanismo (grid, scroll, celdas, pills) vive en components/ui/data-table.css.
+   Acá sólo declaramos los tracks de las 6 columnas propias de Portales. */
+.portals-grid{--dt-cols:2.4fr 90px 1.5fr 116px 104px 92px}
 
 .col--registro{color:var(--text-secondary)}
 
@@ -22,8 +10,6 @@
 a.portal-name-cell{text-decoration:none;color:inherit}
 .portal-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .portal-icon-box{width:40px;height:40px;border-radius:8px;background:var(--surface-sunken);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.content-cell{display:flex;gap:20px;align-items:center}
-.content-chip{display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;color:var(--text);font-family:var(--font-mono)}
 
 /* Type chips (columna Tipo) */
 .col--tipo{display:flex;align-items:center}
@@ -31,12 +17,8 @@ a.portal-name-cell{text-decoration:none;color:inherit}
 .portal-type-chip--master{background:var(--accent-soft);color:var(--g50)}
 .portal-type-chip--regular{background:var(--surface-sunken);color:var(--text-secondary);border:1px solid var(--border)}
 
-/* Vínculos column */
+/* Vínculos column (.rel-pills/.rel-pill* viven en data-table.css) */
 .col--rel{min-width:0}
-.rel-pills{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
-.rel-pill{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
-.rel-pill--master{background:var(--accent-soft);color:var(--g50)}
-.rel-pill--unit{background:var(--surface-sunken);color:var(--text-secondary);border:1px solid var(--border)}
 
 /* Master row: icon box tinted dark */
 .table-row--master .portal-icon-box{background:var(--accent-soft);border-color:var(--g700)}
