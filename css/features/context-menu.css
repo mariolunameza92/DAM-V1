@@ -336,7 +336,7 @@
   transition: background 0.15s;
   flex-shrink: 0;
 }
-.ctx-btn-primary:hover { background: var(--g700); }
+.ctx-btn-primary:hover { background: var(--accent-hover); }
 
 .ctx-btn-outline {
   display: inline-flex;

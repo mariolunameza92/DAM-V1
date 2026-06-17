@@ -14,6 +14,7 @@ import { addToTable } from './features/portales/table.js';
 import { initImageDetail } from './features/carpetas/image-detail.js';
 import { initContextMenu } from './features/shared/context-menu.js';
 import { initSelection } from './features/shared/selection.js';
+import { initTheme } from './features/shared/theme.js';
 import { renderAnalytics } from './features/analytics/analytics.js';
 import { renderPerfil } from './features/perfil/perfil.js';
 
@@ -239,6 +240,7 @@ if (_portalTab) {
     initDemoImages().then(() => refreshPortalImages());
   }
 } else {
+  initTheme();
   initContextMenu();
   initSelection();
   showRecentFolders();

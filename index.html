@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LEN — Digital Asset Management</title>
+<!-- Tema: fija data-theme antes del primer paint para evitar flash (FOUC).
+     En la pestaña de portal público no aplica: el portal maneja su propio tema. -->
+<script>
+  (function () {
+    if (location.search.indexOf('portal=1') !== -1) return;
+    try {
+      var t = localStorage.getItem('len-theme');
+      if (t !== 'dark' && t !== 'light') {
+        t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) { /* storage no disponible */ }
+  })();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,300,0,0" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -82,11 +96,11 @@
       <span class="page-title" id="pageTitle">Inicio</span>
       <div class="topbar-center">
         <div class="searchbar" id="topbarSearch" style="display:none">
-          <span class="msi xs" style="color:var(--g700)">search</span>
+          <span class="msi xs" style="color:var(--text-body)">search</span>
           <span>Buscar por persona, objeto, color, escena, logo, etc</span>
         </div>
         <div class="topbar-end">
-          <button class="icon-btn"><span class="msi xs">dark_mode</span></button>
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Activar modo oscuro" title="Activar modo oscuro"><span class="msi xs">dark_mode</span></button>
           <button class="btn-dark" onclick="openModal()">Agregar</button>
         </div>
       </div>
@@ -155,13 +169,13 @@
             <div class="inicio-welcome">¡Bienvenido de vuelta, Mario!</div>
             <div class="inicio-search-wrap">
               <div class="inicio-search">
-                <span class="msi sm" style="color:var(--g700)">search</span>
+                <span class="msi sm" style="color:var(--text-body)">search</span>
                 <input id="inicio-search-input" class="inicio-search-input" type="text" placeholder="Buscar por persona, objeto, color, escena, logo, etc" autocomplete="off" spellcheck="false">
               </div>
               <div id="search-suggestions" class="search-suggestions" style="display:none"></div>
             </div>
             <div class="filter-chips">
-              <span style="font-size:12px;color:var(--g700)">Filtros:</span>
+              <span style="font-size:12px;color:var(--text-body)">Filtros:</span>
               <button class="filter-chip" id="chip-faceid"><span class="msi sm">ar_on_you</span>Face ID</button>
               <button class="filter-chip" id="chip-marca"><span class="msi sm">copyright</span>Marca</button>
               <button class="filter-chip" id="chip-objeto"><span class="msi sm">toys</span>Objeto</button>
@@ -428,14 +442,14 @@
       <input class="field" id="inp-name" type="text" placeholder="Ingresa un nombre" oninput="onNameInput()"/>
       <div id="folder-section">
         <div class="field-wrap">
-          <span class="msi xs" style="position:absolute;left:14px;color:var(--g700)">search</span>
+          <span class="msi xs" style="position:absolute;left:14px;color:var(--text-body)">search</span>
           <input class="field" id="inp-search" type="text" placeholder="Busca el contenido a incluir" oninput="filterFolders(this.value)" style="padding-left:36px;margin-top:10px"/>
         </div>
         <div class="folder-list" id="folderList"></div>
       </div>
       <div id="unit-section" style="display:none">
         <div class="field-wrap">
-          <span class="msi xs" style="position:absolute;left:14px;color:var(--g700)">search</span>
+          <span class="msi xs" style="position:absolute;left:14px;color:var(--text-body)">search</span>
           <input class="field" id="inp-unit-search" type="text" placeholder="Busca portales unitarios" oninput="filterUnits(this.value)" style="padding-left:36px;margin-top:10px"/>
         </div>
         <div class="folder-list" id="unitList"></div>

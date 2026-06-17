@@ -94,10 +94,10 @@
 /* Columna portales */
 .col--portales{min-width:0;flex:1.2}
 .faceid-portal-pill{max-width:120px}
-.faceid-no-portals{color:var(--g400)}
+.faceid-no-portals{color:var(--text-faint)}
 
 /* Meta info en la card de grilla (fotos · portales) */
-.faceid-card-meta{font-size:11px;color:var(--g500);font-family:var(--font-ui);text-align:center;line-height:1.4}
+.faceid-card-meta{font-size:11px;color:var(--text-muted);font-family:var(--font-ui);text-align:center;line-height:1.4}
 
 /* Input inline "Sin identificar": usa .field.field--inline de fields.css */
 .faceid-person-cell .field--inline{max-width:250px}
