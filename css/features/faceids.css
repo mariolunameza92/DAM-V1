@@ -37,6 +37,9 @@
 .faceid-card--add .faceid-card-name{color:var(--text-muted);font-weight:700}
 
 /* Lista (reutiliza .table-wrap/.table-head/.table-row/.col/.content-cell/.content-chip/.more-btn de portales) */
+/* .table-head/.table-row dependen de --portal-cols (definido sólo en .portals-grid);
+   esta tabla tiene 5 columnas propias, así que definimos sus tracks localmente. */
+#faceids-body .table-head,#faceids-body .table-row{--portal-cols:2.4fr 160px 1.6fr 132px 156px;min-width:820px}
 .faceid-person-cell{display:flex;align-items:center;gap:8px}
 .faceid-av{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface-placeholder);overflow:hidden;flex-shrink:0}
 .faceid-av img{width:100%;height:100%;object-fit:cover;display:block}
