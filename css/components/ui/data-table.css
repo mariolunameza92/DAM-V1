@@ -33,5 +33,5 @@
 /* Pills de vínculos/portales — usadas por las tres tablas */
 .rel-pills{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .rel-pill{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
-.rel-pill--master{background:var(--accent-soft);color:var(--g50)}
+.rel-pill--master{background:var(--accent-soft);color:var(--on-accent)}
 .rel-pill--unit{background:var(--surface-sunken);color:var(--text-secondary);border:1px solid var(--border)}

@@ -149,9 +149,9 @@
   --text-title:         #ecedf2;
   --text:               #d5d9e2;
   --text-body:          #b0b7c9;
-  --text-secondary:     #8b95ad;
-  --text-muted:         #717c97;
-  --text-faint:         #5b6480;
+  --text-secondary:     #a3acc0;  /* AA: ≥4.5:1 sobre todas las superficies dark */
+  --text-muted:         #949db4;  /* AA: ≥4.5:1 sobre bg/surface/raised/neutral/hover */
+  --text-faint:         #8a92aa;  /* AA: ≥4.5:1 sobre bg/surface/raised(cards); ≥3:1 en chips */
   --text-disabled:      #454d63;
 
   /* ── Bordes ── */

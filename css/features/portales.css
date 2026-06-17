@@ -14,7 +14,7 @@ a.portal-name-cell{text-decoration:none;color:inherit}
 /* Type chips (columna Tipo) */
 .col--tipo{display:flex;align-items:center}
 .portal-type-chip{font-size:10px;font-weight:700;letter-spacing:0.06em;padding:3px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap;line-height:16px}
-.portal-type-chip--master{background:var(--accent-soft);color:var(--g50)}
+.portal-type-chip--master{background:var(--accent-soft);color:var(--on-accent)}
 .portal-type-chip--regular{background:var(--surface-sunken);color:var(--text-secondary);border:1px solid var(--border)}
 
 /* Vínculos column (.rel-pills/.rel-pill* viven en data-table.css) */
@@ -22,10 +22,10 @@ a.portal-name-cell{text-decoration:none;color:inherit}
 
 /* Master row: icon box tinted dark */
 .table-row--master .portal-icon-box{background:var(--accent-soft);border-color:var(--g700)}
-.table-row--master .portal-icon-box .msi{color:var(--g100)!important}
+.table-row--master .portal-icon-box .msi{color:var(--on-accent)!important}
 
 /* Step-1 modal: type toggle */
 .portal-type-toggle{display:flex;gap:8px;margin-bottom:16px}
 .portal-type-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 0;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font-ui)}
 .portal-type-btn:hover{border-color:var(--text-faint);color:var(--text)}
-.portal-type-btn.active{border-color:var(--accent-soft);background:var(--accent-soft);color:var(--g50)}
+.portal-type-btn.active{border-color:var(--accent-soft);background:var(--accent-soft);color:var(--on-accent)}
