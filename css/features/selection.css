@@ -4,8 +4,8 @@
 .lasso-rect {
   position: fixed;
   display: none;
-  border: 1.5px solid var(--g500);
-  background: rgba(102, 115, 145, .12);
+  border: 1.5px solid var(--text-muted);
+  background: color-mix(in srgb, var(--text-muted) 12%, transparent);
   pointer-events: none;
   z-index: 500;
   border-radius: 3px;
@@ -19,11 +19,11 @@
    for consistency.
 ──────────────────────────────────────────────────────────────── */
 .folder-card.is-selected {
-  outline: 3px solid var(--g200);
+  outline: 3px solid var(--border);
   outline-offset: 0;
   border-radius: 12px 12px 4px 4px;
 }
 .asset-card.is-selected {
-  outline: 3px solid var(--g200);
+  outline: 3px solid var(--border);
   outline-offset: 4px;
 }

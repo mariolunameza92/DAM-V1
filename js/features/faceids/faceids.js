@@ -142,8 +142,8 @@ function _listHTML(faces) {
         ${nameEl}${starBtn}
       </div></div>
       <div class="col"><div class="content-cell">
-        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">folder</span>&nbsp;${f.appearances.folders}</span>
-        <span class="content-chip"><span class="msi xs" style="color:var(--g500)">image</span>&nbsp;${f.appearances.photos.toLocaleString('es')}</span>
+        <span class="content-chip"><span class="msi xs" style="color:var(--text-muted)">folder</span>&nbsp;${f.appearances.folders}</span>
+        <span class="content-chip"><span class="msi xs" style="color:var(--text-muted)">image</span>&nbsp;${f.appearances.photos.toLocaleString('es')}</span>
       </div></div>
       <div class="col col--portales"><div class="rel-pills">${portalsHtml}</div></div>
       <div class="col">${f.registro}</div>

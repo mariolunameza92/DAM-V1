@@ -1,5 +1,5 @@
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-height:100vh;overflow:hidden}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--text-strong);min-height:100vh;overflow:hidden}
 .msi{font-family:"Material Symbols Outlined";font-weight:300;font-style:normal;font-size:20px;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-smoothing:antialiased;display:inline-flex;align-items:center;justify-content:center;user-select:none;width:20px;height:20px;flex-shrink:0;overflow:hidden}
 .msi.sm{font-size:16px;width:16px;height:16px}
 .msi.xs{font-size:14px;width:14px;height:14px}
@@ -8,12 +8,12 @@ body{font-family:var(--font-ui);background:var(--g100);color:var(--g950);min-hei
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .content-scroll{flex:1;overflow-y:auto}
 .content{padding:var(--space-6);display:flex;flex-direction:column;gap:24px;position:relative;isolation:isolate}
-.content::before{content:'';position:absolute;top:0;right:0;width:70%;height:400px;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 80% 0%,rgba(176,183,201,.45) 0%,transparent 60%),radial-gradient(ellipse at 100% 30%,rgba(81,92,120,.2) 0%,transparent 50%)}
+.content::before{content:'';position:absolute;top:0;right:0;width:70%;height:400px;pointer-events:none;z-index:-1;background:var(--gradient-ambient)}
 .section{display:none}
 .section.active{display:block}
 
 .sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.sec-title{font-size:20px;font-weight:500;color:var(--g800)}
+.sec-title{font-size:20px;font-weight:500;color:var(--text)}
 .sec-actions{display:flex;align-items:center;gap:16px}
 
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
