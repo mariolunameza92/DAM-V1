@@ -43,6 +43,7 @@
 <link rel="stylesheet" href="css/features/selection.css">
 <link rel="stylesheet" href="css/features/portales.css">
 <link rel="stylesheet" href="css/features/portal-screen.css">
+<link rel="stylesheet" href="css/features/theme-sidebar.css"><!-- [THEME-SIDEBAR] -->
 <link rel="stylesheet" href="css/features/faceids.css">
 <link rel="stylesheet" href="css/features/blacklist.css">
 <link rel="stylesheet" href="css/features/analytics.css">
@@ -602,6 +603,11 @@
         <div class="s-row">
           <div class="s-info"><span class="s-label">Visitar el Portal</span><span class="s-hint">Abre el portal para previsualizar</span></div>
           <button class="s-btn" onclick="openPortal()"><span class="msi xs">open_in_new</span></button>
+        </div>
+        <!-- [THEME-SIDEBAR] — eliminar este s-row para revertir -->
+        <div class="s-row">
+          <div class="s-info"><span class="s-label">Personalizar diseño</span><span class="s-hint">Editar colores y tipografía</span></div>
+          <button class="s-btn" onclick="openPortal(true)"><span class="msi xs">palette</span></button>
         </div>
       </div>
       <div class="modal-footer">

@@ -1,5 +1,6 @@
 // Exports: openPortal(), closePortal(), openPortalFromRow(), handleDorsalSearch(), clearDorsalSearch()
 import { st, closeModal, getEditingRow, clearEditingRow } from './modal.js';
+import { mountThemeSidebar } from './theme-sidebar.js'; // [THEME-SIDEBAR]
 import { addToTable } from './table.js';
 import { FOLDERS_DATA, FOLDER_IMAGES, findNode } from '../../data.js';
 import { positionDropdown, generateShadeScale, hexToOklch } from '../../utils.js';
@@ -176,7 +177,7 @@ function _updateHeroBg() {
 }
 
 // ── Public entry points ───────────────────────────────────────────────────────
-export function openPortal() {
+export function openPortal(editMode = false) { // [THEME-SIDEBAR] editMode param
   if (st.type === 'master') { _openMaster(); return; }
   const rawName = document.getElementById('inp-name').value.trim() || 'Mi Portal';
   const title   = rawName;
@@ -216,6 +217,10 @@ export function openPortal() {
   addToTable(title, selected.length, selected.length * 4, accent, folderIds, undefined, false, searchMethod);
   _animatePortalIn();
   _attachPortalResize();
+  // [THEME-SIDEBAR] — eliminar las 3 líneas siguientes para revertir
+  if (editMode) {
+    mountThemeSidebar(document.getElementById('portalScreen'), { accent, theme, font }, _applyPortalTheme);
+  }
 }
 
 export function openPortalFromRow(title, accent, folderIds = [], theme = 'light', searchMethod = 'both') {

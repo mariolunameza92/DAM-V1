@@ -1,0 +1,271 @@
+/* ── Theme Sidebar — panel de diseño del portal ─────────────────────────────
+   [THEME-SIDEBAR] Archivo nuevo. Eliminar el <link> en index.html para revertir.
+   El panel monta en document.body (fuera del portalScreen) y usa tokens del DAM,
+   no del portal. Las reglas [data-custom="1"] se activan solo en modo manual.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Panel ── */
+.ts-panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 272px;
+  background: var(--surface-raised);
+  border-left: 1px solid var(--border);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 32px rgba(0,0,0,.13);
+  transform: translateX(100%);
+  transition: transform .22s cubic-bezier(.2,.8,.2,1);
+  overflow: hidden;
+}
+.ts-panel--open { transform: translateX(0); }
+
+/* ── Head ── */
+.ts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.ts-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-strong);
+  font-family: var(--font-ui);
+}
+.ts-close {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: var(--surface-hover);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background .12s;
+  padding: 0;
+}
+.ts-close:hover { background: var(--surface-strong); }
+.ts-close .msi { font-size: 16px; }
+
+/* ── Mode toggle ── */
+.ts-mode-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 10px 16px;
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.ts-mode-btn {
+  flex: 1;
+  padding: 6px 0;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition: all .12s;
+}
+.ts-mode-btn--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+.ts-mode-btn:not(.ts-mode-btn--active):hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* ── Body (scrollable) ── */
+.ts-body {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.ts-body--hidden { display: none; }
+
+/* ── Section ── */
+.ts-section {
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.ts-section:last-child { border-bottom: none; }
+.ts-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-family: var(--font-ui);
+}
+
+/* ── Field ── */
+.ts-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  min-height: 28px;
+}
+.ts-field:last-child { margin-bottom: 0; }
+.ts-label {
+  font-size: 12px;
+  color: var(--text-body);
+  font-family: var(--font-ui);
+  flex-shrink: 0;
+}
+
+/* ── Color row ── */
+.ts-color-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ts-swatch {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: border-color .12s;
+}
+.ts-swatch:hover { border-color: var(--border-strong); }
+input[type="color"].ts-color-picker {
+  width: 0; height: 0;
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.ts-hex-input {
+  width: 76px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 7px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .12s;
+}
+.ts-hex-input:focus { border-color: var(--border-strong); }
+
+/* Auto section: accent row (uses wider hex input) */
+#ts-body-auto .ts-color-row .ts-hex-input {
+  width: auto;
+  flex: 1;
+}
+
+/* ── Theme toggle (auto mode) ── */
+.ts-theme-row {
+  display: flex;
+  gap: 6px;
+}
+.ts-theme-btn {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 6px 0;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition: all .12s;
+}
+.ts-theme-btn .msi { font-size: 14px; }
+.ts-theme-btn--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+.ts-theme-btn:not(.ts-theme-btn--active):hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* ── Font selector ── */
+.ts-font-sel {
+  font-size: 11.5px;
+  font-family: var(--font-ui);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+  max-width: 128px;
+}
+.ts-font-sel:focus { border-color: var(--border-strong); }
+
+/* ── Footer ── */
+.ts-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--surface-raised);
+}
+.ts-save-btn {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px 0;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: background .12s, opacity .12s;
+}
+.ts-save-btn:hover { opacity: .88; }
+.ts-save-btn .msi { font-size: 15px; }
+.ts-save-btn--ok { background: var(--success) !important; opacity: 1 !important; }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   Portal overrides — SOLO activos en modo manual (data-custom="1")
+   Scoped para no interferir con el flujo auto de _applyPortalTheme.
+   ══════════════════════════════════════════════════════════════════════════════ */
+.portal-screen[data-custom="1"] .p-header-title {
+  color: var(--portal-title-color);
+  font-family: var(--portal-title-font, var(--font-ui));
+}
+.portal-screen[data-custom="1"] .p-header-desc {
+  color: var(--portal-sub-color);
+  font-family: var(--portal-sub-font, var(--font-ui));
+}
+.portal-screen[data-custom="1"] .p-tab {
+  color: var(--portal-sub-color);
+  font-family: var(--portal-sub-font, var(--font-ui));
+}
+.portal-screen[data-custom="1"] .p-tab:hover {
+  color: var(--portal-sub-color);
+  opacity: .8;
+}
+.portal-screen[data-custom="1"] .p-name,
+.portal-screen[data-custom="1"] .p-desc {
+  color: var(--portal-sub-color);
+}
+.portal-screen[data-custom="1"] .p-filter-chip {
+  background: var(--portal-chip-bg);
+  border-color: var(--portal-chip-border);
+  color: var(--portal-chip-color);
+}
+.portal-screen[data-custom="1"] .p-filter-chip:hover {
+  background: var(--portal-chip-bg);
+  opacity: .8;
+}
