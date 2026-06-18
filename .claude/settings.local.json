@@ -137,7 +137,10 @@
       "Bash(git restore *)",
       "Bash(git branch *)",
       "mcp__visualize__read_me",
-      "mcp__visualize__show_widget"
+      "mcp__visualize__show_widget",
+      "Bash(git -C /Users/lenadmin/Documents/GitHub/DAM-V1 status)",
+      "Bash(git -C /Users/lenadmin/Documents/GitHub/DAM-V1 diff --stat)",
+      "Bash(git -C /Users/lenadmin/Documents/GitHub/DAM-V1 log --oneline -10)"
     ]
   },
   "hooks": {
