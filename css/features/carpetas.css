@@ -22,7 +22,7 @@
 .tree-item:hover .tree-label{color:var(--text-strong);transform:translateX(3px)}
 /* Seleccionado (equivalente al active del sidebar): mismo gradiente más intenso + negrita */
 .tree-item.sel{background:linear-gradient(90deg, rgba(133,145,171,.34), rgba(133,145,171,.12))}
-.tree-item.sel .tree-label{font-weight:700;color:var(--text-strong)}
+.tree-item.sel .tree-label{font-weight:700}
 .tree-item.sel .tree-icon{opacity:1}
 
 .masonry-folder-label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-body);margin-bottom:4px}
