@@ -287,7 +287,7 @@ if (_portalTab) {
       const y = scroller.scrollTop;
       const scrollingDown = y > lastY && y > 40;
       topbar.style.marginTop = scrollingDown ? `-${topbar.offsetHeight}px` : '';
-      topbar.classList.toggle('topbar--filled', !scrollingDown && y > 10);
+      topbar.classList.toggle('topbar--filled', y > 0 && y < lastY);
       lastY = y;
     }, { passive: true });
   }());
