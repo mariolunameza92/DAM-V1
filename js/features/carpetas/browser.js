@@ -170,7 +170,31 @@ export function renderTree() {
   const panel = document.getElementById('treePanel');
   if (!panel) return;
   panel.innerHTML = '';
+  const pill = document.createElement('div');
+  pill.className = 'tree-pill';
+  pill.setAttribute('aria-hidden', 'true');
+  panel.appendChild(pill);
   _renderNodes(_getFilteredRoots(), panel, 0);
+  _bindTreePill(panel);
+}
+
+// Pill de hover del tree: misma lógica que initNavPill del sidebar.
+// Delegación en el panel (sobrevive a los re-render que vacían innerHTML).
+function _bindTreePill(panel) {
+  if (panel._pillBound) return;
+  panel._pillBound = true;
+  panel.addEventListener('mouseover', e => {
+    const item = e.target.closest('.tree-item');
+    const pill = panel.querySelector('.tree-pill');
+    if (!item || !pill || !panel.contains(item)) return;
+    pill.style.height = item.offsetHeight + 'px';
+    pill.style.transform = `translateY(${item.offsetTop}px)`;
+    pill.style.opacity = '1';
+  });
+  panel.addEventListener('mouseleave', () => {
+    const pill = panel.querySelector('.tree-pill');
+    if (pill) pill.style.opacity = '0';
+  });
 }
 
 function _renderNodes(nodes, container, level) {
