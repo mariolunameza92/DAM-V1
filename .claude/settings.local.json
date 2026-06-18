@@ -134,7 +134,8 @@
       "Bash(git diff *)",
       "Bash(git log *)",
       "Bash(grep -nE 'color:|background:|fill:|#[0-9a-fA-F]{3,6}|var\\\\\\(--\\(accent|on-accent|text-disabled|g[0-9]\\)' css/features/analytics.css)",
-      "Bash(git restore *)"
+      "Bash(git restore *)",
+      "Bash(git branch *)"
     ]
   },
   "hooks": {
