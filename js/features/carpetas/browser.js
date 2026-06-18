@@ -226,7 +226,7 @@ export function navigateToFolder(nodeId) {
 export function switchTab(el) {
   el.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  const key = { 'Recientes': 'recientes', 'Creadas': 'creadas', 'Compartidas': 'compartidas' }[el.textContent.trim()] || 'recientes';
+  const key = { 'Recientes': 'recientes', 'Creadas': 'creadas', 'Compartidas conmigo': 'compartidas' }[el.textContent.trim()] || 'recientes';
   carpetasState.activeTab = key;
   treeState.selected = null;
   treeState.expanded = new Set();
