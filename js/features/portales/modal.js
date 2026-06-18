@@ -112,6 +112,24 @@ export function openModal() {
 
   resetCopyBtn();
   renderFolderList('');
+
+  // Pre-medir todos los pasos (overlay aún invisible) para fijar minHeight desde el inicio.
+  // El overlay tiene opacity:0 en este punto, no hay flash visual.
+  const modal = document.querySelector('.modal');
+  modal.style.minHeight = '';
+  let maxStepH = 0;
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('step-' + i);
+    if (!el) continue;
+    el.style.display = 'block';
+    [1, 2, 3, 4, 5].forEach(j => {
+      const s = document.getElementById('step-' + j);
+      if (s && j !== i) s.style.display = 'none';
+    });
+    maxStepH = Math.max(maxStepH, modal.offsetHeight);
+  }
+  modal.style.minHeight = maxStepH + 'px';
+
   showStep(1);
   checkStep1();
   _updateAccentPreview();
@@ -120,16 +138,23 @@ export function openModal() {
 
 export function closeModal() {
   document.getElementById('overlay').classList.remove('open');
+  document.querySelector('.modal').style.minHeight = '';
 }
 
 export function showStep(n) {
-  [1, 2, 3, 4].forEach(i => {
-    document.getElementById('step-' + i).style.display = i === n ? 'block' : 'none';
+  [1, 2, 3, 4, 5].forEach(i => {
+    const el = document.getElementById('step-' + i);
+    if (el) el.style.display = i === n ? 'block' : 'none';
   });
-  for (let p = 1; p <= 4; p++) for (let d = 1; d <= 4; d++) {
+  for (let p = 1; p <= 5; p++) for (let d = 1; d <= 5; d++) {
     const el = document.getElementById(`d${p}-${d}`);
     if (el) el.className = 'step-dot' + (d === n ? ' active' : '');
   }
+  // Modal solo crece: offsetHeight fuerza reflow síncrono, no requiere rAF
+  const modal = document.querySelector('.modal');
+  const h = modal.offsetHeight;
+  const current = parseFloat(modal.style.minHeight) || 0;
+  if (h > current) modal.style.minHeight = h + 'px';
 }
 
 export function goStep(n) {
