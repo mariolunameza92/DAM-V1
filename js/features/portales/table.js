@@ -2,6 +2,7 @@
 import { pushPortal, getPortalById } from '../../session.js';
 import { showToast } from '../../components/ui/toast.js';
 import { openModalEdit } from './modal.js';
+import { openPortalFromRow } from './portal-screen.js'; // [THEME-SIDEBAR]
 
 export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr, silent, searchMethod, opts = {}) {
   const today = new Date();
@@ -66,6 +67,7 @@ export function addToTable(title, fCount, photoCount, accent, folderIds, dateStr
     <div class="col col--registro">${d}</div>
     <div class="col col--autor" style="display:flex;align-items:center;gap:12px">
       <span style="flex:1">Tú</span>
+      ${!isMaster ? `<button class="palette-btn" title="Personalizar diseño"><span class="msi xs">palette</span></button>` : ''}
       <button class="more-btn portal-more-btn"><span class="msi xs">more_horiz</span></button>
     </div>`;
   // Masters insert right after the header; units insert after the last master row (or after header if no masters)
@@ -192,4 +194,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('#portalsTable .table-row .more-btn:not(.portal-more-btn)').forEach(btn => {
     btn.classList.add('portal-more-btn');
   });
+});
+
+// [THEME-SIDEBAR] — Palette button: abre portal + sidebar de diseño desde la tabla
+document.getElementById('portalsTable').addEventListener('click', e => {
+  const btn = e.target.closest('.palette-btn');
+  if (!btn) return;
+  e.stopPropagation();
+  const row = btn.closest('.table-row');
+  if (!row) return;
+  const title     = row.dataset.portalTitle  || '';
+  const accent    = row.dataset.portalAccent || '#22252f';
+  const theme     = row.dataset.portalTheme  || 'light';
+  const search    = row.dataset.portalSearch || 'both';
+  const folderIds = row.dataset.portalFolders ? row.dataset.portalFolders.split(',').filter(Boolean) : [];
+  openPortalFromRow(title, accent, folderIds, theme, search, true);
 });

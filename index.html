@@ -473,36 +473,9 @@
 
     <div id="step-2" style="display:none">
       <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
-      <span class="modal-sub">Configuración de accesos</span>
-      <div class="step-bar">
-        <div class="step-dot" id="d2-1"></div><div class="step-dot active" id="d2-2"></div><div class="step-dot" id="d2-3"></div><div class="step-dot" id="d2-4"></div>
-      </div>
-      <div class="radio-group">
-        <label class="radio-item" onclick="selectAccess('public')">
-          <div class="radio-circle sel" id="rc-pub"></div>
-          <span class="radio-label">Público</span>
-          <span class="radio-hint">Cualquiera con el link</span>
-        </label>
-        <label class="radio-item" onclick="selectAccess('private')">
-          <div class="radio-circle" id="rc-priv"></div>
-          <span class="radio-label">Con clave</span>
-          <span class="radio-hint">Requiere contraseña</span>
-        </label>
-      </div>
-      <div id="pwd-wrap" style="display:none;margin-top:8px">
-        <input class="field" id="inp-pwd" type="password" placeholder="Ingresa la clave de acceso"/>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-ghost" onclick="goStep(1)">Atrás</button>
-        <button class="btn-submit" onclick="goStep(3)">Continuar</button>
-      </div>
-    </div>
-
-    <div id="step-3" style="display:none">
-      <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
       <span class="modal-sub">Configuración del tema</span>
       <div class="step-bar">
-        <div class="step-dot" id="d3-1"></div><div class="step-dot" id="d3-2"></div><div class="step-dot active" id="d3-3"></div><div class="step-dot" id="d3-4"></div>
+        <div class="step-dot" id="d2-1"></div><div class="step-dot active" id="d2-2"></div><div class="step-dot" id="d2-3"></div><div class="step-dot" id="d2-4"></div>
       </div>
       <div class="theme-rows">
         <div class="t-row">
@@ -580,6 +553,33 @@
           <button class="t-add" id="desc-add" onclick="toggleInline('desc-wrap','desc-add','inp-desc')"><span class="msi xs">add</span></button>
         </div>
         <div class="inline-field" id="desc-wrap"><input type="text" id="inp-desc" placeholder="Descripción breve del portal"/></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="goStep(1)">Atrás</button>
+        <button class="btn-submit" onclick="goStep(3)">Continuar</button>
+      </div>
+    </div>
+
+    <div id="step-3" style="display:none">
+      <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
+      <span class="modal-sub">Configuración de accesos</span>
+      <div class="step-bar">
+        <div class="step-dot" id="d3-1"></div><div class="step-dot" id="d3-2"></div><div class="step-dot active" id="d3-3"></div><div class="step-dot" id="d3-4"></div>
+      </div>
+      <div class="radio-group">
+        <label class="radio-item" onclick="selectAccess('public')">
+          <div class="radio-circle sel" id="rc-pub"></div>
+          <span class="radio-label">Público</span>
+          <span class="radio-hint">Cualquiera con el link</span>
+        </label>
+        <label class="radio-item" onclick="selectAccess('private')">
+          <div class="radio-circle" id="rc-priv"></div>
+          <span class="radio-label">Con clave</span>
+          <span class="radio-hint">Requiere contraseña</span>
+        </label>
+      </div>
+      <div id="pwd-wrap" style="display:none;margin-top:8px">
+        <input class="field" id="inp-pwd" type="password" placeholder="Ingresa la clave de acceso"/>
       </div>
       <div class="modal-footer">
         <button class="btn-ghost" onclick="goStep(2)">Atrás</button>

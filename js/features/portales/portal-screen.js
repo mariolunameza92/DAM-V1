@@ -223,7 +223,7 @@ export function openPortal(editMode = false) { // [THEME-SIDEBAR] editMode param
   }
 }
 
-export function openPortalFromRow(title, accent, folderIds = [], theme = 'light', searchMethod = 'both') {
+export function openPortalFromRow(title, accent, folderIds = [], theme = 'light', searchMethod = 'both', editMode = false) { // [THEME-SIDEBAR] editMode param
   const folders = folderIds.length > 0
     ? FOLDERS_DATA.filter(f => folderIds.includes(f.id))
     : FOLDERS_DATA;
@@ -232,6 +232,10 @@ export function openPortalFromRow(title, accent, folderIds = [], theme = 'light'
   document.getElementById('appShell').style.display = 'none';
   _animatePortalIn();
   _attachPortalResize();
+  // [THEME-SIDEBAR] — eliminar las 3 líneas siguientes para revertir
+  if (editMode) {
+    mountThemeSidebar(document.getElementById('portalScreen'), { accent, theme, font: 'Google Sans' }, _applyPortalTheme);
+  }
 }
 
 export function closePortal() {

@@ -128,7 +128,9 @@ export function openModal() {
     });
     maxStepH = Math.max(maxStepH, modal.offsetHeight);
   }
-  modal.style.minHeight = maxStepH + 'px';
+  // Cap al viewport disponible: 24px padding arriba + 24px abajo = 48px total
+  const maxAllowed = window.innerHeight - 48;
+  modal.style.minHeight = Math.min(maxStepH, maxAllowed) + 'px';
 
   showStep(1);
   checkStep1();

@@ -14,6 +14,8 @@
 
 .icon-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;color:var(--text-secondary)}
 .more-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.palette-btn{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s,color .12s,border-color .12s;flex-shrink:0}
+.palette-btn:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 
 .view-toggle{display:flex;gap:8px}
 .view-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent}
