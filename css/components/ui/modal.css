@@ -14,7 +14,7 @@
 
 .modal .folder-list{display:flex;flex-direction:column;gap:2px;margin-top:12px;max-height:220px;overflow-y:auto}
 .f-row{display:flex;align-items:center;gap:10px;padding:var(--space-1);border-radius:4px;transition:background .12s}
-.f-row:hover{background:rgba(0,0,0,.03)}
+.f-row:hover{background:var(--row-hover)}
 .f-icon{width:36px;height:36px;border-radius:8px;background:var(--surface-sunken);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .f-info{flex:1;display:flex;flex-direction:column}
 .f-name{font-size:12px;color:var(--text)}
@@ -32,7 +32,7 @@
 
 .theme-rows{display:flex;flex-direction:column;gap:0;margin:4px 0}
 .t-row{display:flex;align-items:center;gap:12px;padding:var(--space-2) var(--space-1);border-radius:4px;transition:background .12s}
-.t-row:hover{background:rgba(0,0,0,.03)}
+.t-row:hover{background:var(--row-hover)}
 .t-info{flex:1;display:flex;flex-direction:column}
 .t-label{font-size:12px;color:var(--text)}
 .t-hint{font-size:11px;color:var(--text-muted)}
@@ -67,7 +67,7 @@
 
 .s-rows{display:flex;flex-direction:column;gap:2px;margin:4px 0}
 .s-row{display:flex;align-items:center;gap:12px;padding:var(--space-2) var(--space-1);border-radius:4px;transition:background .12s}
-.s-row:hover{background:rgba(0,0,0,.03)}
+.s-row:hover{background:var(--row-hover)}
 .s-info{flex:1;display:flex;flex-direction:column}
 .s-label{font-size:12px;color:var(--text)}
 .s-hint{font-size:11px;color:var(--text-muted)}

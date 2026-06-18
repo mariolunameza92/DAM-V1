@@ -27,7 +27,7 @@
 .filter-chip:hover{background:var(--surface-hover)}
 .filter-chip--active{background:var(--accent-soft);color:var(--on-accent);border-color:var(--accent-soft)}
 .filter-chip--active:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
-.chip-badge{background:rgba(255,255,255,.22);color:var(--on-accent);border-radius:20px;font-size:10px;font-weight:700;padding:1px 5px;font-family:var(--font-mono);line-height:1.4;margin-left:2px}
+.chip-badge{background:var(--on-accent-overlay);color:var(--on-accent);border-radius:20px;font-size:10px;font-weight:700;padding:1px 5px;font-family:var(--font-mono);line-height:1.4;margin-left:2px}
 
 /* ── Active filters bar ─────────────────────────────────────────────────────── */
 .active-filters-bar{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;animation:blockIn .2s ease both}
@@ -151,7 +151,7 @@
 .face-chip-avatar{width:22px;height:22px;border-radius:50%;overflow:hidden;flex-shrink:0}
 .face-chip-avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .face-chip-name{font-size:12px;line-height:1}
-.face-chip-remove{background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;padding:0;margin-left:2px;display:flex;align-items:center;transition:color .12s}
+.face-chip-remove{background:none;border:none;color:var(--on-accent-faint);cursor:pointer;padding:0;margin-left:2px;display:flex;align-items:center;transition:color .12s}
 .face-chip-remove:hover{color:var(--on-accent)}
 
 /* Sección resultados de Face ID */

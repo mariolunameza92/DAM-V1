@@ -32,5 +32,5 @@
 .bl-btn-danger .msi{color:var(--on-danger)}
 
 /* Caja de advertencia en el modal de confirmación */
-.bl-remove-warn{background:var(--danger-bg);border:1px solid rgba(220,38,38,.18);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--text-body);font-family:var(--font-ui);line-height:1.6}
+.bl-remove-warn{background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--text-body);font-family:var(--font-ui);line-height:1.6}
 .bl-remove-warn strong{color:var(--danger)}

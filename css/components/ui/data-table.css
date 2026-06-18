@@ -22,7 +22,7 @@
 .table-head{padding:0 var(--space-1);margin-bottom:12px;font-size:14px;font-weight:500;color:var(--text-muted);text-transform:uppercase}
 .table-row{padding:var(--space-3) var(--space-1);border-bottom:1px solid var(--border);border-radius:4px;transition:background .12s}
 .table-row:last-child{border-bottom:none}
-.table-row:hover{background:rgba(0,0,0,.03)}
+.table-row:hover{background:var(--row-hover)}
 
 .col{min-width:0;font-size:14px;font-weight:500;color:var(--text)}
 

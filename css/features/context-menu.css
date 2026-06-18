@@ -64,7 +64,7 @@
   color: var(--text-strong, #22252f);
 }
 .ctx-item--danger { color: var(--danger); }
-.ctx-item--danger:hover { background: #fff5f5; }
+.ctx-item--danger:hover { background: var(--danger-bg); }
 .ctx-divider {
   height: 1px;
   background: var(--border);

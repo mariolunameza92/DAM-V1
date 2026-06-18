@@ -44,6 +44,7 @@
   --surface-raised:     #fff;          /* popovers, menús, diálogos flotantes */
   --surface-sunken:     var(--g100);   /* chips, tracks, grupos anidados, fill de inputs */
   --surface-hover:      var(--g200);   /* hover de filas/ítems */
+  --row-hover:          rgba(0, 0, 0, .03); /* hover sutil de filas de tabla (aclara en dark) */
   --surface-placeholder:var(--g200);   /* fondo de avatares/thumbs vacíos */
   --surface-neutral:    var(--g200);   /* relleno neutro estático: badges, tracks, chips */
   --surface-strong:     var(--g300);   /* relleno neutro más profundo (burbuja "+N") */
@@ -57,6 +58,7 @@
   --text-muted:         var(--g500);
   --text-faint:         var(--g400);
   --text-disabled:      var(--g300);
+  --text-ai:            #8591ab;       /* label de IA (tono del gradient-accent) */
 
   /* ── Bordes ── */
   --border:             var(--g200);
@@ -71,6 +73,8 @@
   --on-accent:          #fff;          /* texto/icono sobre accent */
   --on-accent-muted:    var(--g300);   /* etiqueta atenuada sobre accent */
   --on-accent-border:   rgba(255, 255, 255, .1); /* highlight interno en botones oscuros */
+  --on-accent-overlay:  rgba(255, 255, 255, .22);/* fill translúcido sobre accent (badges en chips activos) */
+  --on-accent-faint:    rgba(255, 255, 255, .55);/* icono atenuado sobre accent (ej. botón quitar chip) */
   --cta:                #0f1117;       /* CTA negra (más oscura que accent) */
   --cta-text:           #fff;
 
@@ -78,6 +82,7 @@
   --danger:             #dc2626;
   --danger-hover:       #b91c1c;
   --danger-bg:          rgba(220, 38, 38, .08);
+  --danger-border:      rgba(220, 38, 38, .18);
   --on-danger:          #fff;
   --success:            #16a34a;
   --success-bg:         #f0fdf4;
@@ -121,6 +126,7 @@
   /* ── Folder icon (gradiente del SVG de carpeta — flips en dark) ── */
   --folder-grad-from:   #b0b7c9;   /* g300 */
   --folder-grad-to:     #515c78;   /* g600 */
+  --folder-wash:        rgba(255, 255, 255, .5); /* velo sobre el gradiente de carpeta — suaviza en light, casi nulo en dark */
 
   /* ── Data-viz ── el "ink" de charts (heatmap/celdas con opacidad).
      Light = g950; en dark se aclara para no perderse sobre fondo oscuro. ── */
@@ -140,6 +146,7 @@
   --surface-raised:     #252934;
   --surface-sunken:     #121419;
   --surface-hover:      #2a2f3a;
+  --row-hover:          rgba(255, 255, 255, .05);
   --surface-placeholder:#2a2f3a;
   --surface-neutral:    #2f3440;
   --surface-strong:     #3a414f;
@@ -153,6 +160,7 @@
   --text-muted:         #949db4;  /* AA: ≥4.5:1 sobre bg/surface/raised/neutral/hover */
   --text-faint:         #8a92aa;  /* AA: ≥4.5:1 sobre bg/surface/raised(cards); ≥3:1 en chips */
   --text-disabled:      #454d63;
+  --text-ai:            #949db4;
 
   /* ── Bordes ── */
   --border:             #2e333e;
@@ -167,6 +175,8 @@
   --on-accent:          #1c1f27;   /* texto/icono oscuro sobre accent claro */
   --on-accent-muted:    #515c78;
   --on-accent-border:   rgba(0, 0, 0, .12);
+  --on-accent-overlay:  rgba(0, 0, 0, .16);
+  --on-accent-faint:    rgba(0, 0, 0, .50);
   --cta:                #f6f7f9;
   --cta-text:           #15171c;
 
@@ -174,6 +184,7 @@
   --danger:             #f87171;
   --danger-hover:       #ef4444;
   --danger-bg:          rgba(248, 113, 113, .14);
+  --danger-border:      rgba(248, 113, 113, .30);
   --on-danger:          #1c1f27;
   --success:            #34d399;
   --success-bg:         rgba(52, 211, 153, .12);
@@ -204,5 +215,6 @@
   /* ── Folder icon + data-viz ink (flips) ── */
   --folder-grad-from:   #3a414f;
   --folder-grad-to:     #20242e;
+  --folder-wash:        rgba(255, 255, 255, .06);
   --dataviz-ink:        #c7cdd9;
 }

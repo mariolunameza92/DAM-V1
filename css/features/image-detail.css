@@ -393,7 +393,7 @@
 .img-detail-ai-label {
   font-size: 12px;
   font-style: italic;
-  color: #8591ab;
+  color: var(--text-ai);
   line-height: 1.5;
   font-family: var(--font-ui);
   margin: 0;
