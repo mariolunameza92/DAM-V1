@@ -57,7 +57,7 @@
 .p-selfie-img{width:46px;height:46px;border-radius:50%;object-fit:cover;display:block;border:2.5px solid var(--color-accent)}
 .p-selfie-remove{position:absolute;top:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:var(--g800);border:1.5px solid var(--g50);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .15s}
 .p-selfie-remove:hover{background:var(--g950)}
-.p-selfie-remove .msi{font-size:11px;color:var(--g100)}
+.p-selfie-remove .msi{font-size:12px;color:var(--g100)}
 .p-dorsal-input-wrap{flex:none;display:flex;align-items:center;background:var(--g50);border:2px solid var(--g200);border-radius:80px;padding:var(--space-3) var(--space-5);width:10rem}
 .p-dorsal-input-wrap .p-search-input{width:100%;min-width:0}
 .p-dorsal-input-wrap.has-clear{padding-right:var(--space-3)}

@@ -93,7 +93,7 @@
 }
 .an-section-lbl:first-child,
 .an-section-lbl.no-top { margin-top: 0; }
-.an-section-lbl .msi { font-size: 13px; color: var(--text-disabled); }
+.an-section-lbl .msi { font-size: 13px; color: var(--text-faint); }
 
 /* ── Generic card ────────────────────────────────────────────────────────── */
 .an-card {
@@ -495,7 +495,7 @@
   align-items: center;
   gap: 6px;
 }
-.an-stat-row-lbl .msi { font-size: 13px; color: var(--text-disabled); }
+.an-stat-row-lbl .msi { font-size: 13px; color: var(--text-faint); }
 .an-stat-row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
 .an-stat-row-val {
   font-family: var(--font-mono);

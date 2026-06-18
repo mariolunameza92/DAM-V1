@@ -12,11 +12,11 @@
 .btn-submit:hover{opacity:.85}
 .btn-submit:disabled{opacity:.4;cursor:default}
 
-.icon-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent}
-.more-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--border);background:var(--surface-sunken);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.icon-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;color:var(--text-secondary)}
+.more-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer}
 
 .view-toggle{display:flex;gap:8px}
-.view-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--surface-sunken)}
-.view-btn .msi{color:var(--text-faint)}
+.view-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent}
+.view-btn .msi{color:var(--text-secondary)}
 .view-btn.active{background:var(--accent);border-color:var(--accent)}
 .view-btn.active .msi{color:var(--on-accent)}
