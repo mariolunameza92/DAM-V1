@@ -42,6 +42,21 @@ export function switchSection(id) {
   location.hash = id;
 }
 
+// Pill de hover del sidebar: se desliza hacia el ítem bajo el cursor.
+export function initNavPill() {
+  const nav = document.querySelector('.nav');
+  const pill = nav?.querySelector('.nav-pill');
+  if (!nav || !pill) return;
+  nav.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      pill.style.height = item.offsetHeight + 'px';
+      pill.style.transform = `translateY(${item.offsetTop}px)`;
+      pill.style.opacity = '1';
+    });
+  });
+  nav.addEventListener('mouseleave', () => { pill.style.opacity = '0'; });
+}
+
 let _introPlayed = false;
 export function animateWelcome() {
   if (_introPlayed) return;
@@ -260,6 +275,7 @@ if (_portalTab) {
   initFilters();
   initSearch();
   initSectionReveal();
+  initNavPill();
 
   // Hide topbar on scroll down, reveal on scroll up
   (function(){
