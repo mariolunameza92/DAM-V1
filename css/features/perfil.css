@@ -1,162 +1,620 @@
-/* ── Perfil ───────────────────────────────────────────────────────────────── */
+/* ── Mi Perfil ─────────────────────────────────────────────────────────────── */
 
-.perfil-wrap {
-  padding-top: var(--space-8);
-  padding-bottom: var(--space-12);
-  max-width: 760px;
+.pf-wrap {
+  padding: var(--space-6) 0 var(--space-12);
+  max-width: 740px;
 }
 
-/* ── Header ─────────────────────────────────────────────────────────────── */
-.perfil-header {
+/* ── Section label / divider ─────────────────────────────────────────────── */
+.pf-section-label {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
-  padding: var(--space-8);
-  background: var(--surface);
-  border-radius: 16px;
-  margin-bottom: var(--space-5);
+  gap: var(--space-3);
+  margin: var(--space-8) 0 var(--space-4);
+  color: var(--text-faint);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-family: var(--font-ui);
+}
+.pf-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.pf-section-label:first-child {
+  margin-top: var(--space-2);
 }
 
-.perfil-avatar {
-  width: 80px;
-  height: 80px;
+/* ── Card base ───────────────────────────────────────────────────────────── */
+.pf-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ── Avatar block ────────────────────────────────────────────────────────── */
+.pf-avatar-block {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-6);
+}
+
+.pf-avatar {
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background: var(--accent-soft);
-  color: var(--on-accent);
+  background: var(--surface-placeholder);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 24px;
-  font-weight: 700;
   flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid var(--border);
+}
+.pf-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pf-avatar-initials {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-secondary);
   letter-spacing: -.5px;
+  line-height: 1;
+}
+.pf-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .48);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity .15s;
+  color: #fff;
+  pointer-events: none;
+}
+.pf-avatar:hover .pf-avatar-overlay { opacity: 1; }
+.pf-avatar-overlay .msi { font-size: 16px; width: 16px; height: 16px; }
+.pf-avatar-overlay-txt {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  font-family: var(--font-ui);
 }
 
-.perfil-info {
+.pf-avatar-meta {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
   flex: 1;
   min-width: 0;
 }
-
-.perfil-name {
-  font-size: 22px;
+.pf-avatar-name {
+  font-size: 17px;
   font-weight: 500;
   color: var(--text-title);
   line-height: 1.2;
 }
-
-.perfil-role {
+.pf-avatar-hint {
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .07em;
-  text-transform: uppercase;
   color: var(--text-faint);
   font-family: var(--font-ui);
   margin-top: 2px;
 }
-
-.perfil-org {
-  font-size: 13px;
-  color: var(--text-secondary);
+.pf-avatar-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-2);
   margin-top: var(--space-2);
 }
 
-/* ── Info grid ───────────────────────────────────────────────────────────── */
-.perfil-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
+/* ── Field rows ──────────────────────────────────────────────────────────── */
+.pf-fields {
+  border-top: 1px solid var(--border);
+}
+.pf-field-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-6);
+  min-height: 54px;
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.pf-field-row:last-child { border-bottom: none; }
+.pf-field-row.editing { background: var(--surface-sunken); }
+.pf-password-row { cursor: pointer; }
+.pf-password-row:hover { background: var(--row-hover); }
+
+.pf-field-label {
+  width: 90px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--text-faint);
+  font-family: var(--font-ui);
+}
+.pf-field-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.pf-field-val {
+  font-size: 14px;
+  color: var(--text);
+  font-family: var(--font-ui);
+}
+.pf-field-input {
+  margin: 0 !important;
+  flex: 1;
+  max-width: 260px;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  font-size: 14px;
 }
 
-.perfil-card {
-  background: var(--surface);
-  border-radius: 12px;
-  padding: var(--space-5) var(--space-6);
-}
-
-.perfil-card-title {
+/* Verified badge */
+.pf-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--success-bg);
+  color: var(--success);
+  border-radius: 20px;
+  padding: 2px 8px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: .07em;
+  font-family: var(--font-ui);
+  letter-spacing: .03em;
+}
+.pf-verified-badge .msi { color: var(--success); }
+
+/* Edit / toggle button in rows */
+.pf-edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--text-faint);
+  flex-shrink: 0;
+  transition: background .15s, color .15s;
+}
+.pf-edit-btn:hover { background: var(--surface-hover); color: var(--text); }
+
+/* ── Password accordion ──────────────────────────────────────────────────── */
+.pf-password-accordion {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s cubic-bezier(.4, 0, .2, 1);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border);
+}
+.pf-pw-fields {
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.pf-pw-inp-wrap {
+  position: relative;
+  width: 100%;
+}
+.pf-pw-inp-wrap .field {
+  padding-right: 40px;
+}
+.pf-eye-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: color .15s;
+  padding: 4px;
+}
+.pf-eye-btn:hover { color: var(--text); }
+
+/* Strength bar */
+.pf-strength-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: 6px;
+}
+.pf-strength-track {
+  flex: 1;
+  height: 3px;
+  background: var(--surface-neutral);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.pf-strength-fill {
+  height: 100%;
+  width: 0;
+  background: var(--danger);
+  border-radius: 2px;
+  transition: width .22s, background .22s;
+}
+.pf-strength-label {
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  min-width: 48px;
+  text-align: right;
+}
+
+/* Password error */
+.pf-pw-error {
+  font-size: 11px;
+  color: var(--danger);
+  margin-top: 4px;
+  padding-left: 14px;
+  font-family: var(--font-ui);
+}
+
+/* Password actions inside accordion */
+.pf-pw-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: 0 var(--space-6) var(--space-4);
+}
+
+/* ── Card footer (Cuenta) ────────────────────────────────────────────────── */
+.pf-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--border);
+  background: var(--surface-sunken);
+}
+
+/* ── Plan card ───────────────────────────────────────────────────────────── */
+.pf-plan-card { padding: var(--space-6); }
+
+.pf-plan-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-5);
+}
+.pf-plan-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.pf-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: .06em;
+  align-self: flex-start;
+  margin-bottom: 4px;
+}
+.pf-plan-name {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-title);
+  line-height: 1.2;
+}
+.pf-plan-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  max-width: 360px;
+}
+.pf-plan-price {
+  text-align: right;
+  flex-shrink: 0;
+}
+.pf-price-amount {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-title);
+  line-height: 1;
+}
+.pf-price-period {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.pf-features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3) var(--space-6);
+  margin-bottom: var(--space-5);
+}
+.pf-feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: var(--text);
+  font-family: var(--font-ui);
+}
+.pf-feature-check { color: var(--success); }
+
+.pf-plan-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.pf-renewal {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+}
+.pf-plan-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.pf-btn-danger {
+  color: var(--danger) !important;
+  border-color: var(--danger-border) !important;
+}
+.pf-btn-danger:hover {
+  background: var(--danger-bg) !important;
+  color: var(--danger) !important;
+}
+
+/* ── Billing card ────────────────────────────────────────────────────────── */
+.pf-payment-block { padding: var(--space-5) var(--space-6); }
+
+.pf-block-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--text-faint);
   font-family: var(--font-ui);
   margin-bottom: var(--space-4);
 }
-
-.perfil-field {
+.pf-payment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pf-card-type {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.pf-card-icon {
+  width: 44px;
+  height: 30px;
+  background: var(--surface-sunken);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.pf-card-info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
+}
+.pf-card-brand {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.pf-card-number {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+.pf-card-exp {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-family: var(--font-ui);
+}
+.pf-block-divider { height: 1px; background: var(--border); }
+
+.pf-invoices-block { padding: var(--space-5) var(--space-6); }
+.pf-invoices-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: var(--space-4);
 }
-.perfil-field:last-child { margin-bottom: 0; }
 
-.perfil-field-label {
+/* Invoice table */
+.pf-invoice-table {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.pf-invoice-head {
+  display: grid;
+  grid-template-columns: 110px 1fr 80px 80px 36px;
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface-sunken);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-faint);
+  font-family: var(--font-ui);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.pf-invoice-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 80px 80px 36px;
+  padding: var(--space-3) var(--space-4);
+  align-items: center;
+  border-top: 1px solid var(--border);
+  transition: background .12s;
+}
+.pf-invoice-row:hover { background: var(--row-hover); }
+.pf-inv-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.pf-inv-desc {
+  font-size: 13px;
+  color: var(--text);
+  font-family: var(--font-ui);
+}
+.pf-inv-amount {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+}
+.pf-inv-status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-ui);
+  letter-spacing: .02em;
+  justify-self: start;
+}
+.pf-status-paid  { background: var(--success-bg);  color: var(--success); }
+.pf-status-failed { background: var(--danger-bg); color: var(--danger); }
+
+.pf-dl-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--text-faint);
+  transition: background .15s, color .15s;
+  justify-self: center;
+}
+.pf-dl-btn:hover { background: var(--surface-hover); color: var(--text); }
+
+.pf-invoice-note {
+  margin-top: var(--space-3);
   font-size: 11px;
   color: var(--text-faint);
   font-family: var(--font-ui);
 }
 
-.perfil-field-value {
-  font-size: 14px;
-  color: var(--text);
-  font-family: var(--font-ui);
-}
-
-.perfil-field-mono {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.perfil-badge {
-  display: inline-flex;
+/* ── Sidebar user button ─────────────────────────────────────────────────── */
+.sb-user-btn {
+  display: flex;
   align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  color: var(--text);
+  transition: background .15s;
+  margin-bottom: var(--space-3);
+}
+.sb-user-btn:hover { background: var(--surface-hover); }
+
+.sb-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
   background: var(--accent-soft);
   color: var(--on-accent);
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 11px;
-  font-weight: 700;
-  font-family: var(--font-ui);
-  letter-spacing: .04em;
-  align-self: flex-start;
-}
-
-/* ── Stats row ───────────────────────────────────────────────────────────── */
-.perfil-stats {
-  display: flex;
-  gap: var(--space-4);
-}
-
-.perfil-stat {
-  flex: 1;
-  background: var(--surface);
-  border-radius: 12px;
-  padding: var(--space-5) var(--space-6);
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.perfil-stat-value {
   font-family: var(--font-mono);
-  font-size: 28px;
+  font-size: 10px;
   font-weight: 700;
-  color: var(--text-title);
-  line-height: 1.1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  letter-spacing: -.5px;
+}
+.sb-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.perfil-stat-label {
+.sb-user-info {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+.sb-user-name {
   font-size: 12px;
-  color: var(--text-muted);
+  font-weight: 500;
+  color: var(--text-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-family: var(--font-ui);
+  line-height: 1.3;
+}
+.sb-user-role {
+  font-size: 10px;
+  color: var(--text-faint);
+  font-family: var(--font-ui);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sb-user-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: var(--space-3);
 }
