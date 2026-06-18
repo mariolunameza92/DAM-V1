@@ -5,9 +5,9 @@ body{font-family:var(--font-ui);background:var(--bg);color:var(--text-strong);mi
 .msi.xs{font-size:14px;width:14px;height:14px}
 
 .app{display:flex;height:100vh;overflow:hidden}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
-.main::before{content:'';position:absolute;top:0;right:0;width:70%;height:400px;pointer-events:none;z-index:0;background:var(--gradient-ambient)}
-.content-scroll{flex:1;overflow-y:auto;position:relative;z-index:1}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;isolation:isolate}
+.main::before{content:'';position:absolute;top:0;right:0;width:70%;height:400px;pointer-events:none;z-index:-1;background:var(--gradient-ambient)}
+.content-scroll{flex:1;overflow-y:auto}
 .content{padding:var(--space-6);display:flex;flex-direction:column;gap:24px}
 .section{display:none}
 .section.active{display:block}
