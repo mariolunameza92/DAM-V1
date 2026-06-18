@@ -88,8 +88,8 @@ function _strengthOf(pw) {
   if (/[0-9]/.test(pw))          score++;
   if (/[^A-Za-z0-9]/.test(pw))   score++;
   const labels = ['', 'Débil', 'Regular', 'Buena', 'Fuerte'];
-  const colors = ['', 'var(--danger)', '#d97706', '#65a30d', 'var(--success)'];
-  return { score, label: labels[score] || '', color: colors[score] || '' };
+  const clses  = ['', 'str-weak', 'str-fair', 'str-good', 'str-strong'];
+  return { score, label: labels[score] || '', cls: clses[score] || '' };
 }
 
 // ── Main render ───────────────────────────────────────────────────────────
@@ -554,11 +554,11 @@ function _bindPasswordAccordion() {
     if (!pw) { strengthWrap.style.display = 'none'; }
     else {
       strengthWrap.style.display = 'flex';
-      const { score, label, color } = _strengthOf(pw);
-      strengthFill.style.width    = (score / 4 * 100) + '%';
-      strengthFill.style.background = color;
-      strengthLabel.textContent   = label;
-      strengthLabel.style.color   = color;
+      const { score, label, cls } = _strengthOf(pw);
+      strengthFill.style.width = (score / 4 * 100) + '%';
+      strengthFill.className   = 'pf-strength-fill ' + cls;
+      strengthLabel.textContent = label;
+      strengthLabel.className  = 'pf-strength-label ' + cls;
     }
     _validateMatch(pwNew, pwConfirm, errorEl);
     _refreshSaveBtn(pwCurrent, pwNew, pwConfirm, saveBtn);

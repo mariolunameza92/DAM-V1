@@ -258,7 +258,7 @@
 .pf-strength-fill {
   height: 100%;
   width: 0;
-  background: var(--danger);
+  background: var(--pf-str-color, var(--danger));
   border-radius: 2px;
   transition: width .22s, background .22s;
 }
@@ -269,7 +269,16 @@
   font-family: var(--font-ui);
   min-width: 48px;
   text-align: right;
+  color: var(--pf-str-color, var(--danger));
 }
+
+/* Strength levels — tokens que adaptan a dark mode */
+.str-weak  { --pf-str-color: var(--danger); }
+.str-fair  { --pf-str-color: var(--warning); }
+.str-good  { --pf-str-color: #65a30d; }
+.str-strong{ --pf-str-color: var(--success); }
+
+[data-theme="dark"] .str-good { --pf-str-color: #4ade80; }
 
 /* Password error */
 .pf-pw-error {
