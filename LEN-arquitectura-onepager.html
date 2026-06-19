@@ -1,0 +1,273 @@
+<title>LEN — Arquitectura de plataforma · One-pager para Amber</title>
+<style>
+  :root{
+    --bg:#0d0f14; --panel:#161922; --panel-2:#1d212c; --line:#2a2f3d;
+    --ink:#f4f6fb; --body:#aeb4c2; --muted:#727a8c; --faint:#535b6d;
+    --accent:#7c9cff; --green:#43c08a; --amber:#e0a83a; --rose:#e0607a; --violet:#a78bfa;
+    --mono:ui-monospace,"SFMono-Regular","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    --ui:"Google Sans",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);line-height:1.5;
+    -webkit-font-smoothing:antialiased;font-size:15px}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 28px 80px}
+
+  /* Header */
+  .hd{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;
+    padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:40px}
+  .brand{font-size:13px;letter-spacing:.32em;color:var(--muted);font-weight:700;margin-bottom:10px}
+  h1{font-size:34px;margin:0;letter-spacing:-.02em;font-weight:700;line-height:1.1}
+  .sub{color:var(--body);font-size:15px;margin-top:10px;max-width:560px}
+  .meta{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;line-height:1.8}
+  .meta b{color:var(--body);font-weight:400}
+
+  /* Section heads */
+  .sec{margin:48px 0 18px;display:flex;align-items:center;gap:12px}
+  .sec .n{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:700;
+    border:1px solid var(--accent);border-radius:6px;padding:3px 8px}
+  .sec h2{font-size:20px;margin:0;font-weight:600;letter-spacing:-.01em}
+  .sec .h-note{color:var(--muted);font-size:12.5px;margin-left:auto;font-family:var(--mono)}
+
+  /* 4 capas */
+  .layers{display:flex;flex-direction:column;gap:10px}
+  .layer{display:grid;grid-template-columns:62px 1fr auto;gap:18px;align-items:center;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px;
+    position:relative;overflow:hidden}
+  .layer::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+  .layer.l1::before{background:var(--muted)} .layer.l2::before{background:var(--violet)}
+  .layer.l3::before{background:var(--accent)} .layer.l4::before{background:var(--green)}
+  .layer.l3{background:linear-gradient(90deg,rgba(124,156,255,.10),var(--panel) 45%);
+    border-color:rgba(124,156,255,.35)}
+  .lnum{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--faint);text-align:center}
+  .layer.l3 .lnum{color:var(--accent)}
+  .ltitle{font-weight:600;font-size:16px}
+  .ldesc{color:var(--body);font-size:13px;margin-top:3px}
+  .ltag{font-family:var(--mono);font-size:10.5px;padding:5px 10px;border-radius:20px;
+    border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .ltag.hot{color:var(--accent);border-color:rgba(124,156,255,.4);background:rgba(124,156,255,.08)}
+  .ltag.ok{color:var(--green);border-color:rgba(67,192,138,.35)}
+
+  /* model 3 pills */
+  .model{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:760px){.model{grid-template-columns:1fr 1fr}}
+  .mp{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .mp .w{font-weight:700;font-size:15px;margin-bottom:6px}
+  .mp .d{color:var(--body);font-size:12.5px;line-height:1.45}
+  .mp.a .w{color:var(--accent)} .mp.b .w{color:var(--violet)}
+  .mp.c .w{color:var(--green)} .mp.d2 .w{color:var(--amber)}
+
+  /* microservices grid */
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .d-block{background:var(--rose)} .d-high{background:var(--accent)}
+  .d-med{background:var(--amber)} .d-low{background:var(--muted)}
+  .svc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:900px){.svc-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.svc-grid{grid-template-columns:1fr}}
+  .svc{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 14px;
+    position:relative}
+  .svc::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:3px}
+  .svc.block::before{background:var(--rose)} .svc.high::before{background:var(--accent)}
+  .svc.med::before{background:var(--amber)} .svc.low::before{background:var(--muted)}
+  .svc .sn{font-weight:600;font-size:13.5px;padding-left:8px}
+  .svc .sd{color:var(--muted);font-size:11.5px;margin-top:4px;padding-left:8px;font-family:var(--mono)}
+  .svc .badge{position:absolute;top:11px;right:11px;font-family:var(--mono);font-size:9px;
+    padding:2px 6px;border-radius:5px;letter-spacing:.05em}
+  .badge.nuevo{color:var(--rose);background:rgba(224,96,122,.12)}
+  .badge.existe{color:var(--green);background:rgba(67,192,138,.12)}
+  .build-note{margin-top:14px;background:rgba(224,96,122,.07);border:1px solid rgba(224,96,122,.25);
+    border-radius:10px;padding:13px 16px;font-size:13px;color:var(--body)}
+  .build-note b{color:var(--rose)}
+
+  /* two-col generic */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:820px){.cols{grid-template-columns:1fr}}
+
+  /* mapping table */
+  .map{width:100%;border-collapse:collapse;font-size:13px}
+  .map th{text-align:left;color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;
+    letter-spacing:.08em;padding:8px 12px;border-bottom:1px solid var(--line)}
+  .map td{padding:10px 12px;border-bottom:1px solid var(--line);color:var(--body);vertical-align:top}
+  .map td:first-child{color:var(--ink)}
+  .map tr:last-child td{border-bottom:none}
+  .map .arrow{color:var(--faint)}
+  .map .gap td{color:var(--rose)}
+
+  /* flows */
+  .flow{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin-bottom:10px}
+  .flow .ft{font-weight:600;font-size:13.5px;margin-bottom:5px;display:flex;gap:8px;align-items:center}
+  .flow .uc{font-family:var(--mono);font-size:10px;color:var(--accent);border:1px solid rgba(124,156,255,.35);
+    border-radius:5px;padding:2px 6px}
+  .flow .fd{color:var(--body);font-size:12.5px}
+  .flow .fd code{font-family:var(--mono);font-size:11px;color:var(--amber);background:rgba(224,168,58,.1);
+    padding:1px 5px;border-radius:4px}
+
+  /* non-negotiables */
+  .nn{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:820px){.nn{grid-template-columns:1fr}}
+  .nncard{border-radius:12px;padding:16px;border:1px solid}
+  .nncard.r{background:rgba(224,96,122,.07);border-color:rgba(224,96,122,.3)}
+  .nncard.b{background:rgba(124,156,255,.07);border-color:rgba(124,156,255,.3)}
+  .nncard.g{background:rgba(67,192,138,.07);border-color:rgba(67,192,138,.3)}
+  .nncard .t{font-weight:700;font-size:14px;margin-bottom:7px}
+  .nncard.r .t{color:var(--rose)} .nncard.b .t{color:var(--accent)} .nncard.g .t{color:var(--green)}
+  .nncard .x{color:var(--body);font-size:12.5px;line-height:1.5}
+
+  /* rule banner */
+  .rule{background:linear-gradient(120deg,rgba(124,156,255,.14),rgba(167,139,250,.10));
+    border:1px solid rgba(124,156,255,.35);border-radius:16px;padding:26px 28px;margin-top:14px}
+  .rule .rk{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:12px}
+  .rule .rt{font-size:21px;font-weight:600;line-height:1.4;letter-spacing:-.01em}
+  .rule .rt b{color:var(--accent)}
+  .rule .rd{color:var(--body);font-size:13.5px;margin-top:12px}
+
+  .foot{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:6px 20px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .foot b{color:var(--body);font-weight:400}
+</style>
+
+<div class="wrap">
+
+  <div class="hd">
+    <div>
+      <div class="brand">L E N · I N T E L I G E N C I A &nbsp;V I S U A L</div>
+      <h1>Arquitectura de plataforma</h1>
+      <div class="sub">Desglose de producto y requerimientos para diseñar la arquitectura sin reprocesos. Resumen visual para el equipo de Amber.</div>
+    </div>
+    <div class="meta">
+      <div><b>Base:</b> Doc. Maestro v1.0 · Abr 2026</div>
+      <div><b>Apps:</b> Schools (MVP) · DAM B2B · DAM-API</div>
+      <div><b>Track:</b> 200+ eventos · 2.5M+ imágenes</div>
+    </div>
+  </div>
+
+  <!-- ── 1. Las 4 capas ── -->
+  <div class="sec"><span class="n">01</span><h2>Las cuatro capas del producto</h2>
+    <span class="h-note">una plataforma · muchas aplicaciones</span></div>
+  <div class="layers">
+    <div class="layer l4">
+      <div class="lnum">4</div>
+      <div><div class="ltitle">Aplicaciones</div><div class="ldesc">Productos comerciales = configuraciones del DAM. LEN for Schools · DAM B2B · DAM-Hospitality/Deportes/Festivales…</div></div>
+      <div class="ltag ok">Schools en MVP</div>
+    </div>
+    <div class="layer l3">
+      <div class="lnum">3</div>
+      <div><div class="ltitle">Plataforma — el DAM</div><div class="ldesc">Usuarios, tenants, autorización, consentimientos, blacklist, álbumes, búsqueda, distribución, auditoría.</div></div>
+      <div class="ltag hot">◆ Aquí trabaja Amber</div>
+    </div>
+    <div class="layer l2">
+      <div class="lnum">2</div>
+      <div><div class="ltitle">Procesamiento — motor de IA</div><div class="ldesc">Reconocimiento facial, detección de objetos/logos, OCR, segmentación, clustering.</div></div>
+      <div class="ltag ok">Rekognition · 94%</div>
+    </div>
+    <div class="layer l1">
+      <div class="lnum">1</div>
+      <div><div class="ltitle">Captura</div><div class="ldesc">Foto profesional de eventos hoy; cámaras, IoT, UGC y video a futuro.</div></div>
+      <div class="ltag">Operativo</div>
+    </div>
+  </div>
+
+  <!-- ── 2. Modelo ── -->
+  <div class="sec"><span class="n">02</span><h2>El modelo: plataforma modular multi-tenant</h2></div>
+  <div class="model">
+    <div class="mp a"><div class="w">Plataforma</div><div class="d">Infraestructura compartida, no una app. Capacidades reutilizables entre mercados.</div></div>
+    <div class="mp b"><div class="w">Modular</div><div class="d">Módulos activables por tenant (<code style="font-family:var(--mono);font-size:11px">enabled_modules</code>). Nada hardcodeado a una vertical.</div></div>
+    <div class="mp c"><div class="w">Multi-tenant</div><div class="d">Muchos clientes, datos 100% aislados. Ningún query cruza tenants.</div></div>
+    <div class="mp d2"><div class="w">N aplicaciones</div><div class="d">Cada vertical = una subversión (<code style="font-family:var(--mono);font-size:11px">schools / dam_b2b</code>) con su UX y marca.</div></div>
+  </div>
+
+  <!-- ── 3. Microservicios ── -->
+  <div class="sec"><span class="n">03</span><h2>Mapa de microservicios objetivo</h2>
+    <span class="h-note">dirección preliminar · cierra Ángel</span></div>
+  <div class="legend">
+    <span><i class="dot d-block"></i> Bloqueante</span>
+    <span><i class="dot d-high"></i> Alta — base</span>
+    <span><i class="dot d-med"></i> Media</span>
+    <span><i class="dot d-low"></i> Baja</span>
+    <span style="margin-left:auto"><span class="badge nuevo" style="position:static">NUEVO</span> a construir &nbsp;·&nbsp; <span class="badge existe" style="position:static">EXISTE</span> wrap/refactor</span>
+  </div>
+  <div class="svc-grid">
+    <div class="svc high"><div class="sn">Identity</div><div class="sd">usuarios · tenants · beneficiarios</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc high"><div class="sn">Authorization</div><div class="sd">roles · permisos · RBAC</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc block"><div class="sn">Consent</div><div class="sd">plantillas · firmas · PDF</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc block"><div class="sn">Blacklist</div><div class="sd">entradas · embeddings restringidos</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc high"><div class="sn">Content</div><div class="sd">álbumes · fotos · faces (core)</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc high"><div class="sn">Audit</div><div class="sd">logs inmutables · transversal</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc high"><div class="sn">Face Recognition</div><div class="sd">embeddings · matching</div><span class="badge existe">EXISTE</span></div>
+    <div class="svc med"><div class="sn">OCR</div><div class="sd">dorsales · texto</div><span class="badge existe">EXISTE</span></div>
+    <div class="svc med"><div class="sn">DAM Search</div><div class="sd">multi-filtro · Elasticsearch</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc med"><div class="sn">Logo Detection</div><div class="sd">modelos custom · marca</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc med"><div class="sn">Notification</div><div class="sd">email · SMS · in-app</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc med"><div class="sn">PDF Generation</div><div class="sd">consentimientos · reportes</div><span class="badge nuevo">NUEVO</span></div>
+    <div class="svc high"><div class="sn">File Storage</div><div class="sd">S3 wrapper · signed URLs</div><span class="badge existe">EXISTE</span></div>
+    <div class="svc low"><div class="sn">Reporting</div><div class="sd">brand exposure · analytics</div><span class="badge nuevo">NUEVO</span></div>
+  </div>
+  <div class="build-note">
+    <b>Este año (6-9 meses):</b> construir los críticos — <b>Identity · Authorization · Consent · Blacklist · Audit</b> — que desbloquean Schools y preparan el DAM completo. Migración <b>incremental</b>: Strapi (legacy) y microservicios coexisten; Consent y Blacklist nacen como servicios externos conectados vía API.
+  </div>
+
+  <!-- ── 4 + 5: mapping + flows ── -->
+  <div class="cols">
+    <div>
+      <div class="sec"><span class="n">04</span><h2>Del prototipo al producto</h2></div>
+      <table class="map">
+        <tr><th>En el demo se ve…</th><th></th><th>Servicio real</th></tr>
+        <tr><td>Carpetas · masonry</td><td class="arrow">→</td><td>Content</td></tr>
+        <tr><td>Face IDs</td><td class="arrow">→</td><td>Face Recognition · Identity</td></tr>
+        <tr><td>Búsqueda selfie/dorsal</td><td class="arrow">→</td><td>Face Recognition · OCR</td></tr>
+        <tr><td>Black List</td><td class="arrow">→</td><td>Blacklist</td></tr>
+        <tr><td>Portales</td><td class="arrow">→</td><td>Content · File Storage</td></tr>
+        <tr><td>Analytics</td><td class="arrow">→</td><td>Reporting</td></tr>
+        <tr><td>Perfil · plan</td><td class="arrow">→</td><td>Identity · billing ext.</td></tr>
+        <tr class="gap"><td>— no existe —</td><td class="arrow">→</td><td>Consent</td></tr>
+        <tr class="gap"><td>— no existe —</td><td class="arrow">→</td><td>Audit</td></tr>
+        <tr class="gap"><td>— no existe —</td><td class="arrow">→</td><td>Multi-tenancy</td></tr>
+      </table>
+      <div style="font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5">
+        El demo es <b style="color:var(--body)">mono-tenant, mono-usuario y sin IA real</b> (el match facial está pre-codificado en nombres de archivo). Es spec de UX, <b style="color:var(--body)">no base de código</b>.
+      </div>
+    </div>
+    <div>
+      <div class="sec"><span class="n">05</span><h2>Flujos críticos</h2></div>
+      <div class="flow"><div class="ft"><span class="uc">UC-01</span>Consentimiento por hijo</div><div class="fd">Padre firma → PDF inmutable → si rechaza módulo crítico ⇒ alumno a blacklist. Sin consentimiento vigente = <code>acceso bloqueado</code>.</div></div>
+      <div class="flow"><div class="ft"><span class="uc">UC-02</span>Detección al subir (costo)</div><div class="fd">Match <b style="color:var(--ink)">solo contra blacklist</b> (~30), no contra el padrón (~1500) → ~50× más barato. Lógica invertida: <code>no en blacklist = autorizado</code>.</div></div>
+      <div class="flow"><div class="ft"><span class="uc">UC-03</span>Revocar consentimiento</div><div class="fd">Nuevo PDF versionado → blacklist <b style="color:var(--rose)">en milisegundos</b> → fotos publicadas pasan a <code>hidden</code> retroactivo.</div></div>
+      <div class="flow"><div class="ft"><span class="uc">UC-05</span>Búsqueda DAM multi-filtro</div><div class="fd">Persona × fecha × evento × logo, query ordenado por selectividad → export masivo · auditado.</div></div>
+    </div>
+  </div>
+
+  <!-- ── 6. No negociables ── -->
+  <div class="sec"><span class="n">06</span><h2>No negociables</h2>
+    <span class="h-note">base de credibilidad enterprise</span></div>
+  <div class="nn">
+    <div class="nncard r">
+      <div class="t">① Aislamiento multi-tenant</div>
+      <div class="x">Prioridad uno, por encima de performance y costo. <i>"Prefiero que se caiga mil veces antes de un cruce entre tenants."</i> Ningún query, endpoint ni estructura lo viola.</div>
+    </div>
+    <div class="nncard b">
+      <div class="t">② Privacy by Design</div>
+      <div class="x">Compliance = feature comercial. Ley 29733 (PE) · 21.719 (CL) · GDPR como techo. Embeddings = dato biométrico cifrado. Audit inmutable ≥24 meses. ARCO propagado a backups + downstream.</div>
+    </div>
+    <div class="nncard g">
+      <div class="t">③ Async + API-ready</div>
+      <div class="x">Procesamiento por cola, idempotente y elástico para picos. Toda capacidad core exponible vía API con token, cuotas y billing — se diseña ahora, se activa después.</div>
+    </div>
+  </div>
+
+  <!-- ── 7. Regla maestra ── -->
+  <div class="sec"><span class="n">07</span><h2>La regla que guía cada decisión</h2></div>
+  <div class="rule">
+    <div class="rk">decisión arquitectónica nº 1</div>
+    <div class="rt">¿Esto vive solo en una aplicación (ej. Schools), o vive en la <b>plataforma común</b> que sirve a todos los verticales?</div>
+    <div class="rd">Si la lógica podría aplicar a otros verticales pero la escribís "solo para colegios" → refactorizá a la plataforma común. Solo lo genuinamente específico de la vertical (cuentas padre→hijo, calendario escolar) vive en la capa de aplicación.</div>
+  </div>
+
+  <div class="foot">
+    <span><b>Documento completo:</b> LEN-ARQUITECTURA-REQUERIMIENTOS.md</span>
+    <span><b>Demo scope:</b> DAM-DEMO-SCOPE-PARA-AMBER.md</span>
+    <span><b>Decisiones técnicas finales:</b> Ángel</span>
+  </div>
+
+</div>
