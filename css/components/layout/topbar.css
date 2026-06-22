@@ -8,8 +8,8 @@
 
 /* ── Global search overlay ───────────────────────────────────────── */
 @keyframes gsModalIn{from{opacity:0;transform:translateY(-12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-#globalSearchOverlay{position:fixed;inset:0;background:var(--scrim-light,rgba(0,0,0,.35));z-index:9998;display:flex;align-items:flex-start;justify-content:center;padding-top:80px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
-#globalSearchModal{background:var(--surface-raised);border:1.5px solid var(--border);border-radius:16px;width:600px;max-width:calc(100vw - 32px);box-shadow:var(--shadow-xl,0 24px 64px rgba(0,0,0,.18));overflow:hidden;animation:gsModalIn .2s cubic-bezier(.34,1.56,.64,1) both}
+#globalSearchOverlay{position:fixed;inset:0;background:var(--scrim-light);z-index:9998;display:flex;align-items:flex-start;justify-content:center;padding-top:80px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+#globalSearchModal{background:var(--surface-raised);border:1.5px solid var(--border);border-radius:16px;width:600px;max-width:calc(100vw - 32px);box-shadow:var(--shadow-lg);overflow:hidden;animation:gsModalIn .2s cubic-bezier(.34,1.56,.64,1) both}
 #globalSearchInputWrap{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border-subtle)}
 #globalSearchInputWrap .msi{color:var(--text-body);flex-shrink:0}
 #globalSearchInput{flex:1;border:none;background:none;outline:none;font-size:15px;font-family:var(--font-ui);color:var(--text)}
