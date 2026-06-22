@@ -48,6 +48,9 @@
 <link rel="stylesheet" href="css/features/blacklist.css">
 <link rel="stylesheet" href="css/features/analytics.css">
 <link rel="stylesheet" href="css/features/perfil.css">
+<link rel="stylesheet" href="css/features/grupos.css">
+<link rel="stylesheet" href="css/features/consentimientos.css">
+<link rel="stylesheet" href="css/features/configuracion.css">
 </head>
 <body>
 
@@ -61,25 +64,40 @@
       <div class="divider"></div>
       <nav class="nav">
         <div class="nav-pill" aria-hidden="true"></div>
-        <button class="nav-item active" data-sec="inicio" onclick="switchSection('inicio')">
+
+        <div class="nav-group-label">Contenido</div>
+        <button class="nav-item active" data-sec="inicio" data-module="inicio" onclick="switchSection('inicio')">
           <span class="msi sm">home</span><span class="lbl">Inicio</span>
         </button>
-        <button class="nav-item" data-sec="carpetas" onclick="switchSection('carpetas')">
+        <button class="nav-item" data-sec="carpetas" data-module="carpetas" onclick="switchSection('carpetas')">
           <span class="msi sm">folder</span><span class="lbl">Carpetas</span>
         </button>
-        <button class="nav-item" data-sec="faceids" onclick="switchSection('faceids')">
-          <span class="msi sm">ar_on_you</span><span class="lbl">Face IDs</span>
-        </button>
-        <button class="nav-item" data-sec="blacklist" onclick="switchSection('blacklist')">
-          <span class="msi sm">person_off</span><span class="lbl">Black List</span>
-        </button>
-        <button class="nav-item" data-sec="portales" onclick="switchSection('portales')">
+        <button class="nav-item" data-sec="portales" data-module="portales" onclick="switchSection('portales')">
           <span class="msi sm">captive_portal</span><span class="lbl">Portales</span>
         </button>
-        <button class="nav-item" data-sec="analytics" onclick="switchSection('analytics')">
+
+        <div class="nav-group-label">Personas</div>
+        <button class="nav-item" data-sec="faceids" data-module="faceids" onclick="switchSection('faceids')">
+          <span class="msi sm">ar_on_you</span><span class="lbl">Face IDs</span>
+        </button>
+        <button class="nav-item" data-sec="blacklist" data-module="blacklist" onclick="switchSection('blacklist')">
+          <span class="msi sm">person_off</span><span class="lbl">Black List</span>
+        </button>
+        <button class="nav-item" data-sec="grupos" data-module="grupos" onclick="switchSection('grupos')">
+          <span class="msi sm">groups</span><span class="lbl">Grupos</span>
+        </button>
+        <button class="nav-item" data-sec="consentimientos" data-module="consentimientos" onclick="switchSection('consentimientos')">
+          <span class="msi sm">verified_user</span><span class="lbl">Consentimientos</span>
+        </button>
+
+        <div class="nav-group-label">Administración</div>
+        <button class="nav-item" data-sec="analytics" data-module="analytics" onclick="switchSection('analytics')">
           <span class="msi sm">analytics</span><span class="lbl">Analytics</span>
         </button>
-        <button class="nav-item" data-sec="perfil" onclick="switchSection('perfil')">
+        <button class="nav-item" data-sec="configuracion" data-module="configuracion" onclick="switchSection('configuracion')">
+          <span class="msi sm">settings</span><span class="lbl">Configuración</span>
+        </button>
+        <button class="nav-item" data-sec="perfil" data-module="perfil" onclick="switchSection('perfil')">
           <span class="msi sm">account_circle</span><span class="lbl">Perfil</span>
         </button>
       </nav>
@@ -330,6 +348,9 @@
         </div>
         <div class="section" id="sec-analytics"></div>
         <div class="section" id="sec-perfil"></div>
+        <div class="section" id="sec-grupos"></div>
+        <div class="section" id="sec-consentimientos"></div>
+        <div class="section" id="sec-configuracion"></div>
 
       </div>
     </div>

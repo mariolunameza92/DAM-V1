@@ -17,10 +17,12 @@ import { initSelection } from './features/shared/selection.js';
 import { initTheme } from './features/shared/theme.js';
 import { renderAnalytics } from './features/analytics/analytics.js';
 import { renderPerfil } from './features/perfil/perfil.js';
+import { initGrupos } from './features/grupos/grupos.js';
 
 const TITLES = {
   inicio: 'Inicio', carpetas: 'Carpetas', faceids: 'Face IDs',
   blacklist: 'Black List', portales: 'Portales', analytics: 'Analytics', perfil: 'Perfil',
+  grupos: 'Grupos', consentimientos: 'Consentimientos', configuracion: 'Configuración',
 };
 
 // ── Routing ──────────────────────────────────────────────────────
@@ -272,6 +274,7 @@ if (_portalTab) {
   initFaceFilters();
   initFaceIds();
   initBlacklist();
+  initGrupos();
   initFilters();
   initSearch();
   initSectionReveal();

@@ -19,6 +19,8 @@
 .nav-item.active{background:linear-gradient(90deg, rgba(133,145,171,.34), rgba(133,145,171,.12))}
 .nav-item.active .lbl{font-weight:700}
 .nav-item.active .msi{opacity:1}
+.nav-group-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-strong);opacity:.35;padding:var(--space-2) var(--space-2) 0;pointer-events:none;user-select:none;margin-top:var(--space-3)}
+.nav-pill + .nav-group-label{margin-top:0}
 .storage-row{display:flex;justify-content:space-between;font-size:12px;padding:var(--space-2);font-family:var(--font-ui)}
 .progress-wrap{padding:0 var(--space-2) var(--space-2)}
 .progress-track{height:2px;background:var(--border-strong);opacity:.5;border-radius:20px;position:relative;margin-bottom:8px}
