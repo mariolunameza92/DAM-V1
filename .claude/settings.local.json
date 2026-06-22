@@ -140,7 +140,14 @@
       "mcp__visualize__show_widget",
       "Bash(git -C /Users/lenadmin/Documents/GitHub/DAM-V1 status)",
       "Bash(git -C /Users/lenadmin/Documents/GitHub/DAM-V1 diff --stat)",
-      "Bash(git -C /Users/lenadmin/Documents/GitHub/DAM-V1 log --oneline -10)"
+      "Bash(git -C /Users/lenadmin/Documents/GitHub/DAM-V1 log --oneline -10)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\PC\\\\Documents\\\\GitHub\\\\DAM V1\" -Recurse -Force)",
+      "Bash(Select-Object FullName, PSIsContainer)",
+      "Bash(Sort-Object FullName)",
+      "Bash(ConvertTo-Json)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\PC\\\\Documents\\\\GitHub\\\\DAM V1\" -Recurse -Force | Sort-Object FullName | ForEach-Object { $_.FullName -replace [regex]::Escape\\(\"C:\\\\Users\\\\PC\\\\Documents\\\\GitHub\\\\DAM V1\"\\), \".\" } | Select-Object -First 200)",
+      "PowerShell(tree \"C:\\\\Users\\\\PC\\\\Documents\\\\GitHub\\\\DAM V1\" -L 3 2>$null)",
+      "PowerShell(head -100)"
     ]
   },
   "hooks": {
