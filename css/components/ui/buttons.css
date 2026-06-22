@@ -17,6 +17,13 @@
 .palette-btn{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s,color .12s,border-color .12s;flex-shrink:0}
 .palette-btn:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 
+/* ── Aliases semánticos para features nuevas ─────── */
+.btn{background:transparent;border:1.5px solid var(--accent);color:var(--accent);border-radius:80px;padding:var(--space-2) var(--space-4);font-family:var(--font-mono);font-weight:700;font-size:10px;text-transform:uppercase;cursor:pointer;letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px;transition:background .15s,color .15s,opacity .15s;white-space:nowrap}
+.btn:hover{background:var(--accent);color:var(--on-accent)}
+.btn-primary{background:var(--accent);color:var(--on-accent);border-color:var(--on-accent-border)}
+.btn-primary:hover{opacity:.85;background:var(--accent);color:var(--on-accent)}
+.btn-sm{font-size:9px;padding:var(--space-1) var(--space-3)}
+
 .view-toggle{display:flex;gap:8px}
 .view-btn{width:32px;height:32px;border-radius:80px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent}
 .view-btn .msi{color:var(--text-secondary)}

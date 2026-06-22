@@ -1,1 +1,153 @@
-/* Feature: Configuración — estilos en tarea #4 */
+/* Feature: Configuración */
+
+.config-wrap { padding: var(--space-5) var(--space-6); max-width: 960px; }
+
+/* ── Tab bar ── */
+.config-tabs { display: flex; gap: 2px; border-bottom: 1.5px solid var(--border); margin-bottom: var(--space-6); }
+.config-tab {
+  padding: var(--space-2) var(--space-4); font-size: var(--text-sm); font-weight: 500;
+  color: var(--text-muted); background: none; border: none; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1.5px;
+  transition: color .15s, border-color .15s; font-family: var(--font-ui);
+}
+.config-tab:hover { color: var(--text); }
+.config-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.config-pane { display: none; }
+.config-pane.active { display: block; }
+
+/* ── Sección dentro de un pane ── */
+.config-section { margin-bottom: var(--space-8); }
+.config-section-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--text-muted); margin-bottom: var(--space-3); padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+.config-section-desc { font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-4); }
+
+/* ── Módulo toggle row ── */
+.config-module-row {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+.config-module-row:last-child { border-bottom: none; }
+.config-module-icon {
+  width: 36px; height: 36px; border-radius: var(--radius);
+  background: var(--surface-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.config-module-icon .msi { font-size: 18px; color: var(--text-muted); }
+.config-module-icon--active .msi { color: var(--accent); }
+.config-module-info { flex: 1; }
+.config-module-label { font-size: var(--text-sm); font-weight: 500; color: var(--text); display: flex; align-items: center; gap: var(--space-2); }
+.config-module-desc  { font-size: 11px; color: var(--text-muted); }
+.config-required-chip { font-size: 10px; font-weight: 600; color: var(--text-muted); background: var(--surface-2); border-radius: 40px; padding: 1px 7px; }
+.config-module-toggle {
+  position: relative; width: 40px; height: 22px; flex-shrink: 0;
+}
+.config-module-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.config-toggle-track {
+  position: absolute; inset: 0; border-radius: 40px; cursor: pointer;
+  background: var(--border); transition: background .2s;
+}
+.config-module-toggle input:checked + .config-toggle-track { background: var(--accent); }
+.config-toggle-track::after {
+  content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%;
+  background: white; top: 3px; left: 3px; transition: transform .2s;
+}
+.config-module-toggle input:checked + .config-toggle-track::after { transform: translateX(18px); }
+.config-module-toggle--disabled .config-toggle-track { cursor: default; opacity: .5; }
+.config-module-row--disabled .config-module-label { color: var(--text-muted); }
+
+/* ── Pricing ── */
+.config-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+.config-plan-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-3);
+  position: relative; overflow: hidden;
+}
+.config-plan-card--highlight {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.config-plan-badge {
+  position: absolute; top: -1px; right: var(--space-4);
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+  background: var(--accent); color: var(--on-accent);
+  padding: 3px 10px 4px; border-radius: 0 0 8px 8px;
+}
+.config-plan-name { font-size: var(--text-xl); font-weight: 800; color: var(--text); }
+.config-plan-price { display: flex; align-items: baseline; gap: 2px; }
+.config-plan-price-num { font-size: 28px; font-weight: 800; color: var(--text); }
+.config-plan-price-period { font-size: var(--text-sm); color: var(--text-muted); }
+.config-plan-desc { font-size: var(--text-sm); color: var(--text-muted); }
+.config-plan-modules {
+  display: flex; flex-wrap: wrap; gap: var(--space-1);
+  padding: var(--space-2) 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.config-plan-module-chip {
+  font-size: 11px; padding: 2px 8px; border-radius: 40px;
+  background: var(--surface-2); color: var(--text-secondary);
+}
+.config-plan-features { list-style: none; display: flex; flex-direction: column; gap: var(--space-2); flex: 1; }
+.config-plan-features li {
+  font-size: var(--text-sm); color: var(--text-secondary);
+  display: flex; align-items: flex-start; gap: var(--space-2);
+}
+.config-plan-features li::before {
+  content: ''; display: inline-block; width: 16px; height: 16px; flex-shrink: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2316a34a'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z'/%3E%3C/svg%3E") center/contain no-repeat;
+  margin-top: 2px;
+}
+.config-plan-cta { margin-top: auto; }
+.config-plan-cta .btn { width: 100%; justify-content: center; }
+
+.config-pricing-note { font-size: var(--text-sm); color: var(--text-muted); margin-top: var(--space-4); text-align: center; }
+.config-pricing-note strong { color: var(--text); }
+
+/* ── Equipo ── */
+.config-team-header {
+  display: flex; align-items: center; justify-content: flex-end;
+  margin-bottom: var(--space-4);
+}
+.config-member-row {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) 0; border-bottom: 1px solid var(--border);
+}
+.config-member-row:last-child { border-bottom: none; }
+.config-member-av {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: white; flex-shrink: 0;
+}
+.config-member-info { flex: 1; min-width: 0; }
+.config-member-name  { font-size: var(--text-sm); font-weight: 500; color: var(--text); }
+.config-member-email { font-size: 11px; color: var(--text-muted); }
+.config-role-select {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: var(--space-1) var(--space-2);
+  font-size: var(--text-sm); color: var(--text); cursor: pointer; outline: none;
+  transition: border-color .15s;
+}
+.config-role-select:focus { border-color: var(--accent); }
+.config-role-select:disabled { opacity: .5; cursor: default; }
+.config-member-joined { font-size: 11px; color: var(--text-muted); min-width: 80px; text-align: right; }
+.config-member-remove { opacity: 0; transition: opacity .15s; flex-shrink: 0; }
+.config-member-row:hover .config-member-remove { opacity: 1; }
+
+/* ── Invite modal form ── */
+.config-invite-form { display: flex; flex-direction: column; gap: var(--space-3); }
+.config-invite-form label { font-size: var(--text-sm); color: var(--text-muted); display: block; margin-bottom: 4px; }
+.config-invite-form input, .config-invite-form select {
+  width: 100%; box-sizing: border-box;
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm); color: var(--text); outline: none;
+  transition: border-color .15s;
+}
+.config-invite-form input:focus, .config-invite-form select:focus { border-color: var(--accent); }

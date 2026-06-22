@@ -13,7 +13,13 @@
 
 /* Tabla en vista lista — el mecanismo vive en components/ui/data-table.css;
    acá sólo los tracks de las 5 columnas propias (idénticas a Face IDs). */
-#bl-body{--dt-cols:2.4fr 160px 1.6fr 132px 156px}
+#bl-body{--dt-cols:2.4fr 160px 1.6fr 132px 180px 156px}
+
+/* Chips de origen */
+.bl-source-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;border-radius:40px;padding:2px 8px}
+.bl-source-chip .msi{font-size:13px}
+.bl-source-chip--manual{background:var(--surface-2);color:var(--text-muted)}
+.bl-source-chip--revoked{background:var(--danger-bg);color:var(--danger)}
 
 /* Avatar en vista lista (igual que .faceid-av) */
 .bl-av{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface-placeholder);overflow:hidden;flex-shrink:0}

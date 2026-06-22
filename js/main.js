@@ -18,6 +18,9 @@ import { initTheme } from './features/shared/theme.js';
 import { renderAnalytics } from './features/analytics/analytics.js';
 import { renderPerfil } from './features/perfil/perfil.js';
 import { initGrupos } from './features/grupos/grupos.js';
+import { initConsentimientos } from './features/consentimientos/consentimientos.js';
+import { initConfiguracion } from './features/configuracion/configuracion.js';
+import { getEnabledModules, subscribeConfig } from './features/configuracion/configuracion-data.js';
 
 const TITLES = {
   inicio: 'Inicio', carpetas: 'Carpetas', faceids: 'Face IDs',
@@ -57,6 +60,16 @@ export function initNavPill() {
     });
   });
   nav.addEventListener('mouseleave', () => { pill.style.opacity = '0'; });
+}
+
+// Reactiva el sidebar cuando cambian los módulos habilitados en Configuración.
+function applyModuleVisibility() {
+  const enabled = getEnabledModules();
+  document.querySelectorAll('.nav-item[data-module]').forEach(btn => {
+    const hidden = !enabled.has(btn.dataset.module);
+    btn.style.display = hidden ? 'none' : '';
+    if (hidden && btn.classList.contains('active')) switchSection('inicio');
+  });
 }
 
 let _introPlayed = false;
@@ -275,9 +288,13 @@ if (_portalTab) {
   initFaceIds();
   initBlacklist();
   initGrupos();
+  initConsentimientos();
+  initConfiguracion();
   initFilters();
   initSearch();
   initSectionReveal();
+  applyModuleVisibility();
+  subscribeConfig(applyModuleVisibility);
   initNavPill();
 
   // Hide topbar on scroll down, reveal on scroll up

@@ -7,7 +7,8 @@ const SS_KEY = 'len_blacklist';
 // Personas del registro usadas como demo seed
 const SEED_IDS = ['cr_f4', 'l42k_f7', 'osr_f2'];
 
-let _state = null; // Array<{ id, name, selfieUrl, registro, addedBy }>
+let _state = null; // Array<{ id, name, selfieUrl, registro, addedBy, source }>
+// source: 'manual' | 'consent_revoked'
 
 function _buildSeed() {
   return SEED_IDS
@@ -15,7 +16,7 @@ function _buildSeed() {
     .map(id => {
       const f = FACE_REGISTRY[id];
       const name = f.name?.trim() || 'Sin identificar';
-      return { id, name, selfieUrl: f.selfieUrl, registro: f.registro || '15/Jun/2026', addedBy: 'Mario Luna' };
+      return { id, name, selfieUrl: f.selfieUrl, registro: f.registro || '15/Jun/2026', addedBy: 'Mario Luna', source: 'manual' };
     });
 }
 
@@ -65,13 +66,28 @@ export function getBlacklist() {
 }
 
 let _seq = 0;
-export function addToBlacklist({ name, selfieUrl }) {
+export function addToBlacklist({ name, selfieUrl, source = 'manual' }) {
   _load();
   _seq++;
   const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   const d = new Date();
   const id = 'bl_' + d.getTime().toString(36) + _seq;
-  const item = { id, name: name.trim(), selfieUrl, registro: `${d.getDate()}/${MONTHS[d.getMonth()]}/${d.getFullYear()}`, addedBy: 'Mario Luna' };
+  const item = { id, name: name.trim(), selfieUrl, registro: `${d.getDate()}/${MONTHS[d.getMonth()]}/${d.getFullYear()}`, addedBy: 'Mario Luna', source };
+  _state.push(item);
+  _save();
+  return item;
+}
+
+// Usado por UC-03: auto-blacklist al revocar consentimiento.
+// Si ya existe el faceId en blacklist, actualiza source a 'consent_revoked'.
+export function addToBlacklistByFaceId(faceId, { name, selfieUrl, templateId }) {
+  _load();
+  const existing = _state.find(i => i.id === faceId);
+  if (existing) { existing.source = 'consent_revoked'; existing.templateId = templateId; _save(); return existing; }
+  _seq++;
+  const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const d = new Date();
+  const item = { id: faceId, name: (name || '').trim(), selfieUrl, registro: `${d.getDate()}/${MONTHS[d.getMonth()]}/${d.getFullYear()}`, addedBy: 'Sistema', source: 'consent_revoked', templateId };
   _state.push(item);
   _save();
   return item;

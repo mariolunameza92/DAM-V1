@@ -4,6 +4,10 @@ import { _registry } from '../shared/image-registry.js';
 import { assetCardHTML } from '../shared/asset-card.js';
 import { initCrop } from './crop.js';
 import { FACE_REGISTRY } from '../../events-registry.js';
+import { treeState, renderFolderContent } from './browser.js';
+import { userUploadedAssets, saveUploadsSession } from '../../session.js';
+import { findNode } from '../../data.js';
+import { showToast } from '../../components/ui/toast.js';
 
 const CAMERAS = [
   { marca: 'SONY',     modelo: 'ILCE-7M4', exp: '1/500',  apertura: 'ƒ/3.2', focal: '70.0 mm', iso: '200' },
@@ -162,6 +166,22 @@ export function initImageDetail() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  });
+
+  // Delete asset
+  document.getElementById('imgDetailDeleteBtn').addEventListener('click', () => {
+    if (!_currentItem) return;
+    if (!confirm(`¿Eliminar "${_currentItem.name}"? Esta acción no se puede deshacer.`)) return;
+    const folderId = treeState.selected;
+    const src = _currentItem.src;
+    if (src && src.startsWith('data:') && folderId && userUploadedAssets[folderId]) {
+      userUploadedAssets[folderId] = userUploadedAssets[folderId].filter(u => u.preview !== src);
+      saveUploadsSession();
+    }
+    showToast(`"${_currentItem.name}" eliminado`);
+    _close();
+    const node = folderId ? findNode(folderId) : null;
+    if (node) renderFolderContent(node);
   });
 
   initCrop(() => _currentItem);

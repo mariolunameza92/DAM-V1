@@ -64,6 +64,7 @@ function _sorted(items) {
       case 'photos':   va = appA.photos;                 vb = appB.photos;                 break;
       case 'portales': va = _portalsForFace(a.id).length; vb = _portalsForFace(b.id).length; break;
       case 'registro': va = a.registro;                  vb = b.registro;                  break;
+      case 'source':   va = a.source || 'manual';        vb = b.source || 'manual';        break;
       case 'addedBy':  va = a.addedBy;                   vb = b.addedBy;                   break;
       default: return 0;
     }
@@ -82,13 +83,17 @@ function _listHTML(items) {
   if (!items.length) {
     return `<div class="faceids-empty">No hay personas en la lista negra.</div>`;
   }
-  const head = `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('portales','Portales')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`;
+  const head = `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('portales','Portales')}${_sortHead('registro','Registro')}${_sortHead('source','Origen')}${_sortHead('addedBy','Agregado por')}</div>`;
   const rows = items.map(item => {
     const app = getAppearancesForId(item.id);
     const portals = _portalsForFace(item.id);
     const portalsHtml = portals.length
       ? portals.map(p => `<span class="rel-pill rel-pill--unit faceid-portal-pill" title="${esc(p.title)}">${esc(p.title)}</span>`).join('')
       : `<span class="faceid-no-portals">—</span>`;
+    const source = item.source || 'manual';
+    const sourceHtml = source === 'consent_revoked'
+      ? `<span class="bl-source-chip bl-source-chip--revoked"><span class="msi xs">verified_user</span>Consentimiento revocado</span>`
+      : `<span class="bl-source-chip bl-source-chip--manual"><span class="msi xs">admin_panel_settings</span>Admin</span>`;
     return `<div class="table-row" data-bl-id="${item.id}">
       <div class="col"><div class="faceid-person-cell">
         <div class="bl-av"><img src="${item.selfieUrl}" alt=""></div>
@@ -100,6 +105,7 @@ function _listHTML(items) {
       </div></div>
       <div class="col col--portales"><div class="rel-pills">${portalsHtml}</div></div>
       <div class="col">${esc(item.registro)}</div>
+      <div class="col">${sourceHtml}</div>
       <div class="col" style="display:flex;align-items:center;gap:12px">
         <span style="flex:1">${esc(item.addedBy)}</span>
         <button class="more-btn" data-bl-menu="${item.id}"><span class="msi xs">more_horiz</span></button>
