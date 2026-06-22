@@ -3,8 +3,10 @@ import { getFaces } from '../../faces.js';
 import { uploadedAssets, userUploadedAssets, getPortals } from '../../session.js';
 import { FOLDERS_DATA } from '../../data.js';
 import { FOLDER_IMAGES_EVENTS } from '../../events-registry.js';
+import { getStats, getTemplates, MODULE_META } from '../consentimientos/consentimientos-data.js';
+import { getAllFaceConsents } from '../faceids/faces-consent.js';
 
-let _tab    = 'dam';
+let _tab    = 'dam'; // 'dam' | 'portales' | 'consentimientos'
 let _period = '30d';
 let _gid    = 0;  // gradient ID counter
 
@@ -45,7 +47,7 @@ const M = {
     ],
   },
   activity: {
-    active: 24, inactive: 8, guests: 12,
+    active: 5, inactive: 2, guests: 8,
     topUploaders: [
       { name: 'María L.',  uploads: 1840 },
       { name: 'Carlos V.', uploads: 1420 },
@@ -136,10 +138,11 @@ function _faceStats() {
   return { total: faces.length, identified, unnamed, top: all.slice(0, 6), all };
 }
 
+const BASE_TOTAL = 20_976; // base demo de archivos totales → total ≈ 21 K
 function _totalFiles() {
   const demo = Object.values(uploadedAssets).reduce((s, a) => s + a.length, 0);
   const user = Object.values(userUploadedAssets).reduce((s, a) => s + a.length, 0);
-  return demo + user;
+  return BASE_TOTAL + demo + user;
 }
 
 const SPARKS = {
@@ -927,6 +930,162 @@ function _buildSecuritySection() {
     </div>`;
 }
 
+// ── Consentimientos Tab ───────────────────────────────────────────────────
+
+function _buildConsentTab() {
+  const stats     = getStats();
+  const templates = getTemplates();
+  const consents  = getAllFaceConsents();
+  const faces     = getFaces().filter(f => !f.unnamed);
+
+  const total = stats.signed + stats.pending + stats.revoked;
+  const pct   = total > 0 ? Math.round((stats.signed / total) * 100) : 0;
+
+  // KPI row
+  const kpiHTML = `<div class="an-kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="an-kpi kc-green">
+      <div class="an-kpi-top"><div class="an-kpi-icon"><span class="msi xs">verified_user</span></div></div>
+      <div class="an-kpi-value">${stats.signed}</div>
+      <div class="an-kpi-label">Firmados</div>
+    </div>
+    <div class="an-kpi kc-amber">
+      <div class="an-kpi-top"><div class="an-kpi-icon"><span class="msi xs">schedule</span></div></div>
+      <div class="an-kpi-value">${stats.pending}</div>
+      <div class="an-kpi-label">Pendientes</div>
+    </div>
+    <div class="an-kpi kc-rose">
+      <div class="an-kpi-top"><div class="an-kpi-icon"><span class="msi xs">gpp_bad</span></div></div>
+      <div class="an-kpi-value">${stats.revoked}</div>
+      <div class="an-kpi-label">Revocados</div>
+    </div>
+  </div>`;
+
+  // Progress donut
+  const donutSegs = [
+    { value: stats.signed,  color: 'var(--success,#16a34a)' },
+    { value: stats.pending, color: '#ca8a04' },
+    { value: stats.revoked, color: 'var(--danger,#dc2626)' },
+    { value: Math.max(0, 60 - total), color: 'var(--border-subtle)' },
+  ].filter(s => s.value > 0);
+
+  const progressCard = `
+    <div class="an-card">
+      <div class="an-card-head">
+        <span class="an-card-title"><span class="msi xs">donut_large</span>Tasa de firma</span>
+        <span class="an-card-badge">${pct}% firmados</span>
+      </div>
+      <div class="an-donut-wrap">
+        <div class="an-donut-center">
+          ${_svgDonut(donutSegs, { size: 110, sw: 18 })}
+          <div class="an-donut-lbl-inner">
+            <span class="an-donut-lbl-val">${pct}%</span>
+            <span class="an-donut-lbl-sub">firmados</span>
+          </div>
+        </div>
+        <div class="an-donut-legend">
+          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--success,#16a34a)"></div><span class="an-leg-name">Firmados</span><span class="an-leg-val">${stats.signed}</span></div>
+          <div class="an-leg-item"><div class="an-leg-dot" style="background:#ca8a04"></div><span class="an-leg-name">Pendientes</span><span class="an-leg-val">${stats.pending}</span></div>
+          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--danger,#dc2626)"></div><span class="an-leg-name">Revocados</span><span class="an-leg-val">${stats.revoked}</span></div>
+        </div>
+      </div>
+    </div>`;
+
+  // Template cards
+  const tplCards = templates.map(t => {
+    const tTotal = t.signedCount + t.pendingCount + t.revokedCount;
+    const tPct   = tTotal > 0 ? Math.round((t.signedCount / tTotal) * 100) : 0;
+    const statusColor = t.status === 'active' ? 'var(--success,#16a34a)' : t.status === 'draft' ? '#ca8a04' : 'var(--text-faint)';
+    const statusLabel = t.status === 'active' ? 'Activo' : t.status === 'draft' ? 'Borrador' : 'Archivado';
+    const moduleIcons = Object.entries(t.modules)
+      .filter(([, on]) => on)
+      .map(([k]) => `<span class="msi xs" title="${MODULE_META[k]?.label}">${MODULE_META[k]?.icon}</span>`)
+      .join('');
+    const tplSegs = tTotal > 0
+      ? [
+          { value: t.signedCount,  color: 'var(--success,#16a34a)' },
+          { value: t.pendingCount, color: '#ca8a04' },
+          { value: t.revokedCount, color: 'var(--danger,#dc2626)' },
+        ].filter(s => s.value > 0)
+      : [{ value: 1, color: 'var(--border-subtle)' }];
+    return `<div class="an-card">
+      <div class="an-card-head">
+        <span class="an-card-title"><span class="msi xs">description</span>${t.title}</span>
+        <span class="an-card-badge" style="color:${statusColor}">${statusLabel} v${t.version}</span>
+      </div>
+      <div class="an-donut-wrap" style="gap:20px">
+        <div class="an-donut-center">${_svgDonut(tplSegs, { size: 90, sw: 14 })}<div class="an-donut-lbl-inner"><span class="an-donut-lbl-val" style="font-size:14px">${tPct}%</span></div></div>
+        <div style="flex:1;min-width:0">
+          <div class="an-stat-rows">
+            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">verified_user</span>Firmados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--success,#16a34a)">${t.signedCount}</span></div></div>
+            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">schedule</span>Pendientes</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:#ca8a04">${t.pendingCount}</span></div></div>
+            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">gpp_bad</span>Revocados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--danger,#dc2626)">${t.revokedCount}</span></div></div>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:6px;align-items:center;color:var(--text-muted);font-size:11px">
+            <span>Módulos:</span>${moduleIcons || '<span style="font-size:11px;color:var(--text-faint)">Ninguno</span>'}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Face-level consent grid
+  const consentFaces = faces.map(f => {
+    const c = consents[f.id];
+    if (!c) return null;
+    const state = c.state;
+    const badgeColor = state === 'signed' ? 'var(--success,#16a34a)' : '#ca8a04';
+    const badgeLabel = state === 'signed' ? 'Firmado' : 'Pendiente';
+    const badgeIcon  = state === 'signed' ? 'verified' : 'schedule';
+    return `<div class="an-cf-item">
+      <div class="an-cf-av"><img src="${f.selfieUrl}" alt="" loading="lazy"></div>
+      <div class="an-cf-name">${f.displayName.split(' ')[0]}</div>
+      <div class="an-cf-badge" style="color:${badgeColor}"><span class="msi xs">${badgeIcon}</span>${badgeLabel}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+
+  const facesCard = `
+    <div class="an-card an-mb-4">
+      <div class="an-card-head">
+        <span class="an-card-title"><span class="msi xs">ar_on_you</span>Detalle por Face ID</span>
+        <span class="an-card-badge">${Object.keys(consents).length} con registro</span>
+      </div>
+      <div class="an-cf-grid">${consentFaces || '<div style="font-size:13px;color:var(--text-faint);padding:16px">Sin registros de consentimiento.</div>'}</div>
+    </div>`;
+
+  return `
+    ${kpiHTML}
+    <div class="an-section-lbl"><span class="msi xs">donut_large</span>Estado global</div>
+    <div class="an-grid-2" style="align-items:start">
+      ${progressCard}
+      <div class="an-card">
+        <div class="an-card-head">
+          <span class="an-card-title"><span class="msi xs">info</span>Sobre los datos</span>
+        </div>
+        <div class="an-alerts">
+          <div class="an-alert-item">
+            <div class="an-alert-icon info"><span class="msi sm">description</span></div>
+            <div class="an-alert-body"><div class="an-alert-title">Plantillas activas</div><div class="an-alert-sub">Plantillas publicadas con firma habilitada</div></div>
+            <span class="an-alert-val">${templates.filter(t => t.status === 'active').length}</span>
+          </div>
+          <div class="an-alert-item">
+            <div class="an-alert-icon warn"><span class="msi sm">edit_note</span></div>
+            <div class="an-alert-body"><div class="an-alert-title">Borradores</div><div class="an-alert-sub">Plantillas pendientes de publicar</div></div>
+            <span class="an-alert-val">${templates.filter(t => t.status === 'draft').length}</span>
+          </div>
+          <div class="an-alert-item">
+            <div class="an-alert-icon danger"><span class="msi sm">gpp_bad</span></div>
+            <div class="an-alert-body"><div class="an-alert-title">Revocaciones</div><div class="an-alert-sub">Consentimientos revocados — auto-blacklist activo</div></div>
+            <span class="an-alert-val">${stats.revoked}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="an-section-lbl"><span class="msi xs">description</span>Por plantilla</div>
+    <div class="an-grid-2" style="align-items:start">${tplCards}</div>
+    <div class="an-section-lbl"><span class="msi xs">ar_on_you</span>Por persona</div>
+    ${facesCard}`;
+}
+
 // ── Filter bars ───────────────────────────────────────────────────────────
 
 function _filterDAM() {
@@ -980,6 +1139,7 @@ function _buildHTML() {
   const tabs = `<div class="tabs">
     <div class="tab${_tab === 'dam' ? ' active' : ''}" data-tab="dam">DAM — Assets</div>
     <div class="tab${_tab === 'portales' ? ' active' : ''}" data-tab="portales">Portales</div>
+    <div class="tab${_tab === 'consentimientos' ? ' active' : ''}" data-tab="consentimientos">Consentimientos</div>
   </div>`;
 
   let content = '';
@@ -1001,7 +1161,7 @@ function _buildHTML() {
       ${_buildQualitySection()}
       <div class="an-section-lbl"><span class="msi xs">grid_view</span>Detalle Face IDs</div>
       ${_buildFaceDetailSection(faces)}`;
-  } else {
+  } else if (_tab === 'portales') {
     content = `
       ${_filterPortales()}
       <div class="an-section-lbl no-top"><span class="msi xs">captive_portal</span>Inventario de portales</div>
@@ -1010,6 +1170,10 @@ function _buildHTML() {
       ${_buildEngagementSection()}
       <div class="an-section-lbl"><span class="msi xs">lock</span>Acceso y seguridad</div>
       ${_buildSecuritySection()}`;
+  } else {
+    content = `
+      <div class="an-section-lbl no-top"><span class="msi xs">verified_user</span>Consentimientos — resumen global</div>
+      ${_buildConsentTab()}`;
   }
 
   return `<div class="an-wrap">${tabs}${content}</div>`;

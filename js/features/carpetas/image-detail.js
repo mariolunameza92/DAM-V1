@@ -5,7 +5,7 @@ import { assetCardHTML } from '../shared/asset-card.js';
 import { initCrop } from './crop.js';
 import { FACE_REGISTRY } from '../../events-registry.js';
 import { treeState, renderFolderContent } from './browser.js';
-import { userUploadedAssets, saveUploadsSession } from '../../session.js';
+import { userUploadedAssets, saveUploadsSession, getPortals } from '../../session.js';
 import { findNode } from '../../data.js';
 import { showToast } from '../../components/ui/toast.js';
 
@@ -166,6 +166,75 @@ export function initImageDetail() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  });
+
+  // Share asset
+  let _shareMenu = null;
+  function _closeShareMenu() { _shareMenu?.remove(); _shareMenu = null; }
+
+  document.getElementById('imgDetailShareBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    _closeShareMenu();
+    const btn    = document.getElementById('imgDetailShareBtn');
+    const portals = getPortals().filter(p => p.type !== 'master');
+
+    _shareMenu = document.createElement('div');
+    _shareMenu.className = 'img-share-menu';
+
+    const portalRows = portals.length
+      ? portals.slice(0, 5).map(p =>
+          `<div class="img-share-portal-row" data-portal-id="${p.id}" data-portal-title="${p.title.replace(/"/g,'&quot;')}">
+            <span class="msi xs">captive_portal</span>
+            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.title}</span>
+            <span class="msi xs">chevron_right</span>
+          </div>`
+        ).join('')
+      : `<div class="img-share-portal-row" style="opacity:.5;pointer-events:none"><span class="msi xs">captive_portal</span><span>Sin portales disponibles</span></div>`;
+
+    _shareMenu.innerHTML = `
+      <div class="img-share-section-label">Compartir en portal</div>
+      ${portalRows}
+      <div class="img-share-divider"></div>
+      <button class="img-share-item" data-share-act="copy">
+        <span class="msi xs">link</span>Copiar enlace directo
+      </button>
+      <button class="img-share-item" data-share-act="download">
+        <span class="msi xs">download</span>Descargar
+      </button>`;
+
+    document.body.appendChild(_shareMenu);
+
+    // Position below the share button
+    const r = btn.getBoundingClientRect();
+    _shareMenu.style.top  = (r.bottom + 6) + 'px';
+    _shareMenu.style.left = Math.max(8, r.right - _shareMenu.offsetWidth) + 'px';
+
+    _shareMenu.addEventListener('click', ev => {
+      const row = ev.target.closest('[data-portal-id]');
+      if (row) {
+        showToast(`Asset añadido a "${row.dataset.portalTitle}"`);
+        _closeShareMenu();
+        return;
+      }
+      const act = ev.target.closest('[data-share-act]')?.dataset?.shareAct;
+      if (act === 'copy') {
+        const url = _currentItem?.originalUrl || _currentItem?.src || '';
+        const demo = `https://app.len.pe/assets/${_hash(url).toString(36)}`;
+        navigator.clipboard?.writeText(demo).catch(() => {});
+        showToast('Enlace copiado al portapapeles');
+        _closeShareMenu();
+      } else if (act === 'download') {
+        const a = document.createElement('a');
+        a.href = _currentItem?.originalUrl || _currentItem?.src;
+        a.download = `${_currentItem?.name || 'asset'}.${(_currentItem?.ext || 'jpg').toLowerCase()}`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        _closeShareMenu();
+      }
+    });
+
+    setTimeout(() => document.addEventListener('mousedown', function _out(ev) {
+      if (!_shareMenu?.contains(ev.target)) { _closeShareMenu(); document.removeEventListener('mousedown', _out, true); }
+    }, true), 0);
   });
 
   // Delete asset

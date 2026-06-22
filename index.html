@@ -124,9 +124,20 @@
     <div class="topbar">
       <span class="page-title" id="pageTitle">Inicio</span>
       <div class="topbar-center">
-        <div class="searchbar" id="topbarSearch" style="display:none">
+        <div class="searchbar" id="topbarSearch" style="display:none" tabindex="0" role="button">
           <span class="msi xs" style="color:var(--text-body)">search</span>
-          <span>Buscar por persona, objeto, color, escena, logo, etc</span>
+          <span id="topbarSearchPlaceholder">Buscar por persona, objeto, color, escena, logo, etc</span>
+        </div>
+        <!-- Global search overlay -->
+        <div id="globalSearchOverlay" style="display:none">
+          <div id="globalSearchModal">
+            <div id="globalSearchInputWrap">
+              <span class="msi xs" style="color:var(--text-body)">search</span>
+              <input id="globalSearchInput" type="text" placeholder="Buscar personas, carpetas, portales…" autocomplete="off" spellcheck="false">
+              <button id="globalSearchClose"><span class="msi xs">close</span></button>
+            </div>
+            <div id="globalSearchResults"></div>
+          </div>
         </div>
         <div class="topbar-end">
           <button class="icon-btn" id="theme-toggle" type="button" aria-label="Activar modo oscuro" title="Activar modo oscuro"><span class="msi xs">dark_mode</span></button>
@@ -271,6 +282,8 @@
           <div id="face-filter-results" class="face-filter-results" style="display:none"></div>
           <div id="other-filter-results" class="face-filter-results" style="display:none"></div>
 
+          <div id="inicio-widgets-row" class="inicio-section"></div>
+
           <div class="inicio-section">
             <div class="sec-header" style="margin-bottom:0">
               <span class="sec-title">Carpetas recientes</span>
@@ -320,6 +333,8 @@
               <button class="faceids-tab active" data-tab="identified">Personas identificadas <span class="faceids-tab-count">0</span></button>
               <button class="faceids-tab" data-tab="unnamed">Sin identificar <span class="faceids-tab-count">0</span></button>
             </div>
+            <!-- Filtros por grupo (renderizado dinámico) -->
+            <div id="faceids-group-filters"></div>
             <!-- Renderizado dinámico (lista o grilla) -->
             <div id="faceids-body"></div>
           </div>
@@ -729,7 +744,7 @@
           <span class="msi sm img-detail-icon" id="imgDetailInfoBtn">info</span>
           <div class="img-detail-faces" id="imgDetailFaces"></div>
           <span class="msi sm img-detail-icon" id="imgDetailFullscreenBtn">fullscreen</span>
-          <span class="msi sm img-detail-icon">share</span>
+          <span class="msi sm img-detail-icon" id="imgDetailShareBtn" style="position:relative">share</span>
           <div class="img-detail-crop-wrap">
             <span class="msi sm img-detail-icon" id="imgDetailCropBtn">crop</span>
             <div class="crop-format-panel" id="cropFormatPanel"></div>

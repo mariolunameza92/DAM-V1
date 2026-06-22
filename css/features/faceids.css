@@ -109,3 +109,23 @@
 .faceid-dropzone:hover{border-color:var(--text-muted);background:var(--surface)}
 .faceid-dropzone-preview{width:88px;height:88px;border-radius:50%;overflow:hidden;border:1.5px solid var(--border);background:var(--surface-placeholder)}
 .faceid-dropzone-preview img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ── Filtros de grupo + badges ───────────────────────────────────────────────── */
+.faceid-group-filters-bar{display:flex;flex-wrap:wrap;gap:var(--space-2);padding:var(--space-2) 0 var(--space-3)}
+.faceid-group-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;border:1.5px solid var(--gc,var(--accent));color:var(--gc,var(--accent));border-radius:40px;padding:3px 12px;cursor:pointer;background:transparent;transition:background .15s,color .15s;font-family:var(--font-ui)}
+.faceid-group-chip::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gc,var(--accent))}
+.faceid-group-chip:hover,.faceid-group-chip.active{background:color-mix(in srgb,var(--gc,var(--accent)) 12%,transparent)}
+
+/* Badge en lista */
+.faceid-group-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;border:1px solid transparent;border-radius:40px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+
+/* Badge en card grilla */
+.faceid-card-group{font-size:11px;font-weight:600;border-radius:40px;padding:2px 10px;margin-top:2px;display:inline-block}
+
+/* Badge de consentimiento (lista + grilla) */
+.faceid-consent-badge{display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:600;border-radius:40px;padding:1px 7px;margin-left:5px;vertical-align:middle;font-family:var(--font-ui)}
+.faceid-consent-badge .msi{font-size:11px}
+.faceid-consent-badge--signed{background:color-mix(in srgb,var(--success,#16a34a) 12%,transparent);color:var(--success,#16a34a)}
+.faceid-consent-badge--pending{background:color-mix(in srgb,#ca8a04 14%,transparent);color:#ca8a04}
+/* En la grilla el badge es display:flex centrado */
+.faceid-card .faceid-consent-badge{margin-left:0;justify-content:center}

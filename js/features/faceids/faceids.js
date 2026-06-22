@@ -1,6 +1,8 @@
 // Feature Face IDs — lista/grilla de rostros mapeados, favoritos, y CRUD básico.
 // Exports: initFaceIds(), renderFaceIds()
 import { getFaces, getFavoriteFaces, toggleFavorite, renameFace, identifyFace, deleteFace, createFace, subscribe } from '../../faces.js';
+import { getGrupos, getGrupoForFace } from '../grupos/grupos-data.js';
+import { getFaceConsent, revokeFaceConsent, subscribeFaceConsent } from './faces-consent.js';
 import { showToast } from '../../components/ui/toast.js';
 import { bindStaticToggle } from '../../components/ui/view-toggle.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
@@ -8,9 +10,10 @@ import { getPortals } from '../../session.js';
 import { PHOTO_FACES, FOLDER_IMAGES_EVENTS } from '../../events-registry.js';
 import { TREE_DATA } from '../../data.js';
 
-let _view = 'list';        // 'list' | 'grid'
-let _tab  = 'identified'; // 'identified' | 'unnamed'
-let _sort = { col: null, dir: 'asc' }; // columna activa y dirección de orden
+let _view        = 'list';       // 'list' | 'grid'
+let _tab         = 'identified'; // 'identified' | 'unnamed'
+let _sort        = { col: null, dir: 'asc' };
+let _groupFilter = null;         // null = todos | string = id de grupo
 
 function esc(s) {
   return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -72,7 +75,14 @@ function renderFavStrip() {
 
 // ── Render: lista / grilla ──────────────────────────────────────────────────────
 function _filtered() {
-  return getFaces().filter(f => _tab === 'identified' ? !f.unnamed : !!f.unnamed);
+  let faces = getFaces().filter(f => _tab === 'identified' ? !f.unnamed : !!f.unnamed);
+  if (_groupFilter) {
+    faces = faces.filter(f => {
+      const g = getGrupoForFace(f.id);
+      return g && g.id === _groupFilter;
+    });
+  }
+  return faces;
 }
 
 function _sorted(faces) {
@@ -126,9 +136,15 @@ function _listHTML(faces) {
     ? `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('portales','Portales')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`
     : `<div class="table-head"><div class="col">Persona</div>${_sortHead('photos','Apariciones')}${_sortHead('portales','Portales')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`;
   const rows = faces.map(f => {
+    const grupo = !f.unnamed ? getGrupoForFace(f.id) : null;
+    const grupoBadge = grupo ? `<span class="faceid-group-badge" style="background:${grupo.color}20;color:${grupo.color};border-color:${grupo.color}40">${esc(grupo.name)}</span>` : '';
+    const consentRec = !f.unnamed ? getFaceConsent(f.id) : null;
+    const consentBadge = consentRec
+      ? `<span class="faceid-consent-badge faceid-consent-badge--${consentRec.state}">${consentRec.state === 'signed' ? '<span class="msi xs">verified</span>Firmado' : '<span class="msi xs">schedule</span>Pendiente'}</span>`
+      : '';
     const nameEl = f.unnamed
       ? `<input class="field field--inline" data-inline-rename="${f.id}" placeholder="Agregar nombre" autocomplete="off" spellcheck="false">`
-      : `<span class="faceid-person-name">${esc(f.displayName)}</span>`;
+      : `<span class="faceid-person-name">${esc(f.displayName)}</span>${grupoBadge}${consentBadge}`;
     const starBtn = f.fav
       ? `<button class="faceid-fav-star" data-fav-toggle="${f.id}" title="Quitar de favoritos"><span class="msi xs faceid-star-icon">star</span><span class="msi xs faceid-trash-icon">delete</span></button>`
       : '';
@@ -167,10 +183,17 @@ function _gridHTML(faces) {
     const portalsStr = portals.length
       ? `${portals.length} portal${portals.length === 1 ? '' : 'es'}`
       : 'Sin portales';
+    const grupo = !f.unnamed ? getGrupoForFace(f.id) : null;
+    const grupoBadge = grupo ? `<div class="faceid-card-group" style="background:${grupo.color}20;color:${grupo.color}">${esc(grupo.name)}</div>` : '';
+    const consentRecCard = !f.unnamed ? getFaceConsent(f.id) : null;
+    const consentBadgeCard = consentRecCard
+      ? `<div class="faceid-consent-badge faceid-consent-badge--${consentRecCard.state}" style="margin-top:2px">${consentRecCard.state === 'signed' ? '<span class="msi xs">verified</span>Firmado' : '<span class="msi xs">schedule</span>Pendiente'}</div>`
+      : '';
     return `<div class="faceid-card" data-face-id="${f.id}">
       ${f.fav ? `<button class="faceid-card-star" data-fav-toggle="${f.id}" title="Quitar de favoritos"><span class="msi xs faceid-star-icon">star</span><span class="msi xs faceid-trash-icon">delete</span></button>` : ''}
       <div class="faceid-card-av"><img src="${f.selfieUrl}" alt=""></div>
       <div class="faceid-card-name${f.unnamed ? ' faceid-card-name--unnamed' : ''}">${esc(f.displayName)}</div>
+      ${grupoBadge}${consentBadgeCard}
       <div class="faceid-card-meta">${f.appearances.photos} fotos · ${portalsStr}</div>
       <button class="faceid-card-more" data-face-menu="${f.id}"><span class="msi xs">more_horiz</span></button>
     </div>`;
@@ -181,7 +204,34 @@ function _gridHTML(faces) {
   return `<div class="faceids-grid">${addCard}${cards}</div>` + empty;
 }
 
+function _renderGroupFilters() {
+  const el = document.getElementById('faceids-group-filters');
+  if (!el) return;
+  if (_tab !== 'identified') { el.innerHTML = ''; return; }
+
+  const allIdentified = getFaces().filter(f => !f.unnamed);
+  const grupos = getGrupos();
+  const present = grupos.filter(g => g.memberIds.some(id => allIdentified.find(f => f.id === id)));
+
+  if (!present.length) { el.innerHTML = ''; return; }
+
+  const chips = present.map(g => {
+    const active = _groupFilter === g.id;
+    return `<button class="faceid-group-chip${active ? ' active' : ''}" data-gchip="${g.id}" style="--gc:${g.color}">${esc(g.name)}</button>`;
+  }).join('');
+  el.innerHTML = `<div class="faceid-group-filters-bar">${chips}</div>`;
+
+  el.querySelectorAll('[data-gchip]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      _groupFilter = _groupFilter === btn.dataset.gchip ? null : btn.dataset.gchip;
+      _renderGroupFilters();
+      renderBody();
+    });
+  });
+}
+
 function renderBody() {
+  _renderGroupFilters();
   const body = document.getElementById('faceids-body');
   if (!body) return;
   const faces = _sorted(_filtered());
@@ -232,9 +282,15 @@ function openMenu(anchor, id) {
   if (!f) return;
   const menu = document.createElement('div');
   menu.className = 'faceid-menu';
+  const consentRec = !f.unnamed ? getFaceConsent(f.id) : null;
+  const revokeItem = consentRec
+    ? `<div class="faceid-menu-divider"></div>
+       <button class="faceid-menu-item faceid-menu-item--danger" data-act="revoke-consent"><span class="msi xs">gpp_bad</span>Revocar consentimiento</button>`
+    : '';
   menu.innerHTML =
     `<button class="faceid-menu-item" data-act="fav"><span class="msi xs">star</span>${f.fav ? 'Quitar de favoritos' : 'Marcar como favorito'}</button>
      <button class="faceid-menu-item" data-act="rename"><span class="msi xs">edit</span>Renombrar</button>
+     ${revokeItem}
      <div class="faceid-menu-divider"></div>
      <button class="faceid-menu-item faceid-menu-item--danger" data-act="delete"><span class="msi xs">delete</span>Eliminar Face ID</button>`;
   document.body.appendChild(menu);
@@ -248,6 +304,9 @@ function openMenu(anchor, id) {
       showToast(now ? 'Agregado a favoritos' : 'Quitado de favoritos');
     } else if (it.dataset.act === 'rename') {
       openRenameDialog(f);
+    } else if (it.dataset.act === 'revoke-consent') {
+      revokeFaceConsent(id, { name: f.displayName, selfieUrl: f.selfieUrl });
+      showToast('Consentimiento revocado — persona añadida a Black List');
     } else if (it.dataset.act === 'delete') {
       deleteFace(id);
       showToast('Face ID eliminado');
@@ -422,5 +481,6 @@ export function initFaceIds() {
   _initRenameDialog();
 
   subscribe(() => { renderFavStrip(); renderBody(); });
+  subscribeFaceConsent(() => renderBody());
   renderFaceIds();
 }

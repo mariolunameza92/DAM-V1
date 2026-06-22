@@ -21,6 +21,7 @@ import { initGrupos } from './features/grupos/grupos.js';
 import { initConsentimientos } from './features/consentimientos/consentimientos.js';
 import { initConfiguracion } from './features/configuracion/configuracion.js';
 import { getEnabledModules, subscribeConfig } from './features/configuracion/configuracion-data.js';
+import { initGlobalSearch } from './features/search/global-search.js';
 
 const TITLES = {
   inicio: 'Inicio', carpetas: 'Carpetas', faceids: 'Face IDs',
@@ -290,6 +291,7 @@ if (_portalTab) {
   initGrupos();
   initConsentimientos();
   initConfiguracion();
+  initGlobalSearch();
   initFilters();
   initSearch();
   initSectionReveal();
