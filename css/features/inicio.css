@@ -174,13 +174,13 @@
 .inicio-widget-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .inicio-widget-icon .msi{font-size:22px}
 .iw-icon--grupos{background:color-mix(in srgb,var(--accent-soft) 12%,transparent);color:var(--accent-soft)}
-.iw-icon--consent{background:color-mix(in srgb,var(--success) 12%,transparent);color:var(--success)}
+.iw-icon--consent{background:var(--surface-neutral);color:var(--accent-soft)}
 .inicio-widget-body{flex:1;min-width:0}
 .inicio-widget-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);font-family:var(--font-ui);margin-bottom:4px}
 .inicio-widget-value{font-size:14px;color:var(--text);font-family:var(--font-ui)}
 .iw-dots{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
 .iw-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.iw-signed{color:var(--success);font-weight:600}
-.iw-pending{color:var(--warning);font-weight:600}
+.iw-signed{color:var(--text-body);font-weight:600}
+.iw-pending{color:var(--text-muted);font-weight:600}
 .iw-progress{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
-.iw-progress-fill{height:100%;background:var(--success);border-radius:2px;min-width:2px;transition:width .4s ease}
+.iw-progress-fill{height:100%;background:var(--accent-soft);border-radius:2px;min-width:2px;transition:width .4s ease}

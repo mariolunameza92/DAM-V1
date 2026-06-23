@@ -125,7 +125,7 @@
 /* Badge de consentimiento (lista + grilla) */
 .faceid-consent-badge{display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:600;border-radius:40px;padding:1px 7px;margin-left:5px;vertical-align:middle;font-family:var(--font-ui)}
 .faceid-consent-badge .msi{font-size:11px}
-.faceid-consent-badge--signed{background:color-mix(in srgb,var(--success) 12%,transparent);color:var(--success)}
-.faceid-consent-badge--pending{background:color-mix(in srgb,var(--warning) 14%,transparent);color:var(--warning)}
+.faceid-consent-badge--signed{background:var(--surface-neutral);color:var(--text-body)}
+.faceid-consent-badge--pending{background:var(--surface-sunken);color:var(--text-muted)}
 /* En la grilla el badge es display:flex centrado */
 .faceid-card .faceid-consent-badge{margin-left:0;justify-content:center}

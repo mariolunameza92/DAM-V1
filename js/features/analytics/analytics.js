@@ -962,9 +962,9 @@ function _buildConsentTab() {
 
   // Progress donut
   const donutSegs = [
-    { value: stats.signed,  color: 'var(--success,#16a34a)' },
-    { value: stats.pending, color: '#ca8a04' },
-    { value: stats.revoked, color: 'var(--danger,#dc2626)' },
+    { value: stats.signed,  color: 'var(--accent-soft)' },
+    { value: stats.pending, color: 'var(--text-muted)' },
+    { value: stats.revoked, color: 'var(--text-faint)' },
     { value: Math.max(0, 60 - total), color: 'var(--border-subtle)' },
   ].filter(s => s.value > 0);
 
@@ -983,9 +983,9 @@ function _buildConsentTab() {
           </div>
         </div>
         <div class="an-donut-legend">
-          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--success,#16a34a)"></div><span class="an-leg-name">Firmados</span><span class="an-leg-val">${stats.signed}</span></div>
-          <div class="an-leg-item"><div class="an-leg-dot" style="background:#ca8a04"></div><span class="an-leg-name">Pendientes</span><span class="an-leg-val">${stats.pending}</span></div>
-          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--danger,#dc2626)"></div><span class="an-leg-name">Revocados</span><span class="an-leg-val">${stats.revoked}</span></div>
+          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--accent-soft)"></div><span class="an-leg-name">Firmados</span><span class="an-leg-val">${stats.signed}</span></div>
+          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--text-muted)"></div><span class="an-leg-name">Pendientes</span><span class="an-leg-val">${stats.pending}</span></div>
+          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--text-faint)"></div><span class="an-leg-name">Revocados</span><span class="an-leg-val">${stats.revoked}</span></div>
         </div>
       </div>
     </div>`;
@@ -994,7 +994,7 @@ function _buildConsentTab() {
   const tplCards = templates.map(t => {
     const tTotal = t.signedCount + t.pendingCount + t.revokedCount;
     const tPct   = tTotal > 0 ? Math.round((t.signedCount / tTotal) * 100) : 0;
-    const statusColor = t.status === 'active' ? 'var(--success,#16a34a)' : t.status === 'draft' ? '#ca8a04' : 'var(--text-faint)';
+    const statusColor = t.status === 'active' ? 'var(--text-body)' : t.status === 'draft' ? 'var(--text-muted)' : 'var(--text-faint)';
     const statusLabel = t.status === 'active' ? 'Activo' : t.status === 'draft' ? 'Borrador' : 'Archivado';
     const moduleIcons = Object.entries(t.modules)
       .filter(([, on]) => on)
@@ -1002,9 +1002,9 @@ function _buildConsentTab() {
       .join('');
     const tplSegs = tTotal > 0
       ? [
-          { value: t.signedCount,  color: 'var(--success,#16a34a)' },
-          { value: t.pendingCount, color: '#ca8a04' },
-          { value: t.revokedCount, color: 'var(--danger,#dc2626)' },
+          { value: t.signedCount,  color: 'var(--accent-soft)' },
+          { value: t.pendingCount, color: 'var(--text-muted)' },
+          { value: t.revokedCount, color: 'var(--text-faint)' },
         ].filter(s => s.value > 0)
       : [{ value: 1, color: 'var(--border-subtle)' }];
     return `<div class="an-card">
@@ -1016,9 +1016,9 @@ function _buildConsentTab() {
         <div class="an-donut-center">${_svgDonut(tplSegs, { size: 90, sw: 14 })}<div class="an-donut-lbl-inner"><span class="an-donut-lbl-val" style="font-size:14px">${tPct}%</span></div></div>
         <div style="flex:1;min-width:0">
           <div class="an-stat-rows">
-            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">verified_user</span>Firmados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--success,#16a34a)">${t.signedCount}</span></div></div>
-            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">schedule</span>Pendientes</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:#ca8a04">${t.pendingCount}</span></div></div>
-            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">gpp_bad</span>Revocados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--danger,#dc2626)">${t.revokedCount}</span></div></div>
+            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">verified_user</span>Firmados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-body)">${t.signedCount}</span></div></div>
+            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">schedule</span>Pendientes</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-muted)">${t.pendingCount}</span></div></div>
+            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">gpp_bad</span>Revocados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-faint)">${t.revokedCount}</span></div></div>
           </div>
           <div style="margin-top:8px;display:flex;gap:6px;align-items:center;color:var(--text-muted);font-size:11px">
             <span>Módulos:</span>${moduleIcons || '<span style="font-size:11px;color:var(--text-faint)">Ninguno</span>'}
@@ -1033,7 +1033,7 @@ function _buildConsentTab() {
     const c = consents[f.id];
     if (!c) return null;
     const state = c.state;
-    const badgeColor = state === 'signed' ? 'var(--success,#16a34a)' : '#ca8a04';
+    const badgeColor = state === 'signed' ? 'var(--text-body)' : 'var(--text-muted)';
     const badgeLabel = state === 'signed' ? 'Firmado' : 'Pendiente';
     const badgeIcon  = state === 'signed' ? 'verified' : 'schedule';
     return `<div class="an-cf-item">

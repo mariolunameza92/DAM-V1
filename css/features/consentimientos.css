@@ -13,9 +13,9 @@
 .consent-stat-dot {
   width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
 }
-.consent-stat-dot--signed  { background: var(--success); }
-.consent-stat-dot--pending { background: var(--warning); }
-.consent-stat-dot--revoked { background: var(--danger); }
+.consent-stat-dot--signed  { background: var(--accent-soft); }
+.consent-stat-dot--pending { background: var(--text-muted); }
+.consent-stat-dot--revoked { background: var(--text-faint); }
 .consent-stats-div { width: 1px; height: 28px; background: var(--border); }
 
 .consent-header {
@@ -46,8 +46,8 @@
   font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
   padding: 2px 8px; border-radius: 40px;
 }
-.consent-status-chip--active   { background: var(--success-bg);  color: var(--success); }
-.consent-status-chip--draft    { background: var(--warning-bg);  color: var(--warning); }
+.consent-status-chip--active   { background: var(--surface-neutral); color: var(--text-body); }
+.consent-status-chip--draft    { background: var(--surface-sunken);  color: var(--text-muted); }
 .consent-status-chip--archived { background: var(--surface-2);   color: var(--text-muted); }
 
 .consent-version-chip {
@@ -73,9 +73,9 @@
 
 .consent-card-counts { display: flex; gap: var(--space-3); margin-bottom: var(--space-2); }
 .consent-count { font-size: 12px; font-weight: 600; }
-.consent-count--signed  { color: var(--success); }
-.consent-count--pending { color: var(--warning); }
-.consent-count--revoked { color: var(--danger); }
+.consent-count--signed  { color: var(--text-body); }
+.consent-count--pending { color: var(--text-muted); }
+.consent-count--revoked { color: var(--text-faint); }
 
 /* ── Card menu btn ── */
 .consent-card-menu { flex-shrink: 0; opacity: 0; transition: opacity .15s; align-self: flex-start; margin-top: 2px; }
