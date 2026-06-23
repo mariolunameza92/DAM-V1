@@ -92,11 +92,11 @@ const ROLES = ['Admin', 'Editor', 'Viewer'];
 export { ROLES };
 
 const TEAM_DEFAULT = [
-  { id: 'u_mario',   name: 'Mario Luna',    email: 'marioluna@len.pe',   role: 'Admin',  joinedAt: '1/Ene/2026',  initials: 'ML', color: '#1d4ed8' },
-  { id: 'u_tomas',   name: 'Tomás De Col',  email: 'tdecol@len.pe',      role: 'Admin',  joinedAt: '1/Ene/2026',  initials: 'TD', color: '#7c3aed' },
-  { id: 'u_brisa',   name: 'Brisa B.',      email: 'brisa@len.pe',       role: 'Editor', joinedAt: '15/Feb/2026', initials: 'BB', color: '#db2777' },
-  { id: 'u_renato',  name: 'Renato Reyes',  email: 'rreyes@len.pe',      role: 'Editor', joinedAt: '15/Feb/2026', initials: 'RR', color: '#d97706' },
-  { id: 'u_antonio', name: 'Antonio C.',    email: 'antonio@len.pe',     role: 'Viewer', joinedAt: '1/Mar/2026',  initials: 'AC', color: '#16a34a' },
+  { id: 'u_mario',   name: 'Mario Luna',    email: 'marioluna@len.pe',   role: 'Admin',  joinedAt: '1/Ene/2026',  initials: 'ML', color: 'var(--user-color-1)' },
+  { id: 'u_tomas',   name: 'Tomás De Col',  email: 'tdecol@len.pe',      role: 'Admin',  joinedAt: '1/Ene/2026',  initials: 'TD', color: 'var(--user-color-2)' },
+  { id: 'u_brisa',   name: 'Brisa B.',      email: 'brisa@len.pe',       role: 'Editor', joinedAt: '15/Feb/2026', initials: 'BB', color: 'var(--user-color-3)' },
+  { id: 'u_renato',  name: 'Renato Reyes',  email: 'rreyes@len.pe',      role: 'Editor', joinedAt: '15/Feb/2026', initials: 'RR', color: 'var(--user-color-4)' },
+  { id: 'u_antonio', name: 'Antonio C.',    email: 'antonio@len.pe',     role: 'Viewer', joinedAt: '1/Mar/2026',  initials: 'AC', color: 'var(--user-color-5)' },
 ];
 
 let _team = null;
@@ -131,7 +131,7 @@ export function inviteMember({ name, email, role = 'Viewer' }) {
   const initials = name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
   const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   const d = new Date();
-  const m = { id, name: name.trim(), email: email.trim(), role, initials, color: '#6366f1', joinedAt: `${d.getDate()}/${MONTHS[d.getMonth()]}/${d.getFullYear()}` };
+  const m = { id, name: name.trim(), email: email.trim(), role, initials, color: 'var(--user-color-6)', joinedAt: `${d.getDate()}/${MONTHS[d.getMonth()]}/${d.getFullYear()}` };
   _team.push(m);
   _notifyTeam();
   return m;

@@ -10,9 +10,8 @@ let _tab    = 'dam'; // 'dam' | 'portales' | 'consentimientos'
 let _period = '30d';
 let _gid    = 0;  // gradient ID counter
 
-// Data-viz grayscale ramp → semantic text tokens (value-identical en light,
-// flipean a claro en dark). Sustituye la rampa cruda --g950..--g400.
-const RAMP = ['var(--text-strong)', 'var(--text)', 'var(--text-body)', 'var(--text-secondary)', 'var(--text-muted)', 'var(--text-faint)'];
+// Data-viz grayscale ramp → tokens --viz-N (fuerte→faint, dark-aware).
+const RAMP = ['var(--viz-1)', 'var(--viz-2)', 'var(--viz-3)', 'var(--viz-4)', 'var(--viz-5)', 'var(--viz-6)'];
 
 // ── Mock data (static mockup) ─────────────────────────────────────────────
 
@@ -21,12 +20,12 @@ const M = {
     usedTB: 2.4, totalTB: 5.0, projectionDate: 'ago 2027',
     avgFileMB: 8.4,
     types: [
-      { ext: 'JPG',   pct: 62, gb: 1.49, color: 'var(--text-strong)' },
-      { ext: 'RAW',   pct: 18, gb: 0.43, color: 'var(--text-body)' },
-      { ext: 'PNG',   pct: 10, gb: 0.24, color: 'var(--text-muted)' },
-      { ext: 'VIDEO', pct:  6, gb: 0.14, color: 'var(--text-faint)' },
-      { ext: 'TIFF',  pct:  3, gb: 0.07, color: 'var(--text-disabled)' },
-      { ext: 'PDF',   pct:  1, gb: 0.02, color: 'var(--surface-neutral)' },
+      { ext: 'JPG',   pct: 62, gb: 1.49, color: 'var(--viz-1)' },
+      { ext: 'RAW',   pct: 18, gb: 0.43, color: 'var(--viz-2)' },
+      { ext: 'PNG',   pct: 10, gb: 0.24, color: 'var(--viz-3)' },
+      { ext: 'VIDEO', pct:  6, gb: 0.14, color: 'var(--viz-4)' },
+      { ext: 'TIFF',  pct:  3, gb: 0.07, color: 'var(--viz-5)' },
+      { ext: 'PDF',   pct:  1, gb: 0.02, color: 'var(--viz-6)' },
     ],
     growthData:   [0.30, 0.50, 0.78, 1.05, 1.28, 1.55, 1.80, 2.10, 2.40],
     growthLabels: ['Oct','Nov','Dic','Ene','Feb','Mar','Abr','May','Jun'],
@@ -41,9 +40,9 @@ const M = {
     ],
     duplicates: 247, orphans: 183, noTags: 629, noMeta: 412,
     nesting: [
-      { label: 'Superficial (1-2)',  pct: 45, color: 'var(--text-disabled)' },
-      { label: 'Medio (3-4)',        pct: 38, color: 'var(--text-secondary)' },
-      { label: 'Profundo (5+)',      pct: 17, color: 'var(--text-strong)' },
+      { label: 'Superficial (1-2)',  pct: 45, color: 'var(--viz-5)' },
+      { label: 'Medio (3-4)',        pct: 38, color: 'var(--viz-3)' },
+      { label: 'Profundo (5+)',      pct: 17, color: 'var(--viz-1)' },
     ],
   },
   activity: {
@@ -56,11 +55,11 @@ const M = {
       { name: 'Sofía M.',  uploads:  540 },
     ],
     actions: [
-      { label: 'Subidas',       n: 5820, color: 'var(--text-strong)' },
-      { label: 'Descargas',     n: 3940, color: 'var(--text-body)' },
-      { label: 'Movimientos',   n: 1280, color: 'var(--text-muted)' },
-      { label: 'Ediciones',     n:  720, color: 'var(--text-faint)' },
-      { label: 'Eliminaciones', n:  184, color: 'var(--text-disabled)' },
+      { label: 'Subidas',       n: 5820, color: 'var(--viz-1)' },
+      { label: 'Descargas',     n: 3940, color: 'var(--viz-2)' },
+      { label: 'Movimientos',   n: 1280, color: 'var(--viz-3)' },
+      { label: 'Ediciones',     n:  720, color: 'var(--viz-4)' },
+      { label: 'Eliminaciones', n:  184, color: 'var(--viz-5)' },
     ],
     heatDays:  ['Lu','Ma','Mi','Ju','Vi','Sá','Do'],
     heatHours: ['8am','10am','12pm','2pm','4pm','6pm'],
@@ -106,9 +105,9 @@ const M = {
       assetsPerSession: 8.4,
       mobile: 62, desktop: 38,
       sources: [
-        { label: 'Link directo', pct: 54, color: 'var(--text)' },
-        { label: 'QR',           pct: 31, color: 'var(--text-muted)' },
-        { label: 'Otros',        pct: 15, color: 'var(--text-disabled)' },
+        { label: 'Link directo', pct: 54, color: 'var(--viz-1)' },
+        { label: 'QR',           pct: 31, color: 'var(--viz-3)' },
+        { label: 'Otros',        pct: 15, color: 'var(--viz-5)' },
       ],
       radarAxes:   ['Vistas','Conversión','Tiempo','Assets/ses.','Retorno'],
       radarValues: [0.85, 0.72, 0.65, 0.80, 0.45],
@@ -377,8 +376,8 @@ function _buildStorageSection() {
   const freePct = (100 - +usedPct).toFixed(0);
 
   const donutSegs = [
-    { value: s.usedTB,             color: 'var(--text-title)' },
-    { value: s.totalTB - s.usedTB, color: 'var(--border-subtle)' },
+    { value: s.usedTB,             color: 'var(--viz-1)' },
+    { value: s.totalTB - s.usedTB, color: 'var(--viz-6)' },
   ];
 
   const typeLegend = s.types.map(t =>
@@ -390,7 +389,7 @@ function _buildStorageSection() {
     </div>`
   ).join('');
 
-  const growthSVG = _svgLine(s.growthData, s.growthLabels, { w: 320, h: 90, color: 'var(--text-body)' });
+  const growthSVG = _svgLine(s.growthData, s.growthLabels, { w: 320, h: 90, color: 'var(--viz-2)' });
 
   const typeSegs = s.types.map(t => ({ value: t.pct, color: t.color }));
   const typeDonut = _svgDonut(typeSegs, { size: 100, sw: 14 });
@@ -531,9 +530,9 @@ function _buildActivitySection() {
   const a = M.activity;
   const totalUsers = a.active + a.inactive + a.guests;
   const userSegs = [
-    { value: a.active,   color: 'var(--text-strong)' },
-    { value: a.inactive, color: 'var(--text-faint)' },
-    { value: a.guests,   color: 'var(--surface-neutral)' },
+    { value: a.active,   color: 'var(--viz-1)' },
+    { value: a.inactive, color: 'var(--viz-4)' },
+    { value: a.guests,   color: 'var(--viz-6)' },
   ];
   const maxUpl = Math.max(...a.topUploaders.map(u => u.uploads));
   const maxAct = Math.max(...a.actions.map(ac => ac.n));

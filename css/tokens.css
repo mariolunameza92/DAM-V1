@@ -131,6 +131,27 @@
   /* ── Data-viz ── el "ink" de charts (heatmap/celdas con opacidad).
      Light = g950; en dark se aclara para no perderse sobre fondo oscuro. ── */
   --dataviz-ink:        #22252f;   /* g950 */
+
+  /* ── User avatar colors — 6 slots distinguibles, muted para no romper la paleta gris.
+     Usar SIEMPRE estos tokens para bolitas de iniciales. Nunca hex fijos ni colores Tailwind.
+     El texto sobre todos es blanco: usar --on-user-color. ── */
+  --user-color-1:  #2850a8;   /* blue   — slot 1 */
+  --user-color-2:  #6b32c8;   /* violet — slot 2 */
+  --user-color-3:  #b82265;   /* rose   — slot 3 */
+  --user-color-4:  #b86c10;   /* amber  — slot 4 */
+  --user-color-5:  #1a7a40;   /* green  — slot 5 */
+  --user-color-6:  #4a52c8;   /* indigo — slot 6 / default para nuevos */
+  --on-user-color: #fff;      /* texto/icono sobre cualquier user-color-N */
+
+  /* ── Data-viz categórica — rampa monocromática fuerte→faint, dark-aware.
+     Usar SIEMPRE estos tokens en gráficos. Nunca --text-* ni --border-* como fill de chart.
+     viz-1 = más prominente (dato principal), viz-6 = más débil (fondo/track). ── */
+  --viz-1: var(--g950);
+  --viz-2: var(--g700);
+  --viz-3: var(--g500);
+  --viz-4: var(--g300);
+  --viz-5: var(--g200);
+  --viz-6: var(--g100);
 }
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -217,4 +238,20 @@
   --folder-grad-to:     #20242e;
   --folder-wash:        rgba(255, 255, 255, .06);
   --dataviz-ink:        #c7cdd9;
+
+  /* ── User avatar colors (más luminosos para contraste sobre fondos oscuros) ── */
+  --user-color-1:  #4d78c8;
+  --user-color-2:  #8a5ad4;
+  --user-color-3:  #d45882;
+  --user-color-4:  #d4922e;
+  --user-color-5:  #3aaa68;
+  --user-color-6:  #6a72d4;
+
+  /* ── Data-viz categórica dark (claro→oscuro: más luminoso = más visible sobre bg oscuro) ── */
+  --viz-1: #f6f7f9;
+  --viz-2: #b0b7c9;
+  --viz-3: #8b95ad;
+  --viz-4: #667391;
+  --viz-5: #515c78;
+  --viz-6: #3a414f;
 }

@@ -7,6 +7,21 @@ Actúa siempre como **líder técnico experto** (arquitectura, frontend, backend
 - Señalar seguridad, rendimiento y deuda técnica aunque no se pida.
 - Ante cualquier UI nueva: preguntar si hay Figma. Si no hay, ofrecer A) esperar Figma o B) diseñar como experto en product design y esperar aprobación. Nunca inventar diseño sin avisar.
 
+## Design system — uso de color (no negociable)
+
+**Regla absoluta: cero hex ni colores externos en JS o CSS de componentes.**
+Todo color debe venir de un token definido en `css/tokens.css`.
+
+| Necesidad | Token a usar | Prohibido |
+|---|---|---|
+| Bolitas de iniciales de usuario | `--user-color-1` … `--user-color-6` · texto: `--on-user-color` | hex fijo, colores Tailwind |
+| Gráficos / data-viz categórica | `--viz-1` … `--viz-6` (fuerte→faint) | `--text-*`, `--border-*` como fill de chart |
+| Gradientes de charts | `--an-grad-*`, `--dataviz-ink` | hex fijo |
+| Estado: error, éxito, aviso | `--danger`, `--success`, `--warning` y sus variantes | hex fijo |
+| Fondos, bordes, texto | tokens semánticos existentes | `--g*` directo, hex fijo |
+
+**Si un feature necesita un color que no existe en `tokens.css`: PAUSAR, comunicarlo y definir el token primero. Nunca improvisar con hex externos.**
+
 ## Principios de arquitectura (no negociables)
 
 1. **Feature-driven**: `css/` y `js/` separados en `components/ui/`, `components/layout/`, `features/[nombre]/`
