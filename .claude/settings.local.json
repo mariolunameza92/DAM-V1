@@ -151,7 +151,9 @@
       "Bash(taskkill /PID 18104 /F)",
       "Bash(grep -rn \"avatar\\\\|initials\\\\|profile.*color\\\\|color.*profile\\\\|background.*color.*[A-Z]\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\" /Users/lenadmin/Documents/GitHub/DAM-V1/js/features/ --include=\"*.js\" -l)",
       "Bash(grep -n \"avatar\\\\|color\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|background\\\\|initials\" /Users/lenadmin/Documents/GitHub/DAM-V1/js/features/configuracion/configuracion.js)",
-      "Bash(grep -rn \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/css/tokens.css)"
+      "Bash(grep -rn \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/css/tokens.css)",
+      "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/js/features/analytics/analytics.js)",
+      "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/css/features/analytics.css)"
     ]
   },
   "hooks": {
