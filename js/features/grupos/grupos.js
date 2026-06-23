@@ -4,7 +4,7 @@ import { getGrupos, getGrupoById, createGrupo, updateGrupo, deleteGrupo, addMemb
 import { getFaces } from '../../faces.js';
 import { showToast } from '../../components/ui/toast.js';
 
-const COLORS = ['var(--cat-1)','var(--cat-2)','var(--cat-3)','var(--cat-4)','var(--cat-5)','var(--cat-6)','var(--cat-7)','var(--cat-8)'];
+const COLORS = ['var(--success)','var(--accent)','var(--accent-soft)','var(--text-body)','var(--text-muted)','var(--text-faint)'];
 
 function esc(s) {
   return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));

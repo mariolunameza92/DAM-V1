@@ -131,17 +131,6 @@
   /* ── Data-viz ── el "ink" de charts (heatmap/celdas con opacidad).
      Light = g950; en dark se aclara para no perderse sobre fondo oscuro. ── */
   --dataviz-ink:        #22252f;   /* g950 */
-
-  /* ── Categorical palette — uso exclusivo en etiquetas de grupos / tags.
-     NO usar directamente en otros componentes. En dark se redefinen más claras. ── */
-  --cat-1:  #2563eb;   /* azul    */
-  --cat-2:  #7c3aed;   /* violeta */
-  --cat-3:  #db2777;   /* rosa    */
-  --cat-4:  #d97706;   /* ámbar   */
-  --cat-5:  #16a34a;   /* verde   */
-  --cat-6:  #0891b2;   /* cian    */
-  --cat-7:  #4f46e5;   /* índigo  */
-  --cat-8:  #dc2626;   /* rojo    */
 }
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -228,14 +217,4 @@
   --folder-grad-to:     #20242e;
   --folder-wash:        rgba(255, 255, 255, .06);
   --dataviz-ink:        #c7cdd9;
-
-  /* ── Categorical palette — variantes claras para dark ── */
-  --cat-1:  #60a5fa;
-  --cat-2:  #a78bfa;
-  --cat-3:  #f472b6;
-  --cat-4:  #fbbf24;
-  --cat-5:  #34d399;
-  --cat-6:  #22d3ee;
-  --cat-7:  #818cf8;
-  --cat-8:  #f87171;
 }

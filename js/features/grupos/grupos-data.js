@@ -7,7 +7,7 @@ const GRUPOS_DEFAULT = [
     id: 'g_comercial',
     name: 'Equipo Comercial',
     description: 'Área de Ventas y Clientes',
-    color: 'var(--cat-1)',
+    color: 'var(--success)',
     createdAt: '10/Abr/2026',
     memberIds: ['l42k_f', 'cr_f2', 'rbf_f', 'osr_f'],
   },
@@ -15,7 +15,7 @@ const GRUPOS_DEFAULT = [
     id: 'g_direccion',
     name: 'Dirección',
     description: 'Alta dirección',
-    color: 'var(--cat-2)',
+    color: 'var(--accent-soft)',
     createdAt: '10/Abr/2026',
     memberIds: ['l42k_f2', 'l42k_f3', 'wfl_f'],
   },
@@ -53,7 +53,7 @@ export function getGrupoForFace(faceId) {
 }
 
 let _seq = 0;
-export function createGrupo({ name, description = '', color = 'var(--cat-7)' }) {
+export function createGrupo({ name, description = '', color = 'var(--success)' }) {
   _seq++;
   const id = 'g_' + Date.now().toString(36) + _seq;
   const g = { id, name: name.trim(), description: description.trim(), color, createdAt: _todayStr(), memberIds: [] };
