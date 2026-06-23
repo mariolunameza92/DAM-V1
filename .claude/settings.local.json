@@ -148,7 +148,10 @@
       "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\PC\\\\Documents\\\\GitHub\\\\DAM V1\" -Recurse -Force | Sort-Object FullName | ForEach-Object { $_.FullName -replace [regex]::Escape\\(\"C:\\\\Users\\\\PC\\\\Documents\\\\GitHub\\\\DAM V1\"\\), \".\" } | Select-Object -First 200)",
       "PowerShell(tree \"C:\\\\Users\\\\PC\\\\Documents\\\\GitHub\\\\DAM V1\" -L 3 2>$null)",
       "PowerShell(head -100)",
-      "Bash(taskkill /PID 18104 /F)"
+      "Bash(taskkill /PID 18104 /F)",
+      "Bash(grep -rn \"avatar\\\\|initials\\\\|profile.*color\\\\|color.*profile\\\\|background.*color.*[A-Z]\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\" /Users/lenadmin/Documents/GitHub/DAM-V1/js/features/ --include=\"*.js\" -l)",
+      "Bash(grep -n \"avatar\\\\|color\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|background\\\\|initials\" /Users/lenadmin/Documents/GitHub/DAM-V1/js/features/configuracion/configuracion.js)",
+      "Bash(grep -rn \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/css/tokens.css)"
     ]
   },
   "hooks": {
