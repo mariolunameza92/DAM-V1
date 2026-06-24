@@ -24,6 +24,9 @@
   --tag-ok:#16a34a;--tag-ok-bg:#dcfce7;--tag-ok-text:#15803d;
   --tag-a:#d97706;--tag-a-bg:#fef3c7;--tag-a-text:#92400e;
   --tag-b:#dc2626;--tag-b-bg:#fee2e2;--tag-b-text:#991b1b;
+  --tag-s:#7c3aed;--tag-s-bg:#ede9fe;--tag-s-text:#5b21b6;
+  /* app gradient token replicas */
+  --an-grad-dark: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-ui);background:var(--g100);color:var(--text);font-size:14px;line-height:1.5}
@@ -44,6 +47,7 @@ code{font-family:'Courier New',monospace;font-size:11px;background:var(--g100);p
 .dot-ok{background:var(--tag-ok)}
 .dot-a{background:var(--tag-a)}
 .dot-b{background:var(--tag-b)}
+.dot-s{background:var(--tag-s)}
 
 /* === CONTROL BAR === */
 .controls{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
@@ -85,6 +89,7 @@ code{font-family:'Courier New',monospace;font-size:11px;background:var(--g100);p
 .btag.ok{background:var(--tag-ok-bg);color:var(--tag-ok-text)}
 .btag.a{background:var(--tag-a-bg);color:var(--tag-a-text)}
 .btag.b{background:var(--tag-b-bg);color:var(--tag-b-text)}
+.btag.s{background:var(--tag-s-bg);color:var(--tag-s-text)}
 .spec-name{font-size:10px;color:var(--text-muted);text-align:center;line-height:1.3}
 .spec-code{font-size:9px;font-family:'Courier New',monospace;color:var(--text-faint);text-align:center;background:var(--g100);padding:1px 4px;border-radius:3px}
 .spec-px{font-size:9px;font-weight:700;color:var(--tag-a)}
@@ -143,6 +148,39 @@ code{font-family:'Courier New',monospace;font-size:11px;background:var(--g100);p
 .vbadge.ok{background:var(--tag-ok-bg);color:var(--tag-ok-text)}
 .vbadge.a{background:var(--tag-a-bg);color:var(--tag-a-text)}
 .vbadge.b{background:var(--tag-b-bg);color:var(--tag-b-text)}
+.vbadge.s{background:var(--tag-s-bg);color:var(--tag-s-text)}
+
+/* S-type: icon support backgrounds demo */
+.support-compare{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.support-item{display:flex;flex-direction:column;align-items:center;gap:5px}
+.support-box{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;position:relative}
+.support-box.grad{background:var(--an-grad-dark);color:#fff}
+.support-box.flat-neutral{background:var(--g200);color:var(--text-secondary)}
+.support-box.flat-sunken{background:var(--g100);color:var(--text-muted)}
+.support-box.flat-surface{background:var(--surface);border:1px solid var(--border);color:var(--text-muted)}
+.support-label{font-size:9px;color:var(--text-faint);text-align:center;line-height:1.3;max-width:52px}
+.support-verdict{font-size:8px;font-weight:700;padding:1px 4px;border-radius:3px;text-align:center}
+.support-verdict.same-card{background:var(--tag-s-bg);color:var(--tag-s-text)}
+.support-verdict.ok-v{background:var(--tag-ok-bg);color:var(--tag-ok-text)}
+
+/* mini cell demos */
+.mini-demo{border-radius:10px;padding:10px 12px;display:inline-flex;flex-direction:column;gap:2px;min-width:80px}
+.mini-demo.grad{background:var(--an-grad-dark)}
+.mini-demo.flat-n{background:var(--g200)}
+.mini-demo.flat-s{background:var(--g100);border:1px solid var(--border)}
+.mini-val{font-size:20px;font-weight:700;line-height:1;color:var(--text)}
+.mini-val.inv{color:#fff}
+.mini-lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
+.mini-lbl.inv{color:rgba(255,255,255,.7)}
+
+/* badge demos */
+.badge-compare{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.b-demo{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px}
+.b-demo.grad{background:var(--an-grad-dark);color:#fff}
+.b-demo.flat{background:var(--g200);color:var(--text)}
+.b-demo.flat-s{background:var(--g100);border:1px solid var(--border);color:var(--text-secondary)}
+
+.same-card-tag{font-size:9px;font-weight:700;background:var(--tag-s-bg);color:var(--tag-s-text);padding:1px 5px;border-radius:3px;margin-left:4px}
 .fix-cell{font-size:11px;color:var(--text-secondary);line-height:1.5;max-width:260px}
 .px-bug{color:var(--tag-b);font-weight:700}
 
@@ -160,9 +198,10 @@ code{font-family:'Courier New',monospace;font-size:11px;background:var(--g100);p
   <p>LEN DAM · js/features/analytics/analytics.js · css/features/analytics.css · 3 tabs: DAM, Portales, Consentimientos</p>
   <div class="stats-bar">
     <div class="stat-pill"><div class="dot dot-ok"></div>OK: patrones sin conflicto</div>
-    <div class="stat-pill"><div class="dot dot-a"></div>A-type ×9: clase HTML redundante (CSS override gana)</div>
-    <div class="stat-pill"><div class="dot dot-b"></div>B-type ×2: bug real (inline + clase en conflicto)</div>
-    <div class="stat-pill" style="background:rgba(255,255,255,.15);">Total hallazgos: 11</div>
+    <div class="stat-pill"><div class="dot dot-a"></div>A-type ×9: clase HTML redundante</div>
+    <div class="stat-pill"><div class="dot dot-b"></div>B-type ×2: bug inline + clase</div>
+    <div class="stat-pill"><div class="dot dot-s"></div>S-type ×5: fondos de icono inconsistentes</div>
+    <div class="stat-pill" style="background:rgba(255,255,255,.15);">Total hallazgos: 16</div>
   </div>
 </div>
 
@@ -187,25 +226,35 @@ code{font-family:'Courier New',monospace;font-size:11px;background:var(--g100);p
 
   <div class="guide">
     <div class="guide-title">Guía de decisión — cómo resolver cada tipo</div>
-    <div class="guide-grid">
+    <div class="guide-grid" style="grid-template-columns:1fr 1fr 1fr">
       <div class="guide-card ac">
         <div class="guide-card-h ac">⚠ A-type — clase HTML redundante</div>
         <ul>
-          <li>El CSS de contexto ya fija el tamaño: <code>.selector .msi { font-size:Xpx }</code></li>
+          <li>El CSS de contexto ya fija el tamaño con <code>.selector .msi{font-size:Xpx}</code></li>
           <li>La clase <code>.sm</code> / <code>.xs</code> en el HTML no tiene efecto visual</li>
-          <li><strong>Opción A (recomendada):</strong> quitar la clase del JS — CSS es la única fuente de verdad</li>
-          <li><strong>Opción B:</strong> quitar el override CSS y estandarizar usando solo clases HTML</li>
-          <li>Aplicar la misma opción a todos los A-type para consistencia global</li>
+          <li><strong>Fix A (recomendado):</strong> quitar la clase del JS — CSS es la fuente de verdad</li>
+          <li><strong>Fix B:</strong> quitar el override CSS y usar solo clases HTML</li>
+          <li>Aplicar la misma opción a todos los A-type</li>
         </ul>
       </div>
       <div class="guide-card bc">
         <div class="guide-card-h bc">🔴 B-type — bug real (inline vs clase)</div>
         <ul>
           <li>El elemento tiene clase de tamaño (.sm/.xs) <strong>y</strong> <code>style="font-size:Xpx"</code> diferente</li>
-          <li>El inline siempre gana sobre la clase — la clase nunca tiene efecto</li>
-          <li><strong>Fix inmediato:</strong> quitar el <code>style="font-size:..."</code> del JS template literal</li>
-          <li>Si el tamaño inline es el correcto, mover ese valor al CSS del contexto</li>
+          <li>El inline siempre gana — la clase nunca tiene efecto</li>
+          <li><strong>Fix inmediato:</strong> quitar el <code>style="font-size:..."</code> del JS</li>
+          <li>Si el tamaño inline es correcto, moverlo al CSS del contexto</li>
           <li>Archivos: <code>analytics.js</code> → <code>_buildSecuritySection()</code>, <code>_buildQualitySection()</code></li>
+        </ul>
+      </div>
+      <div class="guide-card" style="background:#f5f3ff;border:1px solid #ddd6fe;">
+        <div class="guide-card-h" style="color:var(--tag-s);">🟣 S-type — fondo de icono inconsistente</div>
+        <ul>
+          <li>Dentro del mismo card coexisten fondos con gradiente y fondos planos</li>
+          <li>El gradiente <code>--an-grad-dark</code> crea jerarquía visual no intencional</li>
+          <li><strong>Regla propuesta:</strong> gradiente solo en KPI cards (punto focal primario)</li>
+          <li>En contextos secundarios (alert icons, mini cells dentro de card): solo fondos planos diferenciados por tono</li>
+          <li>Archivo CSS: <code>analytics.css</code> → reglas de <code>.an-alert-icon</code>, <code>.an-mini</code>, <code>.an-badge</code></li>
         </ul>
       </div>
     </div>
@@ -408,6 +457,180 @@ code{font-family:'Courier New',monospace;font-size:11px;background:var(--g100);p
         </div>
         <div class="demo-wrap">
           <div class="demo-label">Fix: quitar style inline del JS, añadir en analytics.css: <code>.an-badge .msi { font-size: 11px }</code></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh">S-type — fondos de icono inconsistentes dentro del mismo card</div>
+
+    <div class="pcard" style="border-color:#ddd6fe;">
+      <div class="pcard-head"><span class="pcard-id" style="color:var(--tag-s)">S1</span><span class="pcard-title"><code>.an-alert-icon</code> — gradiente en <code>.danger</code>, plano en <code>.warn</code> e <code>.info</code></span></div>
+      <div class="pcard-note">En el card "Calidad de estructura" el mismo listado mezcla: <code>.warn</code> → <code>surface-neutral</code> plano · <code>.info</code> → <code>surface-sunken</code> plano · <code>.danger</code> → gradiente diagonal. El gradiente crea jerarquía visual no intencional — danger parece más importante solo por su fondo, no por su semántica.</div>
+      <div class="pcard-body">
+        <div style="flex:1;min-width:260px;">
+          <div class="demo-label">Estado actual — los 3 conviven en el mismo card:</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface-1);border:1px solid var(--border);border-radius:8px;">
+              <div class="support-box flat-neutral" style="border-radius:8px;width:28px;height:28px;flex-shrink:0;"><span class="msi" style="font-size:14px;">content_copy</span></div>
+              <div style="flex:1;font-size:11px;">Archivos duplicados</div>
+              <span class="same-card-tag">plano</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface-1);border:1px solid var(--border);border-radius:8px;">
+              <div class="support-box flat-sunken" style="border-radius:8px;width:28px;height:28px;flex-shrink:0;"><span class="msi" style="font-size:14px;">cloud_off</span></div>
+              <div style="flex:1;font-size:11px;">Assets huérfanos</div>
+              <span class="same-card-tag">plano</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface-1);border:1px solid var(--border);border-radius:8px;">
+              <div class="support-box grad" style="border-radius:8px;width:28px;height:28px;flex-shrink:0;"><span class="msi" style="font-size:14px;color:#fff;">label_off</span></div>
+              <div style="flex:1;font-size:11px;">Sin tags</div>
+              <span class="same-card-tag">gradiente ←</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface-1);border:1px solid var(--border);border-radius:8px;">
+              <div class="support-box flat-neutral" style="border-radius:8px;width:28px;height:28px;flex-shrink:0;"><span class="msi" style="font-size:14px;">info</span></div>
+              <div style="flex:1;font-size:11px;">Sin metadata</div>
+              <span class="same-card-tag">plano</span>
+            </div>
+          </div>
+          <div class="demo-label" style="margin-top:10px;color:var(--tag-s);">Fix: cambiar <code>.an-alert-icon.danger</code> a fondo plano consistente con warn/info. El color del icono ya comunica la severidad.</div>
+          <div style="margin-top:6px;font-size:11px;color:var(--text-secondary);">En <code>analytics.css</code>: <code>.an-alert-icon.danger { background: var(--surface-neutral); color: var(--danger); }</code></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="demo-label">Comparativa de fondos:</div>
+          <div class="support-compare">
+            <div class="support-item">
+              <div class="support-box flat-neutral" style="border-radius:8px;width:28px;height:28px;"><span class="msi" style="font-size:14px;">content_copy</span></div>
+              <div class="support-label">warn<br>surface-neutral</div>
+              <div class="support-verdict ok-v">✓ plano</div>
+            </div>
+            <div class="support-item">
+              <div class="support-box flat-sunken" style="border-radius:8px;width:28px;height:28px;"><span class="msi" style="font-size:14px;">cloud_off</span></div>
+              <div class="support-label">info<br>surface-sunken</div>
+              <div class="support-verdict ok-v">✓ plano</div>
+            </div>
+            <div class="support-item">
+              <div class="support-box grad" style="border-radius:8px;width:28px;height:28px;"><span class="msi" style="font-size:14px;color:#fff;">label_off</span></div>
+              <div class="support-label">danger<br>gradiente</div>
+              <div class="support-verdict same-card" style="white-space:nowrap;">S1 ← rompe</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" style="border-color:#ddd6fe;">
+      <div class="pcard-head"><span class="pcard-id" style="color:var(--tag-s)">S2</span><span class="pcard-title"><code>.an-mini</code> — <code>.rose</code> y <code>.violet</code> con gradiente, resto plano — en el mismo grid</span></div>
+      <div class="pcard-note">En <code>_buildSecuritySection()</code> el mini-grid tiene <code>.rose</code> (gradiente oscuro + texto blanco) junto a <code>.amber</code> (plano claro). En <code>_buildPortalInventory()</code>: <code>.violet</code> (gradiente) junto a <code>.gray</code> (plano). El contraste de fondo entre hermanas del mismo grid es radical y no responde a jerarquía de información.</div>
+      <div class="pcard-body">
+        <div style="flex:1;min-width:220px;">
+          <div class="demo-label">_buildSecuritySection() — "Accesos fallidos" vs "Expiran pronto":</div>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <div class="mini-demo grad">
+              <span class="mini-val inv">24</span>
+              <span class="mini-lbl inv">accesos fallidos</span>
+            </div>
+            <div class="mini-demo flat-n">
+              <span class="mini-val">3</span>
+              <span class="mini-lbl">expiran pronto</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:4px;">
+            <span class="same-card-tag">gradiente</span>
+            <span style="font-size:9px;color:var(--text-faint);padding:1px 4px;">vs</span>
+            <span class="same-card-tag">plano</span>
+          </div>
+        </div>
+        <div style="flex:1;min-width:220px;">
+          <div class="demo-label">_buildPortalInventory() — "Masters" vs "Regulares":</div>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <div class="mini-demo grad">
+              <span class="mini-val inv">4</span>
+              <span class="mini-lbl inv">masters</span>
+            </div>
+            <div class="mini-demo flat-s">
+              <span class="mini-val">23</span>
+              <span class="mini-lbl">regulares</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:4px;">
+            <span class="same-card-tag">gradiente</span>
+            <span style="font-size:9px;color:var(--text-faint);padding:1px 4px;">vs</span>
+            <span class="same-card-tag">plano</span>
+          </div>
+        </div>
+        <div class="demo-wrap">
+          <div class="demo-label" style="color:var(--tag-s);">Fix: <code>.rose</code> puede mantener gradiente si representa un estado crítico (accesos fallidos = alerta real). <code>.violet</code> (Masters = dato neutro) → cambiar a fondo plano. Regla: gradiente solo si el valor comunicado requiere alerta de acción.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" style="border-color:#ddd6fe;">
+      <div class="pcard-head"><span class="pcard-id" style="color:var(--tag-s)">S3</span><span class="pcard-title"><code>.an-badge.ok</code> y <code>.an-badge.danger</code> — mismo fondo <code>var(--an-grad-dark)</code></span></div>
+      <div class="pcard-note">En <code>analytics.css</code> líneas 615 y 617: <code>.an-badge.ok</code> y <code>.an-badge.danger</code> tienen el mismo <code>background: var(--an-grad-dark)</code>. Estados semánticamente opuestos — éxito vs peligro — producen el mismo visual oscuro.</div>
+      <div class="pcard-body">
+        <div style="flex:1;min-width:200px;">
+          <div class="demo-label">Estado actual — OK y danger idénticos visualmente:</div>
+          <div class="badge-compare" style="margin-top:6px;">
+            <div class="b-demo grad"><span class="msi" style="font-size:11px;color:#fff;">check_circle</span> Al ritmo actual: OK</div>
+            <span class="same-card-tag">ok → gradiente oscuro</span>
+          </div>
+          <div class="badge-compare" style="margin-top:6px;">
+            <div class="b-demo grad"><span class="msi" style="font-size:11px;color:#fff;">warning</span> 96 archivos eliminados</div>
+            <span class="same-card-tag">danger → gradiente oscuro</span>
+          </div>
+          <div class="demo-label" style="margin-top:10px;color:var(--tag-s);">Fix: <code>.an-badge.ok → background: var(--surface-neutral)</code> o tinte verde suave. <code>.an-badge.danger</code> puede mantener el gradiente oscuro como señal de alerta fuerte.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" style="border-color:#ddd6fe;">
+      <div class="pcard-head"><span class="pcard-id" style="color:var(--tag-s)">S4</span><span class="pcard-title"><code>kc-blue</code>, <code>kc-green</code>, <code>kc-amber</code>, <code>kc-rose</code>, <code>kc-violet</code> — todos producen el mismo CSS</span></div>
+      <div class="pcard-note">Las 5 clases <code>kc-*</code> en <code>analytics.css</code> (líneas 176–180) tienen exactamente el mismo valor: <code>background: var(--an-grad-dark); color: var(--on-accent)</code>. Los nombres implican diferenciación cromática (blue/green/amber/rose) que no existe en la implementación. No es un bug visual pero es deuda de mantenimiento: si en el futuro se quiere diferenciar por color, habría que editar 5 reglas que "debían" ser distintas.</div>
+      <div class="pcard-body">
+        <div style="flex:1;min-width:200px;">
+          <div class="demo-label">Los 4 KPI icons se ven idénticos pese a tener clases distintas:</div>
+          <div class="support-compare" style="margin-top:6px;">
+            <div class="support-item">
+              <div class="support-box grad" style="border-radius:10px;"><span class="msi" style="font-size:16px;color:#fff;">folder_open</span></div>
+              <div class="support-label">kc-blue</div>
+            </div>
+            <div class="support-item">
+              <div class="support-box grad" style="border-radius:10px;"><span class="msi" style="font-size:16px;color:#fff;">cloud_upload</span></div>
+              <div class="support-label">kc-green</div>
+            </div>
+            <div class="support-item">
+              <div class="support-box grad" style="border-radius:10px;"><span class="msi" style="font-size:16px;color:#fff;">captive_portal</span></div>
+              <div class="support-label">kc-amber</div>
+            </div>
+            <div class="support-item">
+              <div class="support-box grad" style="border-radius:10px;"><span class="msi" style="font-size:16px;color:#fff;">download</span></div>
+              <div class="support-label">kc-rose</div>
+            </div>
+          </div>
+          <div class="demo-label" style="margin-top:8px;color:var(--tag-s);">Fix A: colapsar a una sola clase <code>.kc-accent</code>. Fix B: implementar los colores distintos que los nombres prometen usando tokens viz-* como tinte de fondo.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" style="border-color:#ddd6fe;">
+      <div class="pcard-head"><span class="pcard-id" style="color:var(--tag-s)">S5</span><span class="pcard-title"><code>.an-kpi-icon</code> default <code>background: surface-neutral</code> — código muerto</span></div>
+      <div class="pcard-note">La regla base <code>.an-kpi-icon { background: var(--surface-neutral) }</code> (analytics.css línea 173) nunca se aplica: todo KPI card tiene clase <code>kc-*</code> que sobreescribe con <code>var(--an-grad-dark)</code>. El estado default nunca es visible en la UI.</div>
+      <div class="pcard-body">
+        <div style="flex:1;">
+          <div class="demo-label">El default plano existe pero ningún KPI lo usa:</div>
+          <div class="support-compare" style="margin-top:6px;">
+            <div class="support-item">
+              <div class="support-box flat-neutral" style="border-radius:10px;"><span class="msi" style="font-size:16px;">folder</span></div>
+              <div class="support-label">default<br>(nunca visible)</div>
+              <div class="support-verdict same-card">código muerto</div>
+            </div>
+            <div style="font-size:10px;color:var(--text-muted);align-self:center;padding:0 8px;">→ siempre sobreescrito por →</div>
+            <div class="support-item">
+              <div class="support-box grad" style="border-radius:10px;"><span class="msi" style="font-size:16px;color:#fff;">folder</span></div>
+              <div class="support-label">kc-* override<br>(siempre aplica)</div>
+              <div class="support-verdict ok-v">visual real</div>
+            </div>
+          </div>
+          <div class="demo-label" style="margin-top:8px;color:var(--tag-s);">Fix: si el default nunca es necesario, eliminarlo. Si se quiere como fallback, documentarlo explícitamente.</div>
         </div>
       </div>
     </div>
@@ -620,6 +843,23 @@ code{font-family:'Courier New',monospace;font-size:11px;background:var(--g100);p
       </div>
     </div>
 
+    <div class="pcard" style="border-color:#ddd6fe;">
+      <div class="pcard-head"><span class="pcard-id" style="color:var(--tag-s)">S-type ×5</span><span class="pcard-title">Fondos de icono inconsistentes — gradiente vs plano en el mismo contexto</span></div>
+      <div class="pcard-note">Regla propuesta: <code>var(--an-grad-dark)</code> solo en KPI cards (punto focal primario). En contextos secundarios dentro de cards: solo fondos planos diferenciados por tono. Archivo: <code>css/features/analytics.css</code>.</div>
+      <div class="pcard-body" style="padding-top:8px;">
+        <table class="sum-table" style="font-size:11px;">
+          <thead><tr><th>ID</th><th>Componente</th><th>Problema</th><th>Contexto</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr style="background:#faf5ff;"><td><strong>S1</strong></td><td><code>.an-alert-icon.danger</code></td><td>Gradiente en lista donde .warn/.info son planos</td><td>DAM, Cons.</td><td><code>background: var(--surface-neutral); color: var(--danger)</code></td></tr>
+            <tr style="background:#faf5ff;"><td><strong>S2</strong></td><td><code>.an-mini.rose/.violet</code></td><td>Grad-dark en grids donde hermanas son planas</td><td>DAM, Portales</td><td><code>.violet</code> → <code>var(--surface-sunken)</code>. <code>.rose</code> evaluar si requiere alerta.</td></tr>
+            <tr style="background:#faf5ff;"><td><strong>S3</strong></td><td><code>.an-badge.ok y .danger</code></td><td>Misma apariencia (grad-dark) para estados opuestos</td><td>DAM</td><td><code>.ok → var(--surface-neutral)</code> o tinte verde</td></tr>
+            <tr style="background:#faf5ff;"><td><strong>S4</strong></td><td><code>.kc-blue/green/amber/rose/violet</code></td><td>5 nombres distintos, mismo CSS idéntico</td><td>Todos</td><td>Colapsar a <code>.kc-accent</code> o implementar colores reales</td></tr>
+            <tr style="background:#faf5ff;"><td><strong>S5</strong></td><td><code>.an-kpi-icon</code> default</td><td>Regla base <code>surface-neutral</code> nunca visible</td><td>Todos</td><td>Eliminar o documentar como fallback explícito</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div><!-- /tab-resumen -->
 
 </div><!-- /view-visual -->
@@ -628,10 +868,12 @@ code{font-family:'Courier New',monospace;font-size:11px;background:var(--g100);p
 <div class="view-pane" id="view-tabla">
 
   <div class="filter-bar">
-    <button class="fbtn active" onclick="filterTable('all',this)">Todos (11)</button>
+    <button class="fbtn active" onclick="filterTable('all',this)">Todos (16)</button>
     <button class="fbtn fa" onclick="filterTable('a',this)">⚠ A-type (9)</button>
     <button class="fbtn fb" onclick="filterTable('b',this)">🔴 B-type (2)</button>
+    <button class="fbtn" style="border-color:var(--tag-s)" onclick="filterTable('s',this)" id="fbtn-s">🟣 S-type (5)</button>
   </div>
+  <style>.fbtn#fbtn-s.active{background:var(--tag-s);border-color:var(--tag-s);color:#fff}</style>
 
   <table class="ftable" id="ftable">
     <thead>
@@ -659,6 +901,11 @@ code{font-family:'Courier New',monospace;font-size:11px;background:var(--g100);p
       <tr data-verdict="a"><td><strong>A9</strong></td><td><span class="vbadge a">⚠ A-type</span></td><td><code>.an-cf-badge .msi</code></td><td><code>check_circle, cancel, captive_portal, hub…</code></td><td><code>.msi.xs</code></td><td><code>font-size:10px</code></td><td>10px</td><td>Portales, Cons.</td><td class="fix-cell">Quitar <code>.xs</code> del JS. Mayor brecha: 18px declarado vs 10px real.</td></tr>
       <tr data-verdict="b"><td><strong>B1</strong></td><td><span class="vbadge b">🔴 B-type</span></td><td><em>ninguno</em></td><td><code>event</code> (×3)</td><td><code>.msi.sm</code></td><td><code style="color:var(--tag-b)">style="font-size:11px"</code></td><td class="px-bug">11px (bug)</td><td>DAM, Cons.</td><td class="fix-cell"><strong>Fix inmediato.</strong> <code>_buildSecuritySection()</code>: quitar style inline. Añadir <code>.expiry-date .msi{font-size:11px}</code> en analytics.css</td></tr>
       <tr data-verdict="b"><td><strong>B2</strong></td><td><span class="vbadge b">🔴 B-type</span></td><td><em>ninguno</em></td><td><code>warning</code>, <code>notifications</code></td><td><code>.msi.sm</code></td><td><code style="color:var(--tag-b)">style="font-size:11px"</code></td><td class="px-bug">11px (bug)</td><td>Todos</td><td class="fix-cell"><strong>Fix inmediato.</strong> <code>_buildQualitySection()</code> + <code>_buildSecuritySection()</code>: quitar style inline. Añadir <code>.an-badge .msi{font-size:11px}</code> en analytics.css</td></tr>
+      <tr data-verdict="s" style="background:#faf5ff;"><td><strong>S1</strong></td><td><span class="vbadge s">🟣 S-type</span></td><td><code>.an-alert-icon</code></td><td>content_copy, cloud_off, label_off, info</td><td>—</td><td><code>.danger</code> = gradiente · <code>.warn/.info</code> = plano</td><td>Mixto</td><td>DAM, Cons.</td><td class="fix-cell">Unificar todos a fondos planos. <code>.an-alert-icon.danger { background: var(--surface-neutral); color: var(--danger); }</code></td></tr>
+      <tr data-verdict="s" style="background:#faf5ff;"><td><strong>S2</strong></td><td><span class="vbadge s">🟣 S-type</span></td><td><code>.an-mini</code></td><td>—</td><td>—</td><td><code>.rose/.violet</code> = grad-dark · <code>.blue/.amber/.gray</code> = plano</td><td>Mixto</td><td>DAM, Portales</td><td class="fix-cell"><code>.violet</code> → cambiar a <code>var(--surface-sunken)</code>. <code>.rose</code> puede mantener gradiente si comunica alerta. Evaluar caso a caso.</td></tr>
+      <tr data-verdict="s" style="background:#faf5ff;"><td><strong>S3</strong></td><td><span class="vbadge s">🟣 S-type</span></td><td><code>.an-badge</code></td><td>check_circle, warning</td><td>—</td><td><code>.ok</code> y <code>.danger</code> = mismo <code>var(--an-grad-dark)</code></td><td>Igual</td><td>DAM</td><td class="fix-cell"><code>.an-badge.ok → background: var(--surface-neutral)</code> o tinte verde. <code>.danger</code> mantiene gradiente.</td></tr>
+      <tr data-verdict="s" style="background:#faf5ff;"><td><strong>S4</strong></td><td><span class="vbadge s">🟣 S-type</span></td><td><code>.an-kpi-icon.kc-*</code></td><td>folder, cloud_upload, captive_portal, download</td><td>—</td><td>5 clases <code>kc-*</code> = mismo <code>var(--an-grad-dark)</code></td><td>Idéntico</td><td>Todos</td><td class="fix-cell">Colapsar a <code>.kc-accent</code>, o implementar colores reales usando tokens <code>--viz-*</code> como tinte.</td></tr>
+      <tr data-verdict="s" style="background:#faf5ff;"><td><strong>S5</strong></td><td><span class="vbadge s">🟣 S-type</span></td><td><code>.an-kpi-icon</code> default</td><td>—</td><td>—</td><td><code>background: var(--surface-neutral)</code> nunca visible</td><td>Muerto</td><td>Todos</td><td class="fix-cell">Eliminar regla base o documentar como fallback explícito. No produce efecto visual actual.</td></tr>
     </tbody>
   </table>
 

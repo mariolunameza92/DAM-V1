@@ -58,24 +58,33 @@ LEN es una **plataforma de visión computacional multi-tenant** sobre la cual se
 
 ## 2. Del prototipo al producto: mapa de correspondencia
 
-Esto conecta lo que Amber verá en el demo con los módulos y servicios reales. **El demo es mono-tenant, mono-usuario y sin IA real** (ver doc complementario). Equivalencias:
+Esto conecta lo que Amber verá en el demo con los módulos y servicios reales. **El demo sigue siendo mono-tenant, mono-usuario y sin IA real** (el match facial está pre-codificado en nombres de archivo; ver doc complementario), **pero su modelo de dominio ya convergió fuerte con el producto real**: el prototipo ahora incluye Consentimientos versionados, consent por persona con auto-blacklist, Grupos, y una **Configuración con módulos habilitables + roles de equipo + pricing**. Equivalencias actualizadas:
 
-| Lo que se ve en el demo | Concepto de producto | Microservicio(s) objetivo |
-|---|---|---|
-| Carpetas / árbol / masonry | Álbumes + Fotos | Content Service |
-| Subir archivos | Ingesta + pipeline async de procesamiento | Content + Face Recognition + File Storage |
-| "Face IDs" (personas) | DetectedFace + Beneficiary + embeddings | Face Recognition + Identity |
-| Búsqueda por selfie/dorsal en portal | Match facial / OCR contra índice | Face Recognition + OCR + DAM Search |
-| Black List | BlacklistEntry + propagación | Blacklist Service |
-| Portales (unit/master, tema, acceso) | Distribución / publicación con branding y control de acceso | Content + File Storage (signed URLs) + Authorization |
-| Analytics | Reporting / brand exposure | Reporting Service |
-| Perfil / plan / facturación | Billing + suscripción + cuenta | Identity + (billing externo: Stripe/Niubiz) |
-| Usuario fijo "Administrador" | Roles y RBAC | Identity + Authorization |
-| (No existe en el demo) | Consentimientos | **Consent Service** |
-| (No existe en el demo) | Auditoría inmutable | **Audit Service** |
-| (No existe en el demo) | Multi-tenancy / aislamiento | Transversal a todos |
+| Lo que se ve en el demo | Concepto de producto | Microservicio(s) objetivo | Estado en demo |
+|---|---|---|---|
+| Carpetas / árbol / masonry | Álbumes + Fotos | Content Service | UX |
+| Subir archivos | Ingesta + pipeline async de procesamiento | Content + Face Recognition + File Storage | UX (sin pipeline real) |
+| "Face IDs" (personas) | DetectedFace + Beneficiary + embeddings | Face Recognition + Identity | UX (match simulado) |
+| Búsqueda por selfie/dorsal en portal | Match facial / OCR contra índice | Face Recognition + OCR + DAM Search | UX (simulado) |
+| Búsqueda global ⌘K | Search cross-dominio | DAM Search | UX (filtro local) |
+| **Consentimientos** (plantillas, versionado, módulos visual/rrss/comms/ia, estados) | ConsentTemplate + ConsentModule | **Consent Service** | ✅ **modelado** (sin PDF/firma real) |
+| **Consent por persona** (signed/pending + revocar → auto-blacklist) | ConsentRecord + propagación UC-03 | Consent + Blacklist | ✅ **modelado** (propaga a blacklist, no a fotos) |
+| Black List (con `source`: manual / consent_revoked) | BlacklistEntry + propagación | Blacklist Service | ✅ modelado (sin embeddings) |
+| **Grupos** (equipos/secciones de personas) | Agrupación de Beneficiary (`metadata`: grade/section) | Identity / Content | ✅ modelado |
+| Portales (unit/master, tema, acceso) | Distribución con branding + control de acceso | Content + File Storage (signed URLs) + Authorization | UX |
+| **Configuración → Módulos** (toggles que muestran/ocultan secciones) | `Tenant.enabled_modules` (modularidad real) | Identity / Authorization | ✅ **modelado** (reactiva el sidebar) |
+| **Configuración → Equipo y roles** (Admin/Editor/Viewer, invitar, cambiar rol) | RBAC | Authorization | ✅ modelado (RBAC simple, sin scope) |
+| **Configuración → Pricing** (Starter/Pro/Enterprise = bundles de módulos) | Planes ↔ módulos habilitados | Billing | ✅ modelado (estático) |
+| Analytics | Reporting / brand exposure | Reporting Service | UX (mayormente estático) |
+| Perfil / plan / facturación | Billing + suscripción + cuenta | Identity + (billing externo: Stripe/Niubiz) | UX (mock) |
+| (No existe en el demo) | **Auditoría inmutable** | **Audit Service** | ❌ falta |
+| (No existe en el demo) | **Multi-tenancy / aislamiento** | Transversal a todos | ❌ falta |
+| (No existe en el demo) | **Cuentas anidadas padre→hijo** (Schools) | Identity (Beneficiary.primary_user_ids) | ❌ falta |
+| (No existe en el demo) | **Autenticación / login / MFA** | Identity | ❌ falta |
 
-> Lo que **no existe en el demo** es justamente lo más crítico y bloqueante: Consent, Blacklist real, Audit, Authorization y multi-tenancy.
+> **Lo que el demo ya valida (modelado, aunque simulado):** el dominio de **Consentimientos versionados**, la **propagación consent→blacklist (UC-03)**, la **modularidad por `enabled_modules`** y el **RBAC básico**. Esto es excelente insumo de UX y de modelo de dominio para Amber.
+>
+> **Lo que sigue faltando y es lo más crítico/bloqueante:** **multi-tenancy y aislamiento**, **autenticación**, **Audit log inmutable**, el **pipeline real de IA**, la **firma/PDF de consentimientos**, la **propagación retroactiva del consent a las fotos publicadas** (hoy solo crea la entrada de blacklist) y las **cuentas anidadas padre→hijo** de Schools.
 
 ---
 
@@ -95,7 +104,9 @@ Roles del sistema (de `User.user_type` y stakeholders de Schools). El RBAC debe 
 | `sponsor` / `press` | B2B | Acceso a portales/álbumes específicos (portal de prensa, marca). |
 | `visitor` | B2C | Asistente a evento que busca sus fotos (corredor, etc.). |
 
-> 🔵 **[Recomendación]** Modelar permisos en dos ejes simultáneos: **rol** (qué acciones) **× scope de contenido** (sobre qué álbumes/beneficiarios). Nunca autorizar solo por rol (ver regla nº2 de compliance, §10).
+> **Estado en demo:** Configuración ya incluye un equipo con roles **Admin / Editor / Viewer** (invitar, cambiar rol, eliminar). Es un RBAC de un solo eje (rol global del tenant). **Falta el segundo eje** y los roles legales/operativos de arriba (`len_admin` zero-access, Aprobador, Owner, `parent`, `sponsor`/`press`, `visitor`).
+>
+> 🔵 **[Recomendación]** Modelar permisos en dos ejes simultáneos: **rol** (qué acciones) **× scope de contenido** (sobre qué álbumes/beneficiarios). Nunca autorizar solo por rol (ver regla nº2 de compliance, §10). El RBAC del demo (Admin/Editor/Viewer) es el punto de partida de UX, no el modelo final.
 
 ---
 
