@@ -361,7 +361,7 @@ function _buildKPIs(total) {
   return `<div class="an-kpi-grid">${kpis.map(k => `
     <div class="an-kpi ${k.cls}">
       <div class="an-kpi-top">
-        <div class="an-kpi-icon"><span class="msi xs">${k.icon}</span></div>
+        <div class="an-kpi-icon"><span class="msi">${k.icon}</span></div>
         <span class="an-kpi-delta${k.up ? ' up' : ' down'}">${k.delta}</span>
       </div>
       <div class="an-kpi-value">${_fmt(k.val)}</div>
@@ -398,7 +398,7 @@ function _buildStorageSection() {
     <div class="an-grid-2">
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">database</span>Almacenamiento</span>
+          <span class="an-card-title"><span class="msi">database</span>Almacenamiento</span>
           <span class="an-card-badge">${usedPct}% usado</span>
         </div>
         <div class="an-donut-wrap">
@@ -412,19 +412,19 @@ function _buildStorageSection() {
           <div style="flex:1;display:flex;flex-direction:column;gap:var(--space-3)">
             <div class="an-stat-rows">
               <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi sm">storage</span>Usado</span>
+                <span class="an-stat-row-lbl"><span class="msi">storage</span>Usado</span>
                 <div class="an-stat-row-right"><span class="an-stat-row-val">${s.usedTB} TB</span><span class="an-stat-row-sub">${usedPct}%</span></div>
               </div>
               <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi sm">cloud</span>Disponible</span>
+                <span class="an-stat-row-lbl"><span class="msi">cloud</span>Disponible</span>
                 <div class="an-stat-row-right"><span class="an-stat-row-val">${(s.totalTB - s.usedTB).toFixed(1)} TB</span><span class="an-stat-row-sub">${freePct}%</span></div>
               </div>
               <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi sm">schedule</span>Proyección</span>
+                <span class="an-stat-row-lbl"><span class="msi">schedule</span>Proyección</span>
                 <div class="an-stat-row-right"><span class="an-stat-row-val">${s.projectionDate}</span><span class="an-stat-row-sub">al ritmo actual</span></div>
               </div>
               <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi sm">description</span>Promedio/archivo</span>
+                <span class="an-stat-row-lbl"><span class="msi">description</span>Promedio/archivo</span>
                 <div class="an-stat-row-right"><span class="an-stat-row-val">${s.avgFileMB} MB</span></div>
               </div>
             </div>
@@ -434,7 +434,7 @@ function _buildStorageSection() {
 
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">show_chart</span>Crecimiento acumulado</span>
+          <span class="an-card-title"><span class="msi">show_chart</span>Crecimiento acumulado</span>
           <span class="an-card-badge">últimos 9 meses</span>
         </div>
         <div class="an-big">
@@ -448,7 +448,7 @@ function _buildStorageSection() {
 
     <div class="an-card an-mb-4">
       <div class="an-card-head">
-        <span class="an-card-title"><span class="msi xs">photo_library</span>Distribución por tipo</span>
+        <span class="an-card-title"><span class="msi">photo_library</span>Distribución por tipo</span>
         <span class="an-card-badge">${s.types.length} formatos</span>
       </div>
       <div class="an-donut-wrap">
@@ -483,7 +483,7 @@ function _buildStructureSection() {
     <div class="an-grid-2">
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">folder_open</span>Carpetas más pesadas</span>
+          <span class="an-card-title"><span class="msi">folder_open</span>Carpetas más pesadas</span>
           <span class="an-card-badge">por GB</span>
         </div>
         ${heavyList}
@@ -491,26 +491,26 @@ function _buildStructureSection() {
 
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">account_tree</span>Calidad de estructura</span>
+          <span class="an-card-title"><span class="msi">account_tree</span>Calidad de estructura</span>
         </div>
         <div class="an-alerts">
           <div class="an-alert-item">
-            <div class="an-alert-icon warn"><span class="msi sm">content_copy</span></div>
+            <div class="an-alert-icon warn"><span class="msi">content_copy</span></div>
             <div class="an-alert-body"><div class="an-alert-title">Archivos duplicados</div><div class="an-alert-sub">Detectados por reconocimiento facial + hash</div></div>
             <span class="an-alert-val">${s.duplicates}</span>
           </div>
           <div class="an-alert-item">
-            <div class="an-alert-icon info"><span class="msi sm">cloud_off</span></div>
+            <div class="an-alert-icon info"><span class="msi">cloud_off</span></div>
             <div class="an-alert-body"><div class="an-alert-title">Assets huérfanos</div><div class="an-alert-sub">Nunca descargados ni vinculados</div></div>
             <span class="an-alert-val">${s.orphans}</span>
           </div>
           <div class="an-alert-item">
-            <div class="an-alert-icon danger"><span class="msi sm">label_off</span></div>
+            <div class="an-alert-icon danger"><span class="msi">label_off</span></div>
             <div class="an-alert-body"><div class="an-alert-title">Sin tags</div><div class="an-alert-sub">Calidad de catalogación baja</div></div>
             <span class="an-alert-val">${s.noTags}</span>
           </div>
           <div class="an-alert-item">
-            <div class="an-alert-icon warn"><span class="msi sm">info</span></div>
+            <div class="an-alert-icon warn"><span class="msi">info</span></div>
             <div class="an-alert-body"><div class="an-alert-title">Sin metadata</div><div class="an-alert-sub">EXIF o campos vacíos</div></div>
             <span class="an-alert-val">${s.noMeta}</span>
           </div>
@@ -560,7 +560,7 @@ function _buildActivitySection() {
     <div class="an-grid-3">
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">group</span>Usuarios</span>
+          <span class="an-card-title"><span class="msi">group</span>Usuarios</span>
           <span class="an-card-badge">${totalUsers} total</span>
         </div>
         <div class="an-donut-wrap">
@@ -586,7 +586,7 @@ function _buildActivitySection() {
 
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">cloud_upload</span>Top subidas</span>
+          <span class="an-card-title"><span class="msi">cloud_upload</span>Top subidas</span>
           <span class="an-card-badge">por usuario</span>
         </div>
         ${uplList}
@@ -594,7 +594,7 @@ function _buildActivitySection() {
 
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">bar_chart</span>Acciones</span>
+          <span class="an-card-title"><span class="msi">bar_chart</span>Acciones</span>
           <span class="an-card-badge">por tipo</span>
         </div>
         ${actList}
@@ -603,7 +603,7 @@ function _buildActivitySection() {
 
     <div class="an-card an-mb-4">
       <div class="an-card-head">
-        <span class="an-card-title"><span class="msi xs">calendar_view_week</span>Pico de actividad</span>
+        <span class="an-card-title"><span class="msi">calendar_view_week</span>Pico de actividad</span>
         <span class="an-card-badge">hora × día</span>
       </div>
       <div class="an-heatmap-outer">
@@ -630,7 +630,7 @@ function _buildQualitySection() {
   const matchLine = _svgLine([72, 75, 78, 80, 83, 85, 87.4], null, { w: 200, h: 60, color: 'var(--text-body)', showDots: false });
   const delRows = q.deletions.map(d =>
     `<div class="an-alert-item">
-      <div class="an-alert-icon danger"><span class="msi sm">delete_forever</span></div>
+      <div class="an-alert-icon danger"><span class="msi">delete_forever</span></div>
       <div class="an-alert-body"><div class="an-alert-title">${d.folder}</div><div class="an-alert-sub">${d.date}</div></div>
       <span class="an-alert-val">${d.n} arch.</span>
     </div>`
@@ -640,7 +640,7 @@ function _buildQualitySection() {
     <div class="an-grid-2">
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">ar_on_you</span>Procesamiento facial</span>
+          <span class="an-card-title"><span class="msi">ar_on_you</span>Procesamiento facial</span>
           <span class="an-card-badge">${((q.processed/total)*100).toFixed(0)}% completado</span>
         </div>
         <div class="an-donut-wrap">
@@ -654,11 +654,11 @@ function _buildQualitySection() {
           <div style="flex:1;display:flex;flex-direction:column;gap:var(--space-3)">
             <div class="an-stat-rows">
               <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi sm">check_circle</span>Procesados</span>
+                <span class="an-stat-row-lbl"><span class="msi">check_circle</span>Procesados</span>
                 <div class="an-stat-row-right"><span class="an-stat-row-val">${_fmt(q.processed)}</span></div>
               </div>
               <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi sm">hourglass_empty</span>Pendientes</span>
+                <span class="an-stat-row-lbl"><span class="msi">hourglass_empty</span>Pendientes</span>
                 <div class="an-stat-row-right"><span class="an-stat-row-val">${_fmt(q.pending)}</span></div>
               </div>
             </div>
@@ -675,11 +675,11 @@ function _buildQualitySection() {
 
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">delete_sweep</span>Eliminaciones recientes</span>
+          <span class="an-card-title"><span class="msi">delete_sweep</span>Eliminaciones recientes</span>
           <span class="an-card-badge">monitoreo</span>
         </div>
         <div class="an-alerts">${delRows}</div>
-        <div class="an-badge danger" style="margin-top:var(--space-4)"><span class="msi sm" style="font-size:11px">warning</span> ${q.deletions.reduce((s,d)=>s+d.n,0)} archivos eliminados este mes</div>
+        <div class="an-badge danger" style="margin-top:var(--space-4)"><span class="msi">warning</span> ${q.deletions.reduce((s,d)=>s+d.n,0)} archivos eliminados este mes</div>
       </div>
     </div>`;
 }
@@ -688,13 +688,13 @@ function _buildFaceDetailSection(faces) {
   const items = faces.all.map(f => {
     const av = f.selfieUrl
       ? `<img class="an-fdi-avatar" src="${f.selfieUrl}" alt="" loading="lazy">`
-      : `<div class="an-fdi-ph"><span class="msi xs">person</span></div>`;
+      : `<div class="an-fdi-ph"><span class="msi">person</span></div>`;
     const nm = f.unnamed ? 'Sin identificar' : f.displayName;
     return `<div class="an-fdi">${av}<div class="an-fdi-info"><div class="an-fdi-name${f.unnamed?' un':''}">${nm}</div><span class="an-fdi-count">${f.photos}</span><span class="an-fdi-sub">${f.photos===1?'foto':'fotos'}</span></div></div>`;
   }).join('');
   return `<div class="an-card an-mb-4">
     <div class="an-card-head">
-      <span class="an-card-title"><span class="msi xs">grid_view</span>Detalle por Face ID</span>
+      <span class="an-card-title"><span class="msi">grid_view</span>Detalle por Face ID</span>
       <span class="an-card-badge">${faces.all.length} personas</span>
     </div>
     <div class="an-faces-detail-grid">${items}</div>
@@ -721,7 +721,7 @@ function _buildPortalInventory() {
     <div class="an-grid-1-2">
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">captive_portal</span>Estado de portales</span>
+          <span class="an-card-title"><span class="msi">captive_portal</span>Estado de portales</span>
           <span class="an-card-badge">${total} total</span>
         </div>
         <div class="an-donut-wrap">
@@ -755,7 +755,7 @@ function _buildPortalInventory() {
         </div>
         <div class="an-stat-rows" style="margin-top:var(--space-3)">
           <div class="an-stat-row">
-            <span class="an-stat-row-lbl"><span class="msi sm">schedule</span>Antigüedad promedio</span>
+            <span class="an-stat-row-lbl"><span class="msi">schedule</span>Antigüedad promedio</span>
             <div class="an-stat-row-right"><span class="an-stat-row-val">${p.avgAgeDays} días</span></div>
           </div>
         </div>
@@ -763,7 +763,7 @@ function _buildPortalInventory() {
 
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">folder_special</span>Portales por carpeta</span>
+          <span class="an-card-title"><span class="msi">folder_special</span>Portales por carpeta</span>
           <span class="an-card-badge">${p.byFolder.length} eventos</span>
         </div>
         ${byFolderList}
@@ -801,7 +801,7 @@ function _buildEngagementSection() {
     <div class="an-grid-2">
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">radar</span>Radar de engagement</span>
+          <span class="an-card-title"><span class="msi">radar</span>Radar de engagement</span>
           <span class="an-card-badge">portales activos</span>
         </div>
         <div class="an-radar-wrap">
@@ -826,7 +826,7 @@ function _buildEngagementSection() {
 
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">devices</span>Acceso por dispositivo</span>
+          <span class="an-card-title"><span class="msi">devices</span>Acceso por dispositivo</span>
         </div>
         <div class="an-split-bar" style="margin-bottom:var(--space-2)">
           <div class="an-split-seg" style="width:${e.mobile}%;background:var(--text)"></div>
@@ -837,7 +837,7 @@ function _buildEngagementSection() {
           <div class="an-split-leg-item"><div class="an-split-dot" style="background:var(--text-faint)"></div><span class="an-split-leg-lbl">Desktop</span><span class="an-split-leg-val">&nbsp;${e.desktop}%</span></div>
         </div>
         <div class="an-card-head" style="margin-bottom:12px;margin-top:var(--space-2)">
-          <span class="an-card-title" style="font-size:12px;color:var(--text-secondary)"><span class="msi xs">link</span>Origen de tráfico</span>
+          <span class="an-card-title" style="font-size:12px;color:var(--text-secondary)"><span class="msi">link</span>Origen de tráfico</span>
         </div>
         ${srcList}
       </div>
@@ -845,7 +845,7 @@ function _buildEngagementSection() {
 
     <div class="an-card an-mb-4">
       <div class="an-card-head">
-        <span class="an-card-title"><span class="msi xs">show_chart</span>Vistas totales en el tiempo</span>
+        <span class="an-card-title"><span class="msi">show_chart</span>Vistas totales en el tiempo</span>
         <span class="an-card-badge">últimos 9 meses</span>
       </div>
       <div class="an-big" style="margin-bottom:var(--space-3)">
@@ -857,7 +857,7 @@ function _buildEngagementSection() {
 
     <div class="an-card an-mb-4">
       <div class="an-card-head">
-        <span class="an-card-title"><span class="msi xs">leaderboard</span>Conversión por portal</span>
+        <span class="an-card-title"><span class="msi">leaderboard</span>Conversión por portal</span>
         <span class="an-card-badge">vista → descarga</span>
       </div>
       <div class="an-conv-hdr">
@@ -880,7 +880,7 @@ function _buildSecuritySection() {
   const expiryRows = sec.expiring.map(p =>
     `<div class="an-expiry-item">
       <span class="an-expiry-name">${p.title}</span>
-      <span class="an-expiry-date"><span class="msi sm" style="font-size:11px">event</span> ${p.expires}</span>
+      <span class="an-expiry-date"><span class="msi">event</span> ${p.expires}</span>
     </div>`
   ).join('');
 
@@ -888,7 +888,7 @@ function _buildSecuritySection() {
     <div class="an-grid-2">
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">lock</span>Acceso y seguridad</span>
+          <span class="an-card-title"><span class="msi">lock</span>Acceso y seguridad</span>
           <span class="an-card-badge">${totalP} portales</span>
         </div>
         <div class="an-donut-wrap">
@@ -918,12 +918,12 @@ function _buildSecuritySection() {
 
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">event_busy</span>Portales por vencer</span>
+          <span class="an-card-title"><span class="msi">event_busy</span>Portales por vencer</span>
           <span class="an-card-badge">próximos 7 días</span>
         </div>
         <div class="an-expiry-list">${expiryRows}</div>
         <div style="margin-top:var(--space-5)">
-          <div class="an-badge warn"><span class="msi sm" style="font-size:11px">notifications</span> ${sec.expiring.length} portales expiran esta semana — oportunidad comercial</div>
+          <div class="an-badge warn"><span class="msi">notifications</span> ${sec.expiring.length} portales expiran esta semana — oportunidad comercial</div>
         </div>
       </div>
     </div>`;
@@ -943,17 +943,17 @@ function _buildConsentTab() {
   // KPI row
   const kpiHTML = `<div class="an-kpi-grid" style="grid-template-columns:repeat(3,1fr)">
     <div class="an-kpi kc-green">
-      <div class="an-kpi-top"><div class="an-kpi-icon"><span class="msi xs">verified_user</span></div></div>
+      <div class="an-kpi-top"><div class="an-kpi-icon"><span class="msi">verified_user</span></div></div>
       <div class="an-kpi-value">${stats.signed}</div>
       <div class="an-kpi-label">Firmados</div>
     </div>
     <div class="an-kpi kc-amber">
-      <div class="an-kpi-top"><div class="an-kpi-icon"><span class="msi xs">schedule</span></div></div>
+      <div class="an-kpi-top"><div class="an-kpi-icon"><span class="msi">schedule</span></div></div>
       <div class="an-kpi-value">${stats.pending}</div>
       <div class="an-kpi-label">Pendientes</div>
     </div>
     <div class="an-kpi kc-rose">
-      <div class="an-kpi-top"><div class="an-kpi-icon"><span class="msi xs">gpp_bad</span></div></div>
+      <div class="an-kpi-top"><div class="an-kpi-icon"><span class="msi">gpp_bad</span></div></div>
       <div class="an-kpi-value">${stats.revoked}</div>
       <div class="an-kpi-label">Revocados</div>
     </div>
@@ -970,7 +970,7 @@ function _buildConsentTab() {
   const progressCard = `
     <div class="an-card">
       <div class="an-card-head">
-        <span class="an-card-title"><span class="msi xs">donut_large</span>Tasa de firma</span>
+        <span class="an-card-title"><span class="msi">donut_large</span>Tasa de firma</span>
         <span class="an-card-badge">${pct}% firmados</span>
       </div>
       <div class="an-donut-wrap">
@@ -1008,16 +1008,16 @@ function _buildConsentTab() {
       : [{ value: 1, color: 'var(--border-subtle)' }];
     return `<div class="an-card">
       <div class="an-card-head">
-        <span class="an-card-title"><span class="msi xs">description</span>${t.title}</span>
+        <span class="an-card-title"><span class="msi">description</span>${t.title}</span>
         <span class="an-card-badge" style="color:${statusColor}">${statusLabel} v${t.version}</span>
       </div>
       <div class="an-donut-wrap" style="gap:20px">
         <div class="an-donut-center">${_svgDonut(tplSegs, { size: 90, sw: 14 })}<div class="an-donut-lbl-inner"><span class="an-donut-lbl-val" style="font-size:14px">${tPct}%</span></div></div>
         <div style="flex:1;min-width:0">
           <div class="an-stat-rows">
-            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">verified_user</span>Firmados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-body)">${t.signedCount}</span></div></div>
-            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">schedule</span>Pendientes</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-muted)">${t.pendingCount}</span></div></div>
-            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi sm">gpp_bad</span>Revocados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-faint)">${t.revokedCount}</span></div></div>
+            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi">verified_user</span>Firmados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-body)">${t.signedCount}</span></div></div>
+            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi">schedule</span>Pendientes</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-muted)">${t.pendingCount}</span></div></div>
+            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi">gpp_bad</span>Revocados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-faint)">${t.revokedCount}</span></div></div>
           </div>
           <div style="margin-top:8px;display:flex;gap:6px;align-items:center;color:var(--text-muted);font-size:11px">
             <span>Módulos:</span>${moduleIcons || '<span style="font-size:11px;color:var(--text-faint)">Ninguno</span>'}
@@ -1038,14 +1038,14 @@ function _buildConsentTab() {
     return `<div class="an-cf-item">
       <div class="an-cf-av"><img src="${f.selfieUrl}" alt="" loading="lazy"></div>
       <div class="an-cf-name">${f.displayName.split(' ')[0]}</div>
-      <div class="an-cf-badge" style="color:${badgeColor}"><span class="msi xs">${badgeIcon}</span>${badgeLabel}</div>
+      <div class="an-cf-badge" style="color:${badgeColor}"><span class="msi">${badgeIcon}</span>${badgeLabel}</div>
     </div>`;
   }).filter(Boolean).join('');
 
   const facesCard = `
     <div class="an-card an-mb-4">
       <div class="an-card-head">
-        <span class="an-card-title"><span class="msi xs">ar_on_you</span>Detalle por Face ID</span>
+        <span class="an-card-title"><span class="msi">ar_on_you</span>Detalle por Face ID</span>
         <span class="an-card-badge">${Object.keys(consents).length} con registro</span>
       </div>
       <div class="an-cf-grid">${consentFaces || '<div style="font-size:13px;color:var(--text-faint);padding:16px">Sin registros de consentimiento.</div>'}</div>
@@ -1053,35 +1053,35 @@ function _buildConsentTab() {
 
   return `
     ${kpiHTML}
-    <div class="an-section-lbl"><span class="msi xs">donut_large</span>Estado global</div>
+    <div class="an-section-lbl"><span class="msi">donut_large</span>Estado global</div>
     <div class="an-grid-2" style="align-items:start">
       ${progressCard}
       <div class="an-card">
         <div class="an-card-head">
-          <span class="an-card-title"><span class="msi xs">info</span>Sobre los datos</span>
+          <span class="an-card-title"><span class="msi">info</span>Sobre los datos</span>
         </div>
         <div class="an-alerts">
           <div class="an-alert-item">
-            <div class="an-alert-icon info"><span class="msi sm">description</span></div>
+            <div class="an-alert-icon info"><span class="msi">description</span></div>
             <div class="an-alert-body"><div class="an-alert-title">Plantillas activas</div><div class="an-alert-sub">Plantillas publicadas con firma habilitada</div></div>
             <span class="an-alert-val">${templates.filter(t => t.status === 'active').length}</span>
           </div>
           <div class="an-alert-item">
-            <div class="an-alert-icon warn"><span class="msi sm">edit_note</span></div>
+            <div class="an-alert-icon warn"><span class="msi">edit_note</span></div>
             <div class="an-alert-body"><div class="an-alert-title">Borradores</div><div class="an-alert-sub">Plantillas pendientes de publicar</div></div>
             <span class="an-alert-val">${templates.filter(t => t.status === 'draft').length}</span>
           </div>
           <div class="an-alert-item">
-            <div class="an-alert-icon danger"><span class="msi sm">gpp_bad</span></div>
+            <div class="an-alert-icon danger"><span class="msi">gpp_bad</span></div>
             <div class="an-alert-body"><div class="an-alert-title">Revocaciones</div><div class="an-alert-sub">Consentimientos revocados — auto-blacklist activo</div></div>
             <span class="an-alert-val">${stats.revoked}</span>
           </div>
         </div>
       </div>
     </div>
-    <div class="an-section-lbl"><span class="msi xs">description</span>Por plantilla</div>
+    <div class="an-section-lbl"><span class="msi">description</span>Por plantilla</div>
     <div class="an-grid-2" style="align-items:start">${tplCards}</div>
-    <div class="an-section-lbl"><span class="msi xs">ar_on_you</span>Por persona</div>
+    <div class="an-section-lbl"><span class="msi">ar_on_you</span>Por persona</div>
     ${facesCard}`;
 }
 
@@ -1146,32 +1146,32 @@ function _buildHTML() {
   if (_tab === 'dam') {
     content = `
       ${_filterDAM()}
-      <div class="an-section-lbl no-top"><span class="msi xs">ar_on_you</span>Face IDs — reconocimiento facial</div>
+      <div class="an-section-lbl no-top"><span class="msi">ar_on_you</span>Face IDs — reconocimiento facial</div>
       ${_buildFaceHero(faces)}
-      <div class="an-section-lbl"><span class="msi xs">timeline</span>KPIs del período</div>
+      <div class="an-section-lbl"><span class="msi">timeline</span>KPIs del período</div>
       ${_buildKPIs(total)}
-      <div class="an-section-lbl"><span class="msi xs">database</span>Storage y volumen</div>
+      <div class="an-section-lbl"><span class="msi">database</span>Storage y volumen</div>
       ${_buildStorageSection()}
-      <div class="an-section-lbl"><span class="msi xs">account_tree</span>Estructura y contenido</div>
+      <div class="an-section-lbl"><span class="msi">account_tree</span>Estructura y contenido</div>
       ${_buildStructureSection()}
-      <div class="an-section-lbl"><span class="msi xs">group</span>Actividad de usuarios</div>
+      <div class="an-section-lbl"><span class="msi">group</span>Actividad de usuarios</div>
       ${_buildActivitySection()}
-      <div class="an-section-lbl"><span class="msi xs">memory</span>Calidad y procesamiento</div>
+      <div class="an-section-lbl"><span class="msi">memory</span>Calidad y procesamiento</div>
       ${_buildQualitySection()}
-      <div class="an-section-lbl"><span class="msi xs">grid_view</span>Detalle Face IDs</div>
+      <div class="an-section-lbl"><span class="msi">grid_view</span>Detalle Face IDs</div>
       ${_buildFaceDetailSection(faces)}`;
   } else if (_tab === 'portales') {
     content = `
       ${_filterPortales()}
-      <div class="an-section-lbl no-top"><span class="msi xs">captive_portal</span>Inventario de portales</div>
+      <div class="an-section-lbl no-top"><span class="msi">captive_portal</span>Inventario de portales</div>
       ${_buildPortalInventory()}
-      <div class="an-section-lbl"><span class="msi xs">insights</span>Engagement</div>
+      <div class="an-section-lbl"><span class="msi">insights</span>Engagement</div>
       ${_buildEngagementSection()}
-      <div class="an-section-lbl"><span class="msi xs">lock</span>Acceso y seguridad</div>
+      <div class="an-section-lbl"><span class="msi">lock</span>Acceso y seguridad</div>
       ${_buildSecuritySection()}`;
   } else {
     content = `
-      <div class="an-section-lbl no-top"><span class="msi xs">verified_user</span>Consentimientos — resumen global</div>
+      <div class="an-section-lbl no-top"><span class="msi">verified_user</span>Consentimientos — resumen global</div>
       ${_buildConsentTab()}`;
   }
 
