@@ -10,7 +10,7 @@
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);line-height:1.5;
     -webkit-font-smoothing:antialiased;font-size:15px}
-  .wrap{max-width:1180px;margin:0 auto;padding:40px 28px 80px}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 28px 80px;background:var(--bg);min-height:100%}
 
   /* Header */
   .hd{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;
@@ -93,6 +93,11 @@
   .map tr:last-child td{border-bottom:none}
   .map .arrow{color:var(--faint)}
   .map .gap td{color:var(--rose)}
+  .map .ok td:first-child{color:var(--green)}
+  .map .st{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:5px;white-space:nowrap}
+  .map .st.m{color:var(--green);background:rgba(67,192,138,.12)}
+  .map .st.u{color:var(--muted);background:rgba(114,122,140,.14)}
+  .map .st.x{color:var(--rose);background:rgba(224,96,122,.12)}
 
   /* flows */
   .flow{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin-bottom:10px}
@@ -213,20 +218,21 @@
     <div>
       <div class="sec"><span class="n">04</span><h2>Del prototipo al producto</h2></div>
       <table class="map">
-        <tr><th>En el demo se ve…</th><th></th><th>Servicio real</th></tr>
-        <tr><td>Carpetas · masonry</td><td class="arrow">→</td><td>Content</td></tr>
-        <tr><td>Face IDs</td><td class="arrow">→</td><td>Face Recognition · Identity</td></tr>
-        <tr><td>Búsqueda selfie/dorsal</td><td class="arrow">→</td><td>Face Recognition · OCR</td></tr>
-        <tr><td>Black List</td><td class="arrow">→</td><td>Blacklist</td></tr>
-        <tr><td>Portales</td><td class="arrow">→</td><td>Content · File Storage</td></tr>
-        <tr><td>Analytics</td><td class="arrow">→</td><td>Reporting</td></tr>
-        <tr><td>Perfil · plan</td><td class="arrow">→</td><td>Identity · billing ext.</td></tr>
-        <tr class="gap"><td>— no existe —</td><td class="arrow">→</td><td>Consent</td></tr>
-        <tr class="gap"><td>— no existe —</td><td class="arrow">→</td><td>Audit</td></tr>
-        <tr class="gap"><td>— no existe —</td><td class="arrow">→</td><td>Multi-tenancy</td></tr>
+        <tr><th>En el demo…</th><th>Servicio real</th><th></th></tr>
+        <tr class="ok"><td>Consentimientos · versionado</td><td>Consent</td><td><span class="st m">MODELADO</span></td></tr>
+        <tr class="ok"><td>Consent x persona → blacklist</td><td>Consent · Blacklist</td><td><span class="st m">UC-03 parcial</span></td></tr>
+        <tr class="ok"><td>Config · módulos habilitables</td><td>Identity · Authz</td><td><span class="st m">MODELADO</span></td></tr>
+        <tr class="ok"><td>Config · equipo y roles</td><td>Authorization</td><td><span class="st m">RBAC simple</span></td></tr>
+        <tr class="ok"><td>Grupos · Black List</td><td>Identity · Blacklist</td><td><span class="st m">MODELADO</span></td></tr>
+        <tr><td>Carpetas · Portales · Face IDs</td><td>Content · Face Rec.</td><td><span class="st u">UX</span></td></tr>
+        <tr><td>Búsqueda selfie/dorsal · ⌘K</td><td>Face Rec · OCR · Search</td><td><span class="st u">simulado</span></td></tr>
+        <tr><td>Analytics · Perfil · plan</td><td>Reporting · Billing</td><td><span class="st u">mock</span></td></tr>
+        <tr class="gap"><td>— no existe —</td><td>Multi-tenancy · Auth</td><td><span class="st x">FALTA</span></td></tr>
+        <tr class="gap"><td>— no existe —</td><td>Audit log · pipeline IA</td><td><span class="st x">FALTA</span></td></tr>
+        <tr class="gap"><td>— no existe —</td><td>Cuentas padre→hijo</td><td><span class="st x">FALTA</span></td></tr>
       </table>
       <div style="font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5">
-        El demo es <b style="color:var(--body)">mono-tenant, mono-usuario y sin IA real</b> (el match facial está pre-codificado en nombres de archivo). Es spec de UX, <b style="color:var(--body)">no base de código</b>.
+        El demo ya <b style="color:var(--green)">modela el dominio</b> de consentimientos, modularidad y RBAC — gran insumo de UX. Pero sigue siendo <b style="color:var(--body)">mono-tenant, sin auth y con IA simulada</b>. Es spec de UX, <b style="color:var(--body)">no base de código</b>.
       </div>
     </div>
     <div>

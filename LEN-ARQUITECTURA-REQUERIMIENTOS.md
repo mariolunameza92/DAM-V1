@@ -169,6 +169,8 @@ Admin sube N fotos → estado `processing` → por foto se detectan rostros y se
 ### UC-03 — Padre revoca consentimiento ya otorgado
 Padre desmarca módulo → confirma → **nuevo PDF versionado** (el anterior se archiva) → actualiza consentimientos vigentes → **agrega/actualiza blacklist de forma síncrona o quasi-síncrona** → dispara proceso **retroactivo**: identifica todas las fotos publicadas donde aparece el hijo en ese canal → pasan a `hidden_by_consent_revocation` → si la foto ya está en un canal externo (Instagram del colegio), **notifica al admin para acción manual** (no se puede despublicar de Instagram automáticamente) → todo queda en audit log.
 
+> **Estado en demo:** revocar consent por persona ya **crea/actualiza la entrada de blacklist con `source = consent_revoked`** (la primera mitad del flujo). **Faltan en producción:** el versionado/firma del PDF, la **reclasificación retroactiva de las fotos publicadas** a `hidden`, la notificación al admin para canales externos, y el audit log. La propagación a fotos debe ser **inmediata** por la lógica invertida de UC-02.
+
 ### UC-04 — Admin agrega persona externa a blacklist
 (Ej. padrastro en Día del Padre que no firma.) Admin crea entrada manual (nombre opcional, foto, **scope**: todos los álbumes / futuros desde fecha X / un evento) → sistema extrae embedding → crea `BlacklistEntry` tipo `manual_external` → **reprocesa álbumes existentes dentro del scope** buscando match → fotos con match → `pending_review` → admin recibe resumen de afectados.
 
