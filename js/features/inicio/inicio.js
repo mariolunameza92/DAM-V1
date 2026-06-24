@@ -7,8 +7,6 @@ import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 import { bindStaticToggle, viewToggleHTML, bindDynamicToggle } from '../../components/ui/view-toggle.js';
 import { getFaces, getFavoriteFaces, subscribe as subscribeFaces } from '../../faces.js';
-import { getGrupos, subscribeGrupos } from '../grupos/grupos-data.js';
-import { getStats, subscribeConsent } from '../consentimientos/consentimientos-data.js';
 
 let _inicioFoldersView = 'grid';
 let _inicioAssetsView  = 'grid';
@@ -105,60 +103,14 @@ function _renderInicioAssets() {
   }
 }
 
-function _renderWidgets() {
-  const el = document.getElementById('inicio-widgets-row');
-  if (!el) return;
-  const grupos = getGrupos();
-  const stats  = getStats();
-  const totalMembers = grupos.reduce((s, g) => s + g.memberIds.length, 0);
-  const total = stats.signed + stats.pending + stats.revoked;
-  const pct   = total > 0 ? Math.round((stats.signed / total) * 100) : 0;
-
-  const grupoDots = grupos.map(g =>
-    `<span class="iw-dot" style="background:${g.color}" title="${g.name}"></span>`
-  ).join('');
-
-  el.innerHTML =
-    `<div class="sec-header" style="margin-bottom:0"><span class="sec-title">Personas y consentimientos</span></div>
-     <div class="inicio-widgets">
-       <div class="inicio-widget" role="button" tabindex="0" data-nav="grupos">
-         <div class="inicio-widget-icon iw-icon--grupos"><span class="msi">groups</span></div>
-         <div class="inicio-widget-body">
-           <div class="inicio-widget-label">Grupos</div>
-           <div class="inicio-widget-value">${grupos.length} grupo${grupos.length !== 1 ? 's' : ''} · ${totalMembers} miembro${totalMembers !== 1 ? 's' : ''}</div>
-           <div class="iw-dots">${grupoDots}</div>
-         </div>
-         <span class="msi xs" style="color:var(--text-faint);margin-top:2px">chevron_right</span>
-       </div>
-       <div class="inicio-widget" role="button" tabindex="0" data-nav="consentimientos">
-         <div class="inicio-widget-icon iw-icon--consent"><span class="msi">verified_user</span></div>
-         <div class="inicio-widget-body">
-           <div class="inicio-widget-label">Consentimientos</div>
-           <div class="inicio-widget-value"><span class="iw-signed">${stats.signed} firmados</span> · <span class="iw-pending">${stats.pending} pendientes</span></div>
-           <div class="iw-progress"><div class="iw-progress-fill" style="width:${pct}%"></div></div>
-         </div>
-         <span class="msi xs" style="color:var(--text-faint);margin-top:2px">chevron_right</span>
-       </div>
-     </div>`;
-
-  el.querySelectorAll('[data-nav]').forEach(btn => {
-    btn.addEventListener('click', () => window.switchSection(btn.dataset.nav));
-    btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') window.switchSection(btn.dataset.nav); });
-  });
-}
-
 export function renderInicio() {
   _renderInicioFolders();
   _renderInicioAssets();
-  _renderWidgets();
 }
 
 // ── View toggle wiring ────────────────────────────────────────────────────────
 bindStaticToggle('inicio-folders-grid', 'inicio-folders-list', () => _inicioFoldersView, v => { _inicioFoldersView = v; _renderInicioFolders(); });
 bindStaticToggle('inicio-assets-grid',  'inicio-assets-list',  () => _inicioAssetsView,  v => { _inicioAssetsView  = v; _renderInicioAssets();  });
-
-subscribeGrupos(() => _renderWidgets());
-subscribeConsent(() => _renderWidgets());
 
 // ── Search autocomplete ───────────────────────────────────────────────────────
 export function initSearch() {
