@@ -153,7 +153,8 @@
       "Bash(grep -n \"avatar\\\\|color\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|background\\\\|initials\" /Users/lenadmin/Documents/GitHub/DAM-V1/js/features/configuracion/configuracion.js)",
       "Bash(grep -rn \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/css/tokens.css)",
       "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/js/features/analytics/analytics.js)",
-      "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/css/features/analytics.css)"
+      "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/css/features/analytics.css)",
+      "Bash(netstat -ano)"
     ]
   },
   "hooks": {
