@@ -15,9 +15,10 @@
 .dlg-backdrop.open { opacity: 1; pointer-events: all; }
 
 .dlg {
-  background: var(--glass);
-  backdrop-filter: blur(18px) saturate(1.4);
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  position: relative;
+  isolation: isolate;
+  background: var(--gradient-ambient), var(--surface-raised);
+  overflow: hidden;
   border: 1px solid var(--border-subtle);
   border-radius: 20px;
   padding: var(--space-6) var(--space-6) var(--space-5);
@@ -26,7 +27,18 @@
   box-shadow: var(--shadow-lg);
   transform: translateY(14px);
   transition: transform .25s;
-  flex-shrink: 0; margin: auto 0;
+  flex-shrink: 0; margin: 0;
+}
+/* eco sutil rotado: blobs del ambient en esquina inferior-izquierda, detrás del contenido */
+.dlg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-ambient);
+  transform: rotate(180deg);
+  opacity: .28;
+  pointer-events: none;
+  z-index: -1;
 }
 .dlg-backdrop.open .dlg { transform: translateY(0); }
 
