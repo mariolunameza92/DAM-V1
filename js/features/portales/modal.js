@@ -121,7 +121,7 @@ export function openModal() {
   for (let i = 1; i <= 5; i++) {
     const el = document.getElementById('step-' + i);
     if (!el) continue;
-    el.style.display = 'block';
+    el.style.display = 'flex';
     [1, 2, 3, 4, 5].forEach(j => {
       const s = document.getElementById('step-' + j);
       if (s && j !== i) s.style.display = 'none';
@@ -146,7 +146,7 @@ export function closeModal() {
 export function showStep(n) {
   [1, 2, 3, 4, 5].forEach(i => {
     const el = document.getElementById('step-' + i);
-    if (el) el.style.display = i === n ? 'block' : 'none';
+    if (el) el.style.display = i === n ? 'flex' : 'none';
   });
   for (let p = 1; p <= 5; p++) for (let d = 1; d <= 5; d++) {
     const el = document.getElementById(`d${p}-${d}`);

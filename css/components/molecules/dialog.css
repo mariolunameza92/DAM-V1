@@ -54,16 +54,18 @@
 /* NAV — suprime márgenes intrínsecos del átomo; el gap del dlg toma el control */
 .dlg .step-bar { margin: 0; }
 
-/* STEP CONTAINER — flex column para que el gap gestione todo el espaciado interno */
-.dlg-step { display: flex; flex-direction: column; gap: var(--space-3); }
+/* STEP CONTAINER — gap-4 (16px) entre todos los bloques del paso */
+.dlg-step { display: flex; flex-direction: column; gap: var(--space-4); }
 
 /* HEADER: icon + title row (CRUD dialogs) */
 .dlg-head { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--text-strong); }
 
-/* HEADER: step title + subtitle (wizard) — subtitle pegada al título, no al gap */
+/* HEADER: step title + subtitle (wizard)
+   subtitle usa margen negativo para anular parte del gap y pegarse al título:
+   gap(16) + margin-top(-12) = 4px visible entre título y subtítulo */
 .dlg-title { font-weight: 700; font-size: 16px; color: var(--text); }
 .dlg-sub   { font-weight: 500; font-size: 16px; color: var(--text-secondary);
-             margin-top: calc(-1 * var(--space-2)); }
+             margin-top: calc(-1 * var(--space-3)); }
 
 /* BODY: validation / helper text */
 .dlg-hint { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); min-height: 14px; }
