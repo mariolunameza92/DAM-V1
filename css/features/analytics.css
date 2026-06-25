@@ -564,12 +564,10 @@
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  background: var(--surface-neutral);
+  color: var(--text-secondary);
 }
 .an-alert-icon .msi { font-size: 14px; font-variation-settings: 'opsz' 14, 'wght' 300, 'FILL' 0, 'GRAD' -25; }
-.an-alert-icon.warn   { background: var(--surface-neutral); color: var(--text-secondary); }
-.an-alert-icon.info   { background: var(--surface-sunken); color: var(--text-secondary); }
-.an-alert-icon.danger { background: var(--surface-neutral); color: var(--danger); }
-.an-alert-icon.ok     { background: var(--surface-sunken); color: var(--text-muted); }
 .an-alert-body { flex: 1; min-width: 0; }
 .an-alert-title {
   font-size: 12px;

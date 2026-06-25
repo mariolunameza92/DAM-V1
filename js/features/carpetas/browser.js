@@ -2,8 +2,8 @@
 import { TREE_DATA, FOLDER_IMAGES, findNode, getAncestorIds, addUserFolder } from '../../data.js';
 import { folderSVG, imgLabel } from '../../utils.js';
 import { uploadedAssets, userUploadedAssets, pushUserFolder } from '../../session.js';
-import { showToast } from '../../components/ui/toast.js';
-import { bindStaticToggle } from '../../components/ui/view-toggle.js';
+import { showToast } from '../../components/atoms/toast.js';
+import { bindStaticToggle } from '../../components/atoms/view-toggle.js';
 import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
@@ -314,7 +314,7 @@ export function openCrearCarpetaDialog() {
   hint.textContent = parentNode
     ? `Subcarpeta dentro de "${parentNode.label}"`
     : 'Nueva carpeta raíz (visible en Portales)';
-  dlg.style.display = 'flex';
+  dlg.classList.add('open');
   setTimeout(() => inp.focus(), 50);
 }
 
@@ -331,7 +331,7 @@ export function confirmCrearCarpeta() {
   const newId    = addUserFolder(parentId, name);
   pushUserFolder(newId, parentId, name);
 
-  document.getElementById('crear-carpeta-dlg').style.display = 'none';
+  document.getElementById('crear-carpeta-dlg').classList.remove('open');
 
   if (parentId) {
     const parent = findNode(parentId);
@@ -348,7 +348,7 @@ export function confirmCrearCarpeta() {
 }
 
 export function cancelCrearCarpeta() {
-  document.getElementById('crear-carpeta-dlg').style.display = 'none';
+  document.getElementById('crear-carpeta-dlg').classList.remove('open');
 }
 
 // ── View toggle ───────────────────────────────────────────────────────────────

@@ -6,7 +6,8 @@ import {
   getDamType, setDamType,
   getTeam, inviteMember, updateMemberRole, removeMember, ROLES, subscribeTeam,
 } from './configuracion-data.js';
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
+import { userAvatar } from '../../components/atoms/avatar.js';
 
 const PLAN_CURRENT = 'professional'; // demo: plan actual
 
@@ -184,7 +185,7 @@ function _renderEquipo() {
     const isSelf = m.id === 'u_mario';
     return `
       <div class="config-member-row">
-        <div class="config-member-av" style="background:${m.color}">${esc(m.initials)}</div>
+        ${userAvatar(esc(m.initials), m.color)}
         <div class="config-member-info">
           <div class="config-member-name">${esc(m.name)} ${isSelf ? '<span style="font-size:10px;color:var(--text-muted)">(tú)</span>' : ''}</div>
           <div class="config-member-email">${esc(m.email)}</div>

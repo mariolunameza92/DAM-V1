@@ -1,7 +1,7 @@
 // Exports: processUpload(files), initDemoImages(), resizeToDataURL(file, maxDim, quality)
 import { formatBytes, fileExt, imgLabel } from '../../utils.js';
 import { userUploadedAssets, uploadedAssets, saveUploadsSession } from '../../session.js';
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 import { idbGet, idbSet } from '../../image-cache.js';
 import { FOLDER_IMAGES } from '../../data.js';
 import { treeState, renderTree, renderFolderContent } from './browser.js';

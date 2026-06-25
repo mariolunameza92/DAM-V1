@@ -24,23 +24,25 @@
 <!-- Tokens & Base -->
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/base.css">
-<!-- Components: UI -->
-<link rel="stylesheet" href="css/components/ui/buttons.css">
-<link rel="stylesheet" href="css/components/ui/fields.css">
-<link rel="stylesheet" href="css/components/ui/modal.css">
-<link rel="stylesheet" href="css/components/ui/badges.css">
-<link rel="stylesheet" href="css/components/ui/list-view.css">
-<link rel="stylesheet" href="css/components/ui/data-table.css">
-<!-- Components: Layout -->
-<link rel="stylesheet" href="css/components/layout/sidebar.css">
-<link rel="stylesheet" href="css/components/layout/topbar.css">
+<!-- Components: Atoms -->
+<link rel="stylesheet" href="css/components/atoms/buttons.css">
+<link rel="stylesheet" href="css/components/atoms/fields.css">
+<link rel="stylesheet" href="css/components/molecules/dialog.css">
+<link rel="stylesheet" href="css/components/atoms/modal.css">
+<link rel="stylesheet" href="css/components/atoms/badges.css">
+<link rel="stylesheet" href="css/components/atoms/list-view.css">
+<link rel="stylesheet" href="css/components/atoms/data-table.css">
+<!-- Components: Organisms -->
+<link rel="stylesheet" href="css/components/organisms/sidebar.css">
+<link rel="stylesheet" href="css/components/organisms/topbar.css">
+<!-- Components: Molecules -->
+<link rel="stylesheet" href="css/components/molecules/context-menu.css">
+<link rel="stylesheet" href="css/components/molecules/selection.css">
 <!-- Features -->
 <link rel="stylesheet" href="css/features/inicio.css">
 <link rel="stylesheet" href="css/features/carpetas.css">
 <link rel="stylesheet" href="css/features/image-detail.css">
 <link rel="stylesheet" href="css/features/crop.css">
-<link rel="stylesheet" href="css/features/context-menu.css">
-<link rel="stylesheet" href="css/features/selection.css">
 <link rel="stylesheet" href="css/features/portales.css">
 <link rel="stylesheet" href="css/features/portal-screen.css">
 <link rel="stylesheet" href="css/features/theme-sidebar.css"><!-- [THEME-SIDEBAR] -->
@@ -377,13 +379,13 @@
 <input type="file" id="uploadInput" multiple accept="image/*" style="display:none">
 
 <!-- CREAR CARPETA DIALOG -->
-<div id="crear-carpeta-dlg" class="crear-dlg-backdrop" style="display:none" onclick="if(event.target===this) window.cancelCrearCarpeta()">
-  <div class="crear-dlg">
-    <div class="crear-dlg-header"><span class="msi xs">create_new_folder</span>Nueva carpeta</div>
+<div id="crear-carpeta-dlg" class="dlg-backdrop" onclick="if(event.target===this) window.cancelCrearCarpeta()">
+  <div class="dlg">
+    <div class="dlg-head"><span class="msi xs">create_new_folder</span>Nueva carpeta</div>
     <input id="crear-carpeta-inp" class="field field--rect" type="text" placeholder="Nombre de la carpeta" maxlength="80" autocomplete="off"
       onkeydown="if(event.key==='Enter') window.confirmCrearCarpeta(); if(event.key==='Escape') window.cancelCrearCarpeta()">
-    <div class="crear-dlg-hint" id="crear-carpeta-hint"></div>
-    <div class="crear-dlg-actions">
+    <div class="dlg-hint" id="crear-carpeta-hint"></div>
+    <div class="dlg-actions">
       <button class="btn-outline" style="font-size:11px" onclick="window.cancelCrearCarpeta()">Cancelar</button>
       <button class="btn-dark" style="font-size:11px" onclick="window.confirmCrearCarpeta()"><span class="msi xs">add</span>Crear</button>
     </div>
@@ -391,9 +393,9 @@
 </div>
 
 <!-- CREAR FACE ID -->
-<div id="faceid-create-dlg" class="crear-dlg-backdrop" style="display:none">
-  <div class="crear-dlg">
-    <div class="crear-dlg-header"><span class="msi xs">ar_on_you</span>Nuevo Face ID</div>
+<div id="faceid-create-dlg" class="dlg-backdrop">
+  <div class="dlg">
+    <div class="dlg-head"><span class="msi xs">ar_on_you</span>Nuevo Face ID</div>
     <div class="faceid-dropzone" id="faceid-create-drop">
       <div class="faceid-dropzone-preview" id="faceid-create-preview" style="display:none"><img id="faceid-create-img" src="" alt=""></div>
       <span class="msi" id="faceid-create-icon" style="font-size:32px;color:var(--g400)">add_a_photo</span>
@@ -401,8 +403,8 @@
     </div>
     <input type="file" id="faceid-create-file" accept="image/*" style="display:none">
     <input id="faceid-create-name" class="field field--rect" type="text" placeholder="Nombre de la persona" maxlength="60" autocomplete="off">
-    <div class="crear-dlg-hint" id="faceid-create-hint"></div>
-    <div class="crear-dlg-actions">
+    <div class="dlg-hint" id="faceid-create-hint"></div>
+    <div class="dlg-actions">
       <button class="btn-outline" style="font-size:11px" id="faceid-create-cancel">Cancelar</button>
       <button class="btn-dark" style="font-size:11px" id="faceid-create-confirm"><span class="msi xs">add</span>Crear</button>
     </div>
@@ -410,12 +412,12 @@
 </div>
 
 <!-- RENOMBRAR FACE ID -->
-<div id="faceid-rename-dlg" class="crear-dlg-backdrop" style="display:none">
-  <div class="crear-dlg">
-    <div class="crear-dlg-header"><span class="msi xs">edit</span>Renombrar Face ID</div>
+<div id="faceid-rename-dlg" class="dlg-backdrop">
+  <div class="dlg">
+    <div class="dlg-head"><span class="msi xs">edit</span>Renombrar Face ID</div>
     <input id="faceid-rename-name" class="field field--rect" type="text" placeholder="Nombre de la persona" maxlength="60" autocomplete="off">
-    <div class="crear-dlg-hint" id="faceid-rename-hint"></div>
-    <div class="crear-dlg-actions">
+    <div class="dlg-hint" id="faceid-rename-hint"></div>
+    <div class="dlg-actions">
       <button class="btn-outline" style="font-size:11px" id="faceid-rename-cancel">Cancelar</button>
       <button class="btn-dark" style="font-size:11px" id="faceid-rename-confirm"><span class="msi xs">check</span>Guardar</button>
     </div>
@@ -423,9 +425,9 @@
 </div>
 
 <!-- AGREGAR A LISTA NEGRA -->
-<div id="bl-add-dlg" class="crear-dlg-backdrop" style="display:none">
-  <div class="crear-dlg">
-    <div class="crear-dlg-header"><span class="msi xs">person_off</span>Agregar a lista negra</div>
+<div id="bl-add-dlg" class="dlg-backdrop">
+  <div class="dlg">
+    <div class="dlg-head"><span class="msi xs">person_off</span>Agregar a lista negra</div>
     <div class="faceid-dropzone" id="bl-add-drop">
       <div class="faceid-dropzone-preview" id="bl-add-preview" style="display:none"><img id="bl-add-img" src="" alt=""></div>
       <span class="msi" id="bl-add-icon" style="font-size:32px;color:var(--g400)">add_a_photo</span>
@@ -433,8 +435,8 @@
     </div>
     <input type="file" id="bl-add-file" accept="image/*" style="display:none">
     <input id="bl-add-name" class="field field--rect" type="text" placeholder="Nombre identificador" maxlength="60" autocomplete="off">
-    <div class="crear-dlg-hint" id="bl-add-hint"></div>
-    <div class="crear-dlg-actions">
+    <div class="dlg-hint" id="bl-add-hint"></div>
+    <div class="dlg-actions">
       <button class="btn-outline" style="font-size:11px" id="bl-add-cancel">Cancelar</button>
       <button class="btn-dark" style="font-size:11px" id="bl-add-confirm"><span class="msi xs">add</span>Agregar</button>
     </div>
@@ -442,17 +444,17 @@
 </div>
 
 <!-- EDITAR ENTRADA DE LISTA NEGRA -->
-<div id="bl-edit-dlg" class="crear-dlg-backdrop" style="display:none">
-  <div class="crear-dlg">
-    <div class="crear-dlg-header"><span class="msi xs">edit</span>Editar entrada</div>
+<div id="bl-edit-dlg" class="dlg-backdrop">
+  <div class="dlg">
+    <div class="dlg-head"><span class="msi xs">edit</span>Editar entrada</div>
     <div class="faceid-dropzone" id="bl-edit-drop">
       <div class="faceid-dropzone-preview" id="bl-edit-preview"><img id="bl-edit-img" src="" alt=""></div>
       <span id="bl-edit-droptext" style="font-size:12px;color:var(--g500)">Cambiar foto</span>
     </div>
     <input type="file" id="bl-edit-file" accept="image/*" style="display:none">
     <input id="bl-edit-name" class="field field--rect" type="text" placeholder="Nombre identificador" maxlength="60" autocomplete="off">
-    <div class="crear-dlg-hint" id="bl-edit-hint"></div>
-    <div class="crear-dlg-actions">
+    <div class="dlg-hint" id="bl-edit-hint"></div>
+    <div class="dlg-actions">
       <button class="btn-outline" style="font-size:11px" id="bl-edit-cancel">Cancelar</button>
       <button class="btn-dark" style="font-size:11px" id="bl-edit-confirm"><span class="msi xs">check</span>Guardar</button>
     </div>
@@ -460,27 +462,27 @@
 </div>
 
 <!-- QUITAR DE LISTA NEGRA — ADVERTENCIA -->
-<div id="bl-remove-dlg" class="crear-dlg-backdrop" style="display:none">
-  <div class="crear-dlg">
-    <div class="crear-dlg-header" style="color:#dc2626"><span class="msi xs">warning</span>Quitar de lista negra</div>
-    <div class="bl-remove-warn">
+<div id="bl-remove-dlg" class="dlg-backdrop">
+  <div class="dlg">
+    <div class="dlg-head"><span class="msi xs">warning</span>Quitar de lista negra</div>
+    <div class="dlg-warn">
       Vas a quitar a <strong id="bl-remove-name">persona</strong> de la lista negra.<br>
       Su contenido volverá a ser <strong>visible</strong> en carpetas y portales.
     </div>
-    <div class="crear-dlg-actions">
+    <div class="dlg-actions">
       <button class="btn-outline" style="font-size:11px" id="bl-remove-cancel">Cancelar</button>
-      <button class="bl-btn-danger" id="bl-remove-confirm"><span class="msi xs">person_off</span>Quitar de lista negra</button>
+      <button class="btn-dark" id="bl-remove-confirm"><span class="msi xs">person_off</span>Quitar de lista negra</button>
     </div>
   </div>
 </div>
 
 <!-- MODAL -->
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <div class="modal-close" onclick="closeModal()"><span class="msi sm">close</span></div>
+<div class="dlg-backdrop dlg--wizard" id="overlay">
+  <div class="dlg">
+    <div class="dlg-close" onclick="closeModal()"><span class="msi sm">close</span></div>
 
     <div id="step-1">
-      <span class="modal-title">Crear Portal</span>
+      <span class="dlg-title">Crear Portal</span>
       <div class="step-bar">
         <div class="step-dot active" id="d1-1"></div><div class="step-dot" id="d1-2"></div><div class="step-dot" id="d1-3"></div><div class="step-dot" id="d1-4"></div>
       </div>
@@ -503,15 +505,15 @@
         </div>
         <div class="folder-list" id="unitList"></div>
       </div>
-      <div class="modal-footer">
+      <div class="dlg-actions">
         <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
         <button class="btn-submit" id="btn1next" onclick="tryGoStep(2)" disabled>Continuar</button>
       </div>
     </div>
 
     <div id="step-2" style="display:none">
-      <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
-      <span class="modal-sub">Configuración del tema</span>
+      <div style="margin-bottom:4px"><span class="dlg-title">Crear Portal</span></div>
+      <span class="dlg-sub">Configuración del tema</span>
       <div class="step-bar">
         <div class="step-dot" id="d2-1"></div><div class="step-dot active" id="d2-2"></div><div class="step-dot" id="d2-3"></div><div class="step-dot" id="d2-4"></div>
       </div>
@@ -592,15 +594,15 @@
         </div>
         <div class="inline-field" id="desc-wrap"><input type="text" id="inp-desc" placeholder="Descripción breve del portal"/></div>
       </div>
-      <div class="modal-footer">
+      <div class="dlg-actions">
         <button class="btn-ghost" onclick="goStep(1)">Atrás</button>
         <button class="btn-submit" onclick="goStep(3)">Continuar</button>
       </div>
     </div>
 
     <div id="step-3" style="display:none">
-      <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
-      <span class="modal-sub">Configuración de accesos</span>
+      <div style="margin-bottom:4px"><span class="dlg-title">Crear Portal</span></div>
+      <span class="dlg-sub">Configuración de accesos</span>
       <div class="step-bar">
         <div class="step-dot" id="d3-1"></div><div class="step-dot" id="d3-2"></div><div class="step-dot active" id="d3-3"></div><div class="step-dot" id="d3-4"></div>
       </div>
@@ -619,15 +621,15 @@
       <div id="pwd-wrap" style="display:none;margin-top:8px">
         <input class="field" id="inp-pwd" type="password" placeholder="Ingresa la clave de acceso"/>
       </div>
-      <div class="modal-footer">
+      <div class="dlg-actions">
         <button class="btn-ghost" onclick="goStep(2)">Atrás</button>
         <button class="btn-submit" onclick="goStep(4)">Continuar</button>
       </div>
     </div>
 
     <div id="step-4" style="display:none">
-      <div style="margin-bottom:4px"><span class="modal-title">Crear Portal</span></div>
-      <span class="modal-sub">Compartir</span>
+      <div style="margin-bottom:4px"><span class="dlg-title">Crear Portal</span></div>
+      <span class="dlg-sub">Compartir</span>
       <div class="step-bar">
         <div class="step-dot" id="d4-1"></div><div class="step-dot" id="d4-2"></div><div class="step-dot" id="d4-3"></div><div class="step-dot active" id="d4-4"></div>
       </div>
@@ -648,7 +650,7 @@
           <button class="s-btn" onclick="openPortal(true)"><span class="msi xs">palette</span></button>
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="dlg-actions">
         <button class="btn-ghost" onclick="goStep(3)">Atrás</button>
         <button class="btn-submit" onclick="openPortal()">Ver Portal</button>
       </div>

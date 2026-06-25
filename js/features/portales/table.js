@@ -1,6 +1,6 @@
 // Exports: addToTable(title, fCount, photoCount, accent, folderIds, dateStr?, silent?, searchMethod?, opts?) — inserta fila en tabla de portales y persiste en session
 import { pushPortal, getPortalById } from '../../session.js';
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 import { openModalEdit } from './modal.js';
 import { openPortalFromRow } from './portal-screen.js'; // [THEME-SIDEBAR]
 

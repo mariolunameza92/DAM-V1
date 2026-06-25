@@ -1,5 +1,5 @@
 // Exports: renderPerfil()
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 
 const USER = {
   name: 'Mario Luna',
@@ -115,7 +115,7 @@ export function renderPerfil() {
               <button class="btn-ghost" id="pf-upload-btn">
                 <span class="msi xs">upload</span>Subir foto
               </button>
-              <button class="btn-ghost pf-btn-danger" id="pf-delete-btn" style="display:none">
+              <button class="btn-ghost" id="pf-delete-btn" style="display:none">
                 <span class="msi xs">delete</span>Eliminar
               </button>
             </div>
@@ -250,7 +250,7 @@ export function renderPerfil() {
             Próxima renovación: <strong>${PLAN_DATA.renewal}</strong>
           </div>
           <div class="pf-plan-actions">
-            <button class="btn-ghost pf-btn-danger" id="pf-cancel-plan">Cancelar plan</button>
+            <button class="btn-ghost" id="pf-cancel-plan">Cancelar plan</button>
             <button class="btn-dark" id="pf-upgrade-btn">
               <span class="msi xs">arrow_upward</span>Actualizar a ${PLAN_DATA.nextTier}
             </button>

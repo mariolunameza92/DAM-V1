@@ -37,12 +37,6 @@
 .folder-thumb{flex:0 0 calc(50% - 2px);height:calc(50% - 2px);border-radius:5.65px;background:var(--media-grid);background-size:cover;background-position:center;flex-shrink:0}
 .folder-name{font-size:14px;color:var(--text)}
 
-/* ── Crear Carpeta dialog ──────────────────────────────────────────────────── */
-.crear-dlg-backdrop{position:fixed;inset:0;background:var(--scrim);z-index:800;display:flex;align-items:center;justify-content:center;animation:fadeIn .15s}
-.crear-dlg{background:var(--surface-raised);border-radius:20px;padding:var(--space-7) var(--space-7) var(--space-6);display:flex;flex-direction:column;gap:14px;width:340px;box-shadow:var(--shadow-lg)}
-.crear-dlg-header{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--text-strong)}
-.crear-dlg-hint{font-size:11px;color:var(--text-muted);font-family:var(--font-mono);min-height:14px}
-.crear-dlg-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:4px}
 
 .masonry-cols{display:flex;gap:24px;width:100%;min-width:0}
 .masonry-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:24px}

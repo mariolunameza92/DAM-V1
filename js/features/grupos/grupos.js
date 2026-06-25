@@ -2,7 +2,7 @@
 // Exports: initGrupos()
 import { getGrupos, getGrupoById, createGrupo, updateGrupo, deleteGrupo, addMember, removeMember, subscribeGrupos, resetGruposForType, getGrupoForFace } from './grupos-data.js';
 import { getFaces } from '../../faces.js';
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 import { getDamType, subscribeConfig } from '../configuracion/configuracion-data.js';
 
 function _terms() {
@@ -180,7 +180,7 @@ function _openDeleteModal(gid) {
       </p>
       <div class="gm-footer">
         <button class="btn btn-ghost" id="del-cancel">Cancelar</button>
-        <button class="btn btn-danger" id="del-confirm">Eliminar</button>
+        <button class="btn btn-primary" id="del-confirm">Eliminar</button>
       </div>
     </div>`;
 

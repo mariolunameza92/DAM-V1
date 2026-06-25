@@ -5,7 +5,7 @@ import {
   createTemplate, updateDraft, publishTemplate, newVersion, archiveTemplate,
   subscribeConsent, MODULE_META,
 } from './consentimientos-data.js';
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 
 function esc(s) {
   return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));

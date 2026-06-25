@@ -11,7 +11,7 @@
 .bl-info-note{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);font-family:var(--font-ui);background:var(--surface);border:1px solid color-mix(in srgb, var(--border) 65%, transparent);border-radius:8px;padding:8px 12px;max-width:560px}
 .bl-info-note .msi{color:var(--text-faint);flex-shrink:0}
 
-/* Tabla en vista lista — el mecanismo vive en components/ui/data-table.css;
+/* Tabla en vista lista — el mecanismo vive en components/atoms/data-table.css;
    acá sólo los tracks de las 5 columnas propias (idénticas a Face IDs). */
 #bl-body{--dt-cols:2.4fr 160px 1.6fr 132px 180px 156px}
 
@@ -32,11 +32,3 @@
 /* Meta info debajo del nombre en la card */
 .bl-card-meta{font-size:11px;color:var(--text-faint);font-family:var(--font-ui);text-align:center;line-height:1.4}
 
-/* Botón rojo para confirmar quitar de lista negra */
-.bl-btn-danger{display:inline-flex;align-items:center;gap:6px;background:var(--danger);color:var(--on-danger);border:none;border-radius:8px;padding:7px 14px;font-family:var(--font-ui);font-size:11px;font-weight:500;cursor:pointer;transition:background .15s;line-height:1}
-.bl-btn-danger:hover{background:var(--danger-hover)}
-.bl-btn-danger .msi{color:var(--on-danger)}
-
-/* Caja de advertencia en el modal de confirmación */
-.bl-remove-warn{background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--text-body);font-family:var(--font-ui);line-height:1.6}
-.bl-remove-warn strong{color:var(--danger)}

@@ -1,8 +1,10 @@
 // Feature Black List — vista de personas bloqueadas con CRUD básico.
 // Exports: initBlacklist(), renderBlacklist()
 import { getBlacklist, addToBlacklist, removeFromBlacklist, renameBlacklistItem, updateBlacklistFace, getAppearancesForId } from '../../blacklist-store.js';
-import { showToast } from '../../components/ui/toast.js';
-import { bindStaticToggle } from '../../components/ui/view-toggle.js';
+import { showToast } from '../../components/atoms/toast.js';
+import { bindStaticToggle } from '../../components/atoms/view-toggle.js';
+import { emptyState } from '../../components/atoms/empty-state.js';
+import { setupDialog, openDialog, closeDialog } from '../../components/molecules/dialog.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
 import { getPortals } from '../../session.js';
 import { PHOTO_FACES, FOLDER_IMAGES_EVENTS } from '../../events-registry.js';
@@ -81,7 +83,7 @@ function _sortHead(col, label) {
 
 function _listHTML(items) {
   if (!items.length) {
-    return `<div class="faceids-empty">No hay personas en la lista negra.</div>`;
+    return emptyState('No hay personas en la lista negra.');
   }
   const head = `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('portales','Portales')}${_sortHead('registro','Registro')}${_sortHead('source','Origen')}${_sortHead('addedBy','Agregado por')}</div>`;
   const rows = items.map(item => {
@@ -136,7 +138,7 @@ function _gridHTML(items) {
     </div>`;
   }).join('');
   const empty = !items.length
-    ? `<div class="faceids-empty">No hay personas en la lista negra.</div>`
+    ? emptyState('No hay personas en la lista negra.')
     : '';
   return `<div class="faceids-grid">${addCard}${cards}</div>${empty}`;
 }
@@ -224,12 +226,11 @@ function openAddDialog() {
   document.getElementById('bl-add-preview').style.display = 'none';
   document.getElementById('bl-add-icon').style.display = '';
   document.getElementById('bl-add-droptext').textContent = 'Subir foto del rostro';
-  document.getElementById('bl-add-dlg').style.display = '';
-  setTimeout(() => document.getElementById('bl-add-name').focus(), 50);
+  openDialog('bl-add-dlg', 'bl-add-name');
 }
 
 function closeAddDialog() {
-  document.getElementById('bl-add-dlg').style.display = 'none';
+  closeDialog('bl-add-dlg');
   _addPhoto = null;
 }
 
@@ -268,7 +269,7 @@ function _initAddDialog() {
 
   document.getElementById('bl-add-cancel').addEventListener('click', closeAddDialog);
   document.getElementById('bl-add-confirm').addEventListener('click', confirm);
-  dlg.addEventListener('mousedown', e => { if (e.target === dlg) closeAddDialog(); });
+  setupDialog('bl-add-dlg', closeAddDialog);
   name.addEventListener('keydown', e => { if (e.key === 'Enter') confirm(); if (e.key === 'Escape') closeAddDialog(); });
 }
 
@@ -286,12 +287,12 @@ function openEditDialog(item) {
   document.getElementById('bl-edit-img').src = item.selfieUrl;
   document.getElementById('bl-edit-preview').style.display = '';
   document.getElementById('bl-edit-droptext').textContent = 'Cambiar foto';
-  document.getElementById('bl-edit-dlg').style.display = '';
-  setTimeout(() => { name.focus(); name.select(); }, 50);
+  openDialog('bl-edit-dlg', 'bl-edit-name');
+  setTimeout(() => document.getElementById('bl-edit-name')?.select(), 55);
 }
 
 function closeEditDialog() {
-  document.getElementById('bl-edit-dlg').style.display = 'none';
+  closeDialog('bl-edit-dlg');
   _editId = null;
   _editPhoto = null;
 }
@@ -331,7 +332,7 @@ function _initEditDialog() {
 
   document.getElementById('bl-edit-cancel').addEventListener('click', closeEditDialog);
   document.getElementById('bl-edit-confirm').addEventListener('click', confirm);
-  dlg.addEventListener('mousedown', e => { if (e.target === dlg) closeEditDialog(); });
+  setupDialog('bl-edit-dlg', closeEditDialog);
   name.addEventListener('keydown', e => { if (e.key === 'Enter') confirm(); if (e.key === 'Escape') closeEditDialog(); });
 }
 
@@ -343,17 +344,15 @@ function openRemoveDialog(item) {
   _removeId = item.id;
   const nameEl = document.getElementById('bl-remove-name');
   if (nameEl) nameEl.textContent = item.name;
-  document.getElementById('bl-remove-dlg').style.display = '';
+  openDialog('bl-remove-dlg');
 }
 
 function closeRemoveDialog() {
-  document.getElementById('bl-remove-dlg').style.display = 'none';
+  closeDialog('bl-remove-dlg');
   _removeId = null;
 }
 
 function _initRemoveDialog() {
-  const dlg = document.getElementById('bl-remove-dlg');
-  if (!dlg) return;
   document.getElementById('bl-remove-cancel').addEventListener('click', closeRemoveDialog);
   document.getElementById('bl-remove-confirm').addEventListener('click', () => {
     if (!_removeId) return;
@@ -364,7 +363,7 @@ function _initRemoveDialog() {
     renderBlacklist();
     showToast(`${nm} quitado/a de la lista negra`);
   });
-  dlg.addEventListener('mousedown', e => { if (e.target === dlg) closeRemoveDialog(); });
+  setupDialog('bl-remove-dlg', closeRemoveDialog);
 }
 
 // ── Delegación de clicks ──────────────────────────────────────────────────────

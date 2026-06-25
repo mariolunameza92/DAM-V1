@@ -1,5 +1,5 @@
 // Exports: uploadedAssets{}, userUploadedAssets{}, saveUploadsSession(), savePortalsSession(), loadUploadsFromSession(), loadPortalsFromSession(), pushPortal(), getPortalById(), getMasters(), getUnits(), getPortals(), addUnitToMaster(), removeUnitFromMaster(), pushUserFolder(), loadUserFoldersFromSession()
-import { showToast } from './components/ui/toast.js';
+import { showToast } from './components/atoms/toast.js';
 
 const SS_PORTALS = 'len_portals';
 const SS_UPLOADS = 'len_uploads';

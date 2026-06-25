@@ -1,6 +1,7 @@
 // Exports: initContextMenu()
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 import { toggleSelected, clearSelection, selectAll, isSelected, selectionStore } from './selection.js';
+import { userAvatar } from '../../components/atoms/avatar.js';
 
 const DEMO_PERSONAS = [
   { name: 'Javier Ruiz',    email: 'javier.ruiz@workk.com',  color: '#4a6cf7', role: 'Editar' },
@@ -205,7 +206,7 @@ function _closeOverlay(overlay) {
 function _personRowHTML(p, showRole = true) {
   return `
     <div class="ctx-person-row">
-      <div class="ctx-avatar-initials" style="background:${p.color}">${p.name.split(' ').map(w => w[0]).join('')}</div>
+      ${userAvatar(p.name.split(' ').map(w => w[0]).join(''), p.color)}
       <div class="ctx-person-info">
         <div class="ctx-person-name">${p.name}</div>
         <div class="ctx-person-email">${p.email}</div>

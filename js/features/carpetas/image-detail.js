@@ -7,7 +7,7 @@ import { FACE_REGISTRY } from '../../events-registry.js';
 import { treeState, renderFolderContent } from './browser.js';
 import { userUploadedAssets, saveUploadsSession, getPortals } from '../../session.js';
 import { findNode } from '../../data.js';
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 
 const CAMERAS = [
   { marca: 'SONY',     modelo: 'ILCE-7M4', exp: '1/500',  apertura: 'ƒ/3.2', focal: '70.0 mm', iso: '200' },

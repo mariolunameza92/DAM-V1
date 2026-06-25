@@ -5,7 +5,7 @@ import { folderSVG, getNumCols, positionDropdown } from '../../utils.js';
 import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
-import { bindStaticToggle, viewToggleHTML, bindDynamicToggle } from '../../components/ui/view-toggle.js';
+import { bindStaticToggle, viewToggleHTML, bindDynamicToggle } from '../../components/atoms/view-toggle.js';
 import { getFaces, getFavoriteFaces, subscribe as subscribeFaces } from '../../faces.js';
 
 let _inicioFoldersView = 'grid';
