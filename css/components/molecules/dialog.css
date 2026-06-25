@@ -1,5 +1,23 @@
 /* Single source of truth for all modal dialogs.
-   Variant: .dlg--wizard (multi-step) */
+   Variant: .dlg--wizard (multi-step)
+
+   SISTEMA DE ESPACIADO — 4 zonas:
+   ┌─────────────────────────────────────┐
+   │  DISMISS   close btn (wizard only)  │
+   │  ── gap-4 (16px) ──────────────────│
+   │  NAV       step-bar (wizard only)   │
+   │  ── gap-4 ─────────────────────────│
+   │  HEADER    dlg-head / dlg-title     │
+   │  ── gap-4 ─────────────────────────│
+   │  BODY      form fields, listas…     │
+   │  ── gap-4 ─────────────────────────│
+   │  FOOTER    dlg-hint + dlg-actions   │
+   │            (+space-2 extra arriba)  │
+   └─────────────────────────────────────┘
+
+   Regla: la molécula gestiona TODO el espaciado via gap.
+   Los átomos (step-bar, etc.) no deben traer márgenes propios.
+*/
 
 .dlg-backdrop {
   position: fixed; inset: 0;
@@ -21,7 +39,7 @@
   border-radius: 20px;
   padding: var(--space-6) var(--space-6) var(--space-5);
   width: 364px;
-  display: flex; flex-direction: column; gap: 14px;
+  display: flex; flex-direction: column; gap: var(--space-4);
   box-shadow: var(--shadow-lg);
   transform: translateY(14px);
   transition: transform .25s;
@@ -29,25 +47,29 @@
 }
 .dlg-backdrop.open .dlg { transform: translateY(0); }
 
-/* Close button — wizard only */
-.dlg-close { align-self: flex-end; cursor: pointer; opacity: .4; transition: opacity .15s; margin-bottom: 12px; }
+/* DISMISS — el gap gestiona la distancia, sin margen extra */
+.dlg-close { align-self: flex-end; cursor: pointer; opacity: .4; transition: opacity .15s; }
 .dlg-close:hover { opacity: .9; }
 
-/* Header: icon + title row (CRUD dialogs) */
+/* NAV — suprime márgenes intrínsecos del átomo; el gap del dlg toma el control */
+.dlg .step-bar { margin: 0; }
+
+/* HEADER: icon + title row (CRUD dialogs) */
 .dlg-head { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--text-strong); }
 
-/* Step title + subtitle (wizard steps) */
+/* HEADER: step title + subtitle (wizard) — subtitle pegada al título, no al gap */
 .dlg-title { font-weight: 700; font-size: 16px; color: var(--text); }
-.dlg-sub   { font-weight: 500; font-size: 16px; color: var(--text-secondary); }
+.dlg-sub   { font-weight: 500; font-size: 16px; color: var(--text-secondary);
+             margin-top: calc(-1 * var(--space-2)); }
 
-/* Validation / helper text */
+/* BODY: validation / helper text */
 .dlg-hint { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); min-height: 14px; }
 
-/* Footer actions */
-.dlg-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+/* FOOTER: acciones — space-2 extra sobre el gap base = 24px de separación total del body */
+.dlg-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: var(--space-2); }
 
-/* Wizard variant: footer uses space-between for back/next */
+/* Wizard variant: footer usa space-between para atrás/siguiente */
 .dlg--wizard .dlg-actions { justify-content: space-between; }
 
-/* Warning info box (destructive confirmations) */
+/* Warning info box (confirmaciones destructivas) */
 .dlg-warn { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--text-body); font-family: var(--font-ui); line-height: 1.6; }
