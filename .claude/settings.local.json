@@ -156,7 +156,9 @@
       "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\\\|rgb\\(\" /Users/lenadmin/Documents/GitHub/DAM-V1/css/features/analytics.css)",
       "Bash(netstat -ano)",
       "Bash(findstr :3000)",
-      "PowerShell(Get-Process -Id 17440 -ErrorAction SilentlyContinue)"
+      "PowerShell(Get-Process -Id 17440 -ErrorAction SilentlyContinue)",
+      "Bash(git merge atomic-migration --no-ff -m ' *)",
+      "Bash(git commit *)"
     ]
   },
   "hooks": {
