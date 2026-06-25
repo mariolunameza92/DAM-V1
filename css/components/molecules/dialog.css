@@ -15,7 +15,10 @@
 .dlg-backdrop.open { opacity: 1; pointer-events: all; }
 
 .dlg {
-  background: var(--surface-raised);
+  background: var(--glass);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--border-subtle);
   border-radius: 20px;
   padding: var(--space-6) var(--space-6) var(--space-5);
   width: 364px;
