@@ -1,5 +1,5 @@
 /* Single source of truth for all modal dialogs.
-   Variants: .dlg--wizard (multi-step), .dlg--danger (destructive) */
+   Variant: .dlg--wizard (multi-step) */
 
 .dlg-backdrop {
   position: fixed; inset: 0;
@@ -47,12 +47,5 @@
 /* Wizard variant: footer uses space-between for back/next */
 .dlg--wizard .dlg-actions { justify-content: space-between; }
 
-/* Danger variant */
-.dlg--danger .dlg-head { color: var(--danger); }
-.dlg-warn { background: var(--danger-bg); border: 1px solid var(--danger-border); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--text-body); font-family: var(--font-ui); line-height: 1.6; }
-.dlg-warn strong { color: var(--danger); }
-
-/* Danger action button */
-.btn-danger { display: inline-flex; align-items: center; gap: 6px; background: var(--danger); color: var(--on-danger); border: none; border-radius: 8px; padding: 7px 14px; font-family: var(--font-ui); font-size: 11px; font-weight: 500; cursor: pointer; transition: background .15s; line-height: 1; }
-.btn-danger:hover { background: var(--danger-hover); }
-.btn-danger .msi { color: var(--on-danger); }
+/* Warning info box (destructive confirmations) */
+.dlg-warn { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--text-body); font-family: var(--font-ui); line-height: 1.6; }

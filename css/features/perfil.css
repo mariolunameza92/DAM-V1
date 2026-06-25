@@ -406,15 +406,6 @@
   align-items: center;
   gap: var(--space-2);
 }
-.pf-btn-danger {
-  color: var(--danger) !important;
-  border-color: var(--danger-border) !important;
-}
-.pf-btn-danger:hover {
-  background: var(--danger-bg) !important;
-  color: var(--danger) !important;
-}
-
 /* ── Billing card ────────────────────────────────────────────────────────── */
 .pf-payment-block { padding: var(--space-5) var(--space-6); }
 

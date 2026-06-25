@@ -331,7 +331,7 @@ export function confirmCrearCarpeta() {
   const newId    = addUserFolder(parentId, name);
   pushUserFolder(newId, parentId, name);
 
-  document.getElementById('crear-carpeta-dlg').style.display = 'none';
+  document.getElementById('crear-carpeta-dlg').classList.remove('open');
 
   if (parentId) {
     const parent = findNode(parentId);

@@ -180,7 +180,7 @@ function _openDeleteModal(gid) {
       </p>
       <div class="gm-footer">
         <button class="btn btn-ghost" id="del-cancel">Cancelar</button>
-        <button class="btn btn-danger" id="del-confirm">Eliminar</button>
+        <button class="btn btn-primary" id="del-confirm">Eliminar</button>
       </div>
     </div>`;
 
