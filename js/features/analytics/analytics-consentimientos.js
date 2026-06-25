@@ -5,6 +5,7 @@ import { getStats, getTemplates, MODULE_META } from '../consentimientos/consenti
 import { getAllFaceConsents } from '../faceids/faces-consent.js';
 import { getFaces } from '../../faces.js';
 import { svgDonut } from './analytics-charts.js';
+import { alertItem } from '../../components/atoms/alert-item.js';
 
 export function buildConsentTab() {
   const stats     = getStats();
@@ -136,21 +137,9 @@ export function buildConsentTab() {
           <span class="an-card-title"><span class="msi">info</span>Sobre los datos</span>
         </div>
         <div class="an-alerts">
-          <div class="an-alert-item">
-            <div class="an-alert-icon info"><span class="msi">description</span></div>
-            <div class="an-alert-body"><div class="an-alert-title">Plantillas activas</div><div class="an-alert-sub">Plantillas publicadas con firma habilitada</div></div>
-            <span class="an-alert-val">${templates.filter(t => t.status === 'active').length}</span>
-          </div>
-          <div class="an-alert-item">
-            <div class="an-alert-icon warn"><span class="msi">edit_note</span></div>
-            <div class="an-alert-body"><div class="an-alert-title">Borradores</div><div class="an-alert-sub">Plantillas pendientes de publicar</div></div>
-            <span class="an-alert-val">${templates.filter(t => t.status === 'draft').length}</span>
-          </div>
-          <div class="an-alert-item">
-            <div class="an-alert-icon danger"><span class="msi">gpp_bad</span></div>
-            <div class="an-alert-body"><div class="an-alert-title">Revocaciones</div><div class="an-alert-sub">Consentimientos revocados — auto-blacklist activo</div></div>
-            <span class="an-alert-val">${stats.revoked}</span>
-          </div>
+          ${alertItem('description', 'Plantillas activas', 'Plantillas publicadas con firma habilitada', templates.filter(t => t.status === 'active').length)}
+          ${alertItem('edit_note', 'Borradores', 'Plantillas pendientes de publicar', templates.filter(t => t.status === 'draft').length)}
+          ${alertItem('gpp_bad', 'Revocaciones', 'Consentimientos revocados — auto-blacklist activo', stats.revoked)}
         </div>
       </div>
     </div>

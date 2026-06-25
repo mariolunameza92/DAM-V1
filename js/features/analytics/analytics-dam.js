@@ -4,6 +4,7 @@
 
 import { M, RAMP, sparkHTML, fmt } from './analytics-data.js';
 import { svgDonut, svgLine, hbarListHTML } from './analytics-charts.js';
+import { alertItem } from '../../components/atoms/alert-item.js';
 
 export function buildFaceHero(faces) {
   const maxP   = Math.max(...faces.top.map(f => f.photos), 1);
@@ -202,26 +203,10 @@ export function buildStructureSection() {
           <span class="an-card-title"><span class="msi">account_tree</span>Calidad de estructura</span>
         </div>
         <div class="an-alerts">
-          <div class="an-alert-item">
-            <div class="an-alert-icon warn"><span class="msi">content_copy</span></div>
-            <div class="an-alert-body"><div class="an-alert-title">Archivos duplicados</div><div class="an-alert-sub">Detectados por reconocimiento facial + hash</div></div>
-            <span class="an-alert-val">${s.duplicates}</span>
-          </div>
-          <div class="an-alert-item">
-            <div class="an-alert-icon warn"><span class="msi">cloud_off</span></div>
-            <div class="an-alert-body"><div class="an-alert-title">Assets huérfanos</div><div class="an-alert-sub">Nunca descargados ni vinculados</div></div>
-            <span class="an-alert-val">${s.orphans}</span>
-          </div>
-          <div class="an-alert-item">
-            <div class="an-alert-icon warn"><span class="msi">label_off</span></div>
-            <div class="an-alert-body"><div class="an-alert-title">Sin tags</div><div class="an-alert-sub">Calidad de catalogación baja</div></div>
-            <span class="an-alert-val">${s.noTags}</span>
-          </div>
-          <div class="an-alert-item">
-            <div class="an-alert-icon warn"><span class="msi">info</span></div>
-            <div class="an-alert-body"><div class="an-alert-title">Sin metadata</div><div class="an-alert-sub">EXIF o campos vacíos</div></div>
-            <span class="an-alert-val">${s.noMeta}</span>
-          </div>
+          ${alertItem('content_copy', 'Archivos duplicados', 'Detectados por reconocimiento facial + hash', s.duplicates)}
+          ${alertItem('cloud_off', 'Assets huérfanos', 'Nunca descargados ni vinculados', s.orphans)}
+          ${alertItem('label_off', 'Sin tags', 'Calidad de catalogación baja', s.noTags)}
+          ${alertItem('info', 'Sin metadata', 'EXIF o campos vacíos', s.noMeta)}
         </div>
         <div style="margin-top:var(--space-5)">
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:var(--space-3);font-weight:500">Profundidad de carpetas</div>
@@ -337,11 +322,7 @@ export function buildQualitySection() {
   ];
   const matchLine = svgLine([72, 75, 78, 80, 83, 85, 87.4], null, { w: 200, h: 60, color: 'var(--text-body)', showDots: false });
   const delRows = q.deletions.map(d =>
-    `<div class="an-alert-item">
-      <div class="an-alert-icon danger"><span class="msi">delete_forever</span></div>
-      <div class="an-alert-body"><div class="an-alert-title">${d.folder}</div><div class="an-alert-sub">${d.date}</div></div>
-      <span class="an-alert-val">${d.n} arch.</span>
-    </div>`
+    alertItem('delete_forever', d.folder, d.date, `${d.n} arch.`)
   ).join('');
 
   return `
