@@ -1,6 +1,6 @@
-// Feature: Gestión de Grupos — sección de grupos corporativos.
+// Feature: Gestión de Grupos
 // Exports: initGrupos()
-import { getGrupos, getGrupoById, createGrupo, updateGrupo, deleteGrupo, addMember, removeMember, subscribeGrupos, resetGruposForType } from './grupos-data.js';
+import { getGrupos, getGrupoById, createGrupo, updateGrupo, deleteGrupo, addMember, removeMember, subscribeGrupos, resetGruposForType, getGrupoForFace } from './grupos-data.js';
 import { getFaces } from '../../faces.js';
 import { showToast } from '../../components/ui/toast.js';
 import { getDamType, subscribeConfig } from '../configuracion/configuracion-data.js';
@@ -20,7 +20,15 @@ function _terms() {
   };
 }
 
-const COLORS = ['var(--accent)','var(--accent-soft)','var(--text-body)','var(--text-muted)','var(--text-faint)'];
+// Colores de identidad categórica — tokens user-color que funcionan en light y dark
+const COLORS = [
+  'var(--user-color-1)',
+  'var(--user-color-2)',
+  'var(--user-color-3)',
+  'var(--user-color-4)',
+  'var(--user-color-5)',
+  'var(--user-color-6)',
+];
 
 function esc(s) {
   return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
@@ -34,9 +42,7 @@ function _renderSection() {
   sec.innerHTML = `
     <div class="grupos-wrap">
       <div class="grupos-header">
-        <div>
-          <div class="grupos-summary" id="grupos-summary"></div>
-        </div>
+        <div class="grupos-summary" id="grupos-summary"></div>
         <button class="btn btn-primary" id="btn-nuevo-grupo">
           <span class="msi sm">add</span> ${esc(t0.newBtn)}
         </button>
@@ -52,9 +58,18 @@ function _renderSection() {
     if (e.target === document.getElementById('grupo-detail-overlay')) _closeDetail();
   });
 
+  // ESC global cierra el panel de detalle
+  document.addEventListener('keydown', _handleGlobalKey);
+
   _renderGrid();
   subscribeGrupos(_renderGrid);
   subscribeConfig(() => resetGruposForType(getDamType()));
+}
+
+function _handleGlobalKey(e) {
+  if (e.key !== 'Escape') return;
+  const overlay = document.getElementById('grupo-detail-overlay');
+  if (overlay?.classList.contains('open')) _closeDetail();
 }
 
 function _renderGrid() {
@@ -86,21 +101,21 @@ function _renderGrid() {
 
   grid.innerHTML = grupos.map(g => {
     const members = g.memberIds.map(id => byId[id]).filter(Boolean);
-    const shown = members.slice(0, 4);
-    const extra = members.length - shown.length;
-    const avs = shown.map(f => `<img class="grupo-av" src="${esc(f.selfieUrl)}" alt="${esc(f.displayName)}" title="${esc(f.displayName)}">`).join('');
-    const moreChip = extra > 0 ? `<div class="grupo-av-more">+${extra}</div>` : '';
+    const shown   = members.slice(0, 4);
+    const extra   = members.length - shown.length;
+    const avs     = shown.map(f => `<img class="grupo-av" src="${esc(f.selfieUrl)}" alt="${esc(f.displayName)}" title="${esc(f.displayName)}">`).join('');
+    const more    = extra > 0 ? `<div class="grupo-av-more">+${extra}</div>` : '';
 
     return `
       <div class="grupo-card" data-gid="${g.id}" style="--grupo-color:${g.color}">
         <div class="grupo-card-head">
           <div class="grupo-card-name">${esc(g.name)}</div>
-          <button class="icon-btn xs grupo-card-menu" data-menu-gid="${g.id}" title="Opciones">
+          <button class="icon-btn xs grupo-card-menu" data-menu-gid="${g.id}" title="Opciones" aria-label="Opciones de ${esc(g.name)}">
             <span class="msi xs">more_vert</span>
           </button>
         </div>
         <div class="grupo-card-desc">${esc(g.description)}</div>
-        <div class="grupo-avatars">${avs}${moreChip}</div>
+        <div class="grupo-avatars">${avs}${more}</div>
         <div class="grupo-card-meta">
           <span><span class="msi xs">group</span>${members.length} ${members.length !== 1 ? t.members : t.member}</span>
           <span><span class="msi xs">calendar_today</span>${g.createdAt}</span>
@@ -137,26 +152,55 @@ function _openCardMenu(gid, anchor) {
 
   document.body.appendChild(menu);
   const r = anchor.getBoundingClientRect();
-  menu.style.position = 'fixed';
-  menu.style.top  = r.bottom + 4 + 'px';
-  menu.style.left = r.left - menu.offsetWidth + anchor.offsetWidth + 'px';
-  menu.style.zIndex = '500';
+  menu.style.cssText = `position:fixed;top:${r.bottom + 4}px;left:${r.right - menu.offsetWidth}px;z-index:500`;
+  requestAnimationFrame(() => menu.classList.add('open'));
 
-  const close = () => menu.remove();
-  document.addEventListener('click', close, { once: true });
+  // Defer para que el click que abrió el menú no lo cierre de inmediato
+  const close = () => { menu.classList.remove('open'); setTimeout(() => menu.remove(), 140); };
+  setTimeout(() => document.addEventListener('click', close, { once: true }), 0);
 
   menu.querySelector('[data-action=edit]').addEventListener('click', () => { close(); _openEditModal(gid); });
-  menu.querySelector('[data-action=delete]').addEventListener('click', () => { close(); _confirmDelete(gid); });
+  menu.querySelector('[data-action=delete]').addEventListener('click', () => { close(); _openDeleteModal(gid); });
 }
 
-function _confirmDelete(gid) {
+// ── Modal de confirmación de eliminación ─────────────────────────────────────────
+function _openDeleteModal(gid) {
+  console.log('[grupos] _openDeleteModal called, gid:', gid);
   const g = getGrupoById(gid);
+  console.log('[grupos] grupo found:', !!g, g?.name);
   if (!g) return;
-  if (!confirm(`¿Eliminar el grupo "${g.name}"? Esta acción no se puede deshacer.`)) return;
-  deleteGrupo(gid);
-  _closeDetail();
-  showToast(`Grupo "${g.name}" eliminado`);
-  _renderGrid();
+
+  const modal = _createBackdrop(550);
+  modal.innerHTML = `
+    <div class="gm-box gm-box--sm">
+      <div class="gm-header">
+        <strong class="gm-title">Eliminar grupo</strong>
+      </div>
+      <p class="gm-body-text">
+        ¿Eliminar <strong>${esc(g.name)}</strong>?
+        Los miembros quedarán sin grupo asignado. Esta acción no se puede deshacer.
+      </p>
+      <div class="gm-footer">
+        <button class="btn btn-ghost" id="del-cancel">Cancelar</button>
+        <button class="btn btn-danger" id="del-confirm">Eliminar</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+  // Focus en el botón destructivo para que ESC funcione inmediatamente
+  requestAnimationFrame(() => modal.querySelector('#del-cancel').focus());
+
+  const close = () => modal.remove();
+  modal.querySelector('#del-cancel').addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  modal.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+  modal.querySelector('#del-confirm').addEventListener('click', () => {
+    deleteGrupo(gid);
+    _closeDetail();
+    showToast(`Grupo "${g.name}" eliminado`);
+    close();
+  });
 }
 
 // ── Panel de detalle ─────────────────────────────────────────────────────────────
@@ -165,14 +209,12 @@ let _currentGid = null;
 function _openDetail(gid) {
   _currentGid = gid;
   _renderDetail();
-  const overlay = document.getElementById('grupo-detail-overlay');
-  if (overlay) overlay.classList.add('open');
+  document.getElementById('grupo-detail-overlay')?.classList.add('open');
 }
 
 function _closeDetail() {
   _currentGid = null;
-  const overlay = document.getElementById('grupo-detail-overlay');
-  if (overlay) overlay.classList.remove('open');
+  document.getElementById('grupo-detail-overlay')?.classList.remove('open');
 }
 
 function _renderDetail() {
@@ -182,23 +224,23 @@ function _renderDetail() {
   const g = getGrupoById(_currentGid);
   if (!g) return;
 
-  const faces = getFaces();
-  const byId  = Object.fromEntries(faces.map(f => [f.id, f]));
+  const t       = _terms();
+  const byId    = Object.fromEntries(getFaces().map(f => [f.id, f]));
   const members = g.memberIds.map(id => byId[id]).filter(Boolean);
 
   panel.innerHTML = `
     <div class="grupo-detail-top">
       <div class="grupo-detail-color-dot" style="background:${g.color}"></div>
-      <div>
+      <div class="grupo-detail-title-block">
         <div class="grupo-detail-title">${esc(g.name)}</div>
         ${g.description ? `<div class="grupo-detail-desc-sub">${esc(g.description)}</div>` : ''}
       </div>
-      <button class="icon-btn grupo-detail-close" id="btn-close-detail" title="Cerrar">
+      <button class="icon-btn grupo-detail-close" id="btn-close-detail" title="Cerrar" aria-label="Cerrar panel">
         <span class="msi sm">close</span>
       </button>
     </div>
     <div class="grupo-detail-actions">
-      <span class="grupo-detail-count">${members.length} ${members.length !== 1 ? _terms().members : _terms().member}</span>
+      <span class="grupo-detail-count">${members.length} ${members.length !== 1 ? t.members : t.member}</span>
       <button class="btn btn-sm" id="btn-add-member">
         <span class="msi xs">person_add</span> Agregar
       </button>
@@ -215,27 +257,31 @@ function _renderDetail() {
               <div class="grupo-member-name">${esc(f.displayName)}</div>
               <div class="grupo-member-meta">Registrado ${f.registro}</div>
             </div>
-            <button class="icon-btn xs grupo-member-remove" data-remove-fid="${f.id}" title="Quitar del grupo">
+            <button class="icon-btn xs grupo-member-remove" data-remove-fid="${f.id}" title="Quitar del grupo" aria-label="Quitar a ${esc(f.displayName)}">
               <span class="msi xs">person_remove</span>
             </button>
           </div>`).join('')
         : `<div class="grupo-members-empty">
             <span class="msi">group_add</span>
-            <p>Este grupo no tiene miembros aún.</p>
+            <p>Este grupo no tiene ${t.members} aún.</p>
+            <button class="btn btn-sm" id="btn-add-member-empty">
+              <span class="msi xs">person_add</span> Agregar ${t.members}
+            </button>
           </div>`
       }
     </div>`;
 
   panel.querySelector('#btn-close-detail').addEventListener('click', _closeDetail);
-
   panel.querySelector('#btn-edit-grupo').addEventListener('click', () => _openEditModal(_currentGid));
-
   panel.querySelector('#btn-add-member').addEventListener('click', () => _openMemberPicker(_currentGid));
+  panel.querySelector('#btn-add-member-empty')?.addEventListener('click', () => _openMemberPicker(_currentGid));
 
   panel.querySelectorAll('.grupo-member-remove').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
+      const face = getFaces().find(f => f.id === btn.dataset.removeFid);
       removeMember(_currentGid, btn.dataset.removeFid);
+      if (face) showToast(`${face.displayName} quitado del grupo`);
       _renderDetail();
       _renderGrid();
     });
@@ -243,60 +289,61 @@ function _renderDetail() {
 }
 
 // ── Modal nuevo / editar grupo ───────────────────────────────────────────────────
-function _openNewGrupoModal() {
-  _openGrupoModal(null);
-}
-
-function _openEditModal(gid) {
-  _openGrupoModal(gid);
-}
+function _openNewGrupoModal() { _openGrupoModal(null); }
+function _openEditModal(gid)  { _openGrupoModal(gid); }
 
 function _openGrupoModal(gid) {
   const t       = _terms();
   const editing = gid ? getGrupoById(gid) : null;
   const title   = editing ? `Editar ${t.unit}` : t.newBtn;
-
   let selectedColor = editing?.color || COLORS[0];
 
-  const modal = document.createElement('div');
-  modal.className = 'modal-backdrop';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:blur(4px)';
-
+  const modal = _createBackdrop(600);
   modal.innerHTML = `
-    <div class="modal-box" style="width:min(440px,92vw);background:var(--surface-0);border-radius:var(--radius-lg);padding:var(--space-6);border:1px solid var(--border)">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4)">
-        <strong style="font-size:var(--text-lg)">${title}</strong>
-        <button class="icon-btn" id="gm-close"><span class="msi sm">close</span></button>
+    <div class="gm-box gm-box--md">
+      <div class="gm-header">
+        <strong class="gm-title">${title}</strong>
+        <button class="icon-btn" id="gm-close" aria-label="Cerrar"><span class="msi sm">close</span></button>
       </div>
       <div class="grupo-new-form">
-        <div>
-          <label>Nombre *</label>
-          <input id="gm-name" type="text" placeholder="${esc(t.placeholder)}" value="${esc(editing?.name || '')}">
+        <div class="gm-field">
+          <label class="gm-label" for="gm-name">Nombre <span class="gm-required">*</span></label>
+          <input id="gm-name" class="gm-input" type="text" placeholder="${esc(t.placeholder)}" value="${esc(editing?.name || '')}" autocomplete="off">
+          <span class="gm-field-error" id="gm-name-error" hidden>El nombre es obligatorio</span>
         </div>
-        <div>
-          <label>Descripción</label>
-          <textarea id="gm-desc" placeholder="Descripción del grupo">${esc(editing?.description || '')}</textarea>
+        <div class="gm-field">
+          <label class="gm-label" for="gm-desc">Descripción</label>
+          <textarea id="gm-desc" class="gm-input gm-textarea" placeholder="Descripción del grupo">${esc(editing?.description || '')}</textarea>
         </div>
-        <div>
-          <label>Color</label>
-          <div class="grupo-color-row" id="gm-colors">
-            ${COLORS.map(c => `<div class="grupo-color-swatch${c === selectedColor ? ' selected' : ''}" data-color="${c}" style="background:${c}" title="${c}"></div>`).join('')}
+        <div class="gm-field">
+          <label class="gm-label">Color de identificación</label>
+          <div class="grupo-color-row" id="gm-colors" role="radiogroup" aria-label="Color del grupo">
+            ${COLORS.map(c => `<div class="grupo-color-swatch${c === selectedColor ? ' selected' : ''}" data-color="${c}" style="background:${c}" role="radio" aria-checked="${c === selectedColor}" tabindex="0"></div>`).join('')}
           </div>
         </div>
-        <div style="display:flex;gap:var(--space-2);justify-content:flex-end;margin-top:var(--space-2)">
-          <button class="btn btn-ghost" id="gm-cancel">Cancelar</button>
-          <button class="btn btn-primary" id="gm-save">${editing ? 'Guardar' : 'Crear'}</button>
-        </div>
+      </div>
+      <div class="gm-footer">
+        <button class="btn btn-ghost" id="gm-cancel">Cancelar</button>
+        <button class="btn btn-primary" id="gm-save">${editing ? 'Guardar cambios' : 'Crear grupo'}</button>
       </div>
     </div>`;
 
   document.body.appendChild(modal);
+  requestAnimationFrame(() => modal.querySelector('#gm-name').focus());
 
   modal.querySelectorAll('.grupo-color-swatch').forEach(sw => {
-    sw.addEventListener('click', () => {
-      modal.querySelectorAll('.grupo-color-swatch').forEach(s => s.classList.remove('selected'));
+    const select = () => {
+      modal.querySelectorAll('.grupo-color-swatch').forEach(s => {
+        s.classList.remove('selected');
+        s.setAttribute('aria-checked', 'false');
+      });
       sw.classList.add('selected');
+      sw.setAttribute('aria-checked', 'true');
       selectedColor = sw.dataset.color;
+    };
+    sw.addEventListener('click', select);
+    sw.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); select(); }
     });
   });
 
@@ -304,10 +351,23 @@ function _openGrupoModal(gid) {
   modal.querySelector('#gm-close').addEventListener('click', close);
   modal.querySelector('#gm-cancel').addEventListener('click', close);
   modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  modal.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 
-  modal.querySelector('#gm-save').addEventListener('click', () => {
-    const name = modal.querySelector('#gm-name').value.trim();
-    if (!name) { modal.querySelector('#gm-name').focus(); return; }
+  const save = () => {
+    const nameEl  = modal.querySelector('#gm-name');
+    const errorEl = modal.querySelector('#gm-name-error');
+    const name    = nameEl.value.trim();
+    if (!name) {
+      nameEl.classList.add('gm-input--error');
+      errorEl.removeAttribute('hidden');
+      nameEl.focus();
+      nameEl.animate(
+        [{ transform:'translateX(0)' },{ transform:'translateX(-5px)' },{ transform:'translateX(5px)' },{ transform:'translateX(-3px)' },{ transform:'translateX(3px)' },{ transform:'translateX(0)' }],
+        { duration: 280, easing: 'ease-out' }
+      );
+      return;
+    }
+    nameEl.classList.remove('gm-input--error');
     const description = modal.querySelector('#gm-desc').value;
     if (editing) {
       updateGrupo(gid, { name, description, color: selectedColor });
@@ -319,59 +379,76 @@ function _openGrupoModal(gid) {
     }
     _renderGrid();
     close();
-  });
+  };
+
+  modal.querySelector('#gm-save').addEventListener('click', save);
+  modal.querySelector('#gm-name').addEventListener('keydown', e => { if (e.key === 'Enter') save(); });
 }
 
 // ── Picker de miembros ───────────────────────────────────────────────────────────
 function _openMemberPicker(gid) {
   const g     = getGrupoById(gid);
   if (!g) return;
+  const t     = _terms();
   const faces = getFaces().filter(f => !f.unnamed);
 
-  const modal = document.createElement('div');
-  modal.className = 'modal-backdrop';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:700;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:blur(4px)';
+  const modal = _createBackdrop(700);
 
   const rows = faces.map(f => {
-    const checked  = g.memberIds.includes(f.id);
+    const checked   = g.memberIds.includes(f.id);
+    const otherG    = getGrupoForFace(f.id);
+    const inOther   = otherG && otherG.id !== gid;
+    const badge     = inOther
+      ? `<span class="grupo-picker-badge" title="Se moverá desde ${esc(otherG.name)}">en ${esc(otherG.name)}</span>`
+      : '';
     return `
-      <label class="grupo-picker-row">
+      <label class="grupo-picker-row${inOther && !checked ? ' grupo-picker-row--other' : ''}">
         <input type="checkbox" data-pid="${f.id}" ${checked ? 'checked' : ''}>
         <img class="grupo-picker-av" src="${esc(f.selfieUrl)}" alt="">
         <span class="grupo-picker-name">${esc(f.displayName)}</span>
+        ${badge}
       </label>`;
   }).join('');
 
   modal.innerHTML = `
-    <div class="modal-box" style="width:min(400px,92vw);background:var(--surface-0);border-radius:var(--radius-lg);padding:var(--space-5);border:1px solid var(--border)">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3)">
-        <strong style="font-size:var(--text-base)">${esc(_terms().addBtn)}</strong>
-        <button class="icon-btn" id="mp-close"><span class="msi sm">close</span></button>
+    <div class="gm-box gm-box--md">
+      <div class="gm-header">
+        <strong class="gm-title">${esc(t.addBtn)}</strong>
+        <button class="icon-btn" id="mp-close" aria-label="Cerrar"><span class="msi sm">close</span></button>
       </div>
-      <input class="grupo-picker-search" id="mp-search" type="text" placeholder="Buscar…">
-      <div class="grupo-picker-list" id="mp-list">${rows}</div>
-      <div style="display:flex;justify-content:flex-end;gap:var(--space-2);margin-top:var(--space-3)">
+      <input class="grupo-picker-search" id="mp-search" type="text" placeholder="Buscar por nombre…" autocomplete="off">
+      ${faces.length
+        ? `<div class="grupo-picker-list" id="mp-list">${rows}</div>`
+        : `<div class="grupo-picker-empty">
+            <span class="msi">person_off</span>
+            <p>No hay personas registradas aún.</p>
+          </div>`
+      }
+      <div class="gm-footer">
         <button class="btn btn-ghost" id="mp-cancel">Cancelar</button>
         <button class="btn btn-primary" id="mp-apply">Aplicar</button>
       </div>
     </div>`;
 
   document.body.appendChild(modal);
+  requestAnimationFrame(() => modal.querySelector('#mp-search').focus());
 
-  const list   = modal.querySelector('#mp-list');
-  const search = modal.querySelector('#mp-search');
-  search.addEventListener('input', () => {
-    const q = search.value.toLowerCase();
-    list.querySelectorAll('.grupo-picker-row').forEach(row => {
-      const name = row.querySelector('.grupo-picker-name').textContent.toLowerCase();
-      row.style.display = name.includes(q) ? '' : 'none';
+  const list = modal.querySelector('#mp-list');
+  if (list) {
+    modal.querySelector('#mp-search').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      list.querySelectorAll('.grupo-picker-row').forEach(row => {
+        const name = row.querySelector('.grupo-picker-name').textContent.toLowerCase();
+        row.style.display = name.includes(q) ? '' : 'none';
+      });
     });
-  });
+  }
 
   const close = () => modal.remove();
   modal.querySelector('#mp-close').addEventListener('click', close);
   modal.querySelector('#mp-cancel').addEventListener('click', close);
   modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  modal.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 
   modal.querySelector('#mp-apply').addEventListener('click', () => {
     const checked = [...modal.querySelectorAll('input[data-pid]:checked')].map(i => i.dataset.pid);
@@ -385,6 +462,14 @@ function _openMemberPicker(gid) {
     showToast('Miembros actualizados');
     close();
   });
+}
+
+// ── Helper: crea el backdrop del modal ──────────────────────────────────────────
+function _createBackdrop(zIndex = 600) {
+  const el = document.createElement('div');
+  el.className = 'gm-backdrop';
+  el.style.zIndex = zIndex;
+  return el;
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────────
