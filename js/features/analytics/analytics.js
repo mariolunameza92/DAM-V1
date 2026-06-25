@@ -10,6 +10,7 @@ import {
   buildPortalInventory, buildEngagementSection, buildSecuritySection, filterPortales,
 } from './analytics-portales.js';
 import { buildConsentTab } from './analytics-consentimientos.js';
+import { sectionLabel } from './analytics-helpers.js';
 
 let _tab    = 'dam'; // 'dam' | 'portales' | 'consentimientos'
 let _period = '30d';
@@ -19,8 +20,8 @@ function _buildHTML() {
   const total = totalFiles();
 
   const tabs = `<div class="tabs">
-    <div class="tab${_tab === 'dam' ? ' active' : ''}" data-tab="dam">DAM — Assets</div>
-    <div class="tab${_tab === 'portales' ? ' active' : ''}" data-tab="portales">Portales</div>
+    <div class="tab${_tab === 'dam'             ? ' active' : ''}" data-tab="dam">DAM — Assets</div>
+    <div class="tab${_tab === 'portales'        ? ' active' : ''}" data-tab="portales">Portales</div>
     <div class="tab${_tab === 'consentimientos' ? ' active' : ''}" data-tab="consentimientos">Consentimientos</div>
   </div>`;
 
@@ -29,32 +30,32 @@ function _buildHTML() {
   if (_tab === 'dam') {
     content = `
       ${filterDAM(_period)}
-      <div class="an-section-lbl no-top"><span class="msi">ar_on_you</span>Face IDs — reconocimiento facial</div>
+      ${sectionLabel('ar_on_you', 'Face IDs — reconocimiento facial', true)}
       ${buildFaceHero(faces)}
-      <div class="an-section-lbl"><span class="msi">timeline</span>KPIs del período</div>
+      ${sectionLabel('timeline', 'KPIs del período')}
       ${buildKPIs(total, _period)}
-      <div class="an-section-lbl"><span class="msi">database</span>Storage y volumen</div>
+      ${sectionLabel('database', 'Storage y volumen')}
       ${buildStorageSection()}
-      <div class="an-section-lbl"><span class="msi">account_tree</span>Estructura y contenido</div>
+      ${sectionLabel('account_tree', 'Estructura y contenido')}
       ${buildStructureSection()}
-      <div class="an-section-lbl"><span class="msi">group</span>Actividad de usuarios</div>
+      ${sectionLabel('group', 'Actividad de usuarios')}
       ${buildActivitySection()}
-      <div class="an-section-lbl"><span class="msi">memory</span>Calidad y procesamiento</div>
+      ${sectionLabel('memory', 'Calidad y procesamiento')}
       ${buildQualitySection()}
-      <div class="an-section-lbl"><span class="msi">grid_view</span>Detalle Face IDs</div>
+      ${sectionLabel('grid_view', 'Detalle Face IDs')}
       ${buildFaceDetailSection(faces)}`;
   } else if (_tab === 'portales') {
     content = `
       ${filterPortales(_period)}
-      <div class="an-section-lbl no-top"><span class="msi">captive_portal</span>Inventario de portales</div>
+      ${sectionLabel('captive_portal', 'Inventario de portales', true)}
       ${buildPortalInventory()}
-      <div class="an-section-lbl"><span class="msi">insights</span>Engagement</div>
+      ${sectionLabel('insights', 'Engagement')}
       ${buildEngagementSection()}
-      <div class="an-section-lbl"><span class="msi">lock</span>Acceso y seguridad</div>
+      ${sectionLabel('lock', 'Acceso y seguridad')}
       ${buildSecuritySection()}`;
   } else {
     content = `
-      <div class="an-section-lbl no-top"><span class="msi">verified_user</span>Consentimientos — resumen global</div>
+      ${sectionLabel('verified_user', 'Consentimientos — resumen global', true)}
       ${buildConsentTab()}`;
   }
 

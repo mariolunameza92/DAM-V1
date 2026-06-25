@@ -5,9 +5,10 @@
 import { M, RAMP, sparkHTML, fmt } from './analytics-data.js';
 import { svgDonut, svgLine, hbarListHTML } from './analytics-charts.js';
 import { alertItem } from '../../components/atoms/alert-item.js';
+import { cardHead, statRow, statRows, legendItem, gaugeBar, bigNumber, anBadge } from './analytics-helpers.js';
 
 export function buildFaceHero(faces) {
-  const maxP   = Math.max(...faces.top.map(f => f.photos), 1);
+  const maxP      = Math.max(...faces.top.map(f => f.photos), 1);
   const gridItems = faces.top.map(f => {
     const av = f.selfieUrl
       ? `<img class="an-fhg-avatar" src="${f.selfieUrl}" alt="" loading="lazy">`
@@ -62,10 +63,10 @@ export function buildKPIs(total, period) {
   const mult = { '7d':[.05,47,23], '30d':[.18,183,94], '3m':[.62,521,276], 'all':[1,847,418] };
   const [um, pv, dl] = mult[period] || mult['30d'];
   const kpis = [
-    { key:'total',       cls:'kc-blue',   icon:'folder_open',    label:'Archivos totales',   val: total,                    delta:'+12%', up:true  },
-    { key:'uploads',     cls:'kc-green',  icon:'cloud_upload',   label:'Subidas este mes',    val: Math.round(total * um),   delta:'+8%',  up:true  },
-    { key:'portalViews', cls:'kc-amber',  icon:'captive_portal', label:'Vistas portales',     val: pv,                       delta:'+24%', up:true  },
-    { key:'downloads',   cls:'kc-rose',   icon:'download',       label:'Descargas',           val: dl,                       delta:'+5%',  up:true  },
+    { key:'total',       cls:'kc-blue',  icon:'folder_open',    label:'Archivos totales',  val: total,                  delta:'+12%', up:true },
+    { key:'uploads',     cls:'kc-green', icon:'cloud_upload',   label:'Subidas este mes',  val: Math.round(total * um), delta:'+8%',  up:true },
+    { key:'portalViews', cls:'kc-amber', icon:'captive_portal', label:'Vistas portales',   val: pv,                     delta:'+24%', up:true },
+    { key:'downloads',   cls:'kc-rose',  icon:'download',       label:'Descargas',         val: dl,                     delta:'+5%',  up:true },
   ];
   return `<div class="an-kpi-grid">${kpis.map(k => `
     <div class="an-kpi ${k.cls}">
@@ -80,36 +81,23 @@ export function buildKPIs(total, period) {
 }
 
 export function buildStorageSection() {
-  const s = M.storage;
+  const s       = M.storage;
   const usedPct = (s.usedTB / s.totalTB * 100).toFixed(0);
   const freePct = (100 - +usedPct).toFixed(0);
+  const growthDiff = (s.growthData[s.growthData.length - 1] - s.growthData[0]).toFixed(2);
 
-  const donutSegs = [
+  const donutSegs  = [
     { value: s.usedTB,             color: 'var(--viz-1)' },
     { value: s.totalTB - s.usedTB, color: 'var(--viz-6)' },
   ];
-
-  const typeLegend = s.types.map(t =>
-    `<div class="an-leg-item">
-      <div class="an-leg-dot" style="background:${t.color}"></div>
-      <span class="an-leg-name">${t.ext}</span>
-      <span class="an-leg-val">${t.gb} TB</span>
-      <span class="an-leg-pct">${t.pct}%</span>
-    </div>`
-  ).join('');
-
-  const growthSVG = svgLine(s.growthData, s.growthLabels, { w: 320, h: 90, color: 'var(--viz-2)' });
-
-  const typeSegs = s.types.map(t => ({ value: t.pct, color: t.color }));
-  const typeDonut = svgDonut(typeSegs, { size: 100, sw: 14 });
+  const typeLegend = s.types.map(t => legendItem(t.color, t.ext, `${t.gb} TB`, `${t.pct}%`)).join('');
+  const growthSVG  = svgLine(s.growthData, s.growthLabels, { w: 320, h: 90, color: 'var(--viz-2)' });
+  const typeDonut  = svgDonut(s.types.map(t => ({ value: t.pct, color: t.color })), { size: 100, sw: 14 });
 
   return `
     <div class="an-grid-2">
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">database</span>Almacenamiento</span>
-          <span class="an-card-badge">${usedPct}% usado</span>
-        </div>
+        ${cardHead('database', 'Almacenamiento', `${usedPct}% usado`)}
         <div class="an-donut-wrap">
           <div class="an-donut-center">
             ${svgDonut(donutSegs, { size: 110, sw: 18 })}
@@ -119,47 +107,25 @@ export function buildStorageSection() {
             </div>
           </div>
           <div style="flex:1;display:flex;flex-direction:column;gap:var(--space-3)">
-            <div class="an-stat-rows">
-              <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi">storage</span>Usado</span>
-                <div class="an-stat-row-right"><span class="an-stat-row-val">${s.usedTB} TB</span><span class="an-stat-row-sub">${usedPct}%</span></div>
-              </div>
-              <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi">cloud</span>Disponible</span>
-                <div class="an-stat-row-right"><span class="an-stat-row-val">${(s.totalTB - s.usedTB).toFixed(1)} TB</span><span class="an-stat-row-sub">${freePct}%</span></div>
-              </div>
-              <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi">schedule</span>Proyección</span>
-                <div class="an-stat-row-right"><span class="an-stat-row-val">${s.projectionDate}</span><span class="an-stat-row-sub">al ritmo actual</span></div>
-              </div>
-              <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi">description</span>Promedio/archivo</span>
-                <div class="an-stat-row-right"><span class="an-stat-row-val">${s.avgFileMB} MB</span></div>
-              </div>
-            </div>
+            ${statRows(
+              statRow('storage',     'Usado',             `${s.usedTB} TB`,                          usedPct + '%') +
+              statRow('cloud',       'Disponible',        `${(s.totalTB - s.usedTB).toFixed(1)} TB`, freePct + '%') +
+              statRow('schedule',    'Proyección',        s.projectionDate,                           'al ritmo actual') +
+              statRow('description', 'Promedio/archivo',  `${s.avgFileMB} MB`)
+            )}
           </div>
         </div>
       </div>
 
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">show_chart</span>Crecimiento acumulado</span>
-          <span class="an-card-badge">últimos 9 meses</span>
-        </div>
-        <div class="an-big">
-          <span class="an-big-val">+${(s.growthData[s.growthData.length-1] - s.growthData[0]).toFixed(2)} TB</span>
-          <span class="an-big-lbl">almacenamiento añadido en el período</span>
-          <span class="an-badge warn">Al ritmo actual: +0.3 TB/mes</span>
-        </div>
+        ${cardHead('show_chart', 'Crecimiento acumulado', 'últimos 9 meses')}
+        ${bigNumber(`+${growthDiff} TB`, 'almacenamiento añadido en el período', anBadge('warn', 'Al ritmo actual: +0.3 TB/mes'))}
         <div class="an-line-wrap">${growthSVG}</div>
       </div>
     </div>
 
     <div class="an-card an-mb-4">
-      <div class="an-card-head">
-        <span class="an-card-title"><span class="msi">photo_library</span>Distribución por tipo</span>
-        <span class="an-card-badge">${s.types.length} formatos</span>
-      </div>
+      ${cardHead('photo_library', 'Distribución por tipo', `${s.types.length} formatos`)}
       <div class="an-donut-wrap">
         <div class="an-donut-center">
           ${typeDonut}
@@ -173,40 +139,27 @@ export function buildStorageSection() {
 }
 
 export function buildStructureSection() {
-  const s = M.structure;
-  const maxGB = Math.max(...s.heavyFolders.map(f => f.gb));
-
+  const s      = M.structure;
+  const maxGB  = Math.max(...s.heavyFolders.map(f => f.gb));
   const heavyItems = s.heavyFolders.map(f => ({ name: f.name, val: f.gb, label: `${f.gb} GB` }));
   const heavyList  = hbarListHTML(heavyItems, maxGB, (it, i) => RAMP[i] || 'var(--text-secondary)');
-
-  const nestDonut = svgDonut(s.nesting.map(n => ({ value: n.pct, color: n.color })), { size: 90, sw: 13 });
-  const nestLegend = s.nesting.map(n =>
-    `<div class="an-leg-item">
-      <div class="an-leg-dot" style="background:${n.color}"></div>
-      <span class="an-leg-name">${n.label}</span>
-      <span class="an-leg-val">${n.pct}%</span>
-    </div>`
-  ).join('');
+  const nestDonut  = svgDonut(s.nesting.map(n => ({ value: n.pct, color: n.color })), { size: 90, sw: 13 });
+  const nestLegend = s.nesting.map(n => legendItem(n.color, n.label, `${n.pct}%`)).join('');
 
   return `
     <div class="an-grid-2">
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">folder_open</span>Carpetas más pesadas</span>
-          <span class="an-card-badge">por GB</span>
-        </div>
+        ${cardHead('folder_open', 'Carpetas más pesadas', 'por GB')}
         ${heavyList}
       </div>
 
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">account_tree</span>Calidad de estructura</span>
-        </div>
+        ${cardHead('account_tree', 'Calidad de estructura')}
         <div class="an-alerts">
           ${alertItem('content_copy', 'Archivos duplicados', 'Detectados por reconocimiento facial + hash', s.duplicates)}
-          ${alertItem('cloud_off', 'Assets huérfanos', 'Nunca descargados ni vinculados', s.orphans)}
-          ${alertItem('label_off', 'Sin tags', 'Calidad de catalogación baja', s.noTags)}
-          ${alertItem('info', 'Sin metadata', 'EXIF o campos vacíos', s.noMeta)}
+          ${alertItem('cloud_off',    'Assets huérfanos',    'Nunca descargados ni vinculados',             s.orphans)}
+          ${alertItem('label_off',    'Sin tags',            'Calidad de catalogación baja',                s.noTags)}
+          ${alertItem('info',         'Sin metadata',        'EXIF o campos vacíos',                        s.noMeta)}
         </div>
         <div style="margin-top:var(--space-5)">
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:var(--space-3);font-weight:500">Profundidad de carpetas</div>
@@ -220,24 +173,23 @@ export function buildStructureSection() {
 }
 
 export function buildActivitySection() {
-  const a = M.activity;
+  const a          = M.activity;
   const totalUsers = a.active + a.inactive + a.guests;
-  const userSegs = [
+  const activePct  = ((a.active / totalUsers) * 100).toFixed(0);
+  const userSegs   = [
     { value: a.active,   color: 'var(--viz-1)' },
     { value: a.inactive, color: 'var(--viz-4)' },
     { value: a.guests,   color: 'var(--viz-6)' },
   ];
-  const maxUpl = Math.max(...a.topUploaders.map(u => u.uploads));
-  const maxAct = Math.max(...a.actions.map(ac => ac.n));
 
+  const maxUpl   = Math.max(...a.topUploaders.map(u => u.uploads));
+  const maxAct   = Math.max(...a.actions.map(ac => ac.n));
   const uplItems = a.topUploaders.map(u => ({ name: u.name, val: u.uploads, label: fmt(u.uploads) }));
   const uplList  = hbarListHTML(uplItems, maxUpl, (it, i) => RAMP[i] || 'var(--text-muted)');
-
   const actItems = a.actions.map(ac => ({ name: ac.label, val: ac.n, label: fmt(ac.n), color: ac.color }));
   const actList  = hbarListHTML(actItems, maxAct, it => it.color);
 
-  // Heatmap
-  const heatMax = Math.max(...a.heatData.flat());
+  const heatMax  = Math.max(...a.heatData.flat());
   const heatHdrs = a.heatHours.map(h => `<span class="an-heatmap-hdr">${h}</span>`).join('');
   const heatCols = a.heatHours.length;
   const heatRows = a.heatDays.map((day, di) => {
@@ -252,10 +204,7 @@ export function buildActivitySection() {
   return `
     <div class="an-grid-3">
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">group</span>Usuarios</span>
-          <span class="an-card-badge">${totalUsers} total</span>
-        </div>
+        ${cardHead('group', 'Usuarios', `${totalUsers} total`)}
         <div class="an-donut-wrap">
           <div class="an-donut-center">
             ${svgDonut(userSegs, { size: 100, sw: 14 })}
@@ -264,41 +213,29 @@ export function buildActivitySection() {
             </div>
           </div>
           <div class="an-donut-legend">
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--text-strong)"></div><span class="an-leg-name">Activos</span><span class="an-leg-val">${a.active}</span></div>
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--text-faint)"></div><span class="an-leg-name">Inactivos</span><span class="an-leg-val">${a.inactive}</span></div>
-            <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--surface-neutral)"></div><span class="an-leg-name">Invitados</span><span class="an-leg-val">${a.guests}</span></div>
+            ${legendItem('var(--text-strong)',     'Activos',   a.active)}
+            ${legendItem('var(--text-faint)',      'Inactivos', a.inactive)}
+            ${legendItem('var(--surface-neutral)', 'Invitados', a.guests)}
           </div>
         </div>
         <div style="margin-top:var(--space-4)">
-          <div class="an-gauge-wrap">
-            <div class="an-gauge-labels"><span class="an-gauge-lbl">Actividad</span><span class="an-gauge-lbl">${((a.active/totalUsers)*100).toFixed(0)}% activos</span></div>
-            <div class="an-gauge"><div class="an-gauge-fill" style="width:${((a.active/totalUsers)*100).toFixed(0)}%"></div></div>
-          </div>
+          ${gaugeBar('Actividad', `${activePct}% activos`, activePct)}
         </div>
       </div>
 
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">cloud_upload</span>Top subidas</span>
-          <span class="an-card-badge">por usuario</span>
-        </div>
+        ${cardHead('cloud_upload', 'Top subidas', 'por usuario')}
         ${uplList}
       </div>
 
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">bar_chart</span>Acciones</span>
-          <span class="an-card-badge">por tipo</span>
-        </div>
+        ${cardHead('bar_chart', 'Acciones', 'por tipo')}
         ${actList}
       </div>
     </div>
 
     <div class="an-card an-mb-4">
-      <div class="an-card-head">
-        <span class="an-card-title"><span class="msi">calendar_view_week</span>Pico de actividad</span>
-        <span class="an-card-badge">hora × día</span>
-      </div>
+      ${cardHead('calendar_view_week', 'Pico de actividad', 'hora × día')}
       <div class="an-heatmap-outer">
         <div class="an-heatmap-hdrs">${heatHdrs}</div>
         <div class="an-heatmap-body">${heatRows}</div>
@@ -314,24 +251,21 @@ export function buildActivitySection() {
 }
 
 export function buildQualitySection() {
-  const q = M.quality;
-  const total = q.processed + q.pending;
+  const q       = M.quality;
+  const total   = q.processed + q.pending;
+  const procPct = ((q.processed / total) * 100).toFixed(0);
   const procSegs = [
     { value: q.processed, color: 'var(--text-title)' },
     { value: q.pending,   color: 'var(--border-subtle)' },
   ];
   const matchLine = svgLine([72, 75, 78, 80, 83, 85, 87.4], null, { w: 200, h: 60, color: 'var(--text-body)', showDots: false });
-  const delRows = q.deletions.map(d =>
-    alertItem('delete_forever', d.folder, d.date, `${d.n} arch.`)
-  ).join('');
+  const totalDel  = q.deletions.reduce((s, d) => s + d.n, 0);
+  const delRows   = q.deletions.map(d => alertItem('delete_forever', d.folder, d.date, `${d.n} arch.`)).join('');
 
   return `
     <div class="an-grid-2">
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">ar_on_you</span>Procesamiento facial</span>
-          <span class="an-card-badge">${((q.processed/total)*100).toFixed(0)}% completado</span>
-        </div>
+        ${cardHead('ar_on_you', 'Procesamiento facial', `${procPct}% completado`)}
         <div class="an-donut-wrap">
           <div class="an-donut-center">
             ${svgDonut(procSegs, { size: 110, sw: 18 })}
@@ -341,16 +275,10 @@ export function buildQualitySection() {
             </div>
           </div>
           <div style="flex:1;display:flex;flex-direction:column;gap:var(--space-3)">
-            <div class="an-stat-rows">
-              <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi">check_circle</span>Procesados</span>
-                <div class="an-stat-row-right"><span class="an-stat-row-val">${fmt(q.processed)}</span></div>
-              </div>
-              <div class="an-stat-row">
-                <span class="an-stat-row-lbl"><span class="msi">hourglass_empty</span>Pendientes</span>
-                <div class="an-stat-row-right"><span class="an-stat-row-val">${fmt(q.pending)}</span></div>
-              </div>
-            </div>
+            ${statRows(
+              statRow('check_circle',    'Procesados', fmt(q.processed)) +
+              statRow('hourglass_empty', 'Pendientes', fmt(q.pending))
+            )}
             <div>
               <div style="display:flex;justify-content:space-between;margin-bottom:5px">
                 <span style="font-size:10px;color:var(--text-muted)">Tasa de match facial</span>
@@ -363,12 +291,9 @@ export function buildQualitySection() {
       </div>
 
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">delete_sweep</span>Eliminaciones recientes</span>
-          <span class="an-card-badge">monitoreo</span>
-        </div>
+        ${cardHead('delete_sweep', 'Eliminaciones recientes', 'monitoreo')}
         <div class="an-alerts">${delRows}</div>
-        <div class="an-badge danger" style="margin-top:var(--space-4)"><span class="msi">warning</span> ${q.deletions.reduce((s,d)=>s+d.n,0)} archivos eliminados este mes</div>
+        ${anBadge('danger', `${totalDel} archivos eliminados este mes`, 'warning', 'margin-top:var(--space-4)')}
       </div>
     </div>`;
 }
@@ -379,13 +304,10 @@ export function buildFaceDetailSection(faces) {
       ? `<img class="an-fdi-avatar" src="${f.selfieUrl}" alt="" loading="lazy">`
       : `<div class="an-fdi-ph"><span class="msi">person</span></div>`;
     const nm = f.unnamed ? 'Sin identificar' : f.displayName;
-    return `<div class="an-fdi">${av}<div class="an-fdi-info"><div class="an-fdi-name${f.unnamed?' un':''}">${nm}</div><span class="an-fdi-count">${f.photos}</span><span class="an-fdi-sub">${f.photos===1?'foto':'fotos'}</span></div></div>`;
+    return `<div class="an-fdi">${av}<div class="an-fdi-info"><div class="an-fdi-name${f.unnamed ? ' un' : ''}">${nm}</div><span class="an-fdi-count">${f.photos}</span><span class="an-fdi-sub">${f.photos === 1 ? 'foto' : 'fotos'}</span></div></div>`;
   }).join('');
   return `<div class="an-card an-mb-4">
-    <div class="an-card-head">
-      <span class="an-card-title"><span class="msi">grid_view</span>Detalle por Face ID</span>
-      <span class="an-card-badge">${faces.all.length} personas</span>
-    </div>
+    ${cardHead('grid_view', 'Detalle por Face ID', `${faces.all.length} personas`)}
     <div class="an-faces-detail-grid">${items}</div>
   </div>`;
 }

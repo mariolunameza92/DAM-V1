@@ -6,6 +6,7 @@ import { getAllFaceConsents } from '../faceids/faces-consent.js';
 import { getFaces } from '../../faces.js';
 import { svgDonut } from './analytics-charts.js';
 import { alertItem } from '../../components/atoms/alert-item.js';
+import { cardHead, legendItem, statRow, statRows, sectionLabel } from './analytics-helpers.js';
 
 export function buildConsentTab() {
   const stats     = getStats();
@@ -45,10 +46,7 @@ export function buildConsentTab() {
 
   const progressCard = `
     <div class="an-card">
-      <div class="an-card-head">
-        <span class="an-card-title"><span class="msi">donut_large</span>Tasa de firma</span>
-        <span class="an-card-badge">${pct}% firmados</span>
-      </div>
+      ${cardHead('donut_large', 'Tasa de firma', `${pct}% firmados`)}
       <div class="an-donut-wrap">
         <div class="an-donut-center">
           ${svgDonut(donutSegs, { size: 110, sw: 18 })}
@@ -58,9 +56,9 @@ export function buildConsentTab() {
           </div>
         </div>
         <div class="an-donut-legend">
-          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--accent-soft)"></div><span class="an-leg-name">Firmados</span><span class="an-leg-val">${stats.signed}</span></div>
-          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--text-muted)"></div><span class="an-leg-name">Pendientes</span><span class="an-leg-val">${stats.pending}</span></div>
-          <div class="an-leg-item"><div class="an-leg-dot" style="background:var(--text-faint)"></div><span class="an-leg-name">Revocados</span><span class="an-leg-val">${stats.revoked}</span></div>
+          ${legendItem('var(--accent-soft)', 'Firmados',   stats.signed)}
+          ${legendItem('var(--text-muted)',  'Pendientes', stats.pending)}
+          ${legendItem('var(--text-faint)',  'Revocados',  stats.revoked)}
         </div>
       </div>
     </div>`;
@@ -83,18 +81,15 @@ export function buildConsentTab() {
         ].filter(s => s.value > 0)
       : [{ value: 1, color: 'var(--border-subtle)' }];
     return `<div class="an-card">
-      <div class="an-card-head">
-        <span class="an-card-title"><span class="msi">description</span>${t.title}</span>
-        <span class="an-card-badge" style="color:${statusColor}">${statusLabel} v${t.version}</span>
-      </div>
+      ${cardHead('description', t.title, `${statusLabel} v${t.version}`, `color:${statusColor}`)}
       <div class="an-donut-wrap" style="gap:20px">
         <div class="an-donut-center">${svgDonut(tplSegs, { size: 90, sw: 14 })}<div class="an-donut-lbl-inner"><span class="an-donut-lbl-val" style="font-size:14px">${tPct}%</span></div></div>
         <div style="flex:1;min-width:0">
-          <div class="an-stat-rows">
-            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi">verified_user</span>Firmados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-body)">${t.signedCount}</span></div></div>
-            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi">schedule</span>Pendientes</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-muted)">${t.pendingCount}</span></div></div>
-            <div class="an-stat-row"><span class="an-stat-row-lbl"><span class="msi">gpp_bad</span>Revocados</span><div class="an-stat-row-right"><span class="an-stat-row-val" style="color:var(--text-faint)">${t.revokedCount}</span></div></div>
-          </div>
+          ${statRows(
+            statRow('verified_user', 'Firmados',   t.signedCount,  null, 'var(--text-body)') +
+            statRow('schedule',      'Pendientes', t.pendingCount, null, 'var(--text-muted)') +
+            statRow('gpp_bad',       'Revocados',  t.revokedCount, null, 'var(--text-faint)')
+          )}
           <div style="margin-top:8px;display:flex;gap:6px;align-items:center;color:var(--text-muted);font-size:11px">
             <span>Módulos:</span>${moduleIcons || '<span style="font-size:11px;color:var(--text-faint)">Ninguno</span>'}
           </div>
@@ -107,7 +102,7 @@ export function buildConsentTab() {
   const consentFaces = faces.map(f => {
     const c = consents[f.id];
     if (!c) return null;
-    const state = c.state;
+    const state      = c.state;
     const badgeColor = state === 'signed' ? 'var(--text-body)' : 'var(--text-muted)';
     const badgeLabel = state === 'signed' ? 'Firmado' : 'Pendiente';
     const badgeIcon  = state === 'signed' ? 'verified' : 'schedule';
@@ -120,31 +115,26 @@ export function buildConsentTab() {
 
   const facesCard = `
     <div class="an-card an-mb-4">
-      <div class="an-card-head">
-        <span class="an-card-title"><span class="msi">ar_on_you</span>Detalle por Face ID</span>
-        <span class="an-card-badge">${Object.keys(consents).length} con registro</span>
-      </div>
+      ${cardHead('ar_on_you', 'Detalle por Face ID', `${Object.keys(consents).length} con registro`)}
       <div class="an-cf-grid">${consentFaces || '<div style="font-size:13px;color:var(--text-faint);padding:16px">Sin registros de consentimiento.</div>'}</div>
     </div>`;
 
   return `
     ${kpiHTML}
-    <div class="an-section-lbl"><span class="msi">donut_large</span>Estado global</div>
+    ${sectionLabel('donut_large', 'Estado global')}
     <div class="an-grid-2" style="align-items:start">
       ${progressCard}
       <div class="an-card">
-        <div class="an-card-head">
-          <span class="an-card-title"><span class="msi">info</span>Sobre los datos</span>
-        </div>
+        ${cardHead('info', 'Sobre los datos')}
         <div class="an-alerts">
           ${alertItem('description', 'Plantillas activas', 'Plantillas publicadas con firma habilitada', templates.filter(t => t.status === 'active').length)}
-          ${alertItem('edit_note', 'Borradores', 'Plantillas pendientes de publicar', templates.filter(t => t.status === 'draft').length)}
-          ${alertItem('gpp_bad', 'Revocaciones', 'Consentimientos revocados — auto-blacklist activo', stats.revoked)}
+          ${alertItem('edit_note',   'Borradores',         'Plantillas pendientes de publicar',          templates.filter(t => t.status === 'draft').length)}
+          ${alertItem('gpp_bad',     'Revocaciones',       'Consentimientos revocados — auto-blacklist activo', stats.revoked)}
         </div>
       </div>
     </div>
-    <div class="an-section-lbl"><span class="msi">description</span>Por plantilla</div>
+    ${sectionLabel('description', 'Por plantilla')}
     <div class="an-grid-2" style="align-items:start">${tplCards}</div>
-    <div class="an-section-lbl"><span class="msi">ar_on_you</span>Por persona</div>
+    ${sectionLabel('ar_on_you', 'Por persona')}
     ${facesCard}`;
 }
