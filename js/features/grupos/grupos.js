@@ -140,8 +140,8 @@ function _renderGrid() {
 
 // ── Menú contextual de tarjeta ───────────────────────────────────────────────────
 function _openCardMenu(gid, anchor) {
-  const existing = document.getElementById('grupo-ctx-menu');
-  if (existing) existing.remove();
+  // Cierra cualquier ctx-menu abierto (incluyendo los de otras secciones)
+  document.querySelectorAll('.ctx-menu').forEach(m => m.remove());
 
   const menu = document.createElement('div');
   menu.id = 'grupo-ctx-menu';
@@ -165,9 +165,7 @@ function _openCardMenu(gid, anchor) {
 
 // ── Modal de confirmación de eliminación ─────────────────────────────────────────
 function _openDeleteModal(gid) {
-  console.log('[grupos] _openDeleteModal called, gid:', gid);
   const g = getGrupoById(gid);
-  console.log('[grupos] grupo found:', !!g, g?.name);
   if (!g) return;
 
   const modal = _createBackdrop(550);

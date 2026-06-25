@@ -500,12 +500,12 @@ function _buildStructureSection() {
             <span class="an-alert-val">${s.duplicates}</span>
           </div>
           <div class="an-alert-item">
-            <div class="an-alert-icon info"><span class="msi">cloud_off</span></div>
+            <div class="an-alert-icon warn"><span class="msi">cloud_off</span></div>
             <div class="an-alert-body"><div class="an-alert-title">Assets huérfanos</div><div class="an-alert-sub">Nunca descargados ni vinculados</div></div>
             <span class="an-alert-val">${s.orphans}</span>
           </div>
           <div class="an-alert-item">
-            <div class="an-alert-icon danger"><span class="msi">label_off</span></div>
+            <div class="an-alert-icon warn"><span class="msi">label_off</span></div>
             <div class="an-alert-body"><div class="an-alert-title">Sin tags</div><div class="an-alert-sub">Calidad de catalogación baja</div></div>
             <span class="an-alert-val">${s.noTags}</span>
           </div>
