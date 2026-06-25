@@ -54,6 +54,9 @@
 /* NAV — suprime márgenes intrínsecos del átomo; el gap del dlg toma el control */
 .dlg .step-bar { margin: 0; }
 
+/* STEP CONTAINER — flex column para que el gap gestione todo el espaciado interno */
+.dlg-step { display: flex; flex-direction: column; gap: var(--space-3); }
+
 /* HEADER: icon + title row (CRUD dialogs) */
 .dlg-head { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--text-strong); }
 

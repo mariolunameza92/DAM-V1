@@ -481,11 +481,11 @@
   <div class="dlg">
     <div class="dlg-close" onclick="closeModal()"><span class="msi sm">close</span></div>
 
-    <div id="step-1">
-      <span class="dlg-title">Crear Portal</span>
+    <div id="step-1" class="dlg-step">
       <div class="step-bar">
         <div class="step-dot active" id="d1-1"></div><div class="step-dot" id="d1-2"></div><div class="step-dot" id="d1-3"></div><div class="step-dot" id="d1-4"></div>
       </div>
+      <span class="dlg-title">Crear Portal</span>
       <div class="portal-type-toggle">
         <button class="portal-type-btn active" id="type-unit" onclick="selectPortalType('unit')"><span class="msi xs">captive_portal</span>Portal</button>
         <button class="portal-type-btn" id="type-master" onclick="selectPortalType('master')"><span class="msi xs">hub</span>Master</button>
@@ -511,12 +511,12 @@
       </div>
     </div>
 
-    <div id="step-2" style="display:none">
-      <div style="margin-bottom:4px"><span class="dlg-title">Crear Portal</span></div>
-      <span class="dlg-sub">Configuración del tema</span>
+    <div id="step-2" class="dlg-step" style="display:none">
       <div class="step-bar">
         <div class="step-dot" id="d2-1"></div><div class="step-dot active" id="d2-2"></div><div class="step-dot" id="d2-3"></div><div class="step-dot" id="d2-4"></div>
       </div>
+      <span class="dlg-title">Crear Portal</span>
+      <span class="dlg-sub">Configuración del tema</span>
       <div class="theme-rows">
         <div class="t-row">
           <div class="t-info"><span class="t-label">Logo</span><span class="t-hint">En formato SVG o PNG</span></div>
@@ -600,12 +600,12 @@
       </div>
     </div>
 
-    <div id="step-3" style="display:none">
-      <div style="margin-bottom:4px"><span class="dlg-title">Crear Portal</span></div>
-      <span class="dlg-sub">Configuración de accesos</span>
+    <div id="step-3" class="dlg-step" style="display:none">
       <div class="step-bar">
         <div class="step-dot" id="d3-1"></div><div class="step-dot" id="d3-2"></div><div class="step-dot active" id="d3-3"></div><div class="step-dot" id="d3-4"></div>
       </div>
+      <span class="dlg-title">Crear Portal</span>
+      <span class="dlg-sub">Configuración de accesos</span>
       <div class="radio-group">
         <label class="radio-item" onclick="selectAccess('public')">
           <div class="radio-circle sel" id="rc-pub"></div>
@@ -627,12 +627,12 @@
       </div>
     </div>
 
-    <div id="step-4" style="display:none">
-      <div style="margin-bottom:4px"><span class="dlg-title">Crear Portal</span></div>
-      <span class="dlg-sub">Compartir</span>
+    <div id="step-4" class="dlg-step" style="display:none">
       <div class="step-bar">
         <div class="step-dot" id="d4-1"></div><div class="step-dot" id="d4-2"></div><div class="step-dot" id="d4-3"></div><div class="step-dot active" id="d4-4"></div>
       </div>
+      <span class="dlg-title">Crear Portal</span>
+      <span class="dlg-sub">Compartir</span>
       <div class="success-chip"><span class="msi sm" style="color:#16a34a">check_circle</span>¡Portal creado exitosamente!</div>
       <div class="url-chip">len.pe/portal/<span id="url-slug">mi-portal</span></div>
       <div class="s-rows">
