@@ -1,5 +1,5 @@
 // Exports: initContextMenu()
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 import { toggleSelected, clearSelection, selectAll, isSelected, selectionStore } from './selection.js';
 
 const DEMO_PERSONAS = [

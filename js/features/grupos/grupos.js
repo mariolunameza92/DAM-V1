@@ -2,7 +2,7 @@
 // Exports: initGrupos()
 import { getGrupos, getGrupoById, createGrupo, updateGrupo, deleteGrupo, addMember, removeMember, subscribeGrupos, resetGruposForType, getGrupoForFace } from './grupos-data.js';
 import { getFaces } from '../../faces.js';
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 import { getDamType, subscribeConfig } from '../configuracion/configuracion-data.js';
 
 function _terms() {

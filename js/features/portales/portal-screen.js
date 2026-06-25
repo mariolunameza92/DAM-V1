@@ -4,7 +4,7 @@ import { mountThemeSidebar } from './theme-sidebar.js'; // [THEME-SIDEBAR]
 import { addToTable } from './table.js';
 import { FOLDERS_DATA, FOLDER_IMAGES, findNode } from '../../data.js';
 import { positionDropdown, generateShadeScale, hexToOklch } from '../../utils.js';
-import { viewToggleHTML, bindDynamicToggle } from '../../components/ui/view-toggle.js';
+import { viewToggleHTML, bindDynamicToggle } from '../../components/atoms/view-toggle.js';
 
 function getPortalNumCols() {
   const w = window.innerWidth;

@@ -6,7 +6,7 @@ import { getFaces } from '../../faces.js';
 import { uploadedAssets, userUploadedAssets } from '../../session.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';
 import { registerSection } from '../shared/image-registry.js';
-import { bindDynamicToggle, viewToggleHTML } from '../../components/ui/view-toggle.js';
+import { bindDynamicToggle, viewToggleHTML } from '../../components/atoms/view-toggle.js';
 import { getNumCols } from '../../utils.js';
 
 const MARCAS = [

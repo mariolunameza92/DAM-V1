@@ -6,7 +6,7 @@ import {
   getDamType, setDamType,
   getTeam, inviteMember, updateMemberRole, removeMember, ROLES, subscribeTeam,
 } from './configuracion-data.js';
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 
 const PLAN_CURRENT = 'professional'; // demo: plan actual
 

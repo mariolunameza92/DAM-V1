@@ -2,8 +2,8 @@
 import { TREE_DATA, FOLDER_IMAGES, findNode, getAncestorIds, addUserFolder } from '../../data.js';
 import { folderSVG, imgLabel } from '../../utils.js';
 import { uploadedAssets, userUploadedAssets, pushUserFolder } from '../../session.js';
-import { showToast } from '../../components/ui/toast.js';
-import { bindStaticToggle } from '../../components/ui/view-toggle.js';
+import { showToast } from '../../components/atoms/toast.js';
+import { bindStaticToggle } from '../../components/atoms/view-toggle.js';
 import { thumbsHTML, folderListRowHTML } from '../shared/folder-card.js';
 import { registerSection } from '../shared/image-registry.js';
 import { assetCardHTML, assetListRowHTML } from '../shared/asset-card.js';

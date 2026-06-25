@@ -3,8 +3,8 @@
 import { getFaces, getFavoriteFaces, toggleFavorite, renameFace, identifyFace, deleteFace, createFace, subscribe } from '../../faces.js';
 import { getGrupos, getGrupoForFace } from '../grupos/grupos-data.js';
 import { getFaceConsent, revokeFaceConsent, subscribeFaceConsent } from './faces-consent.js';
-import { showToast } from '../../components/ui/toast.js';
-import { bindStaticToggle } from '../../components/ui/view-toggle.js';
+import { showToast } from '../../components/atoms/toast.js';
+import { bindStaticToggle } from '../../components/atoms/view-toggle.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
 import { getPortals } from '../../session.js';
 import { PHOTO_FACES, FOLDER_IMAGES_EVENTS } from '../../events-registry.js';

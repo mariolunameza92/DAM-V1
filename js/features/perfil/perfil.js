@@ -1,5 +1,5 @@
 // Exports: renderPerfil()
-import { showToast } from '../../components/ui/toast.js';
+import { showToast } from '../../components/atoms/toast.js';
 
 const USER = {
   name: 'Mario Luna',

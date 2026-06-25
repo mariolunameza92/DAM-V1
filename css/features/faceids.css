@@ -36,7 +36,7 @@
 .faceid-card--add .faceid-card-av{display:flex;align-items:center;justify-content:center;background:var(--surface-raised);color:var(--text-body)}
 .faceid-card--add .faceid-card-name{color:var(--text-muted);font-weight:700}
 
-/* Lista: el mecanismo vive en components/ui/data-table.css; acá sólo los tracks
+/* Lista: el mecanismo vive en components/atoms/data-table.css; acá sólo los tracks
    de las 5 columnas propias (Persona · Apariciones · Portales · Registro · Agregado por). */
 #faceids-body{--dt-cols:2.4fr 160px 1.6fr 132px 156px}
 .faceid-person-cell{display:flex;align-items:center;gap:8px}

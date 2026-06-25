@@ -2,7 +2,7 @@
 .portals-consent-notice{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-muted);background:var(--surface-1);border:1px solid var(--border);border-left:3px solid var(--border-strong);border-radius:var(--radius);padding:10px 14px;margin-bottom:16px;line-height:1.5}
 .portals-consent-notice .msi{color:var(--text-muted);flex-shrink:0;margin-top:1px}
 
-/* Tabla: el mecanismo (grid, scroll, celdas, pills) vive en components/ui/data-table.css.
+/* Tabla: el mecanismo (grid, scroll, celdas, pills) vive en components/atoms/data-table.css.
    Acá sólo declaramos los tracks de las 6 columnas propias de Portales. */
 .portals-grid{--dt-cols:2.4fr 90px 1.5fr 116px 104px 92px}
 
