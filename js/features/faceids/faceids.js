@@ -6,6 +6,7 @@ import { getFaceConsent, revokeFaceConsent, subscribeFaceConsent } from './faces
 import { showToast } from '../../components/atoms/toast.js';
 import { bindStaticToggle } from '../../components/atoms/view-toggle.js';
 import { emptyState } from '../../components/atoms/empty-state.js';
+import { setupDialog, openDialog, closeDialog } from '../../components/molecules/dialog.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
 import { getPortals } from '../../session.js';
 import { PHOTO_FACES, FOLDER_IMAGES_EVENTS } from '../../events-registry.js';
@@ -349,10 +350,9 @@ function openCreateDialog() {
   document.getElementById('faceid-create-preview').style.display = 'none';
   document.getElementById('faceid-create-icon').style.display = '';
   document.getElementById('faceid-create-droptext').textContent = 'Subir foto del rostro';
-  document.getElementById('faceid-create-dlg').style.display = '';
-  setTimeout(() => document.getElementById('faceid-create-name').focus(), 50);
+  openDialog('faceid-create-dlg', 'faceid-create-name');
 }
-function closeCreateDialog() { document.getElementById('faceid-create-dlg').style.display = 'none'; }
+function closeCreateDialog() { closeDialog('faceid-create-dlg'); }
 
 function _initCreateDialog() {
   const dlg = document.getElementById('faceid-create-dlg');
@@ -388,7 +388,7 @@ function _initCreateDialog() {
 
   document.getElementById('faceid-create-cancel').addEventListener('click', closeCreateDialog);
   document.getElementById('faceid-create-confirm').addEventListener('click', confirm);
-  dlg.addEventListener('mousedown', e => { if (e.target === dlg) closeCreateDialog(); });
+  setupDialog('faceid-create-dlg', closeCreateDialog);
   name.addEventListener('keydown', e => { if (e.key === 'Enter') confirm(); if (e.key === 'Escape') closeCreateDialog(); });
 }
 
@@ -400,10 +400,10 @@ function openRenameDialog(face) {
   const name = document.getElementById('faceid-rename-name');
   name.value = face.name || '';
   document.getElementById('faceid-rename-hint').textContent = '';
-  document.getElementById('faceid-rename-dlg').style.display = '';
-  setTimeout(() => { name.focus(); name.select(); }, 50);
+  openDialog('faceid-rename-dlg', 'faceid-rename-name');
+  setTimeout(() => document.getElementById('faceid-rename-name')?.select(), 55);
 }
-function closeRenameDialog() { document.getElementById('faceid-rename-dlg').style.display = 'none'; _renameId = null; }
+function closeRenameDialog() { closeDialog('faceid-rename-dlg'); _renameId = null; }
 
 function _initRenameDialog() {
   const dlg = document.getElementById('faceid-rename-dlg');
@@ -422,7 +422,7 @@ function _initRenameDialog() {
 
   document.getElementById('faceid-rename-cancel').addEventListener('click', closeRenameDialog);
   document.getElementById('faceid-rename-confirm').addEventListener('click', confirm);
-  dlg.addEventListener('mousedown', e => { if (e.target === dlg) closeRenameDialog(); });
+  setupDialog('faceid-rename-dlg', closeRenameDialog);
   name.addEventListener('keydown', e => { if (e.key === 'Enter') confirm(); if (e.key === 'Escape') closeRenameDialog(); });
 }
 
