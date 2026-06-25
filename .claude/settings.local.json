@@ -159,7 +159,9 @@
       "PowerShell(Get-Process -Id 17440 -ErrorAction SilentlyContinue)",
       "Bash(git mv *)",
       "Bash(sed -i '' 's|components/ui/toast\\\\.js|components/atoms/toast.js|g' js/session.js js/features/faceids/faceids.js js/features/consentimientos/consentimientos.js js/features/perfil/perfil.js js/features/shared/context-menu.js js/features/configuracion/configuracion.js js/features/inicio/inicio.js js/features/carpetas/browser.js js/features/carpetas/image-detail.js js/features/carpetas/upload.js js/features/blacklist/blacklist.js js/features/portales/table.js js/features/grupos/grupos.js)",
-      "Bash(sed -i '' 's|components/ui/view-toggle\\\\.js|components/atoms/view-toggle.js|g' js/features/faceids/faceids.js js/features/inicio/filters.js js/features/inicio/inicio.js js/features/carpetas/browser.js js/features/blacklist/blacklist.js js/features/portales/portal-screen.js)"
+      "Bash(sed -i '' 's|components/ui/view-toggle\\\\.js|components/atoms/view-toggle.js|g' js/features/faceids/faceids.js js/features/inicio/filters.js js/features/inicio/inicio.js js/features/carpetas/browser.js js/features/blacklist/blacklist.js js/features/portales/portal-screen.js)",
+      "Read(//private/etc/**)",
+      "Bash(python3 -c \"import socket; print\\(socket.getservbyname\\('hbci'\\)\\)\")"
     ]
   },
   "hooks": {
