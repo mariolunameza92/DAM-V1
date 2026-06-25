@@ -19,7 +19,7 @@ function _setStep4ForType(isEdit) {
   if (!step4) return;
   const isMaster  = st.type === 'master';
   const typeName  = isMaster ? 'Master' : 'Portal';
-  const titleEl   = step4.querySelector('.modal-title');
+  const titleEl   = step4.querySelector('.dlg-title');
   const chipEl    = step4.querySelector('.success-chip');
   const submitEl  = step4.querySelector('.btn-submit');
   if (titleEl)  titleEl.textContent = isEdit ? `Editar ${typeName}` : `Crear ${typeName}`;
@@ -115,7 +115,7 @@ export function openModal() {
 
   // Pre-medir todos los pasos (overlay aún invisible) para fijar minHeight desde el inicio.
   // El overlay tiene opacity:0 en este punto, no hay flash visual.
-  const modal = document.querySelector('.modal');
+  const modal = document.querySelector('.dlg');
   modal.style.minHeight = '';
   let maxStepH = 0;
   for (let i = 1; i <= 5; i++) {
@@ -140,7 +140,7 @@ export function openModal() {
 
 export function closeModal() {
   document.getElementById('overlay').classList.remove('open');
-  document.querySelector('.modal').style.minHeight = '';
+  document.querySelector('.dlg').style.minHeight = '';
 }
 
 export function showStep(n) {
@@ -153,7 +153,7 @@ export function showStep(n) {
     if (el) el.className = 'step-dot' + (d === n ? ' active' : '');
   }
   // Modal solo crece: offsetHeight fuerza reflow síncrono, no requiere rAF
-  const modal = document.querySelector('.modal');
+  const modal = document.querySelector('.dlg');
   const h = modal.offsetHeight;
   const current = parseFloat(modal.style.minHeight) || 0;
   if (h > current) modal.style.minHeight = h + 'px';

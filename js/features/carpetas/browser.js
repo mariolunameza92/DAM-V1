@@ -314,7 +314,7 @@ export function openCrearCarpetaDialog() {
   hint.textContent = parentNode
     ? `Subcarpeta dentro de "${parentNode.label}"`
     : 'Nueva carpeta raíz (visible en Portales)';
-  dlg.style.display = 'flex';
+  dlg.classList.add('open');
   setTimeout(() => inp.focus(), 50);
 }
 
@@ -348,7 +348,7 @@ export function confirmCrearCarpeta() {
 }
 
 export function cancelCrearCarpeta() {
-  document.getElementById('crear-carpeta-dlg').style.display = 'none';
+  document.getElementById('crear-carpeta-dlg').classList.remove('open');
 }
 
 // ── View toggle ───────────────────────────────────────────────────────────────
