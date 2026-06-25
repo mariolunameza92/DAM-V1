@@ -127,6 +127,7 @@
   --gradient-accent:    linear-gradient(to left, #333847, #8591ab);
   --gradient-ambient:   radial-gradient(ellipse at 80% 0%, rgba(176, 183, 201, .45) 0%, transparent 60%),
                         radial-gradient(ellipse at 100% 30%, rgba(81, 92, 120, .2) 0%, transparent 50%);
+  --modal-wash:         linear-gradient(to bottom, rgba(176, 183, 201, .28) 0%, transparent 52%);
   --gradient-shimmer:   linear-gradient(90deg, #5a6580 0%, #5a6580 35%, #8e99b0 43%, #d4dae8 50%, #8e99b0 57%, #5a6580 65%, #5a6580 100%);
   --an-grad-dark:       linear-gradient(135deg, var(--g800) 0%, var(--g950) 100%);
   --an-grad-mid:        linear-gradient(135deg, var(--g500) 0%, var(--g700) 100%);
@@ -237,6 +238,7 @@
   --gradient-accent:    linear-gradient(to left, #8591ab, #d5d9e2);
   --gradient-ambient:   radial-gradient(ellipse at 80% 0%, rgba(133, 145, 171, .20) 0%, transparent 60%),
                         radial-gradient(ellipse at 100% 30%, rgba(81, 92, 120, .22) 0%, transparent 50%);
+  --modal-wash:         linear-gradient(to bottom, rgba(133, 145, 171, .22) 0%, transparent 52%);
   --gradient-shimmer:   linear-gradient(90deg, #2a2f3a 0%, #2a2f3a 35%, #3a4150 43%, #4a5165 50%, #3a4150 57%, #2a2f3a 65%, #2a2f3a 100%);
   --an-grad-dark:       linear-gradient(135deg, #d5d9e2 0%, #f6f7f9 100%);
   --an-grad-mid:        linear-gradient(135deg, #8b95ad 0%, #b0b7c9 100%);
