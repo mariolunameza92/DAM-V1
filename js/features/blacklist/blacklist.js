@@ -3,6 +3,7 @@
 import { getBlacklist, addToBlacklist, removeFromBlacklist, renameBlacklistItem, updateBlacklistFace, getAppearancesForId } from '../../blacklist-store.js';
 import { showToast } from '../../components/atoms/toast.js';
 import { bindStaticToggle } from '../../components/atoms/view-toggle.js';
+import { emptyState } from '../../components/atoms/empty-state.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
 import { getPortals } from '../../session.js';
 import { PHOTO_FACES, FOLDER_IMAGES_EVENTS } from '../../events-registry.js';
@@ -81,7 +82,7 @@ function _sortHead(col, label) {
 
 function _listHTML(items) {
   if (!items.length) {
-    return `<div class="faceids-empty">No hay personas en la lista negra.</div>`;
+    return emptyState('No hay personas en la lista negra.');
   }
   const head = `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('portales','Portales')}${_sortHead('registro','Registro')}${_sortHead('source','Origen')}${_sortHead('addedBy','Agregado por')}</div>`;
   const rows = items.map(item => {
@@ -136,7 +137,7 @@ function _gridHTML(items) {
     </div>`;
   }).join('');
   const empty = !items.length
-    ? `<div class="faceids-empty">No hay personas en la lista negra.</div>`
+    ? emptyState('No hay personas en la lista negra.')
     : '';
   return `<div class="faceids-grid">${addCard}${cards}</div>${empty}`;
 }

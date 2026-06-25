@@ -5,6 +5,7 @@ import { getGrupos, getGrupoForFace } from '../grupos/grupos-data.js';
 import { getFaceConsent, revokeFaceConsent, subscribeFaceConsent } from './faces-consent.js';
 import { showToast } from '../../components/atoms/toast.js';
 import { bindStaticToggle } from '../../components/atoms/view-toggle.js';
+import { emptyState } from '../../components/atoms/empty-state.js';
 import { resizeToDataURL } from '../carpetas/upload.js';
 import { getPortals } from '../../session.js';
 import { PHOTO_FACES, FOLDER_IMAGES_EVENTS } from '../../events-registry.js';
@@ -130,7 +131,7 @@ function _switchToTab(t) {
 function _listHTML(faces) {
   if (!faces.length) {
     const msg = _tab === 'identified' ? 'No se encontraron personas identificadas.' : 'No hay personas sin identificar.';
-    return `<div class="faceids-empty">${msg}</div>`;
+    return emptyState(msg);
   }
   const head = _tab === 'identified'
     ? `<div class="table-head">${_sortHead('name','Persona')}${_sortHead('photos','Apariciones')}${_sortHead('portales','Portales')}${_sortHead('registro','Registro')}${_sortHead('addedBy','Agregado por')}</div>`
@@ -199,7 +200,7 @@ function _gridHTML(faces) {
     </div>`;
   }).join('');
   const empty = !faces.length
-    ? `<div class="faceids-empty">${_tab === 'identified' ? 'No se encontraron personas identificadas.' : 'No hay personas sin identificar.'}</div>`
+    ? emptyState(_tab === 'identified' ? 'No se encontraron personas identificadas.' : 'No hay personas sin identificar.')
     : '';
   return `<div class="faceids-grid">${addCard}${cards}</div>` + empty;
 }
