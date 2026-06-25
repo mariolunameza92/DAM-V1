@@ -15,6 +15,18 @@
   --font-ui: 'Google Sans', sans-serif;
   --font-mono: 'Space Mono', monospace;
 
+  /* Typography scale — UI text sizes */
+  --text-xs:   11px;
+  --text-sm:   12px;
+  --text-base: 13px;
+  --text-lg:   15px;
+  --text-xl:   20px;
+
+  /* Border-radius scale */
+  --radius:    8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
   /* Spacing scale — base 4px. Token name = step count, value = step * 4px.
      Single source of truth for padding/gap/inset across DAM and portales. */
   --space-1: 4px;

@@ -140,6 +140,77 @@
 .config-member-remove { opacity: 0; transition: opacity .15s; flex-shrink: 0; }
 .config-member-row:hover .config-member-remove { opacity: 1; }
 
+/* ── DAM Type Selector ── */
+.dam-type-selector-wrap {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+.dam-type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.dam-type-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4) var(--space-5);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+  font-family: var(--font-ui);
+}
+.dam-type-card:hover:not(.dam-type-card--active) {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+}
+.dam-type-card--active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.dam-type-card-inner {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+.dam-type-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.dam-type-card--active .dam-type-icon { color: var(--accent); }
+.dam-type-label {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.dam-type-desc {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+.dam-type-badge {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  background: var(--accent);
+  color: var(--on-accent);
+  padding: 2px 8px;
+  border-radius: 40px;
+}
+
 /* ── Invite modal form ── */
 .config-invite-form { display: flex; flex-direction: column; gap: var(--space-3); }
 .config-invite-form label { font-size: var(--text-sm); color: var(--text-muted); display: block; margin-bottom: 4px; }

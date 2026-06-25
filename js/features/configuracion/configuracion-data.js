@@ -16,6 +16,24 @@ export const MODULE_DEFS = [
   { id: 'configuracion',   label: 'Configuración',    desc: 'Administración de módulos, precios y equipo',          icon: 'settings',        required: true  },
 ];
 
+// ── Tipos de DAM ─────────────────────────────────────────────────────────────────
+export const DAM_TYPES = [
+  {
+    id: 'business',
+    label: 'LEN DAM Business',
+    icon: 'business_center',
+    desc: 'Para empresas y organizaciones. Core: carpetas, portales y búsqueda con IA.',
+    modulesPreset: ['inicio', 'carpetas', 'portales', 'faceids', 'blacklist', 'analytics', 'configuracion'],
+  },
+  {
+    id: 'schools',
+    label: 'LEN DAM for Schools',
+    icon: 'school',
+    desc: 'Para instituciones educativas. Incluye gestión de alumnos, padres y consentimientos.',
+    modulesPreset: ['inicio', 'carpetas', 'portales', 'faceids', 'blacklist', 'grupos', 'consentimientos', 'analytics', 'configuracion'],
+  },
+];
+
 // ── Planes de pricing ─────────────────────────────────────────────────────────────
 export const PRICING_PLANS = [
   {
@@ -60,7 +78,8 @@ function _loadConfig() {
     const raw = sessionStorage.getItem(SS_CONFIG);
     if (raw) { _config = JSON.parse(raw); return; }
   } catch (e) {}
-  _config = { enabledModules: [...DEFAULT_ENABLED] };
+  const businessPreset = DAM_TYPES.find(t => t.id === 'business').modulesPreset;
+  _config = { enabledModules: [...businessPreset], damType: 'business' };
 }
 
 function _saveConfig() {
@@ -78,6 +97,16 @@ function _notifyConfig() { _saveConfig(); _configListeners.forEach(cb => { try {
 
 export function getEnabledModules()    { return new Set(_config.enabledModules); }
 export function isModuleEnabled(id)    { return _config.enabledModules.includes(id); }
+export function getDamType()           { return _config.damType || 'business'; }
+
+export function setDamType(typeId) {
+  const t = DAM_TYPES.find(t => t.id === typeId);
+  if (!t) return;
+  _config.damType = typeId;
+  const preset = new Set(t.modulesPreset);
+  _config.enabledModules = MODULE_DEFS.filter(m => m.required || preset.has(m.id)).map(m => m.id);
+  _notifyConfig();
+}
 
 export function setModuleEnabled(id, enabled) {
   const m = MODULE_DEFS.find(m => m.id === id);

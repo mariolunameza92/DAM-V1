@@ -3,6 +3,22 @@
 import { getGrupos, getGrupoById, createGrupo, updateGrupo, deleteGrupo, addMember, removeMember, subscribeGrupos } from './grupos-data.js';
 import { getFaces } from '../../faces.js';
 import { showToast } from '../../components/ui/toast.js';
+import { getDamType, subscribeConfig } from '../configuracion/configuracion-data.js';
+
+function _terms() {
+  if (getDamType() === 'schools') return {
+    unit: 'salón', units: 'salones', member: 'alumno', members: 'alumnos',
+    newBtn: 'Nuevo salón', addBtn: 'Agregar alumnos',
+    placeholder: 'Ej: 5to Año B',
+    emptyMsg: 'Aún no hay salones.<br>Creá uno para organizar a tus alumnos.',
+  };
+  return {
+    unit: 'grupo', units: 'grupos', member: 'miembro', members: 'miembros',
+    newBtn: 'Nuevo grupo', addBtn: 'Agregar miembros',
+    placeholder: 'Ej: Equipo Comercial',
+    emptyMsg: 'Aún no hay grupos.<br>Creá uno para organizar a tu equipo.',
+  };
+}
 
 const COLORS = ['var(--accent)','var(--accent-soft)','var(--text-body)','var(--text-muted)','var(--text-faint)'];
 
@@ -14,6 +30,7 @@ function esc(s) {
 function _renderSection() {
   const sec = document.getElementById('sec-grupos');
   if (!sec) return;
+  const t0 = _terms();
   sec.innerHTML = `
     <div class="grupos-wrap">
       <div class="grupos-header">
@@ -21,7 +38,7 @@ function _renderSection() {
           <div class="grupos-summary" id="grupos-summary"></div>
         </div>
         <button class="btn btn-primary" id="btn-nuevo-grupo">
-          <span class="msi sm">add</span> Nuevo grupo
+          <span class="msi sm">add</span> ${esc(t0.newBtn)}
         </button>
       </div>
       <div class="grupos-grid" id="grupos-grid"></div>
@@ -37,17 +54,22 @@ function _renderSection() {
 
   _renderGrid();
   subscribeGrupos(_renderGrid);
+  subscribeConfig(_renderGrid);
 }
 
 function _renderGrid() {
+  const t      = _terms();
   const grupos = getGrupos();
   const faces  = getFaces();
   const byId   = Object.fromEntries(faces.map(f => [f.id, f]));
 
+  const btn = document.getElementById('btn-nuevo-grupo');
+  if (btn) btn.innerHTML = `<span class="msi sm">add</span> ${esc(t.newBtn)}`;
+
   const summary = document.getElementById('grupos-summary');
   if (summary) {
     const totalMembers = grupos.reduce((acc, g) => acc + g.memberIds.length, 0);
-    summary.textContent = `${grupos.length} grupo${grupos.length !== 1 ? 's' : ''} · ${totalMembers} miembro${totalMembers !== 1 ? 's' : ''}`;
+    summary.textContent = `${grupos.length} ${grupos.length !== 1 ? t.units : t.unit} · ${totalMembers} ${totalMembers !== 1 ? t.members : t.member}`;
   }
 
   const grid = document.getElementById('grupos-grid');
@@ -57,7 +79,7 @@ function _renderGrid() {
     grid.innerHTML = `
       <div class="grupos-empty">
         <span class="msi">groups</span>
-        <p>Aún no hay grupos.<br>Creá uno para organizar a tu equipo.</p>
+        <p>${t.emptyMsg}</p>
       </div>`;
     return;
   }
@@ -80,7 +102,7 @@ function _renderGrid() {
         <div class="grupo-card-desc">${esc(g.description)}</div>
         <div class="grupo-avatars">${avs}${moreChip}</div>
         <div class="grupo-card-meta">
-          <span><span class="msi xs">group</span>${members.length} miembro${members.length !== 1 ? 's' : ''}</span>
+          <span><span class="msi xs">group</span>${members.length} ${members.length !== 1 ? t.members : t.member}</span>
           <span><span class="msi xs">calendar_today</span>${g.createdAt}</span>
         </div>
       </div>`;
@@ -176,7 +198,7 @@ function _renderDetail() {
       </button>
     </div>
     <div class="grupo-detail-actions">
-      <span class="grupo-detail-count">${members.length} miembro${members.length !== 1 ? 's' : ''}</span>
+      <span class="grupo-detail-count">${members.length} ${members.length !== 1 ? _terms().members : _terms().member}</span>
       <button class="btn btn-sm" id="btn-add-member">
         <span class="msi xs">person_add</span> Agregar
       </button>
@@ -230,8 +252,9 @@ function _openEditModal(gid) {
 }
 
 function _openGrupoModal(gid) {
+  const t       = _terms();
   const editing = gid ? getGrupoById(gid) : null;
-  const title   = editing ? 'Editar grupo' : 'Nuevo grupo';
+  const title   = editing ? `Editar ${t.unit}` : t.newBtn;
 
   let selectedColor = editing?.color || COLORS[0];
 
@@ -248,7 +271,7 @@ function _openGrupoModal(gid) {
       <div class="grupo-new-form">
         <div>
           <label>Nombre *</label>
-          <input id="gm-name" type="text" placeholder="Ej: Equipo Comercial" value="${esc(editing?.name || '')}">
+          <input id="gm-name" type="text" placeholder="${esc(t.placeholder)}" value="${esc(editing?.name || '')}">
         </div>
         <div>
           <label>Descripción</label>
@@ -322,7 +345,7 @@ function _openMemberPicker(gid) {
   modal.innerHTML = `
     <div class="modal-box" style="width:min(400px,92vw);background:var(--surface-0);border-radius:var(--radius-lg);padding:var(--space-5);border:1px solid var(--border)">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3)">
-        <strong style="font-size:var(--text-base)">Agregar miembros</strong>
+        <strong style="font-size:var(--text-base)">${esc(_terms().addBtn)}</strong>
         <button class="icon-btn" id="mp-close"><span class="msi sm">close</span></button>
       </div>
       <input class="grupo-picker-search" id="mp-search" type="text" placeholder="Buscar…">

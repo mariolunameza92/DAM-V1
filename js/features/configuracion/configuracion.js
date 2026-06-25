@@ -1,8 +1,9 @@
 // Feature: Configuración — 3 tabs: Módulos, Pricing, Equipo.
 // Exports: initConfiguracion()
 import {
-  MODULE_DEFS, PRICING_PLANS,
+  MODULE_DEFS, PRICING_PLANS, DAM_TYPES,
   getEnabledModules, isModuleEnabled, setModuleEnabled, subscribeConfig,
+  getDamType, setDamType,
   getTeam, inviteMember, updateMemberRole, removeMember, ROLES, subscribeTeam,
 } from './configuracion-data.js';
 import { showToast } from '../../components/ui/toast.js';
@@ -21,6 +22,11 @@ function _renderSection() {
   if (!sec) return;
   sec.innerHTML = `
     <div class="config-wrap">
+      <div class="dam-type-selector-wrap">
+        <div class="config-section-title">Tipo de DAM</div>
+        <p class="config-section-desc">Cambia la vista para simular cómo se ve la plataforma según el tipo de cliente.</p>
+        <div class="dam-type-selector" id="dam-type-selector"></div>
+      </div>
       <div class="config-tabs">
         <button class="config-tab active" data-tab="modulos">Módulos</button>
         <button class="config-tab" data-tab="pricing">Pricing demo</button>
@@ -39,12 +45,41 @@ function _renderSection() {
     });
   });
 
+  _renderDamTypeSelector();
   _renderModulos();
   _renderPricing();
   _renderEquipo();
 
   subscribeConfig(() => _renderModulos());
   subscribeTeam(() => _renderEquipo());
+}
+
+// ── Selector de tipo de DAM ───────────────────────────────────────────────────────
+function _renderDamTypeSelector() {
+  const container = document.getElementById('dam-type-selector');
+  if (!container) return;
+  const current = getDamType();
+  container.innerHTML = DAM_TYPES.map(t => `
+    <button class="dam-type-card ${t.id === current ? 'dam-type-card--active' : ''}" data-type="${t.id}">
+      <div class="dam-type-card-inner">
+        <span class="msi dam-type-icon">${esc(t.icon)}</span>
+        <div>
+          <div class="dam-type-label">${esc(t.label)}</div>
+          <div class="dam-type-desc">${esc(t.desc)}</div>
+        </div>
+      </div>
+      ${t.id === current ? '<span class="dam-type-badge">Activo</span>' : ''}
+    </button>`).join('');
+
+  container.querySelectorAll('[data-type]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.type === getDamType()) return;
+      setDamType(btn.dataset.type);
+      _renderDamTypeSelector();
+      const label = DAM_TYPES.find(t => t.id === btn.dataset.type)?.label;
+      showToast(`Vista cambiada a ${label}`);
+    });
+  });
 }
 
 // ── Tab: Módulos ─────────────────────────────────────────────────────────────────
