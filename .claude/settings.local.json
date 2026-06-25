@@ -168,7 +168,9 @@
       "Bash([ -f \"/Users/lenadmin/Documents/GitHub/DAM-V1/$f\" ])",
       "Bash(grep -rn \"#[0-9a-fA-F]\\\\{3,6\\\\}\" js/components/)",
       "Bash(git push *)",
-      "Bash(gh auth *)"
+      "Bash(gh auth *)",
+      "Skill(artifact-design)",
+      "Skill(artifact-design:*)"
     ]
   },
   "hooks": {

@@ -15,7 +15,7 @@
 .dlg-backdrop.open { opacity: 1; pointer-events: all; }
 
 .dlg {
-  background: var(--modal-wash), var(--surface-raised);
+  background: var(--gradient-ambient), var(--surface-raised);
   overflow: hidden;
   border: 1px solid var(--border-subtle);
   border-radius: 20px;
