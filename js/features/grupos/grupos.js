@@ -1,16 +1,16 @@
 // Feature: Gestión de Grupos — sección de grupos corporativos.
 // Exports: initGrupos()
-import { getGrupos, getGrupoById, createGrupo, updateGrupo, deleteGrupo, addMember, removeMember, subscribeGrupos } from './grupos-data.js';
+import { getGrupos, getGrupoById, createGrupo, updateGrupo, deleteGrupo, addMember, removeMember, subscribeGrupos, resetGruposForType } from './grupos-data.js';
 import { getFaces } from '../../faces.js';
 import { showToast } from '../../components/ui/toast.js';
 import { getDamType, subscribeConfig } from '../configuracion/configuracion-data.js';
 
 function _terms() {
   if (getDamType() === 'schools') return {
-    unit: 'salón', units: 'salones', member: 'alumno', members: 'alumnos',
-    newBtn: 'Nuevo salón', addBtn: 'Agregar alumnos',
+    unit: 'sección', units: 'secciones', member: 'alumno', members: 'alumnos',
+    newBtn: 'Nuevo grupo', addBtn: 'Agregar alumnos',
     placeholder: 'Ej: 5to Año B',
-    emptyMsg: 'Aún no hay salones.<br>Creá uno para organizar a tus alumnos.',
+    emptyMsg: 'Aún no hay grupos.<br>Creá uno para organizar a tus alumnos.',
   };
   return {
     unit: 'grupo', units: 'grupos', member: 'miembro', members: 'miembros',
@@ -54,7 +54,7 @@ function _renderSection() {
 
   _renderGrid();
   subscribeGrupos(_renderGrid);
-  subscribeConfig(_renderGrid);
+  subscribeConfig(() => resetGruposForType(getDamType()));
 }
 
 function _renderGrid() {

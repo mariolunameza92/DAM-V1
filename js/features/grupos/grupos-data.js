@@ -2,7 +2,7 @@
 // Persiste en sessionStorage. Exporta CRUD + suscripción.
 const SS_GRUPOS = 'len_grupos';
 
-const GRUPOS_DEFAULT = [
+const GRUPOS_BUSINESS_DEFAULT = [
   {
     id: 'g_comercial',
     name: 'Equipo Comercial',
@@ -20,6 +20,35 @@ const GRUPOS_DEFAULT = [
     memberIds: ['l42k_f2', 'l42k_f3', 'wfl_f'],
   },
 ];
+
+const GRUPOS_SCHOOLS_DEFAULT = [
+  {
+    id: 'g_1a',
+    name: '1ro "A"',
+    description: 'Primer año — sección A',
+    color: 'var(--accent)',
+    createdAt: '10/Abr/2026',
+    memberIds: ['l42k_f', 'cr_f2', 'rbf_f'],
+  },
+  {
+    id: 'g_1b',
+    name: '1ro "B"',
+    description: 'Primer año — sección B',
+    color: 'var(--accent-soft)',
+    createdAt: '10/Abr/2026',
+    memberIds: ['osr_f', 'l42k_f2'],
+  },
+  {
+    id: 'g_1c',
+    name: '1ro "C"',
+    description: 'Primer año — sección C',
+    color: 'var(--text-body)',
+    createdAt: '10/Abr/2026',
+    memberIds: ['l42k_f3', 'wfl_f'],
+  },
+];
+
+const GRUPOS_DEFAULT = GRUPOS_BUSINESS_DEFAULT;
 
 let _grupos = null;
 
@@ -91,6 +120,12 @@ export function removeMember(grupoId, faceId) {
   const g = _grupos.find(g => g.id === grupoId);
   if (!g) return;
   g.memberIds = g.memberIds.filter(id => id !== faceId);
+  _notify();
+}
+
+export function resetGruposForType(type) {
+  const defaults = type === 'schools' ? GRUPOS_SCHOOLS_DEFAULT : GRUPOS_BUSINESS_DEFAULT;
+  _grupos = defaults.map(g => ({ ...g, memberIds: [...g.memberIds] }));
   _notify();
 }
 
